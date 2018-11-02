@@ -16,14 +16,10 @@
 # | |   / _ \| '_ \| |_| |/ _` | | | | '__/ _` | __| |/ _ \| '_ \ 
 # | |__| (_) | | | |  _| | (_| | |_| | | | (_| | |_| | (_) | | | |
 #  \____\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
-#                         |___/                                                   
-
-# If you do not wish to use certain options, leave the examples as they are
-# If you want to add more worlds, regions, categories, or faction territories to be controlled, carefully copy and paste the given examples so they line up with the previous entries
-# Example Video: https://www.youtube.com/watch?v=SnHCX9yn2XA
+#                         |___/
 
 # This feature requires CombatTagPlus, CombatLogX, or AntiCombatLogging!
-# Disable the option to stop flight in the combat plugin configuration to prevent issues
+# Disable the option to stop flight in your combat plugin configuration to prevent issues
 # Set the following value to true if you wish to disable flight in combat
 disable_flight_in_combat: false
 
@@ -39,19 +35,6 @@ vanish_bypass: false
 # If you are vanished with either of the plugins above or are in spectator mode the particles do not spawn
 # Set the following value to true if you wish for cloud particles to spawn under players that are moving while flying
 flight_trail: false
-
-# Worlds that deny flight
-disable_flight_worlds:
-# Change exampleworld to your world below if you wish to use this feature
-- exampleworld
-
-# This feature requires WorldGuard!
-# Regions that deny flight
-disable_flight_regions:
-  # Change exampleworld to your world and the example regions below to regions within that world if you wish to use this feature
-  exampleworld:
-  - exampleregion
-  - exampleregion2
 
 # This feature requires Factions (by MassiveCraft), FactionsUUID, or SavageFactions!
 # The below section allows configuration of the automatic enabling/disabling of flight 
@@ -83,13 +66,13 @@ factions:
 sounds:
   # Please use the names from the "Sound Event" section of the table on https://minecraft.gamepedia.com/Sounds.json#Java_Edition_values
   # USE THE CORRECT TABLE (Java Edition values before 1.9) if you are using 1.8!
-  disable_flight:
+  enable_flight:
     # Follow the instructions above for setting the value
     value: "NONE"
     pitch: 1
     volume: 1
 
-  enable_flight:
+  disable_flight:
     # Follow the instructions above for setting the value
     value: "NONE"
     pitch: 1
@@ -98,13 +81,11 @@ sounds:
 # If you do not wish for a message to be sent at all, set it to ""
 # You can use & for color codes just like any other plugin!
 messages:
-  # Message when denied flight
-  disable_flight: "&cYour flight has automatically been disabled!"
-  
   # Message when flight is automatically enabled
   enable_flight: "&aYour flight has automatically been enabled!"
-
-  # Message when denied permission to administrative commands
+  # Message when denied flight
+  disable_flight: "&cYour flight has automatically been disabled!"
+  # Message when denied permission to commands
   permission_denied: "&cYou do not have permission to use this command!"
 
 #  ____                     _         _                 
@@ -113,9 +94,15 @@ messages:
 # |  __/  __/ |  | | | | | | \__ \__ \ | (_) | | | \__ \
 # |_|   \___|_|  |_| |_| |_|_|___/___/_|\___/|_| |_|___/
 
+# Replace WORLDNAME in the permission with the name of the world
+#         REGIONNAME with the name of the region
+#         CATEGORY with the name of the category
+
 # flightcontrol.admin - Ability to use FlightControl commands (automatically given to OPs)
 # flightcontrol.bypass - Bypasses all fly restrictions and always allows flight
-# flightcontrol.autoflyall - Ability to automatically fly in all regions that are not disabled
-# flightcontrol.autofly.WORLDNAME - Ability to fly in a certain world (replace WORLDNAME in the permission with the name of the world)
-# flightcontrol.autofly.WORLDNAME.REGIONNAME - Ability to fly in a certain region (replace WORLDNAME in the permission with the name of the world and REGIONNAME with the name of the region)
-# flightcontrol.factions.CATEGORY - Controls flight based upon the category (replace CATEGORY with the name of the category)
+# flightcontrol.flyall - Ability to automatically fly in all regions that are not disabled
+# flightcontrol.fly.WORLDNAME - Ability to fly in a certain world
+# flightcontrol.fly.WORLDNAME.REGIONNAME - Ability to fly in a certain region
+# flightcontrol.nofly.WORLDNAME - Disables flight in a certain world
+# flightcontrol.nofly.WORLDNAME.REGIONNAME - Disables flight in a certain region
+# flightcontrol.factions.CATEGORY - Controls flight based upon the category

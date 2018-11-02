@@ -24,8 +24,6 @@ class Config {
 	static String dFlight, eFlight, permDenied;
     static HashMap<String, AbstractMap.SimpleEntry<List<String>, List<String>>> categories = new HashMap<>();
 	static ArrayList<String> trailPrefs = new ArrayList<>();
-	static ArrayList<String> worlds = new ArrayList<>();
-	static HashMap<String, List<String>> regions = new HashMap<>();
 
 	Config(FlightControl i) {
 		pl = i;
@@ -46,40 +44,21 @@ class Config {
 		dFlight = c.getString("messages.disable_flight");
 		eFlight = c.getString("messages.enable_flight");
 		permDenied = c.getString("messages.permission_denied");
-        trailPrefs = worlds = new ArrayList<>(); regions = new HashMap<>(); categories = new HashMap<>();
-        loadSounds(); loadTrailPrefs(); loadWorlds();
-		if (pm.isPluginEnabled("WorldGuard")) loadRegions();
+        trailPrefs = new ArrayList<>(); categories = new HashMap<>();
+        loadSounds(); loadTrailPrefs();
 		if (pm.isPluginEnabled("Factions")) loadFacCategories();
 
-        for (World w : Bukkit.getWorlds()) { String name = w.getName(); if (pm.getPermission("flightcontrol.autofly." + name) == null)
-            pm.addPermission(new Permission("flightcontrol.autofly." + name, PermissionDefault.FALSE)); }
+        for (World w : Bukkit.getWorlds()) { String name = w.getName(); defaultPerms(name);
+            for (String rg : pl.regions.regions(w)) { defaultPerms(name + "." + rg); }
+        }
 	}
 
-	private void loadWorlds() {
-		if (c.getStringList("disable_flight_worlds") != null && !c.getStringList("disable_flight_worlds").isEmpty())
-		    for (String world : c.getStringList("disable_flight_worlds")) { if (Bukkit.getWorld(world) != null) worlds.add(world); }
-		else pl.getServer().getLogger().warning("disable_flight_worlds is invalid!");
-	}
-
-	private void loadRegions() {
-		if (c.isConfigurationSection("disable_flight_regions")) {
-			Set<String> worlds = c.getConfigurationSection("disable_flight_regions").getKeys(false);
-			if (worlds != null && !worlds.isEmpty()) {
-				for (String world : worlds) {
-					if (world != null && !world.isEmpty() && Bukkit.getWorld(world) != null) {
-						List<String> worldRegions = c.getStringList("disable_flight_regions." + world);
-						for (String region : worldRegions) {
-							if (region != null && !region.isEmpty() && pl.regions.hasRegion(world, region)) {
-								regions.put(world, worldRegions);
-								if (pm.getPermission("flightcontrol.autofly." + world + "." + region) == null)
-								    pm.addPermission(new Permission("flightcontrol.autofly." + world + "." + region, PermissionDefault.FALSE));
-							}
-						}
-					}
-				}
-			} else pl.getServer().getLogger().warning("disable_flight_regions is invalid!");
-		}
-	}
+	private void defaultPerms(String suffix) {
+        if (pm.getPermission("flightcontrol.fly." + suffix) == null)
+            pm.addPermission(new Permission("flightcontrol.fly." + suffix, PermissionDefault.FALSE));
+        if (pm.getPermission("flightcontrol.nofly." + suffix) == null)
+            pm.addPermission(new Permission("flightcontrol.nofly." + suffix, PermissionDefault.FALSE));
+    }
 
 	private void loadFacCategories() {
 		if (c.isConfigurationSection("factions")) {

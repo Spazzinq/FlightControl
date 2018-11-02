@@ -65,37 +65,36 @@ class Listener implements org.bukkit.event.Listener {
 		Player p = e.getPlayer();
 		
 		if (!p.hasPermission("flightcontrol.bypass") && !(vanish.vanished(p) && Config.vanishBypass) && p.getGameMode() != GameMode.SPECTATOR) {
-			String worldN = e.getTo().getWorld().getName();
-			String regionN = pl.regions.region(e.getTo());
+			String world = e.getTo().getWorld().getName();
+			String region = pl.regions.region(e.getTo());
+
+			boolean disable = combat.tagged(p) || fac.rel(p, false) || !plot.flight(e.getTo())
+                    || p.hasPermission("flightcontrol.nofly." + world)
+                    || (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)),
+                    enable = fac.rel(p, true)
+                            || p.hasPermission("flightcontrol.flyall")
+                            || p.hasPermission("flightcontrol.fly." + world)
+                            || (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region));
 			if (p.getAllowFlight()) {
-				if (combat.tagged(p) || Config.worlds.contains(worldN) ||
-                        (Config.regions.containsKey(worldN) && Config.regions.get(worldN).contains(regionN))
-						|| fac.rel(p, false) || !plot.flight(e.getTo())) {
-					p.setAllowFlight(false);
-					p.setFlying(false);
-                    Sound.play(p, Config.dSound);
-					if (Config.cancelFall) { fall.add(p); Bukkit.getScheduler().scheduleSyncDelayedTask(pl, () -> fall.remove(p), 120); }
-					pl.msg(p, Config.dFlight);
-				}
-			} else {
-				if (!combat.tagged(p) && !fac.rel(p, false) && plot.flight(e.getTo())
-                        && !Config.worlds.contains(worldN) && !(Config.regions.containsKey(worldN) && Config.regions.get(worldN).contains(regionN))
-                        && (fac.rel(p, true)
-                        || p.hasPermission("flightcontrol.autoflyall")
-                        || p.hasPermission("flightcontrol.autofly." + worldN)
-                        || p.hasPermission("flightcontrol.autofly." + worldN + "." + regionN))) {
-					p.setAllowFlight(true);
-                    Sound.play(p, Config.eSound);
-					pl.msg(p, Config.eFlight);
-				}
-			}
-		} else if (!p.getAllowFlight()) {
-		    p.setAllowFlight(true);
-            Sound.play(p, Config.eSound);
-		    pl.msg(p, Config.eFlight);
-		}
+			    if (disable || !enable) disableFlight(p);
+			} else if (!disable && enable) enableFlight(p);
+		} else if (!p.getAllowFlight()) enableFlight(p);
 		if ((particles instanceof Particles13 || (isSpigot && particles instanceof Particles8)) && Config.flightTrail &&
                 !Config.trailPrefs.contains(p.getUniqueId().toString()) && e.getFrom().distance(e.getTo()) > 0 &&
                 p.isFlying() && p.getGameMode() != GameMode.SPECTATOR && !vanish.vanished(p)) particles.play(p.getWorld(), p, e.getTo(), e.getFrom());
 	}
+
+	private void enableFlight(Player p) {
+        p.setAllowFlight(true);
+        Sound.play(p, Config.eSound);
+        pl.msg(p, Config.eFlight);
+    }
+
+    private void disableFlight(Player p) {
+        p.setAllowFlight(false);
+        p.setFlying(false);
+        Sound.play(p, Config.dSound);
+        if (Config.cancelFall) { fall.add(p); Bukkit.getScheduler().scheduleSyncDelayedTask(pl, () -> fall.remove(p), 120); }
+        pl.msg(p, Config.dFlight);
+    }
 }

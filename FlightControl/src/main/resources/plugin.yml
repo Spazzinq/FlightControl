@@ -18,7 +18,7 @@ permissions:
   flightcontrol.bypass:
     description: Bypasses fly restrictions
     default: false
-  flightcontrol.autoflyall:
+  flightcontrol.flyall:
     description: Ability to fly in all regions
     default: false
   flightcontrol.admin:
