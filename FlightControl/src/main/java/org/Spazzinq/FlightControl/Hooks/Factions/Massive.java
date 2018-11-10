@@ -6,22 +6,19 @@ import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColl;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
+import org.Spazzinq.FlightControl.Config;
 import org.bukkit.entity.Player;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.List;
 
 public class Massive extends Factions {
-    private HashMap<String, AbstractMap.SimpleEntry<List<String>, List<String>>> fCategories;
-    public Massive(HashMap<String, AbstractMap.SimpleEntry<List<String>, List<String>>> fCategories) { this.fCategories = fCategories; }
 
     @Override
     public boolean rel(Player p, boolean type) {
-        // 0 == auto_flight && 1 == disable_flight
-        for (String category : fCategories.keySet()) {
+        // true == enable_flight && false == disable_flight
+        for (String category : Config.getCategories().keySet()) {
             if (p.hasPermission("flightcontrol.factions." + category)) {
-                List<String> types = type ? fCategories.get(category).getKey() : fCategories.get(category).getValue();
+                List<String> types = type ? Config.getCategories().get(category).getKey() : Config.getCategories().get(category).getValue();
                 boolean own = false, ally = false, truce = false, neutral = false, enemy = false, warzone = false, safezone = false, wilderness = false;
                 MPlayer mp = MPlayer.get(p);
                 Faction f = BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));

@@ -58,6 +58,7 @@
                 </executions>
             </plugin>
         </plugins>
+        <finalName>FlightControl</finalName>
     </build>
 
     <repositories>

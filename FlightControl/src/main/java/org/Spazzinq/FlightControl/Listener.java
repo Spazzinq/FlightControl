@@ -50,7 +50,7 @@ class Listener implements org.bukkit.event.Listener {
 	    else if (pm.getPlugin("AntiCombatLogging") != null) combat = new AntiLogging();
         if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) vanish = new PremiumSuper();
         else if (pm.getPlugin("Essentials") != null) vanish = new Ess((Essentials) pm.getPlugin("Essentials"));
-        if (pm.getPlugin("Factions") != null) fac = pm.getPlugin("MassiveCore") != null ? new Massive(Config.categories) : new UUIDSavage(Config.categories);
+        if (pm.getPlugin("Factions") != null) fac = pm.getPlugin("MassiveCore") != null ? new Massive() : new UUIDSavage();
     }
 
 	@EventHandler
@@ -67,17 +67,20 @@ class Listener implements org.bukkit.event.Listener {
 		if (!p.hasPermission("flightcontrol.bypass") && !(vanish.vanished(p) && Config.vanishBypass) && p.getGameMode() != GameMode.SPECTATOR) {
 			String world = e.getTo().getWorld().getName();
 			String region = pl.regions.region(e.getTo());
-
-			boolean disable = combat.tagged(p) || fac.rel(p, false) || !plot.flight(e.getTo())
-                    || p.hasPermission("flightcontrol.nofly." + world)
-                    || (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)),
-                    enable = fac.rel(p, true)
+			boolean enable = fac.rel(p, true)
                             || p.hasPermission("flightcontrol.flyall")
                             || p.hasPermission("flightcontrol.fly." + world)
-                            || (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region));
+                            || (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region))
+                            || Config.eWorlds.contains(world)
+                            || Config.eRegions.containsKey(world) && Config.eRegions.get(world).contains(region),
+                    disable = combat.tagged(p) || fac.rel(p, false) || !plot.flight(e.getTo())
+                            || p.hasPermission("flightcontrol.nofly." + world)
+                            || Config.dWorlds.contains(world)
+                            || Config.dRegions.containsKey(world) && Config.dRegions.get(world).contains(region)
+                            || region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region);
 			if (p.getAllowFlight()) {
 			    if (disable || !enable) disableFlight(p);
-			} else if (!disable && enable) enableFlight(p);
+			} else if (enable && !disable) enableFlight(p);
 		} else if (!p.getAllowFlight()) enableFlight(p);
 		if ((particles instanceof Particles13 || (isSpigot && particles instanceof Particles8)) && Config.flightTrail &&
                 !Config.trailPrefs.contains(p.getUniqueId().toString()) && e.getFrom().distance(e.getTo()) > 0 &&
