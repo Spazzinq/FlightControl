@@ -19,6 +19,10 @@
 #                         |___/
 
 settings:
+  # Enables /fly instead of automatic flight
+  # When "command" is enabled, "can_enable" and "cannot_enable" messages/sounds are also available
+  command: false
+
   # Requires: CombatTagPlus, CombatLogX, or AntiCombatLogging
   # NOTE: in the combat plugin config, disable its option to stop flight while in combat (prevents issues)
   disable_flight_in_combat: false
@@ -37,20 +41,20 @@ settings:
 
 # Enables/Disables flight in certain worlds
 worlds:
-  enable_flight:
+  enable:
     - exampleworld
-  disable_flight:
+  disable:
     - exampleworld2
 
 # Enables/Disables flight in certain WorldGuard regions
 # Requires: WorldGuard (and WorldEdit)
 regions:
-  enable_flight:
+  enable:
     exampleworld:
     - exampleregion
     exapleworld2:
     - exampleregion2
-  disable_flight:
+  disable:
     exampleworld3:
     - exampleregion3
 
@@ -62,40 +66,59 @@ factions:
   # "example" is a category (the permission to use it is flightcontrol.factions.example)
   example:
     # Enables flight in the region type(s) below ("example" category)
-    enable_flight:
+    enable:
     - OWN
     - ALLY
     # Disables flight in the region type(s) below ("example" category)
-    disable_flight:
+    disable:
     - ENEMY
     - WARZONE
 
   # "example2" is a category (the permission to use it is flightcontrol.factions.example2)
   example2:
-    enable_flight:
+    enable:
     - SAFEZONE
     - WARZONE
-    disable_flight:
+    disable:
     - WILDERNESS
 
 sounds:
   # Please use the sound names from the "Sound Event" section of the table on https://minecraft.gamepedia.com/Sounds.json#Java_Edition_values
   # USE THE CORRECT TABLE (Java Edition values before 1.9) if you are using 1.8!
-  enable_flight:
+  enable:
     sound: "NONE"
     pitch: 1
     volume: 1
-  disable_flight:
+  disable:
+    sound: "NONE"
+    pitch: 1
+    volume: 1
+  # "can_enable" and "cannot_enable" are only used when "command" is true
+  can_enable:
+    sound: "NONE"
+    pitch: 1
+    volume: 1
+  cannot_enable:
     sound: "NONE"
     pitch: 1
     volume: 1
 
-# If you do not wish for a message to be sent at all, set it to ""
+# If you do not wish for a message to be sent, set it to ""
 # You can use "&" for color codes just like any other plugin!
 messages:
-  enable_flight: "&aYour flight has automatically been enabled!"
-  disable_flight: "&cYour flight has automatically been disabled!"
-  permission_denied: "&cYou do not have permission to use this command!"
+  # Use the actionbar (area above hotbar) instead of chat for certain notifications
+  actionbar: false
+  flight:
+    enable: "&aYour flight has been enabled."
+    disable: "&cYour flight has been disabled."
+    # "can_enable" and "cannot_enable" are only used when "command" is true
+    can_enable: "&bYou can use /fly now."
+    cannot_enable: "&cYou cannot fly right now."
+  # Per-player trail enable/disable
+  trail:
+    enable: "&aYou enabled the flight trail!"
+    disable: "&cYou disabled the flight trail!"
+  permission_denied: "&cYou do not have permission to use this command."
 
 #  ____                     _         _                 
 # |  _ \ ___ _ __ _ __ ___ (_)___ ___(_) ___  _ __  ___ 

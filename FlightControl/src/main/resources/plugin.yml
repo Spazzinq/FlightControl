@@ -4,7 +4,7 @@ version: ${project.version}
 api-version: 1.13
 author: Spazzinq
 description: "Control your players' flight"
-softdepend: [CombatTagPlus, CombatLogX, Essentials, WorldGuard, WorldEdit, Factions, PlotSquared, AntiCombatLogging]
+softdepend: [AntiCombatLogging, CombatLogX, CombatTagPlus, Essentials, Factions, PlotSquared, WorldGuard]
 
 commands:
   flightcontrol:
@@ -14,7 +14,11 @@ commands:
     description: Per-player trail toggle
     aliases: [trail, tt]
 
+
 permissions:
+  flightcontrol.fly:
+    description: Access to fly command
+    default: false
   flightcontrol.bypass:
     description: Bypasses fly restrictions
     default: false
@@ -22,5 +26,5 @@ permissions:
     description: Ability to fly in all regions
     default: false
   flightcontrol.admin:
-    description: Ability to use FlightControl commands
+    description: Access to FlightControl commands
     default: op
