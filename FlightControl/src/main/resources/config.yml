@@ -130,11 +130,14 @@ messages:
 #         REGIONNAME with the name of the region
 #         CATEGORY with the name of the category
 
+# Important Permissions
 # flightcontrol.admin - Ability to use FlightControl commands (automatically given to OPs)
 # flightcontrol.bypass - Bypasses all fly restrictions and always allows flight
+# flightcontrol.factions.CATEGORY - Controls flight based upon the category
 # flightcontrol.flyall - Ability to automatically fly in all regions that are not disabled
+# flightcontrol.fly - Access to /fly when the command is enabled (the Essentials permission "essentials.fly" works too)
+# Optional Permissions
 # flightcontrol.fly.WORLDNAME - Ability to fly in a certain world
 # flightcontrol.fly.WORLDNAME.REGIONNAME - Ability to fly in a certain region
 # flightcontrol.nofly.WORLDNAME - Disables flight in a certain world
 # flightcontrol.nofly.WORLDNAME.REGIONNAME - Disables flight in a certain region
-# flightcontrol.factions.CATEGORY - Controls flight based upon the category
