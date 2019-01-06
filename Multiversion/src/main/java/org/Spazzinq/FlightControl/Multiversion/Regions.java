@@ -27,11 +27,13 @@ package org.Spazzinq.FlightControl.Multiversion;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 @SuppressWarnings("unused")
 public class Regions {
     public String region(Location l) { return null; }
-    public Set<String> regions(World w) { return null; }
+    public Set<String> regions(World w) { return Collections.emptySet(); }
     public boolean hasRegion(String world, String region) { return false; }
 }
