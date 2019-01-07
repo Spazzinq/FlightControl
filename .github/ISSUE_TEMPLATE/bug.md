@@ -15,9 +15,8 @@ about: Create a report to help me solve the issue
 **Configuration** (hastebin or gist)
  
  
-**Permissions & OP Status**
+**FlightControl Permissions** (given to player) **& OP Status**
  
  
 **Server Version** (e.g. Spigot 1.8.8)
-
  
