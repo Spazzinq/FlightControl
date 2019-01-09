@@ -26,13 +26,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <parent>
         <artifactId>FlightControl-parent</artifactId>
         <groupId>org.Spazzinq</groupId>
         <version>LATEST</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>${parent.version}</version>
     <artifactId>v8</artifactId>
 
     <repositories>
@@ -41,7 +43,6 @@
             <url>http://maven.sk89q.com/repo/</url>
         </repository>
     </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -62,16 +63,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.SirBlobman</groupId>
-            <artifactId>combatlogx</artifactId>
-            <version>8.0.0.0</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/Spazzinq/Downloads/BuildTools/CombatLogX-8.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>org.Spazzinq</groupId>
             <artifactId>Multiversion</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 </project>

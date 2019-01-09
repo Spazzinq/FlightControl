@@ -26,13 +26,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <parent>
         <artifactId>FlightControl-parent</artifactId>
         <groupId>org.Spazzinq</groupId>
         <version>LATEST</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>${parent.version}</version>
     <artifactId>v13</artifactId>
 
     <dependencies>
@@ -47,26 +49,19 @@
             <artifactId>worldedit</artifactId>
             <version>7.0.0-beta-01;8975469</version>
             <scope>system</scope>
-            <systemPath>C:/Users/Spazzinq/Downloads/BuildTools/worldedit-bukkit-7.0.0-beta-01.jar</systemPath>
+            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/worldedit-bukkit-7.0.0-beta-01.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldguard</artifactId>
             <version>7.0.0-beta01;01dfebe</version>
             <scope>system</scope>
-            <systemPath>C:/Users/Spazzinq/Downloads/BuildTools/worldguard-legacy-7.0.0-beta01.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.SirBlobman</groupId>
-            <artifactId>combatlogx</artifactId>
-            <version>9.0.0.0</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/Spazzinq/Downloads/BuildTools/CombatLogX-13.jar</systemPath>
+            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/worldguard-legacy-7.0.0-beta01.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.Spazzinq</groupId>
             <artifactId>Multiversion</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 </project>

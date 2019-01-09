@@ -35,6 +35,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -62,5 +63,6 @@ class Listener implements org.bukkit.event.Listener {
                 e.getFrom().distance(e.getTo()) > 0 && p.isFlying() && p.getGameMode() != GameMode.SPECTATOR && !pl.vanish.vanished(p)) particles.play(p.getWorld(), p, e.getTo(), e.getFrom());
 	}
 
-	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) { new BukkitRunnable() { public void run() { pl.check(e.getPlayer(), false); } }.runTaskLater(pl, 1);  }
+	@EventHandler private void onJoin(PlayerJoinEvent e) { pl.check(e.getPlayer()); }
+	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) { new BukkitRunnable() { public void run() { pl.check(e.getPlayer()); } }.runTaskLater(pl, 1);  }
 }

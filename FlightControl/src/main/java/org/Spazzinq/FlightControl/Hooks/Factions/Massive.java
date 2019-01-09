@@ -30,33 +30,30 @@ import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColl;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
+import org.Spazzinq.FlightControl.Category;
 import org.Spazzinq.FlightControl.Config;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class Massive extends Factions {
-
     @Override
-    public boolean rel(Player p, boolean type) {
-        // true == enable_flight && false == disable_flight
-        for (String category : Config.getCategories().keySet()) {
+    public boolean rel(Player p) {
+        for (String category : Config.categories.keySet()) {
             if (p.hasPermission("flightcontrol.factions." + category)) {
-                List<String> types = type ? Config.getCategories().get(category).getKey() : Config.getCategories().get(category).getValue();
-                boolean own = false, ally = false, truce = false, neutral = false, enemy = false, warzone = false, safezone = false, wilderness = false;
+                Category c = Config.categories.get(category);
                 MPlayer mp = MPlayer.get(p);
                 Faction f = BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));
                 FactionColl fColl = FactionColl.get();
-                if (types.contains("WARZONE")) warzone = f == fColl.getWarzone();
-                if (types.contains("SAFEZONE")) safezone = f == fColl.getSafezone();
-                if (types.contains("WILDERNESS")) wilderness = f.isNone();
+                boolean own = false, ally = false, truce = false, neutral = false, enemy = false,
+                        warzone = c.warzone && f == fColl.getWarzone(), safezone = c.safezone && f == fColl.getSafezone(), wilderness = c.wilderness && f.isNone();
                 if (mp.hasFaction()) {
                     Rel r = f.getRelationWish(mp.getFaction());
-                    if (types.contains("OWN")) own = mp.isInOwnTerritory();
-                    if (types.contains("ALLY")) ally = r == Rel.ALLY;
-                    if (types.contains("TRUCE")) truce = r == Rel.TRUCE;
-                    if (types.contains("NEUTRAL")) neutral = !f.isNone() && f != fColl.getWarzone() && f != fColl.getSafezone() && !mp.isInOwnTerritory() && r == Rel.NEUTRAL;
-                    if (types.contains("ENEMY")) enemy = r == Rel.ENEMY;
+                    if (c.own) own = mp.isInOwnTerritory();
+                    if (c.ally) ally = r == Rel.ALLY;
+                    if (c.truce) truce = r == Rel.TRUCE;
+                    if (c.neutral) neutral = !f.isNone() && f != fColl.getWarzone() && f != fColl.getSafezone() && !mp.isInOwnTerritory() && r == Rel.NEUTRAL;
+                    if (c.enemy) enemy = r == Rel.ENEMY;
                 }
                 return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
             }

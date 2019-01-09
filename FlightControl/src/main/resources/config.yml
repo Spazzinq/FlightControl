@@ -39,12 +39,10 @@ settings:
   # Compatible: EssentialsX, PremiumVanish (disables while vanished)
   flight_trail: false
 
-# Enables/Disables flight in certain worlds
+# Enables flight in certain worlds
 worlds:
   enable:
     - exampleworld
-  disable:
-    - exampleworld2
 
 # Enables/Disables flight in certain WorldGuard regions
 # Requires: WorldGuard (and WorldEdit)
@@ -54,6 +52,7 @@ regions:
     - exampleregion
     exapleworld2:
     - exampleregion2
+  # This option ONLY OVERRIDES REGIONS WITH ENABLED FLIGHT
   disable:
     exampleworld3:
     - exampleregion3
@@ -61,7 +60,7 @@ regions:
 # Enables/Disables flight in certain faction regions
 # Requires: Factions (by MassiveCraft), FactionsUUID, or SavageFactions
 # There are eight types of faction territories (OWN, ALLY, TRUCE, NEUTRAL, ENEMY, WARZONE, SAFEZONE, WILDERNESS)
-# Note: OWN enables flight in the player's own faction territory
+# OWN enables flight in the player's own faction territory
 factions:
   # "example" is a category (the permission to use it is flightcontrol.factions.example)
   example:
@@ -69,18 +68,12 @@ factions:
     enable:
     - OWN
     - ALLY
-    # Disables flight in the region type(s) below ("example" category)
-    disable:
-    - ENEMY
-    - WARZONE
 
   # "example2" is a category (the permission to use it is flightcontrol.factions.example2)
   example2:
     enable:
     - SAFEZONE
     - WARZONE
-    disable:
-    - WILDERNESS
 
 sounds:
   # Please use the sound names from the "Sound Event" section of the table on https://minecraft.gamepedia.com/Sounds.json#Java_Edition_values
@@ -139,5 +132,4 @@ messages:
 # Optional Permissions
 # flightcontrol.fly.WORLDNAME - Ability to fly in a certain world
 # flightcontrol.fly.WORLDNAME.REGIONNAME - Ability to fly in a certain region
-# flightcontrol.nofly.WORLDNAME - Disables flight in a certain world
 # flightcontrol.nofly.WORLDNAME.REGIONNAME - Disables flight in a certain region

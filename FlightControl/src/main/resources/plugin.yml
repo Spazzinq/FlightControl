@@ -1,9 +1,9 @@
 name: FlightControl
 main: org.Spazzinq.FlightControl.FlightControl
-version: ${project.version}
+version: ${project.parent.version}
 api-version: 1.13
 author: Spazzinq
-description: "Control your players' flight"
+description: "A simple yet advanced way to control player flight"
 softdepend: [AntiCombatLogging, CombatLogX, CombatTagPlus, Essentials, Factions, PlotSquared, WorldGuard]
 
 commands:

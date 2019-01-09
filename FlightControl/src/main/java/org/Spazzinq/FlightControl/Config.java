@@ -44,13 +44,13 @@ public class Config {
     private static File dTrailF;
 	private static FileConfiguration dTrailC;
 
-	static boolean isSpigot, command, useCombat, cancelFall, vanishBypass, flightTrail, actionBar;
+	static boolean isSpigot, command, useCombat, cancelFall, vanishBypass, flightTrail, actionBar, support;
 	static Sound eSound, dSound, cSound, nSound;
 	static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, permDenied;
 //	static double abLength;
 	static HashMap<String, List<String>> eRegions, dRegions;
-	static List<String> eWorlds, dWorlds, trailPrefs;
-    private static HashMap<String, AbstractMap.SimpleEntry<List<String>, List<String>>> categories = new HashMap<>();
+	static List<String> eWorlds, trailPrefs;
+    public static HashMap<String, Category> categories = new HashMap<>();
 
 	Config(FlightControl i) {
 		pl = i;
@@ -76,19 +76,18 @@ public class Config {
         dTrail = c.getString("messages.trail.disable");
         eTrail = c.getString("messages.trail.enable");
         permDenied = c.getString("messages.permission_denied");
-        eWorlds = dWorlds = trailPrefs = new ArrayList<>(); eRegions = dRegions = new HashMap<>(); categories = new HashMap<>();
+        eWorlds = trailPrefs = new ArrayList<>(); eRegions = dRegions = new HashMap<>(); categories = new HashMap<>();
         loadWorlds(); loadSounds(); loadTrailPrefs();
         if (pm.isPluginEnabled("WorldGuard")) loadRegions();
         if (pm.isPluginEnabled("Factions")) loadFacCategories();
         for (World w : Bukkit.getWorlds()) { String name = w.getName(); defaultPerms(name); for (String rg : pl.regions.regions(w)) defaultPerms(name + "." + rg); }
 	}
 
-    public static HashMap<String, AbstractMap.SimpleEntry<List<String>, List<String>>> getCategories() { return categories; }
-
 	private void defaultPerms(String suffix) {
         if (pm.getPermission("flightcontrol.fly." + suffix) == null)
             pm.addPermission(new Permission("flightcontrol.fly." + suffix, PermissionDefault.FALSE));
-        if (pm.getPermission("flightcontrol.nofly." + suffix) == null)
+        // No "nofly" worlds; disable permission register
+        if (suffix.contains(".") && pm.getPermission("flightcontrol.nofly." + suffix) == null)
             pm.addPermission(new Permission("flightcontrol.nofly." + suffix, PermissionDefault.FALSE));
     }
 
@@ -110,7 +109,6 @@ public class Config {
 	    ConfigurationSection worlds = load(c,"worlds");
 	    if (worlds != null) {
 	        eWorlds = addWorlds(worlds.getStringList("enable"));
-	        dWorlds = addWorlds(worlds.getStringList("disable"));
         }
     }
 
@@ -126,11 +124,11 @@ public class Config {
 	    ConfigurationSection facs = load(c,"factions");
 	    if (facs != null) for (String cName : facs.getKeys(false)) {
             if (pm.getPermission("flightcontrol.factions." + cName) == null) pm.addPermission(new Permission("flightcontrol.factions." + cName, PermissionDefault.FALSE));
-            ConfigurationSection category = load(facs, cName);
-            if (category != null) {
-                Config.categories.put(cName, new AbstractMap.SimpleEntry<>(
-                        typeValidator(category.getStringList("enable")),
-                        typeValidator(category.getStringList("disable"))));
+            ConfigurationSection categorySect = load(facs, cName);
+            if (categorySect != null) {
+                Category category = createCategory(categorySect.getStringList("enable"));
+                if (category != null) Config.categories.put(cName, category);
+                else pl.getLogger().warning("Factions category \"" + cName + "\" is invalid/empty!");
             }
 	    }
 	}
@@ -179,18 +177,13 @@ public class Config {
         return regions;
     }
 
-	private List<String> typeValidator(List<String> types) {
-		if (types != null && !types.isEmpty()) {
-			ArrayList<String> toRemove = new ArrayList<>();
-			for (String type : types) {
-				if (type == null || type.isEmpty()
-						|| !(type.contains("OWN") || type.contains("ALLY") || type.contains("TRUCE")
-								|| type.contains("NEUTRAL") || type.contains("ENEMY") || type.contains("WARZONE")
-								|| type.contains("SAFEZONE") || type.contains("WILDERNESS"))) toRemove.add(type);
-			}
-			types.removeAll(toRemove);
+	private Category createCategory(List<String> types) {
+		if (types != null && !types.isEmpty() && (types.contains("OWN") || types.contains("ALLY") || types.contains("TRUCE")
+                || types.contains("NEUTRAL") || types.contains("ENEMY") || types.contains("WARZONE")
+                || types.contains("SAFEZONE") || types.contains("WILDERNESS"))) {
+            return new Category(types.contains("OWN"), types.contains("ALLY"), types.contains("TRUCE"), types.contains("NEUTRAL"), types.contains("ENEMY"), types.contains("WARZONE"),types.contains("SAFEZONE"), types.contains("WILDERNESS"));
 		}
-		return types;
+		return null;
 	}
 
     // Saves personal trail preferences

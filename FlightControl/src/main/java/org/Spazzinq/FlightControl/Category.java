@@ -22,13 +22,23 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Combat;
+package org.Spazzinq.FlightControl;
 
-import net.minelink.ctplus.TagManager;
-import org.bukkit.entity.Player;
+public class Category {
+    public final boolean own, ally, truce, neutral, enemy, warzone, safezone, wilderness;
+    private String debug;
 
-public class TagPlus extends Combat {
-    private TagManager m;
-    public TagPlus(TagManager m) { this.m = m; }
-    @Override public boolean tagged(Player p) { return m.isTagged(p.getUniqueId());}
+    Category(boolean own, boolean ally, boolean truce, boolean neutral, boolean enemy, boolean warzone, boolean safezone, boolean wilderness) {
+        this.own = own; this.ally = ally; this.truce = truce; this.neutral = neutral; this.enemy = enemy; this.warzone = warzone;
+        this.safezone = safezone; this.wilderness = wilderness;
+
+        debug = "[" + (own ? "own," : "") + (ally ? "ally," : "") + (truce ? "truce," : "") + (neutral ? "neutral," : "")
+                + (enemy ? "enemy," : "") + (warzone ? "warzone," : "") + (safezone ? "safezone," : "") + (wilderness ? "wilderness," : "");
+        debug = debug.substring(0, debug.length() - 1) + "]";
+    }
+
+    @Override
+    public String toString() {
+        return debug;
+    }
 }
