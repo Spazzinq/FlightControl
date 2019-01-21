@@ -30,8 +30,6 @@ import org.Spazzinq.FlightControl.Category;
 import org.Spazzinq.FlightControl.Config;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
 public class UUIDSavage extends Factions {
     @Override
     public boolean rel(Player p) {

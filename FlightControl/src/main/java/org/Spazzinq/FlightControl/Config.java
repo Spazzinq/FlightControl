@@ -48,7 +48,7 @@ public class Config {
 	static Sound eSound, dSound, cSound, nSound;
 	static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, permDenied;
 //	static double abLength;
-	static HashMap<String, List<String>> eRegions, dRegions;
+	static HashMap<String, List<String>> eRegions;
 	static List<String> eWorlds, trailPrefs;
     public static HashMap<String, Category> categories = new HashMap<>();
 
@@ -58,13 +58,17 @@ public class Config {
         isSpigot = pl.getServer().getVersion().contains("Spigot");
 		dTrailF = new File(pl.getDataFolder(), "disabled_trail.yml");
 
+		reloadConfig();
+	}
+
+	void reloadConfig() {
         pl.saveDefaultConfig();
         pl.reloadConfig();
         c = pl.getConfig();
 
         command = c.getBoolean("settings.command"); pl.flyCommand();
         useCombat = c.getBoolean("settings.disable_flight_in_combat");
-        cancelFall = c.getBoolean("settings.disable_fall_damage");
+        cancelFall = c.getBoolean("settings.prevent_fall_damage");
         vanishBypass = c.getBoolean("settings.vanish_bypass");
         flightTrail = c.getBoolean("settings.flight_trail");
         actionBar = c.getBoolean("messages.actionbar");
@@ -76,12 +80,13 @@ public class Config {
         dTrail = c.getString("messages.trail.disable");
         eTrail = c.getString("messages.trail.enable");
         permDenied = c.getString("messages.permission_denied");
-        eWorlds = trailPrefs = new ArrayList<>(); eRegions = dRegions = new HashMap<>(); categories = new HashMap<>();
+        eWorlds = new ArrayList<>(); trailPrefs = new ArrayList<>();
+        eRegions = new HashMap<>(); categories = new HashMap<>();
         loadWorlds(); loadSounds(); loadTrailPrefs();
         if (pm.isPluginEnabled("WorldGuard")) loadRegions();
         if (pm.isPluginEnabled("Factions")) loadFacCategories();
         for (World w : Bukkit.getWorlds()) { String name = w.getName(); defaultPerms(name); for (String rg : pl.regions.regions(w)) defaultPerms(name + "." + rg); }
-	}
+    }
 
 	private void defaultPerms(String suffix) {
         if (pm.getPermission("flightcontrol.fly." + suffix) == null)
@@ -99,6 +104,7 @@ public class Config {
                 if (key.contains(".")) key = key.split("\\.")[1];
                 typeKeys.add(key);
             }
+            // "disable" may seem useless right now, but it's for future functionality
             if (!typeKeys.isEmpty() && (typeKeys.contains("enable") || typeKeys.contains("disable")
                     || type.equals("enable") || type.equals("disable"))) return typeS;
         }
@@ -114,10 +120,7 @@ public class Config {
 
     private void loadRegions() {
         ConfigurationSection regions = load(c,"regions");
-        if (regions != null) {
-            eRegions = addRegions(load(regions, "enable"));
-            dRegions = addRegions(load(regions, "disable"));
-        }
+        if (regions != null) eRegions = addRegions(load(regions, "enable"));
     }
 
 	private void loadFacCategories() {

@@ -58,6 +58,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
+    private Config c;
     private PluginManager pm = Bukkit.getPluginManager();
     boolean is13 = getServer().getVersion().contains("1.13");
     private ArrayList<Player> notif = new ArrayList<>();
@@ -81,7 +82,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) vanish = new PremiumSuper();
         else if (pm.getPlugin("Essentials") != null) vanish = new Ess((Essentials) pm.getPlugin("Essentials"));
 
-	    new Config(this); new Listener(this); new Actionbar(this); new Update(getDescription().getVersion());
+	    c = new Config(this); new Listener(this); new Actionbar(this); new Update(getDescription().getVersion());
 
         if (Update.exists()) new BukkitRunnable() {
             public void run() { getLogger().info("FlightControl " + Update.newVer() + " is available for update. Perform /fc update to update and " +
@@ -94,7 +95,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         if (cmd.getName().equalsIgnoreCase("flightcontrol")) {
             if (s instanceof ConsoleCommandSender || s.hasPermission("flightcontrol.admin")) {
                 if (args.length == 1) {
-                    if (args[0].equalsIgnoreCase("reload")) { new Config(this); msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!"); }
+                    if (args[0].equalsIgnoreCase("reload")) { c.reloadConfig(); msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!"); }
                     else if (args[0].equalsIgnoreCase("update")) if (Update.exists()) {
                         if (!Update.dled) { Update.dl(); if (pm.getPlugin("Plugman") != null) {
                             msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (you may need to reset the configuration)! Welcome to FlightControl " + Update.newVer() + " :D");
@@ -126,7 +127,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 } else sendHelp(s);
             } else if (args.length == 1 && args[0].equalsIgnoreCase("debug") && s instanceof Player && s.getName().equals("Spazzinq")) {
                 if (Config.support) debug((Player) s);
-                else msg(s, "&c&lFlightControl &7» &cSorry bud, no can do. Your product ain't a backdoor for debug information :I");
+                else msg(s, "&c&lFlightControl &7» &cSorry bud, you don't have permission to view debug information :I");
             }
             else msg(s, Config.permDenied);
         } else if (cmd.getName().equalsIgnoreCase("fly")) {
@@ -200,9 +201,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                     || (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region))
                     || Config.eWorlds.contains(world)
                     || Config.eRegions.containsKey(world) && Config.eRegions.get(world).contains(region),
-                    disable = combat.tagged(p) || !plot.flight(l)
-                            || region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)
-                            || Config.dRegions.containsKey(world) && Config.dRegions.get(world).contains(region);
+                    disable = combat.tagged(p) || !plot.flight(l);
             if (p.getAllowFlight()) { if (disable || !enable) disableFlight(p);
             } else {
                 if (enable && !disable) canEnable(p, cmd);
@@ -224,11 +223,11 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
     private void disableFlight(Player p) {
         if (Config.command) notif.remove(p);
+        if (Config.cancelFall && p.isFlying()) { fall.add(p);
+            new BukkitRunnable() { public void run() { fall.remove(p); } }.runTaskLater(this, 120); }
         p.setAllowFlight(false);
         p.setFlying(false);
         Sound.play(p, Config.dSound);
-        if (Config.cancelFall) { fall.add(p);
-            new BukkitRunnable() { public void run() { fall.remove(p); } }.runTaskLater(this, 120); }
         msg(p, Config.dFlight, Config.actionBar);
     }
 
@@ -265,7 +264,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         String region = regions.region(l);
         String currentC = "";
         if (hasFac) for (String c : Config.categories.keySet()) if (p.hasPermission("flightcontrol.factions." + c)) currentC = c + "=" + Config.categories.get(c).toString();
-        msg(p, (hasFac ? (currentC + "\n \n") : "") + "&a&lEnable\n" +
+        msg(p, (hasFac ? (currentC + "\n" + region + "\n" + Config.eRegions + "\n \n") : "") + "&a&lEnable\n" +
                 (hasFac ? "&aFC &7» &f" + fac.rel(p) + "\n" : "") +
                 "&aAll &7» &f" + p.hasPermission("flightcontrol.flyall") + "\n" +
                 "&aPWorld &7» &f" + p.hasPermission("flightcontrol.fly." + world) + "\n" +
@@ -275,7 +274,6 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 "&c&lDisable\n" +
                 "&cCombat &7» &f" + combat.tagged(p) + "\n" +
                 "&cPlot &7» &f" + !plot.flight(l) + "\n" +
-                "&cPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)) + "\n" +
-                "&cCRegion &7» &f" + (Config.dRegions.containsKey(world) && Config.dRegions.get(world).contains(region)) + "\n");
+                "&cPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)) + "\n");
     }
 }

@@ -85,7 +85,7 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>FlightControl</finalName>
+        <finalName>${project.name}</finalName>
     </build>
 
     <repositories>
