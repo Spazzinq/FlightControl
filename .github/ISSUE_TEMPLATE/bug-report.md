@@ -1,5 +1,5 @@
 ---
-name: Bug
+name: Bug Report
 about: Report an issue with FlightControl
 title: ''
 labels: verify
