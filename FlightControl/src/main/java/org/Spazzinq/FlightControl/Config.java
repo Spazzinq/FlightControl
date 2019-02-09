@@ -44,12 +44,14 @@ public class Config {
     private static File dTrailF;
 	private static FileConfiguration dTrailC;
 
-	static boolean isSpigot, command, useCombat, cancelFall, vanishBypass, flightTrail, actionBar, support;
+	// World is blacklist
+	static boolean isSpigot, command, support, worldBL, regionBL,
+            useCombat, cancelFall, vanishBypass, flightTrail, actionBar;
 	static Sound eSound, dSound, cSound, nSound;
 	static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, permDenied;
 //	static double abLength;
-	static HashMap<String, List<String>> eRegions;
-	static List<String> eWorlds, trailPrefs;
+	static HashMap<String, List<String>> regions;
+	static List<String> worlds, trailPrefs;
     public static HashMap<String, Category> categories = new HashMap<>();
 
 	Config(FlightControl i) {
@@ -67,6 +69,8 @@ public class Config {
         c = pl.getConfig();
 
         command = c.getBoolean("settings.command"); pl.flyCommand();
+        worldBL = c.isList("worlds.disable");
+        regionBL = c.isConfigurationSection("regions.disable");
         useCombat = c.getBoolean("settings.disable_flight_in_combat");
         cancelFall = c.getBoolean("settings.prevent_fall_damage");
         vanishBypass = c.getBoolean("settings.vanish_bypass");
@@ -80,8 +84,8 @@ public class Config {
         dTrail = c.getString("messages.trail.disable");
         eTrail = c.getString("messages.trail.enable");
         permDenied = c.getString("messages.permission_denied");
-        eWorlds = new ArrayList<>(); trailPrefs = new ArrayList<>();
-        eRegions = new HashMap<>(); categories = new HashMap<>();
+        worlds = new ArrayList<>(); trailPrefs = new ArrayList<>();
+        regions = new HashMap<>(); categories = new HashMap<>();
         loadWorlds(); loadSounds(); loadTrailPrefs();
         if (pm.isPluginEnabled("WorldGuard")) loadRegions();
         if (pm.isPluginEnabled("Factions")) loadFacCategories();
@@ -112,15 +116,16 @@ public class Config {
     }
 
     private void loadWorlds() {
-	    ConfigurationSection worlds = load(c,"worlds");
-	    if (worlds != null) {
-	        eWorlds = addWorlds(worlds.getStringList("enable"));
+	    ConfigurationSection worldsCS = load(c,"worlds");
+	    if (worldsCS != null) {
+            List<String> type = worldsCS.getStringList(worldsCS.isList("enable") ? "enable" : "disable");
+            if (type != null) for (String w : type) if (Bukkit.getWorld(w) != null) worlds.add(w);
         }
     }
 
     private void loadRegions() {
-        ConfigurationSection regions = load(c,"regions");
-        if (regions != null) eRegions = addRegions(load(regions, "enable"));
+        ConfigurationSection regionsCS = load(c,"regions");
+        if (regionsCS != null) regions = addRegions(load(regionsCS, "enable"));
     }
 
 	private void loadFacCategories() {
@@ -161,12 +166,6 @@ public class Config {
 			}
 		} else dTrailC.createSection("disabled_trail");
 	}
-
-	private List<String> addWorlds(List<String> type) {
-	    List<String> worlds = new ArrayList<>();
-	    if (type != null) for (String w : type) if (Bukkit.getWorld(w) != null) worlds.add(w);
-	    return worlds;
-    }
 
 	private HashMap<String, List<String>> addRegions(ConfigurationSection c) {
         HashMap<String, List<String>> regions = new HashMap<>();

@@ -33,8 +33,9 @@ import org.Spazzinq.FlightControl.Hooks.Combat.TagPlus;
 import org.Spazzinq.FlightControl.Hooks.Factions.Factions;
 import org.Spazzinq.FlightControl.Hooks.Factions.Massive;
 import org.Spazzinq.FlightControl.Hooks.Factions.UUIDSavage;
+import org.Spazzinq.FlightControl.Hooks.Plot.NewSquared;
 import org.Spazzinq.FlightControl.Hooks.Plot.Plot;
-import org.Spazzinq.FlightControl.Hooks.Plot.Squared;
+import org.Spazzinq.FlightControl.Hooks.Plot.OldSquared;
 import org.Spazzinq.FlightControl.Hooks.Vanish.Ess;
 import org.Spazzinq.FlightControl.Hooks.Vanish.PremiumSuper;
 import org.Spazzinq.FlightControl.Hooks.Vanish.Vanish;
@@ -65,7 +66,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     ArrayList<Player> fall = new ArrayList<>();
 
     Regions regions = pm.getPlugin("WorldGuard") != null ? (is13 ? new Regions13() : new Regions8()) : new Regions();
-    private Plot plot = pm.getPlugin("PlotSquared") != null ? new Squared() : new Plot();
+    private Plot plot = pm.getPlugin("PlotSquared") != null ? (pm.getPlugin("PlotSquared").getDescription().getVersion().split(".")[0].matches("17|18|19") ? new OldSquared() : new NewSquared()) : new Plot();
     private Combat combat = new Combat();
     private Factions fac = pm.getPlugin("Factions") != null ? (pm.getPlugin("MassiveCore") != null ? new Massive() : new UUIDSavage()) : new Factions();
     Vanish vanish = new Vanish();
@@ -116,9 +117,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                         if (Config.support) {
                             msg(s, "&e&lFlightControl &eWarning &7» &fLive support enables Spazzinq to check debug information on why flight is disabled. " +
                                     "You can disable support at any time by repeating the command, and the access only lasts until you restart FlightControl/the server.");
-                            if (spazzinq != null) {
-                                if (spazzinq.isOnline()) msg(spazzinq, "&c&lFlightControl &7» &c" + s.getName() + " has requested support.");
-                            }
+                            if (spazzinq != null) if (spazzinq.isOnline()) msg(spazzinq, "&c&lFlightControl &7» &c" + s.getName() + " has requested support.");
                         }
                     }
                     else if (args[0].equalsIgnoreCase("debug"))
@@ -198,10 +197,14 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             boolean enable = fac.rel(p)
                     || p.hasPermission("flightcontrol.flyall")
                     || p.hasPermission("flightcontrol.fly." + world)
-                    || (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region))
-                    || Config.eWorlds.contains(world)
-                    || Config.eRegions.containsKey(world) && Config.eRegions.get(world).contains(region),
-                    disable = combat.tagged(p) || !plot.flight(l);
+                    || region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)
+                    || !Config.worldBL && Config.worlds.contains(world)
+                    || Config.regionBL && Config.regions.containsKey(world) && Config.regions.get(world).contains(region),
+                    disable = combat.tagged(p) || plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
+                            || p.hasPermission("flightcontrol.fly." + world)
+                            || region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)
+                            || Config.worldBL && Config.worlds.contains(world)
+                            || !Config.regionBL && Config.regions.containsKey(world) && Config.regions.get(world).contains(region);
             if (p.getAllowFlight()) { if (disable || !enable) disableFlight(p);
             } else {
                 if (enable && !disable) canEnable(p, cmd);
@@ -263,17 +266,17 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         String world = l.getWorld().getName();
         String region = regions.region(l);
         String currentC = "";
-        if (hasFac) for (String c : Config.categories.keySet()) if (p.hasPermission("flightcontrol.factions." + c)) currentC = c + "=" + Config.categories.get(c).toString();
-        msg(p, (hasFac ? (currentC + "\n" + region + "\n" + Config.eRegions + "\n \n") : "") + "&a&lEnable\n" +
+        if (hasFac) for (String c : Config.categories.keySet()) if (p.hasPermission("flightcontrol.factions." + c)) currentC = currentC.concat(c + "=" + Config.categories.get(c).toString());
+        msg(p, (hasFac ? currentC + "\n \n" : "") + region + "\n" + Config.regions  + "\n \n&a&lEnable\n" +
                 (hasFac ? "&aFC &7» &f" + fac.rel(p) + "\n" : "") +
                 "&aAll &7» &f" + p.hasPermission("flightcontrol.flyall") + "\n" +
                 "&aPWorld &7» &f" + p.hasPermission("flightcontrol.fly." + world) + "\n" +
                 "&aPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)) + "\n" +
-                "&aCWorld &7» &f" + Config.eWorlds.contains(world) + "\n" +
-                "&aCRegion &7» &f" + (Config.eRegions.containsKey(world) && Config.eRegions.get(world).contains(region)) + "\n \n" +
+                "&aCWorld &7» &f" + Config.worlds.contains(world) + "\n" +
+                "&aCRegion &7» &f" + (Config.regions.containsKey(world) && Config.regions.get(world).contains(region)) + "\n \n" +
                 "&c&lDisable\n" +
                 "&cCombat &7» &f" + combat.tagged(p) + "\n" +
-                "&cPlot &7» &f" + !plot.flight(l) + "\n" +
+                "&cPlot &7» &f" + plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) + "\n" +
                 "&cPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)) + "\n");
     }
 }

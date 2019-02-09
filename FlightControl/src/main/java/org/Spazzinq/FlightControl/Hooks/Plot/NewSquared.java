@@ -24,7 +24,13 @@
 
 package org.Spazzinq.FlightControl.Hooks.Plot;
 
-public class Plot {
-    public boolean dFlight(String world, int x, int y, int z) { return true; }
-}
+import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
 
+public class NewSquared extends org.Spazzinq.FlightControl.Hooks.Plot.Plot {
+    @Override public boolean dFlight(String world, int x, int y, int z) {
+        Plot p = Plot.getPlot(new Location(world, x, y, z));
+        return p != null && !p.getFlag(Flags.FLY, true);
+    }
+}

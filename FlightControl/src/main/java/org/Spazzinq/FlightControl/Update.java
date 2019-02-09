@@ -35,10 +35,12 @@ class Update {
 
     Update(String version) { Update.version = version; }
 
-    static boolean exists() { try {
+    static boolean exists() {
+        try {
         newVersion = new BufferedReader(new InputStreamReader(new URL("https://api.spigotmc.org/legacy/update.php?resource=55168").openConnection().getInputStream())).readLine();
-    } catch (IOException e) { e.printStackTrace(); } return version.matches("\\d+(.\\d+)?")
-            && newVersion.matches("\\d+(.\\d+)?") ? Double.parseDouble(newVersion) > Double.parseDouble(version) : !version.equals(newVersion); }
+        } catch (Exception ignored) { return false; }
+        return version.matches("\\d+(.\\d+)?") && newVersion.matches("\\d+(.\\d+)?") ? Double.parseDouble(newVersion) > Double.parseDouble(version) : !version.equals(newVersion);
+    }
 
     static void dl() {
         if (exists()) {

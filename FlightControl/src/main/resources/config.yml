@@ -47,7 +47,11 @@ settings:
   flight_trail: false
 
 # Enables flight in certain worlds
+# To set it to a blacklist (flight will only disable in the listed worlds),
+# change "enable" to "disable" before the world list
 worlds:
+  # To change this from a whitelist to a blacklist (flight will enable unless disabled),
+  # change "enable" to "disable"
   enable:
     - exampleworld
 
@@ -56,6 +60,8 @@ worlds:
 # If you have multiple regions overlapping each other, PLEASE PLEASE PLEASE use /rg setpriority REGIONNAME NUMBER
 # FlightControl checks the player's HIGHEST priority region (otherwise it checks the first in REVERSE alphabetical order)
 regions:
+  # To change this from a whitelist to a blacklist (flight will enable unless disabled),
+  # change "enable" to "disable"
   enable:
     exampleworld:
     - exampleregion
@@ -68,8 +74,10 @@ regions:
 # OWN enables flight in the player's own faction territory
 factions:
   # "example" is a category (the permission to use it is flightcontrol.factions.example)
+  # Keep in mind you can set category names to whatever you want (only alphanumeric characters, no spaces)
   example:
-    # Enables flight in the region type(s) below ("example" category)
+    # To change this from a whitelist to a blacklist (flight will enable unless disabled),
+    # change "enable" to "disable"
     enable:
     - OWN
     - ALLY
@@ -81,7 +89,8 @@ factions:
     - WARZONE
 
 sounds:
-  # Please use the sound names from the "Sound Event" section of the table on https://minecraft.gamepedia.com/Sounds.json#Java_Edition_values
+  # Please use the sound names from the "Sound Event" section of the table
+  # on https://minecraft.gamepedia.com/Sounds.json#Java_Edition_values
   # USE THE CORRECT TABLE (Java Edition values before 1.9) if you are using 1.8!
   enable:
     sound: "NONE"
@@ -92,6 +101,7 @@ sounds:
     pitch: 1
     volume: 1
   # "can_enable" and "cannot_enable" are only used when "command" is true
+  # (do you have the chance to notify the player that they can/cannot if it's already enabled?)
   can_enable:
     sound: "NONE"
     pitch: 1
@@ -110,9 +120,9 @@ messages:
     enable: "&aYour flight has been enabled."
     disable: "&cYour flight has been disabled."
     # "can_enable" and "cannot_enable" are only used when "command" is true
+    # (do you have the chance to notify the player that they can/cannot if it's already enabled?)
     can_enable: "&bYou can use /fly now."
     cannot_enable: "&cYou cannot fly right now."
-  # Per-player trail enable/disable
   trail:
     enable: "&aYou enabled the flight trail!"
     disable: "&cYou disabled the flight trail!"
