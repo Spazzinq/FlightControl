@@ -1,0 +1,30 @@
+name: FlightControl
+main: org.Spazzinq.FlightControl.FlightControl
+version: ${project.parent.version}
+api-version: 1.13
+author: Spazzinq
+description: "A simple yet advanced way to control player flight"
+softdepend: [AntiCombatLogging, CombatLogX, CombatTagPlus, Essentials, Factions, PlotSquared, WorldGuard]
+
+commands:
+  flightcontrol:
+    description: FlightControl administration
+    aliases: [fc]
+  toggletrail:
+    description: Per-player trail toggle
+    aliases: [trail, tt]
+
+
+permissions:
+  flightcontrol.fly:
+    description: Access to fly command
+    default: false
+  flightcontrol.bypass:
+    description: Bypasses fly restrictions
+    default: false
+  flightcontrol.flyall:
+    description: Ability to fly in all regions
+    default: false
+  flightcontrol.admin:
+    description: Access to FlightControl commands
+    default: op

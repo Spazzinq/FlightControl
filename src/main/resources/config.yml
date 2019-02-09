@@ -1,0 +1,149 @@
+#  ______ _ _       _     _    _____            _             _ 
+# |  ____| (_)     | |   | |  / ____|          | |           | |
+# | |__  | |_  __ _| |__ | |_| |     ___  _ __ | |_ _ __ ___ | |
+# |  __| | | |/ _` | '_ \| __| |    / _ \| '_ \| __| '__/ _ \| |
+# | |    | | | (_| | | | | |_| |___| (_) | | | | |_| | | (_) | |
+# |_|    |_|_|\__, |_| |_|\__|\_____\___/|_| |_|\__|_|  \___/|_|
+#              __/ |                                            
+#             |___/                                  By Spazzinq
+
+# Before leaving a negative review, you should first read through the information in this configuration
+# and then contact me on Discord if it does not solve your problem (my Discord link is below).
+# https://spazzinq.org/discord
+
+# This configuration contains a LOT of instructions, but all are necessary to understanding the functionality of
+# the features. Please DO NOT remove them unless you are familiar with the features you are using.
+
+#   ____             __ _                       _   _             
+#  / ___|___  _ __  / _(_) __ _ _   _ _ __ __ _| |_(_) ___  _ __  
+# | |   / _ \| '_ \| |_| |/ _` | | | | '__/ _` | __| |/ _ \| '_ \ 
+# | |__| (_) | | | |  _| | (_| | |_| | | | (_| | |_| | (_) | | | |
+#  \____\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
+#                         |___/
+
+# A VERY IMPORTANT idea to understand for part of this configuration is that flight disables when it
+# has a reason to disable OR it does not have a reason to enable (a whitelist basically). I will
+# be implementing an option to turn it into a blacklist SOON (it will enable unless it has a reason to disable).
+
+settings:
+  # Enables /fly instead of automatic flight
+  # When "command" is enabled, "can_enable" and "cannot_enable" messages/sounds are used
+  command: false
+
+  # Requires: CombatTagPlus, CombatLogX, or AntiCombatLogging
+  # NOTE: in the combat plugin config, disable its option to stop flight while in combat (prevents issues)
+  disable_flight_in_combat: false
+
+  # Prevents fall damage when flight is disabled mid-air by FlightControl
+  prevent_fall_damage: false
+
+  # Bypasses the disabling of flight while in vanish (or spectating)
+  # Requires: EssentialsX or PremiumVanish
+  vanish_bypass: true
+
+  # Spawns cloud particles under players that are flying (in motion)
+  # Requires: version/fork of SPIGOT (unless you are using 1.13)
+  # Compatible: EssentialsX, PremiumVanish (disables while vanished)
+  flight_trail: false
+
+# Enables flight in certain worlds
+# To set it to a blacklist (flight will only disable in the listed worlds),
+# change "enable" to "disable" before the world list
+worlds:
+  # To change this from a whitelist to a blacklist (flight will enable unless disabled),
+  # change "enable" to "disable"
+  enable:
+    - exampleworld
+
+# Enables flight in certain WorldGuard regions
+# Requires: WorldGuard (and WorldEdit)
+# If you have multiple regions overlapping each other, PLEASE PLEASE PLEASE use /rg setpriority REGIONNAME NUMBER
+# FlightControl checks the player's HIGHEST priority region (otherwise it checks the first in REVERSE alphabetical order)
+regions:
+  # To change this from a whitelist to a blacklist (flight will enable unless disabled),
+  # change "enable" to "disable"
+  enable:
+    exampleworld:
+    - exampleregion
+    exapleworld2:
+    - exampleregion2
+
+# Enables flight in certain faction regions
+# Requires: Factions (by MassiveCraft), FactionsUUID, or SavageFactions
+# There are eight types of faction territories (OWN, ALLY, TRUCE, NEUTRAL, ENEMY, WARZONE, SAFEZONE, WILDERNESS)
+# OWN enables flight in the player's own faction territory
+factions:
+  # "example" is a category (the permission to use it is flightcontrol.factions.example)
+  # Keep in mind you can set category names to whatever you want (only alphanumeric characters, no spaces)
+  example:
+    # To change this from a whitelist to a blacklist (flight will enable unless disabled),
+    # change "enable" to "disable"
+    enable:
+    - OWN
+    - ALLY
+
+  # "example2" is a category (the permission to use it is flightcontrol.factions.example2)
+  example2:
+    enable:
+    - SAFEZONE
+    - WARZONE
+
+sounds:
+  # Please use the sound names from the "Sound Event" section of the table
+  # on https://minecraft.gamepedia.com/Sounds.json#Java_Edition_values
+  # USE THE CORRECT TABLE (Java Edition values before 1.9) if you are using 1.8!
+  enable:
+    sound: "NONE"
+    pitch: 1
+    volume: 1
+  disable:
+    sound: "NONE"
+    pitch: 1
+    volume: 1
+  # "can_enable" and "cannot_enable" are only used when "command" is true
+  # (do you have the chance to notify the player that they can/cannot if it's already enabled?)
+  can_enable:
+    sound: "NONE"
+    pitch: 1
+    volume: 1
+  cannot_enable:
+    sound: "NONE"
+    pitch: 1
+    volume: 1
+
+# If you do not wish for a message to be sent, set it to ""
+# You can use "&" for color codes just like any other plugin!
+messages:
+  # Use the actionbar (area above hotbar) instead of chat for certain notifications
+  actionbar: false
+  flight:
+    enable: "&aYour flight has been enabled."
+    disable: "&cYour flight has been disabled."
+    # "can_enable" and "cannot_enable" are only used when "command" is true
+    # (do you have the chance to notify the player that they can/cannot if it's already enabled?)
+    can_enable: "&bYou can use /fly now."
+    cannot_enable: "&cYou cannot fly right now."
+  trail:
+    enable: "&aYou enabled the flight trail!"
+    disable: "&cYou disabled the flight trail!"
+  permission_denied: "&cYou do not have permission to use this command."
+
+#  ____                     _         _                 
+# |  _ \ ___ _ __ _ __ ___ (_)___ ___(_) ___  _ __  ___ 
+# | |_) / _ \ '__| '_ ` _ \| / __/ __| |/ _ \| '_ \/ __|
+# |  __/  __/ |  | | | | | | \__ \__ \ | (_) | | | \__ \
+# |_|   \___|_|  |_| |_| |_|_|___/___/_|\___/|_| |_|___/
+
+# Replace WORLDNAME in the permission with the name of the world
+#         REGIONNAME with the name of the region
+#         CATEGORY with the name of the category
+
+# Important Permissions
+# flightcontrol.admin - Ability to use FlightControl commands (automatically given to OPs)
+# flightcontrol.bypass - Bypasses all fly restrictions and always allows flight
+# flightcontrol.factions.CATEGORY - Controls flight based upon the category
+# flightcontrol.flyall - Ability to automatically fly in all regions that are not disabled
+# flightcontrol.fly - Access to /fly when the command is enabled (the Essentials permission "essentials.fly" works too)
+# Optional Permissions
+# flightcontrol.fly.WORLDNAME - Ability to fly in a certain world
+# flightcontrol.fly.WORLDNAME.REGIONNAME - Ability to fly in a certain region
