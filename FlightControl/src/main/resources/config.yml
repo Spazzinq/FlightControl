@@ -44,7 +44,6 @@ settings:
   # Spawns cloud particles under players that are flying (in motion)
   # Requires: version/fork of SPIGOT (unless you are using 1.13)
   # Compatible: EssentialsX, PremiumVanish (disables while vanished)
-  flight_trail: false
 
 # Enables flight in certain worlds
 # To set it to a blacklist (flight will only disable in the listed worlds),
@@ -88,10 +87,21 @@ factions:
     - SAFEZONE
     - WARZONE
 
+trail:
+  enabled: false
+  # 1.8 List: https://spazzinq.org/1.8-particles.html
+  # Latest (1.13) List: https://spazzinq.org/1.13-particles.html - Sorry, Spigot did not provide a description
+  particle: "CLOUD"
+  amount: 4
+  # Offset from default location (under player)
+  # Also is RGB with COLOURED_DUST
+  # Format: {x,y,z}
+  offset: {0,0,0}
+
 sounds:
-  # Please use the sound names from the "Sound Event" section of the table
-  # on https://minecraft.gamepedia.com/Sounds.json#Java_Edition_values
-  # USE THE CORRECT TABLE (Java Edition values before 1.9) if you are using 1.8!
+  # Please use the sound names from the "Sound Event" column
+  # 1.8 List: https://minecraft.gamepedia.com/Sounds.json/Java_Edition_values_before_1.9
+  # Latest (1.13) List: https://minecraft.gamepedia.com/Sounds.json/Java_Edition_values
   enable:
     sound: "NONE"
     pitch: 1
@@ -147,3 +157,5 @@ messages:
 # Optional Permissions
 # flightcontrol.fly.WORLDNAME - Ability to fly in a certain world
 # flightcontrol.fly.WORLDNAME.REGIONNAME - Ability to fly in a certain region
+# flightcontrol.nofly.WORLDNAME - Denies flight in a certain world
+# flightcontrol.nofly.WORLDNAME.REGIONNAME - Denies flight in a certain region

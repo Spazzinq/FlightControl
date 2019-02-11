@@ -34,13 +34,16 @@ import org.Spazzinq.FlightControl.Hooks.Factions.Factions;
 import org.Spazzinq.FlightControl.Hooks.Factions.Massive;
 import org.Spazzinq.FlightControl.Hooks.Factions.UUIDSavage;
 import org.Spazzinq.FlightControl.Hooks.Plot.NewSquared;
-import org.Spazzinq.FlightControl.Hooks.Plot.Plot;
 import org.Spazzinq.FlightControl.Hooks.Plot.OldSquared;
+import org.Spazzinq.FlightControl.Hooks.Plot.Plot;
 import org.Spazzinq.FlightControl.Hooks.Vanish.Ess;
 import org.Spazzinq.FlightControl.Hooks.Vanish.PremiumSuper;
 import org.Spazzinq.FlightControl.Hooks.Vanish.Vanish;
+import org.Spazzinq.FlightControl.Multiversion.Particles;
 import org.Spazzinq.FlightControl.Multiversion.Regions;
+import org.Spazzinq.FlightControl.Multiversion.v13.Particles13;
 import org.Spazzinq.FlightControl.Multiversion.v13.Regions13;
+import org.Spazzinq.FlightControl.Multiversion.v8.Particles8;
 import org.Spazzinq.FlightControl.Multiversion.v8.Regions8;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -61,7 +64,7 @@ import java.util.Map;
 public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     private Config c;
     private PluginManager pm = Bukkit.getPluginManager();
-    boolean is13 = getServer().getVersion().contains("1.13");
+    private boolean is13 = getServer().getVersion().contains("1.13");
     private ArrayList<Player> notif = new ArrayList<>();
     ArrayList<Player> fall = new ArrayList<>();
 
@@ -69,6 +72,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     private Plot plot = pm.getPlugin("PlotSquared") != null ? (pm.getPlugin("PlotSquared").getDescription().getVersion().split(".")[0].matches("17|18|19") ? new OldSquared() : new NewSquared()) : new Plot();
     private Combat combat = new Combat();
     private Factions fac = pm.getPlugin("Factions") != null ? (pm.getPlugin("MassiveCore") != null ? new Massive() : new UUIDSavage()) : new Factions();
+    Particles particles = is13 ? new Particles13() : new Particles8();
     Vanish vanish = new Vanish();
 
     private boolean configWarning = true;
@@ -106,7 +110,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                     } else msg(s, "&a&lFlightControl &7» &aNo updates found.");
                     else if (args[0].equalsIgnoreCase("combat")) toggleOption(s, Config.useCombat = !Config.useCombat, "Combat Disabling");
                     else if (args[0].equalsIgnoreCase("falldamage")) toggleOption(s, Config.cancelFall = !Config.cancelFall, "Prevent Fall Damage");
-                    else if (args[0].equalsIgnoreCase("trails")) toggleOption(s, Config.flightTrail = !Config.flightTrail, "Trails");
+                    else if (args[0].equalsIgnoreCase("trails")) toggleOption(s, Config.trail = !Config.trail, "Trails");
                     else if (args[0].equalsIgnoreCase("vanishbypass")) toggleOption(s, Config.vanishBypass = !Config.vanishBypass, "Vanish Bypass");
                     else if (args[0].equalsIgnoreCase("actionbar")) toggleOption(s, Config.actionBar = !Config.actionBar, "Actionbar Notifications");
                     else if (args[0].equalsIgnoreCase("command")) { toggleOption(s, Config.command = !Config.command, "Command"); flyCommand(); }

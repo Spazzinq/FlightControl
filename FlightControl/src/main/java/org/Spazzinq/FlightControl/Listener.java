@@ -24,7 +24,6 @@
 
 package org.Spazzinq.FlightControl;
 
-import org.Spazzinq.FlightControl.Multiversion.Particles;
 import org.Spazzinq.FlightControl.Multiversion.v13.Particles13;
 import org.Spazzinq.FlightControl.Multiversion.v8.Particles8;
 import org.bukkit.Bukkit;
@@ -41,15 +40,17 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 class Listener implements org.bukkit.event.Listener {
     private static FlightControl pl;
-    private Particles particles;
+    private boolean particles;
 
-	Listener(FlightControl i) { pl = i;
-	particles = pl.is13 ? new Particles13() : new Particles8();
-	Bukkit.getPluginManager().registerEvents(this, i); }
+	Listener(FlightControl i) {
+	    pl = i; Bukkit.getPluginManager().registerEvents(this, i);
+	    particles = pl.particles instanceof Particles13 || (Config.isSpigot && pl.particles instanceof Particles8);
+	}
 
 	@EventHandler
-	private void onPlayerDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL) { Player p = (Player) e.getEntity();
+    private void onPlayerDamage(EntityDamageEvent e) {
+        if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL) {
+            Player p = (Player) e.getEntity();
             if (pl.fall.contains(p)) { e.setCancelled(true); pl.fall.remove(p); }
         }
 	}
@@ -59,8 +60,8 @@ class Listener implements org.bukkit.event.Listener {
 		Player p = e.getPlayer();
 
 		pl.check(p, e.getTo(), false);
-		if ((particles instanceof Particles13 || (Config.isSpigot && particles instanceof Particles8)) && Config.flightTrail && !Config.trailPrefs.contains(p.getUniqueId().toString()) &&
-                e.getFrom().distance(e.getTo()) > 0 && p.isFlying() && p.getGameMode() != GameMode.SPECTATOR && !pl.vanish.vanished(p)) particles.play(p.getWorld(), p, e.getTo(), e.getFrom());
+		if (particles && Config.trail && !Config.trailPrefs.contains(p.getUniqueId().toString()) &&
+                e.getFrom().distance(e.getTo()) > 0 && p.isFlying() && p.getGameMode() != GameMode.SPECTATOR && !pl.vanish.vanished(p)) pl.particles.play(p.getWorld(), p, e.getTo(), e.getFrom());
 	}
 
 	@EventHandler private void onJoin(PlayerJoinEvent e) { pl.check(e.getPlayer()); }

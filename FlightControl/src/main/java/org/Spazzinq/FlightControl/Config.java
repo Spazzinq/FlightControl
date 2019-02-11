@@ -24,6 +24,7 @@
 
 package org.Spazzinq.FlightControl;
 
+import org.Spazzinq.FlightControl.Multiversion.Particles;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -46,9 +47,9 @@ public class Config {
 
 	// World is blacklist
 	static boolean isSpigot, command, support, worldBL, regionBL,
-            useCombat, cancelFall, vanishBypass, flightTrail, actionBar;
+            useCombat, cancelFall, vanishBypass, trail, actionBar;
 	static Sound eSound, dSound, cSound, nSound;
-	static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, permDenied;
+	static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, permDenied, particle;
 //	static double abLength;
 	static HashMap<String, List<String>> regions;
 	static List<String> worlds, trailPrefs;
@@ -74,7 +75,6 @@ public class Config {
         useCombat = c.getBoolean("settings.disable_flight_in_combat");
         cancelFall = c.getBoolean("settings.prevent_fall_damage");
         vanishBypass = c.getBoolean("settings.vanish_bypass");
-        flightTrail = c.getBoolean("settings.flight_trail");
         actionBar = c.getBoolean("messages.actionbar");
 //        abLength = c.getDouble("messages.actionbar.duration") * 20;
         dFlight = c.getString("messages.flight.disable");
@@ -86,7 +86,7 @@ public class Config {
         permDenied = c.getString("messages.permission_denied");
         worlds = new ArrayList<>(); trailPrefs = new ArrayList<>();
         regions = new HashMap<>(); categories = new HashMap<>();
-        loadWorlds(); loadSounds(); loadTrailPrefs();
+        loadWorlds(); loadSounds(); loadTrail(); loadTrailPrefs();
         if (pm.isPluginEnabled("WorldGuard")) loadRegions();
         if (pm.isPluginEnabled("Factions")) loadFacCategories();
         for (World w : Bukkit.getWorlds()) { String name = w.getName(); defaultPerms(name); for (String rg : pl.regions.regions(w)) defaultPerms(name + "." + rg); }
@@ -152,12 +152,25 @@ public class Config {
         if (Sound.is(n)) nSound = new Sound(n, (float) c.getDouble("sounds.cannot_enable.volume"), (float) c.getDouble("sounds.cannot_enable.pitch"));
     }
 
+    private void loadTrail() {
+        trail = c.getBoolean("trail.enabled");
+        pl.particles.setParticle(c.getString("trail.particle"));
+        pl.particles.setAmount(c.getInt("trail.amount"));
+        String offset = c.getString("trail.offset");
+        if (offset != null && (offset = offset.replaceAll("[{}]", "")).split(",").length == 3) {
+            String[] xyz = offset.split(",");
+            pl.particles.setOffset(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Float.parseFloat(xyz[0]) : 0,
+                    xyz[1].matches("-?\\d+(.(\\d+)?)?") ? Float.parseFloat(xyz[1]) : 0,
+                    xyz[2].matches("-?\\d+(.(\\d+)?)?") ? Float.parseFloat(xyz[2]) : 0);
+        }
+    }
+
 	// Per-player trail preferences
 	private void loadTrailPrefs() {
 		if (!dTrailF.exists()) { try { //noinspection ResultOfMethodCallIgnored
             dTrailF.createNewFile(); } catch (IOException e) { e.printStackTrace(); } }
 		dTrailC = YamlConfiguration.loadConfiguration(dTrailF);
-		
+
 		if (dTrailC.isList("disabled_trail")) {
 			if (dTrailC.getStringList("disabled_trail") != null && !dTrailC.getStringList("disabled_trail").isEmpty()) {
 				for (String uuid : dTrailC.getStringList("disabled_trail")) {
