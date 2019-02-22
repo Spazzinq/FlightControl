@@ -24,7 +24,7 @@
 
 package org.Spazzinq.FlightControl;
 
-import org.Spazzinq.FlightControl.Multiversion.Particles;
+import org.Spazzinq.FlightControl.Hooks.Factions.Factions;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -46,14 +46,14 @@ public class Config {
 	private static FileConfiguration dTrailC;
 
 	// World is blacklist
-	static boolean isSpigot, command, support, worldBL, regionBL,
+	static boolean isSpigot, command, support, worldBL, regionBL, fac,
             useCombat, cancelFall, vanishBypass, trail, actionBar;
 	static Sound eSound, dSound, cSound, nSound;
-	static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, permDenied, particle;
+	static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, permDenied;
 //	static double abLength;
 	static HashMap<String, List<String>> regions;
 	static List<String> worlds, trailPrefs;
-    public static HashMap<String, Category> categories = new HashMap<>();
+    public static HashMap<String, Category> eCategories, dCategories;
 
 	Config(FlightControl i) {
 		pl = i;
@@ -72,6 +72,8 @@ public class Config {
         command = c.getBoolean("settings.command"); pl.flyCommand();
         worldBL = c.isList("worlds.disable");
         regionBL = c.isConfigurationSection("regions.disable");
+        fac = !Factions.class.equals(pl.fac.getClass());
+
         useCombat = c.getBoolean("settings.disable_flight_in_combat");
         cancelFall = c.getBoolean("settings.prevent_fall_damage");
         vanishBypass = c.getBoolean("settings.vanish_bypass");
@@ -85,10 +87,10 @@ public class Config {
         eTrail = c.getString("messages.trail.enable");
         permDenied = c.getString("messages.permission_denied");
         worlds = new ArrayList<>(); trailPrefs = new ArrayList<>();
-        regions = new HashMap<>(); categories = new HashMap<>();
+        regions = new HashMap<>(); eCategories = new HashMap<>(); dCategories = new HashMap<>();
         loadWorlds(); loadSounds(); loadTrail(); loadTrailPrefs();
         if (pm.isPluginEnabled("WorldGuard")) loadRegions();
-        if (pm.isPluginEnabled("Factions")) loadFacCategories();
+        if (pm.isPluginEnabled("Factions")) loadCategories();
         for (World w : Bukkit.getWorlds()) { String name = w.getName(); defaultPerms(name); for (String rg : pl.regions.regions(w)) defaultPerms(name + "." + rg); }
     }
 
@@ -128,15 +130,19 @@ public class Config {
         if (regionsCS != null) regions = addRegions(load(regionsCS, "enable"));
     }
 
-	private void loadFacCategories() {
+	private void loadCategories() {
 	    ConfigurationSection facs = load(c,"factions");
 	    if (facs != null) for (String cName : facs.getKeys(false)) {
             if (pm.getPermission("flightcontrol.factions." + cName) == null) pm.addPermission(new Permission("flightcontrol.factions." + cName, PermissionDefault.FALSE));
             ConfigurationSection categorySect = load(facs, cName);
             if (categorySect != null) {
-                Category category = createCategory(categorySect.getStringList("enable"));
-                if (category != null) Config.categories.put(cName, category);
-                else pl.getLogger().warning("Factions category \"" + cName + "\" is invalid/empty!");
+                String type = categorySect.isList("enable") ? "enable" : (categorySect.isList("disable") ? "disable" : null);
+                if (type != null) {
+                    Category c = createCategory(categorySect.getStringList(type));
+                    if (type.equals("enable")) Config.eCategories.put(cName, c);
+                    else Config.dCategories.put(cName, c);
+
+                } else pl.getLogger().warning("Factions category \"" + cName + "\" is invalid! (missing \"enable\"/\"disable\")");
             }
 	    }
 	}

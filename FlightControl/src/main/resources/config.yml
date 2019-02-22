@@ -89,8 +89,8 @@ factions:
 
 trail:
   enabled: false
-  # 1.8 List: https://spazzinq.org/1.8-particles.html
-  # Latest (1.13) List: https://spazzinq.org/1.13-particles.html - Sorry, Spigot did not provide a description
+  # 1.8 List: https://spazzinq.org/particles/1.8.html
+  # Latest (1.13) List: https://spazzinq.org/particles/1.13.html - Sorry, Spigot did not provide a description
   particle: "CLOUD"
   amount: 4
   # Offset from default location (under player)

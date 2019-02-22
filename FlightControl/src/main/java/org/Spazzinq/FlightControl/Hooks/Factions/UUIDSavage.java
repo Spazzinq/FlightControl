@@ -27,28 +27,24 @@ package org.Spazzinq.FlightControl.Hooks.Factions;
 import com.massivecraft.factions.*;
 import com.massivecraft.factions.struct.Relation;
 import org.Spazzinq.FlightControl.Category;
-import org.Spazzinq.FlightControl.Config;
 import org.bukkit.entity.Player;
 
 public class UUIDSavage extends Factions {
     @Override
-    public boolean rel(Player p) {
-        for (String category : Config.categories.keySet()) {
-            if (p.hasPermission("flightcontrol.factions." + category)) {
-                Category c = Config.categories.get(category);
-                Faction f = Board.getInstance().getFactionAt(new FLocation(p.getLocation()));
-                FPlayer fP = FPlayers.getInstance().getByPlayer(p);
-                boolean own = false, ally = false, truce = false, neutral = false, enemy = false,
-                        warzone = c.warzone && f.isWarZone(), safezone = c.safezone && f.isSafeZone(), wilderness = c.wilderness && f.isWilderness();
-                if (fP.hasFaction()) {
-                    if (c.own) own = fP.isInOwnTerritory();
-                    if (c.ally) ally = fP.isInAllyTerritory();
-                    if (c.truce) truce = fP.getRelationToLocation() == Relation.TRUCE;
-                    if (c.neutral) neutral = fP.isInNeutralTerritory();
-                    if (c.enemy) enemy = fP.isInEnemyTerritory();
-                }
-                return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
+    public boolean rel(Player p, Category c) {
+        if (c != null) {
+            Faction f = Board.getInstance().getFactionAt(new FLocation(p.getLocation()));
+            FPlayer fP = FPlayers.getInstance().getByPlayer(p);
+            boolean own = false, ally = false, truce = false, neutral = false, enemy = false,
+                    warzone = c.warzone && f.isWarZone(), safezone = c.safezone && f.isSafeZone(), wilderness = c.wilderness && f.isWilderness();
+            if (fP.hasFaction()) {
+                if (c.own) own = fP.isInOwnTerritory();
+                if (c.ally) ally = fP.isInAllyTerritory();
+                if (c.truce) truce = fP.getRelationToLocation() == Relation.TRUCE;
+                if (c.neutral) neutral = fP.isInNeutralTerritory();
+                if (c.enemy) enemy = fP.isInEnemyTerritory();
             }
+            return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
         }
         return false;
     }

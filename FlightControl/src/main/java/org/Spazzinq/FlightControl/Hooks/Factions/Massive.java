@@ -31,30 +31,26 @@ import com.massivecraft.factions.entity.FactionColl;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
 import org.Spazzinq.FlightControl.Category;
-import org.Spazzinq.FlightControl.Config;
 import org.bukkit.entity.Player;
 
 public class Massive extends Factions {
     @Override
-    public boolean rel(Player p) {
-        for (String category : Config.categories.keySet()) {
-            if (p.hasPermission("flightcontrol.factions." + category)) {
-                Category c = Config.categories.get(category);
-                MPlayer mp = MPlayer.get(p);
-                Faction f = BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));
-                FactionColl fColl = FactionColl.get();
-                boolean own = false, ally = false, truce = false, neutral = false, enemy = false,
-                        warzone = c.warzone && f == fColl.getWarzone(), safezone = c.safezone && f == fColl.getSafezone(), wilderness = c.wilderness && f.isNone();
-                if (mp.hasFaction()) {
-                    Rel r = f.getRelationWish(mp.getFaction());
-                    if (c.own) own = mp.isInOwnTerritory();
-                    if (c.ally) ally = r == Rel.ALLY;
-                    if (c.truce) truce = r == Rel.TRUCE;
-                    if (c.neutral) neutral = !f.isNone() && f != fColl.getWarzone() && f != fColl.getSafezone() && !mp.isInOwnTerritory() && r == Rel.NEUTRAL;
-                    if (c.enemy) enemy = r == Rel.ENEMY;
-                }
-                return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
+    public boolean rel(Player p, Category c) {
+        if (c != null) {
+            MPlayer mp = MPlayer.get(p);
+            Faction f = BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));
+            FactionColl fColl = FactionColl.get();
+            boolean own = false, ally = false, truce = false, neutral = false, enemy = false,
+                    warzone = c.warzone && f == fColl.getWarzone(), safezone = c.safezone && f == fColl.getSafezone(), wilderness = c.wilderness && f.isNone();
+            if (mp.hasFaction()) {
+                Rel r = f.getRelationWish(mp.getFaction());
+                if (c.own) own = mp.isInOwnTerritory();
+                if (c.ally) ally = r == Rel.ALLY;
+                if (c.truce) truce = r == Rel.TRUCE;
+                if (c.neutral) neutral = !f.isNone() && f != fColl.getWarzone() && f != fColl.getSafezone() && !mp.isInOwnTerritory() && r == Rel.NEUTRAL;
+                if (c.enemy) enemy = r == Rel.ENEMY;
             }
+            return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
         }
         return false;
     }
