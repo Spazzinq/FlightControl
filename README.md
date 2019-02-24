@@ -1,5 +1,5 @@
 # FlightControl
-A simple yet advanced way to control player flight
+An elegant solution for controlling player flight
 
 Discord Support: https://spazzinq.org/discord
 
