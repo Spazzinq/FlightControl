@@ -26,6 +26,7 @@ package org.Spazzinq.FlightControl;
 
 import org.Spazzinq.FlightControl.Hooks.Factions.Factions;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -54,13 +55,13 @@ class Config {
     static HashMap<String, Category> categories;
 
 	Config(FlightControl i) {
-		pl = i;
-		pm = pl.getServer().getPluginManager();
+        pl = i;
+        pm = pl.getServer().getPluginManager();
         isSpigot = pl.getServer().getVersion().contains("Spigot");
-		dTrailF = new File(pl.getDataFolder(), "disabled_trail.yml");
+        dTrailF = new File(pl.getDataFolder(), "disabled_trail.yml");
 
-		reloadConfig();
-	}
+        reloadConfig();
+    }
 
 	void reloadConfig() {
         pl.saveDefaultConfig();
@@ -88,6 +89,7 @@ class Config {
         loadWorlds(); loadSounds(); loadTrail(); loadTrailPrefs();
         if (pm.isPluginEnabled("WorldGuard")) loadRegions();
         if (pm.isPluginEnabled("Factions")) loadCategories();
+        for (World w : Bukkit.getWorlds()) { String name = w.getName(); defaultPerms(name); for (String rg : pl.regions.regions(w)) defaultPerms(name + "." + rg); }
     }
 
 	static void defaultPerms(String suffix) {
@@ -154,14 +156,16 @@ class Config {
 
     private void loadTrail() {
         trail = c.getBoolean("trail.enabled");
-        pl.particles.setParticle(c.getString("trail.particle"));
-        pl.particles.setAmount(c.getInt("trail.amount"));
-        String offset = c.getString("trail.offset");
-        if (offset != null && (offset = offset.replaceAll("[{}]", "")).split(",").length == 3) {
-            String[] xyz = offset.split(",");
-            pl.particles.setOffset(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Float.parseFloat(xyz[0]) : 0,
-                    xyz[1].matches("-?\\d+(.(\\d+)?)?") ? Float.parseFloat(xyz[1]) : 0,
-                    xyz[2].matches("-?\\d+(.(\\d+)?)?") ? Float.parseFloat(xyz[2]) : 0);
+        if (trail) {
+            pl.particles.setParticle(c.getString("trail.particle"));
+            pl.particles.setAmount(c.getInt("trail.amount"));
+            String offset = c.getString("trail.rgb");
+            if (offset != null && (offset = offset.replaceAll("\\s+", "")).split(",").length == 3) {
+                String[] xyz = offset.split(",");
+                pl.particles.setRBG(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[0]) : 0,
+                        xyz[1].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[1]) : 0,
+                        xyz[2].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[2]) : 0);
+            }
         }
     }
 

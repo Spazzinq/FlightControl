@@ -24,7 +24,6 @@
 
 package org.Spazzinq.FlightControl.Multiversion.v8;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -32,20 +31,19 @@ import org.bukkit.entity.Player;
 
 public class Particles8 implements org.Spazzinq.FlightControl.Multiversion.Particles {
     private Effect e = Effect.CLOUD;
-    private float x = 0, y = 0, z = 0;
-    private int amount = 4;
+    private float r = 0, g = 0, b = 0, speed = 0;
+    private int amount = 4, data = 0;
 
     public void play(World w, Player p, Location to, Location from) {
-        p.spigot().playEffect(to, e, 0, 0 , x, y, z, 0F, amount, 0);
-        Location l = to.clone().subtract(from);
-        p.getWorld().spigot().playEffect(from.clone().subtract(l).subtract(l), e, 0, 0, x, y, z, 0F, amount, 160);
-        Bukkit.getLogger().info(x + " " + y + " " + z);
+        p.spigot().playEffect(to, e, 0, data, r, g, b, speed, amount, 0);
+        p.getWorld().spigot().playEffect(from.clone().subtract(to.clone().subtract(from)), e, 0, data, r, g, b, speed, amount, 160);
+
     }
     public void setParticle(String s) {
         try { Effect.valueOf(s); } catch (Exception e) { return; }
         if (Effect.valueOf(s).getType() == Effect.Type.PARTICLE) e = Effect.valueOf(s);
+        if (e == Effect.COLOURED_DUST) { speed = 1; data = 1; } else { speed = 0; data = 0; }
     }
-
-    public void setOffset(float x, float y, float z) { this.x = x / 255; this.y = y / 255; this.z = z / 255; }
-    public void setAmount(int amount) { this.amount = amount == 0 ? 4 : amount; }
+    public void setAmount(int amount) { this.amount = amount; }
+    public void setRBG(int r, int g, int b) { if (!(r == 0 && g == 0 && b == 0)) { this.r = (r / 255F) - 1; this.g = g / 255F; this.b = b / 255F; } }
 }

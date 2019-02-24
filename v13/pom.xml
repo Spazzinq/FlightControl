@@ -36,6 +36,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>v13</artifactId>
+    <version>SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -61,7 +62,7 @@
         <dependency>
             <groupId>org.Spazzinq</groupId>
             <artifactId>Multiversion</artifactId>
-            <version>${project.parent.version}</version>
+            <version>SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

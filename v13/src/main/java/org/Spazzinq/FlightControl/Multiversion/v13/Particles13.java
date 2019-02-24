@@ -24,6 +24,7 @@
 
 package org.Spazzinq.FlightControl.Multiversion.v13;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -31,16 +32,14 @@ import org.bukkit.entity.Player;
 
 public class Particles13 implements org.Spazzinq.FlightControl.Multiversion.Particles {
     private Particle particle = Particle.CLOUD;
-    private float x = 0, y = 0, z = 0;
+    private Particle.DustOptions o;
     private int amount = 4;
 
     public void play(World w, Player p, Location to, Location from) {
-        p.spawnParticle(particle, to, amount, x, y, z, 0);
-        Location l = to.clone().subtract(from);
-        w.spawnParticle(particle, from.clone().subtract(l).subtract(l), amount, x, y, z, 0);
+        p.spawnParticle(particle, to, 1, o);
+        w.spawnParticle(particle, from.clone().subtract(to.clone().subtract(from)), 1, o);
     }
     public void setParticle(String s) { try { particle = Particle.valueOf(s); } catch (Exception ignored) { } }
-
-    public void setOffset(float x, float y, float z) { this.x = x / 255; this.y = y / 255; this.z = z / 255; }
-    public void setAmount(int amount) { this.amount = amount == 0 ? 4 : amount; }
+    public void setAmount(int amount) { this.amount = amount; }
+    public void setRBG(int r, int g, int b) { o = new Particle.DustOptions(Color.fromRGB(r,g,b), amount); }
 }

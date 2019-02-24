@@ -73,6 +73,7 @@ class Listener implements org.bukkit.event.Listener {
 	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) { new BukkitRunnable() { public void run() { pl.check(e.getPlayer()); } }.runTaskLater(pl, 1);  }
     @EventHandler private void onWorldLoad(WorldLoadEvent e) {
         String w = e.getWorld().getName();
+
         Config.defaultPerms(w); for (String rg : pl.regions.regions(e.getWorld())) Config.defaultPerms(w + "." + rg);
 
         ConfigurationSection worldsCS = Config.load(pl.getConfig(),"worlds");

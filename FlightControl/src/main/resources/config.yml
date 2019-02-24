@@ -86,9 +86,10 @@ trail:
   # Latest (1.13) List: https://spazzinq.org/particles/1.13.html - Sorry, Spigot did not provide a description
   particle: "CLOUD"
   amount: 4
-  # Offset from under player (also is RGB with COLOURED_DUST)
-  # Format: {x,y,z}
-  offset: {0,0,0}
+  # Color picking is done by RGB values and a color picker can be found here: https://www.google.com/search?q=color+picker
+  # Use the format "red,green,blue" (otherwise, do not touch the values
+  # You MUST set the amount to 0 on 1.8 for one specific color!
+  rgb: "0,0,0"
 
 sounds:
   # Please use the sound names from the "Sound Event" column

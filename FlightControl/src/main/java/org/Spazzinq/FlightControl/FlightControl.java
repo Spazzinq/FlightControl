@@ -68,10 +68,10 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     private ArrayList<Player> notif = new ArrayList<>();
     ArrayList<Player> fall = new ArrayList<>();
 
-    Regions regions = pm.getPlugin("WorldGuard") != null ? (is13 ? new Regions13() : new Regions8()) : new Regions();
-    private Plot plot = pm.getPlugin("PlotSquared") != null ? (is13 ? new NewSquared() : new OldSquared()) : new Plot();
     private Combat combat = new Combat();
-    Factions fac = pm.getPlugin("Factions") != null ? (pm.getPlugin("MassiveCore") != null ? new Massive() : new UUIDSavage()) : new Factions();
+    private Plot plot = pm.isPluginEnabled("PlotSquared") ? (is13 ? new NewSquared() : new OldSquared()) : new Plot();
+    Regions regions = pm.isPluginEnabled("WorldGuard") ? (is13 ? new Regions13() : new Regions8()) : new Regions();
+    Factions fac = pm.isPluginEnabled("Factions") ? (pm.isPluginEnabled("MassiveCore") ? new Massive() : new UUIDSavage()) : new Factions();
     Particles particles = is13 ? new Particles13() : new Particles8();
     Vanish vanish = new Vanish();
 
@@ -81,11 +81,11 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         getCommand("flightcontrol").setTabCompleter((commandSender, command, s, strings) ->
                 new ArrayList<>(Arrays.asList("update", "actionbar", "combat", "falldamage", "trails", "vanishbypass", "clean", "command")));
 
-        if (pm.getPlugin("CombatLogX") != null) combat = new LogX();
-        else if (pm.getPlugin("CombatTagPlus") != null) combat = new TagPlus(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
-        else if (pm.getPlugin("AntiCombatLogging") != null) combat = new AntiLogging();
-        if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) vanish = new PremiumSuper();
-        else if (pm.getPlugin("Essentials") != null) vanish = new Ess((Essentials) pm.getPlugin("Essentials"));
+        if (pm.isPluginEnabled("CombatLogX")) combat = new LogX();
+        else if (pm.isPluginEnabled("CombatTagPlus")) combat = new TagPlus(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
+        else if (pm.isPluginEnabled("AntiCombatLogging")) combat = new AntiLogging();
+        if (pm.isPluginEnabled("PremiumVanish") || pm.isPluginEnabled("SuperVanish")) vanish = new PremiumSuper();
+        else if (pm.isPluginEnabled("Essentials")) vanish = new Ess((Essentials) pm.getPlugin("Essentials"));
 
 	    c = new Config(this); new Listener(this); new Actionbar(this); new Update(getDescription().getVersion());
 
@@ -100,9 +100,10 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         if (cmd.getName().equalsIgnoreCase("flightcontrol")) {
             if (s instanceof ConsoleCommandSender || s.hasPermission("flightcontrol.admin")) {
                 if (args.length == 1) {
-                    if (args[0].equalsIgnoreCase("reload")) { c.reloadConfig(); msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!"); }
+                    if (args[0].equalsIgnoreCase("reload")) {
+                        c.reloadConfig(); msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!"); }
                     else if (args[0].equalsIgnoreCase("update")) if (Update.exists()) {
-                        if (!Update.dled) { Update.dl(); if (pm.getPlugin("Plugman") != null) {
+                        if (!Update.dled) { Update.dl(); if (pm.isPluginEnabled("Plugman")) {
                             msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (you may need to reset the configuration)! Welcome to FlightControl " + Update.newVer() + " :D");
                             getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload FlightControl");
                         } else msg(s, "&a&lFlightControl &7» &aUpdate downloaded. Restart (or reload) the server to apply the update (you may need to reset the plugin config).", false); }
@@ -165,13 +166,13 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             String region = regions.region(l);
             Eval categories = evalCategories(p), worlds = new Eval(Config.worldBL, Config.worlds.contains(world)),
                     regions = new Eval(Config.regionBL, Config.regions.containsKey(world) && Config.regions.get(world).contains(region));
-            boolean enable = categories.enable()
+            boolean enable = categories.enable() || plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
                     || p.hasPermission("flightcontrol.flyall")
                     || p.hasPermission("flightcontrol.fly." + world)
                     || region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)
                     || worlds.enable() || regions.enable(),
-                    disable = combat.tagged(p) || plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
-                            || categories.disable()
+                    disable = combat.tagged(p) || categories.disable()
+                            || plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
                             || p.hasPermission("flightcontrol.nofly." + world)
                             || region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)
                             || worlds.disable() || regions.disable();
@@ -194,6 +195,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         msg(p, (Config.fac && (cats != null) ? cats + "\n \n" : "") + region + "\n" + Config.regions  + "\n \n&a&lEnable\n" +
                 (Config.fac ? "&aFC &7» &f" + categories.enable() + "\n" : "") +
                 "&aAll &7» &f" + p.hasPermission("flightcontrol.flyall") + "\n" +
+                "&aPlot &7» &f" + plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) + "\n" +
                 "&aPWorld &7» &f" + p.hasPermission("flightcontrol.fly." + world) + "\n" +
                 "&aPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)) + "\n" +
                 "&aCWorld &7» &f" + worlds.enable() + "\n" +
@@ -300,7 +302,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             } else if (getCommand("fly") != null && getCommand("fly").getPlugin() == this) {
                 kCMDMap.remove(plName.toLowerCase() + ":fly");
                 kCMDMap.remove("fly");
-                if (pm.getPlugin("Essentials") != null) {
+                if (pm.isPluginEnabled("Essentials")) {
                     map.register("Essentials", fly);
                     fly.setExecutor(pm.getPlugin("Essentials"));
                 }

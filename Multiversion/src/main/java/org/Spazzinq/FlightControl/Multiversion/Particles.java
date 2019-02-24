@@ -31,6 +31,6 @@ import org.bukkit.entity.Player;
 public interface Particles {
     void play(World w, Player p, Location to, Location from);
     void setParticle(String s);
-    void setOffset(float x, float y, float z);
     void setAmount(int amount);
+    void setRBG(int r, int g, int b);
 }

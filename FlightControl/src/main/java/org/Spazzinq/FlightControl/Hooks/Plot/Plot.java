@@ -25,6 +25,7 @@
 package org.Spazzinq.FlightControl.Hooks.Plot;
 
 public class Plot {
+    public boolean flight(String world, int x, int y, int z) { return false; }
     public boolean dFlight(String world, int x, int y, int z) { return false; }
 }
 
