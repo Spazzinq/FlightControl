@@ -33,13 +33,17 @@ import org.bukkit.entity.Player;
 public class Particles13 implements org.Spazzinq.FlightControl.Multiversion.Particles {
     private Particle particle = Particle.CLOUD;
     private Particle.DustOptions o;
-    private int amount = 4;
+    private int amount = 4, extra = 0;
 
     public void play(World w, Player p, Location to, Location from) {
-        p.spawnParticle(particle, to, 1, o);
-        w.spawnParticle(particle, from.clone().subtract(to.clone().subtract(from)), 1, o);
+        //                       loc   amnt    x      y      z
+        p.spawnParticle(particle, to, 1, 0, 0, 0, extra, o);
+        w.spawnParticle(particle, from.clone().subtract(to.clone().subtract(from)), 1, 0, 0, 0, extra, o);
     }
-    public void setParticle(String s) { try { particle = Particle.valueOf(s); } catch (Exception ignored) { } }
+    public void setParticle(String s) {
+        try { particle = Particle.valueOf(s); } catch (Exception ignored) { }
+        if (particle == Particle.REDSTONE) extra = 1; else extra = 0;
+    }
     public void setAmount(int amount) { this.amount = amount; }
-    public void setRBG(int r, int g, int b) { o = new Particle.DustOptions(Color.fromRGB(r,g,b), amount); }
+    public void setRBG(int r, int g, int b) { if (particle == Particle.REDSTONE) o = new Particle.DustOptions(Color.fromRGB(r,g,b), amount); else o = null; }
 }
