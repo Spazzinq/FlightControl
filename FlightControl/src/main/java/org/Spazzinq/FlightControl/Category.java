@@ -25,14 +25,15 @@
 package org.Spazzinq.FlightControl;
 
 public class Category {
+    final boolean blacklist;
     public final boolean own, ally, truce, neutral, enemy, warzone, safezone, wilderness;
     private String debug;
 
-    Category(boolean own, boolean ally, boolean truce, boolean neutral, boolean enemy, boolean warzone, boolean safezone, boolean wilderness) {
-        this.own = own; this.ally = ally; this.truce = truce; this.neutral = neutral; this.enemy = enemy; this.warzone = warzone;
+    Category(boolean blacklist, boolean own, boolean ally, boolean truce, boolean neutral, boolean enemy, boolean warzone, boolean safezone, boolean wilderness) {
+        this.blacklist = blacklist; this.own = own; this.ally = ally; this.truce = truce; this.neutral = neutral; this.enemy = enemy; this.warzone = warzone;
         this.safezone = safezone; this.wilderness = wilderness;
 
-        debug = "[" + (own ? "own," : "") + (ally ? "ally," : "") + (truce ? "truce," : "") + (neutral ? "neutral," : "")
+        debug = blacklist + " [" + (own ? "own," : "") + (ally ? "ally," : "") + (truce ? "truce," : "") + (neutral ? "neutral," : "")
                 + (enemy ? "enemy," : "") + (warzone ? "warzone," : "") + (safezone ? "safezone," : "") + (wilderness ? "wilderness," : "");
         debug = debug.substring(0, debug.length() - 1) + "]";
     }

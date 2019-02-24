@@ -59,7 +59,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
@@ -70,7 +69,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     ArrayList<Player> fall = new ArrayList<>();
 
     Regions regions = pm.getPlugin("WorldGuard") != null ? (is13 ? new Regions13() : new Regions8()) : new Regions();
-    private Plot plot = pm.getPlugin("PlotSquared") != null ? (pm.getPlugin("PlotSquared").getDescription().getVersion().split(".")[0].matches("17|18|19") ? new OldSquared() : new NewSquared()) : new Plot();
+    private Plot plot = pm.getPlugin("PlotSquared") != null ? (is13 ? new NewSquared() : new OldSquared()) : new Plot();
     private Combat combat = new Combat();
     Factions fac = pm.getPlugin("Factions") != null ? (pm.getPlugin("MassiveCore") != null ? new Massive() : new UUIDSavage()) : new Factions();
     Particles particles = is13 ? new Particles13() : new Particles8();
@@ -158,6 +157,75 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         return true;
     }
 
+    private void checkCMD(Player p) { check(p, p.getLocation(), true); }
+    void check(Player p) { check(p, p.getLocation(), false); }
+    void check(Player p, Location l, boolean cmd) {
+        if (!p.hasPermission("flightcontrol.bypass") && !(vanish.vanished(p) && Config.vanishBypass) && p.getGameMode() != GameMode.SPECTATOR) {
+            String world = l.getWorld().getName();
+            String region = regions.region(l);
+            Eval categories = evalCategories(p), worlds = new Eval(Config.worldBL, Config.worlds.contains(world)),
+                    regions = new Eval(Config.regionBL, Config.regions.containsKey(world) && Config.regions.get(world).contains(region));
+            boolean enable = categories.enable()
+                    || p.hasPermission("flightcontrol.flyall")
+                    || p.hasPermission("flightcontrol.fly." + world)
+                    || region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)
+                    || worlds.enable() || regions.enable(),
+                    disable = combat.tagged(p) || plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
+                            || categories.disable()
+                            || p.hasPermission("flightcontrol.nofly." + world)
+                            || region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)
+                            || worlds.disable() || regions.disable();
+            if (p.getAllowFlight()) { if (disable || !enable) disableFlight(p); }
+            else {
+                // TODO Better command solution
+                if (enable && !disable) canEnable(p, cmd);
+                else if (cmd) cannotEnable(p);
+            }
+        } else if (!p.getAllowFlight()) canEnable(p, cmd);
+    }
+
+    private void debug(Player p) {
+        Location l = p.getLocation();
+        String world = l.getWorld().getName();
+        String region = regions.region(l);
+        ArrayList<Category> cats = categories(p);
+        Eval categories = evalCategories(p), worlds = new Eval(Config.worldBL, Config.worlds.contains(world)),
+                regions = new Eval(Config.regionBL, Config.regions.containsKey(world) && Config.regions.get(world).contains(region));
+        msg(p, (Config.fac && (cats != null) ? cats + "\n \n" : "") + region + "\n" + Config.regions  + "\n \n&a&lEnable\n" +
+                (Config.fac ? "&aFC &7» &f" + categories.enable() + "\n" : "") +
+                "&aAll &7» &f" + p.hasPermission("flightcontrol.flyall") + "\n" +
+                "&aPWorld &7» &f" + p.hasPermission("flightcontrol.fly." + world) + "\n" +
+                "&aPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)) + "\n" +
+                "&aCWorld &7» &f" + worlds.enable() + "\n" +
+                "&aCRegion &7» &f" + regions.enable() + "\n \n" +
+                "&c&lDisable\n" +
+                (Config.fac ? "&cFC &7» &f" + categories.disable() + "\n" : "") +
+                "&cCombat &7» &f" + combat.tagged(p) + "\n" +
+                "&cPlot &7» &f" + plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) + "\n" +
+                "&cPWorld &7» &f" + p.hasPermission("flightcontrol.nofly." + world) + "\n" +
+                "&cPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)) + "\n" +
+                "&cCWorld &7» &f" + worlds.disable() + "\n" +
+                "&cCRegion &7» &f" + regions.disable());
+    }
+
+    private Eval evalCategories(Player p) {
+	    ArrayList<Category> cats = categories(p);
+	    boolean disable = false, enable = false;
+	    if (cats != null) for (Category c : cats) {
+	        boolean cat = fac.rel(p, c);
+            if (c.blacklist && cat) disable = true; else if (c.blacklist || cat) enable = true;
+        }
+	    return new Eval(disable, enable, false);
+    }
+
+    private ArrayList<Category> categories(Player p) {
+	    ArrayList<Category> c = new ArrayList<>();
+        if (Config.fac) {
+            for (Map.Entry<String, Category> entry : Config.categories.entrySet()) if (p.hasPermission("flightcontrol.factions." + entry.getKey())) c.add(entry.getValue());
+            return c;
+        } return null;
+    }
+
     private void toggleOption(CommandSender s, Boolean o, String prefix) {
         msg(s, (prefix.equals("Trail") ? "&a&l" : "&a&lFlightControl &a") + prefix + " &7» "
                 + (o ? "&aEnabled" : "&cDisabled"));
@@ -185,40 +253,12 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
     private void msg(CommandSender s, String msg) { msg(s, msg, false); }
     private void msg(CommandSender s, String msg, boolean actionBar) {
-	    if (msg != null && !msg.isEmpty()) {
+        if (msg != null && !msg.isEmpty()) {
             if (s instanceof ConsoleCommandSender) msg = msg.replaceAll("FlightControl &7» ", "[FlightControl] ").replaceAll("»", "-");
-	        msg = ChatColor.translateAlternateColorCodes('&', msg);
-	        if (actionBar && s instanceof Player) Actionbar.send((Player) s, msg);
-	        else s.sendMessage(msg);
+            msg = ChatColor.translateAlternateColorCodes('&', msg);
+            if (actionBar && s instanceof Player) Actionbar.send((Player) s, msg);
+            else s.sendMessage(msg);
         }
-	}
-
-    private void checkCMD(Player p) { check(p, p.getLocation(), true); }
-    void check(Player p) { check(p, p.getLocation(), false); }
-    void check(Player p, Location l, boolean cmd) {
-        if (!p.hasPermission("flightcontrol.bypass") && !(vanish.vanished(p) && Config.vanishBypass) && p.getGameMode() != GameMode.SPECTATOR) {
-            String world = l.getWorld().getName();
-            String region = regions.region(l);
-            boolean enable = fac.rel(p, category(p, Config.eCategories))
-                    || p.hasPermission("flightcontrol.flyall")
-                    || p.hasPermission("flightcontrol.fly." + world)
-                    || region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)
-                    || !Config.worldBL && Config.worlds.contains(world)
-                    || Config.regionBL && Config.regions.containsKey(world) && Config.regions.get(world).contains(region),
-                    disable = combat.tagged(p) || plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
-                            || fac.rel(p, category(p, Config.dCategories))
-                            || p.hasPermission("flightcontrol.fly." + world)
-                            || region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)
-                            || Config.worldBL && Config.worlds.contains(world)
-                            || !Config.regionBL && Config.regions.containsKey(world) && Config.regions.get(world).contains(region);
-
-            if (p.getAllowFlight()) { if (disable || !enable) disableFlight(p); }
-            else {
-                // TODO Better solution
-                if (enable && !disable) canEnable(p, cmd);
-                else if (cmd) cannotEnable(p);
-            }
-        } else if (!p.getAllowFlight()) canEnable(p, cmd);
     }
 
     private void canEnable(Player p, boolean cmd) {
@@ -227,7 +267,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     }
     private void cannotEnable(Player p) { Sound.play(p, Config.nSound); msg(p, Config.nFlight, Config.actionBar); }
     private void enableFlight(Player p) {
-	    p.setAllowFlight(true);
+        p.setAllowFlight(true);
         Sound.play(p, Config.eSound);
         msg(p, Config.eFlight, Config.actionBar);
     }
@@ -266,30 +306,5 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 }
             }
         } catch (Exception e) { e.printStackTrace(); }
-    }
-
-    private Category category(Player p, HashMap<String, Category> categories) {
-        // TODO Check priority of categories
-        if (Config.fac) for (Map.Entry<String, Category> entry : categories.entrySet()) if (p.hasPermission("flightcontrol.factions." + entry.getKey())) return entry.getValue();
-        return null;
-    }
-
-    private void debug(Player p) {
-        Location l = p.getLocation();
-        String world = l.getWorld().getName();
-        String region = regions.region(l);
-        Category eCate = category(p, Config.eCategories), dCate = category(p, Config.dCategories);
-        msg(p, (Config.fac && (eCate != null || dCate != null) ? eCate + " " + dCate + "\n \n" : "") + region + "\n" + Config.regions  + "\n \n&a&lEnable\n" +
-                (Config.fac ? "&aFC &7» &f" + fac.rel(p, eCate) + "\n" : "") +
-                "&aAll &7» &f" + p.hasPermission("flightcontrol.flyall") + "\n" +
-                "&aPWorld &7» &f" + p.hasPermission("flightcontrol.fly." + world) + "\n" +
-                "&aPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)) + "\n" +
-                "&aCWorld &7» &f" + Config.worlds.contains(world) + "\n" +
-                "&aCRegion &7» &f" + (Config.regions.containsKey(world) && Config.regions.get(world).contains(region)) + "\n \n" +
-                "&c&lDisable\n" +
-                (Config.fac ? "&cFC &7» &f" + fac.rel(p, dCate) + "\n" : "") +
-                "&cCombat &7» &f" + combat.tagged(p) + "\n" +
-                "&cPlot &7» &f" + plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) + "\n" +
-                "&cPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)) + "\n");
     }
 }

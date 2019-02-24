@@ -24,6 +24,7 @@
 
 package org.Spazzinq.FlightControl.Multiversion.v8;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -37,13 +38,14 @@ public class Particles8 implements org.Spazzinq.FlightControl.Multiversion.Parti
     public void play(World w, Player p, Location to, Location from) {
         p.spigot().playEffect(to, e, 0, 0 , x, y, z, 0F, amount, 0);
         Location l = to.clone().subtract(from);
-        p.getWorld().spigot().playEffect(from.clone().subtract(l).subtract(l), Effect.CLOUD, 0, 0, x, y, z, 0F, amount, 160);
+        p.getWorld().spigot().playEffect(from.clone().subtract(l).subtract(l), e, 0, 0, x, y, z, 0F, amount, 160);
+        Bukkit.getLogger().info(x + " " + y + " " + z);
     }
     public void setParticle(String s) {
         try { Effect.valueOf(s); } catch (Exception e) { return; }
         if (Effect.valueOf(s).getType() == Effect.Type.PARTICLE) e = Effect.valueOf(s);
     }
 
-    public void setOffset(float x, float y, float z) { this.x = x; this.y = y; this.z = z; }
+    public void setOffset(float x, float y, float z) { this.x = x / 255; this.y = y / 255; this.z = z / 255; }
     public void setAmount(int amount) { this.amount = amount == 0 ? 4 : amount; }
 }

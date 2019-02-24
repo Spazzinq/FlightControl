@@ -28,6 +28,7 @@ import org.Spazzinq.FlightControl.Multiversion.v13.Particles13;
 import org.Spazzinq.FlightControl.Multiversion.v8.Particles8;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,10 +37,14 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class Listener implements org.bukkit.event.Listener {
-    private static FlightControl pl;
+    private FlightControl pl;
     private boolean particles;
 
 	Listener(FlightControl i) {
@@ -66,4 +71,23 @@ class Listener implements org.bukkit.event.Listener {
 
 	@EventHandler private void onJoin(PlayerJoinEvent e) { pl.check(e.getPlayer()); }
 	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) { new BukkitRunnable() { public void run() { pl.check(e.getPlayer()); } }.runTaskLater(pl, 1);  }
+    @EventHandler private void onWorldLoad(WorldLoadEvent e) {
+        String w = e.getWorld().getName();
+        Config.defaultPerms(w); for (String rg : pl.regions.regions(e.getWorld())) Config.defaultPerms(w + "." + rg);
+
+        ConfigurationSection worldsCS = Config.load(pl.getConfig(),"worlds");
+        if (worldsCS != null) {
+            List<String> type = worldsCS.getStringList(Config.worldBL ? "disable" : "enable");
+            if (type != null && type.contains(w)) Config.worlds.add(w);
+        }
+
+        ConfigurationSection regionsCS = Config.load(pl.getConfig(),"regions");
+        if (regionsCS != null) {
+            ConfigurationSection dE = regionsCS.getConfigurationSection(Config.regionBL ? "disable" : "enable");
+            if (dE.isList(w)) {
+                ArrayList<String> rgs = new ArrayList<>(); for (String rg : dE.getStringList(w)) if (pl.regions.hasRegion(w, rg)) rgs.add(rg);
+                Config.regions.put(w, rgs);
+            }
+        }
+    }
 }

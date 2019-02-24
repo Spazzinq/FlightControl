@@ -11,8 +11,8 @@
 # and then contact me on Discord if it does not solve your problem (my Discord link is below).
 # https://spazzinq.org/discord
 
-# This configuration contains a LOT of instructions, but all are necessary to understanding the functionality of
-# the features. Please DO NOT remove them unless you are familiar with the features you are using.
+# This configuration contains a LOT of instructions, but all are vital to understanding the features.
+# Please DO NOT remove them unless you are familiar with the features you are using.
 
 #   ____             __ _                       _   _             
 #  / ___|___  _ __  / _(_) __ _ _   _ _ __ __ _| |_(_) ___  _ __  
@@ -21,9 +21,8 @@
 #  \____\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
 #                         |___/
 
-# A VERY IMPORTANT idea to understand for part of this configuration is that flight disables when it
-# has a reason to disable OR it does not have a reason to enable (a whitelist basically). I will
-# be implementing an option to turn it into a blacklist SOON (it will enable unless it has a reason to disable).
+# A VERY IMPORTANT idea to understand for part of this configuration is that flight only enables when it
+# has a reason to (it does not stay enabled in a neutral/un-enabled location).
 
 settings:
   # Enables /fly instead of automatic flight
@@ -41,43 +40,34 @@ settings:
   # Requires: EssentialsX or PremiumVanish
   vanish_bypass: true
 
-  # Spawns cloud particles under players that are flying (in motion)
-  # Requires: version/fork of SPIGOT (unless you are using 1.13)
-  # Compatible: EssentialsX, PremiumVanish (disables while vanished)
-
-# Enables flight in certain worlds
-# To set it to a blacklist (flight will only disable in the listed worlds),
-# change "enable" to "disable" before the world list
 worlds:
-  # To change this from a whitelist to a blacklist (flight will enable unless disabled),
-  # change "enable" to "disable"
+  # Change "enable" to "disable" if you want it to disable in certain worlds instead
+  # (and enable in the ones unlisted)
   enable:
     - exampleworld
 
-# Enables flight in certain WorldGuard regions
 # Requires: WorldGuard (and WorldEdit)
-# If you have multiple regions overlapping each other, PLEASE PLEASE PLEASE use /rg setpriority REGIONNAME NUMBER
-# FlightControl checks the player's HIGHEST priority region (otherwise it checks the first in REVERSE alphabetical order)
+# If you have multiple regions overlapping each other, please use /rg setpriority REGIONNAME NUMBER
+# FlightControl checks the HIGHEST priority region (otherwise it checks the first in REVERSE alphabetical order)
 regions:
-  # To change this from a whitelist to a blacklist (flight will enable unless disabled),
-  # change "enable" to "disable"
+  # Change "enable" to "disable" if you want it to disable in certain regions instead
+  # (and enable in the ones unlisted)
   enable:
     exampleworld:
     - exampleregion
     exapleworld2:
     - exampleregion2
 
-# Enables flight in certain faction regions
 # Requires: Factions (by MassiveCraft), FactionsUUID, or SavageFactions
-# There are eight types of faction territories (OWN, ALLY, TRUCE, NEUTRAL, ENEMY, WARZONE, SAFEZONE, WILDERNESS)
-# OWN enables flight in the player's own faction territory
 factions:
   # "example" is a category (the permission to use it is flightcontrol.factions.example)
   # Keep in mind you can set category names to whatever you want (only alphanumeric characters, no spaces)
   example:
-    # To change this from a whitelist to a blacklist (flight will enable unless disabled),
-    # change "enable" to "disable"
+    # Change "enable" to "disable" if you want it to disable in certain faction territories instead
+    # (and enable in the ones unlisted)
     enable:
+    # There are eight types of faction territories (OWN, ALLY, TRUCE, NEUTRAL, ENEMY, WARZONE, SAFEZONE, WILDERNESS)
+    # OWN enables flight in the player's own faction territory
     - OWN
     - ALLY
 
@@ -87,14 +77,16 @@ factions:
     - SAFEZONE
     - WARZONE
 
+# The trail is only active while IN MOTION
+# Requires: version/fork of SPIGOT (unless you are using 1.13)
+# Compatible: EssentialsX, PremiumVanish (disables while vanished)
 trail:
   enabled: false
   # 1.8 List: https://spazzinq.org/particles/1.8.html
   # Latest (1.13) List: https://spazzinq.org/particles/1.13.html - Sorry, Spigot did not provide a description
   particle: "CLOUD"
   amount: 4
-  # Offset from default location (under player)
-  # Also is RGB with COLOURED_DUST
+  # Offset from under player (also is RGB with COLOURED_DUST)
   # Format: {x,y,z}
   offset: {0,0,0}
 
@@ -124,7 +116,7 @@ sounds:
 # If you do not wish for a message to be sent, set it to ""
 # You can use "&" for color codes just like any other plugin!
 messages:
-  # Use the actionbar (area above hotbar) instead of chat for certain notifications
+  # Use the actionbar (area above hotbar) instead of chat for notifications
   actionbar: false
   flight:
     enable: "&aYour flight has been enabled."

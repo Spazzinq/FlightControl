@@ -47,16 +47,16 @@
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldedit</artifactId>
-            <version>7.0.0-beta-01;8975469</version>
+            <version>7.0.0-beta-05;6bbf29b</version>
             <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/worldedit-bukkit-7.0.0-beta-01.jar</systemPath>
+            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/worldedit-bukkit-7.0.0-beta-05.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldguard</artifactId>
-            <version>7.0.0-beta01;01dfebe</version>
+            <version>7.0.0-beta-03;e51a220</version>
             <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/worldguard-legacy-7.0.0-beta01.jar</systemPath>
+            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/worldguard-legacy-7.0.0-beta-03.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.Spazzinq</groupId>

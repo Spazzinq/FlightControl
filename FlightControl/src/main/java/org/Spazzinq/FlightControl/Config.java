@@ -26,7 +26,6 @@ package org.Spazzinq.FlightControl;
 
 import org.Spazzinq.FlightControl.Hooks.Factions.Factions;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -38,22 +37,21 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class Config {
+class Config {
 	private FlightControl pl;
 	private FileConfiguration c;
-    private PluginManager pm;
+    private static PluginManager pm;
     private static File dTrailF;
 	private static FileConfiguration dTrailC;
 
-	// World is blacklist
 	static boolean isSpigot, command, support, worldBL, regionBL, fac,
             useCombat, cancelFall, vanishBypass, trail, actionBar;
 	static Sound eSound, dSound, cSound, nSound;
 	static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, permDenied;
 //	static double abLength;
+    static HashSet<String> worlds, trailPrefs;
 	static HashMap<String, List<String>> regions;
-	static List<String> worlds, trailPrefs;
-    public static HashMap<String, Category> eCategories, dCategories;
+    static HashMap<String, Category> categories;
 
 	Config(FlightControl i) {
 		pl = i;
@@ -80,69 +78,65 @@ public class Config {
         actionBar = c.getBoolean("messages.actionbar");
 //        abLength = c.getDouble("messages.actionbar.duration") * 20;
         dFlight = c.getString("messages.flight.disable");
+        dFlight = c.getString("messages.flight.disable");
         eFlight = c.getString("messages.flight.enable");
         cFlight = c.getString("messages.flight.can_enable");
         nFlight = c.getString("messages.flight.cannot_enable");
         dTrail = c.getString("messages.trail.disable");
         eTrail = c.getString("messages.trail.enable");
         permDenied = c.getString("messages.permission_denied");
-        worlds = new ArrayList<>(); trailPrefs = new ArrayList<>();
-        regions = new HashMap<>(); eCategories = new HashMap<>(); dCategories = new HashMap<>();
         loadWorlds(); loadSounds(); loadTrail(); loadTrailPrefs();
         if (pm.isPluginEnabled("WorldGuard")) loadRegions();
         if (pm.isPluginEnabled("Factions")) loadCategories();
-        for (World w : Bukkit.getWorlds()) { String name = w.getName(); defaultPerms(name); for (String rg : pl.regions.regions(w)) defaultPerms(name + "." + rg); }
     }
 
-	private void defaultPerms(String suffix) {
+	static void defaultPerms(String suffix) {
         if (pm.getPermission("flightcontrol.fly." + suffix) == null)
             pm.addPermission(new Permission("flightcontrol.fly." + suffix, PermissionDefault.FALSE));
-        // No "nofly" worlds; disable permission register
-        if (suffix.contains(".") && pm.getPermission("flightcontrol.nofly." + suffix) == null)
+        if (pm.getPermission("flightcontrol.nofly." + suffix) == null)
             pm.addPermission(new Permission("flightcontrol.nofly." + suffix, PermissionDefault.FALSE));
     }
 
-    private ConfigurationSection load(ConfigurationSection c, String type) {
+    static ConfigurationSection load(ConfigurationSection c, String type) {
         if (c.isConfigurationSection(type)) {
             ConfigurationSection typeS = c.getConfigurationSection(type);
             Set<String> typeKeys = new HashSet<>();
             for (String key : typeS.getKeys(true)) {
-                if (key.contains(".")) key = key.split("\\.")[1];
+                String[] keyParts = key.split("\\.");
+                // Get last part of key
+                if (key.contains(".")) key = keyParts[keyParts.length - 1];
                 typeKeys.add(key);
             }
-            // "disable" may seem useless right now, but it's for future functionality
-            if (!typeKeys.isEmpty() && (typeKeys.contains("enable") || typeKeys.contains("disable")
-                    || type.equals("enable") || type.equals("disable"))) return typeS;
+            if (!typeKeys.isEmpty() && (typeKeys.contains("enable") || typeKeys.contains("disable"))) return typeS;
         }
         return null;
     }
 
     private void loadWorlds() {
+        worlds = new HashSet<>();
 	    ConfigurationSection worldsCS = load(c,"worlds");
 	    if (worldsCS != null) {
-            List<String> type = worldsCS.getStringList(worldsCS.isList("enable") ? "enable" : "disable");
+            List<String> type = worldsCS.getStringList(Config.worldBL ? "disable" : "enable");
             if (type != null) for (String w : type) if (Bukkit.getWorld(w) != null) worlds.add(w);
         }
     }
 
     private void loadRegions() {
+        regions = new HashMap<>();
         ConfigurationSection regionsCS = load(c,"regions");
-        if (regionsCS != null) regions = addRegions(load(regionsCS, "enable"));
+        if (regionsCS != null) addRegions(regionsCS.getConfigurationSection(Config.regionBL ? "disable" : "enable"));
     }
 
 	private void loadCategories() {
+        categories = new HashMap<>();
 	    ConfigurationSection facs = load(c,"factions");
 	    if (facs != null) for (String cName : facs.getKeys(false)) {
             if (pm.getPermission("flightcontrol.factions." + cName) == null) pm.addPermission(new Permission("flightcontrol.factions." + cName, PermissionDefault.FALSE));
             ConfigurationSection categorySect = load(facs, cName);
             if (categorySect != null) {
-                String type = categorySect.isList("enable") ? "enable" : (categorySect.isList("disable") ? "disable" : null);
-                if (type != null) {
-                    Category c = createCategory(categorySect.getStringList(type));
-                    if (type.equals("enable")) Config.eCategories.put(cName, c);
-                    else Config.dCategories.put(cName, c);
-
-                } else pl.getLogger().warning("Factions category \"" + cName + "\" is invalid! (missing \"enable\"/\"disable\")");
+                String type = categorySect.isList("disable") ? "disable" : (categorySect.isList("enable") ? "enable" : null);
+                if (type != null) Config.categories.put(cName, createCategory(categorySect.getStringList(type), type.equals("disable")));
+                else pl.getLogger().warning("Factions category \"" + cName + "\" is invalid! (missing \"enable\"/\"disable\")");
             }
 	    }
 	}
@@ -173,6 +167,7 @@ public class Config {
 
 	// Per-player trail preferences
 	private void loadTrailPrefs() {
+        trailPrefs = new HashSet<>();
 		if (!dTrailF.exists()) { try { //noinspection ResultOfMethodCallIgnored
             dTrailF.createNewFile(); } catch (IOException e) { e.printStackTrace(); } }
 		dTrailC = YamlConfiguration.loadConfiguration(dTrailF);
@@ -186,23 +181,21 @@ public class Config {
 		} else dTrailC.createSection("disabled_trail");
 	}
 
-	private HashMap<String, List<String>> addRegions(ConfigurationSection c) {
-        HashMap<String, List<String>> regions = new HashMap<>();
+    private void addRegions(ConfigurationSection c) {
         if (c != null) for (String w : c.getKeys(false)) {
-            if (Bukkit.getWorld(w) != null) {
+            if (Bukkit.getWorld(w) != null && c.isList(w)) {
                 ArrayList<String> rgs = new ArrayList<>();
                 for (String rg : c.getStringList(w)) if (pl.regions.hasRegion(w, rg)) rgs.add(rg);
                 regions.put(w, rgs);
             }
         }
-        return regions;
     }
 
-	private Category createCategory(List<String> types) {
+	private Category createCategory(List<String> types, boolean blacklist) {
 		if (types != null && !types.isEmpty() && (types.contains("OWN") || types.contains("ALLY") || types.contains("TRUCE")
                 || types.contains("NEUTRAL") || types.contains("ENEMY") || types.contains("WARZONE")
                 || types.contains("SAFEZONE") || types.contains("WILDERNESS"))) {
-            return new Category(types.contains("OWN"), types.contains("ALLY"), types.contains("TRUCE"), types.contains("NEUTRAL"), types.contains("ENEMY"), types.contains("WARZONE"),types.contains("SAFEZONE"), types.contains("WILDERNESS"));
+            return new Category(blacklist, types.contains("OWN"), types.contains("ALLY"), types.contains("TRUCE"), types.contains("NEUTRAL"), types.contains("ENEMY"), types.contains("WARZONE"),types.contains("SAFEZONE"), types.contains("WILDERNESS"));
 		}
 		return null;
 	}

@@ -90,16 +90,8 @@
 
     <repositories>
         <repository>
-            <id>ess</id>
-            <url>http://ci.ender.zone/plugin/repository/everything/</url>
-        </repository>
-        <repository>
             <id>sk89q</id>
             <url>http://maven.sk89q.com/repo/</url>
-        </repository>
-        <repository>
-            <id>PlotSquared</id>
-            <url>http://ci.athion.net/job/PlotSquared/ws/mvn/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -112,8 +104,9 @@
         <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
-            <version>2.16.0</version>
-            <scope>provided</scope>
+            <version>2.16.3</version>
+            <scope>system</scope>
+            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/EssentialsX-2.16.0.3.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
@@ -130,21 +123,23 @@
         <dependency>
             <groupId>com.massivecraft</groupId>
             <artifactId>Factions</artifactId>
-            <version>1.6.9.5-U0.2.3</version>
-            <scope>provided</scope>
+            <version>1.6.9.5-U0.2.3-b126</version>
+            <scope>system</scope>
+            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/FactionsUUID.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.plotsquared</groupId>
             <artifactId>plotsquared-api</artifactId>
-            <version>19.02.05-d27ead5-688</version>
-            <scope>provided</scope>
+            <version>19.02.22-47ce4b2-695</version>
+            <scope>system</scope>
+            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/PlotSquared-Bukkit-19.02.22-47ce4b2-695.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.IntellectualSites</groupId>
             <artifactId>PlotSquared</artifactId>
-            <version>4.152</version>
+            <version>4.179</version>
             <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/PlotSquared-Bukkit-4.152.jar</systemPath>
+            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/PlotSquared-Bukkit-4.179.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.minelink</groupId>
@@ -184,12 +179,12 @@
         <dependency>
             <groupId>org.Spazzinq</groupId>
             <artifactId>v8</artifactId>
-            <version>${project.parent.version}</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>org.Spazzinq</groupId>
             <artifactId>v13</artifactId>
-            <version>${project.parent.version}</version>
+            <version>LATEST</version>
         </dependency>
     </dependencies>
 </project>
