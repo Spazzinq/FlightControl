@@ -1,0 +1,151 @@
+# Mevcut diller: İngilizce (en-us), Türkçe (tr-tr)
+# Kısaltmayı parantez içinde kullanın
+language: "en-us"
+
+#  ______ _ _       _     _    _____            _             _ 
+# |  ____| (_)     | |   | |  / ____|          | |           | |
+# | |__  | |_  __ _| |__ | |_| |     ___  _ __ | |_ _ __ ___ | |
+# |  __| | | |/ _` | '_ \| __| |    / _ \| '_ \| __| '__/ _ \| |
+# | |    | | | (_| | | | | |_| |___| (_) | | | | |_| | | (_) | |
+# |_|    |_|_|\__, |_| |_|\__|\_____\___/|_| |_|\__|_|  \___/|_|
+#              __/ |                                            
+#             |___/                                  By Spazzinq
+
+# Eğer bir hatanız varsa bu yapılandırmadaki bilgilerden faydalanın.
+# Sorununuz çözülmez ise discord'da bana ulaşın. (Discord bilgilerim aşağıda)
+# https://spazzinq.org/discord
+
+# Bu yapılandırma bir çok talimat içermektedir, ama tüm özellikleri anlatmak imkansızdır.
+# Kullandığınız özelliklere aşina olmadıkça bunları kaldırmayın.
+
+#   ____             __ _                       _   _             
+#  / ___|___  _ __  / _(_) __ _ _   _ _ __ __ _| |_(_) ___  _ __  
+# | |   / _ \| '_ \| |_| |/ _` | | | | '__/ _` | __| |/ _ \| '_ \ 
+# | |__| (_) | | | |  _| | (_| | |_| | | | (_| | |_| | (_) | | | |
+#  \____\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
+#                         |___/
+
+# Bu yapılandırma plugini anlamak için çok önemlidir
+# Bu uçuş modu etkin bir alanın dışında kalmaz
+
+settings:
+  # Otomatik uçmayı etkinleştirir.
+  # "Command" etkin olduğunda, "etkinleştir" ve "etkinleştiremiyor" mesajları / sesler kullanılır.
+  command: false
+
+  # Gerekli: CombatTagPlus, CombatLogX, ya da AntiCombatLogging
+  # NOT: Eğer "disable_flight_in_combat" false olarak ayarlıysa savaş esnasında uçuç modunu devre dışı bırakır. 
+  disable_flight_in_combat: false
+
+  # Eğer "prevent_fall_damage" false olarak ayarlıysa yüksekten düşerken hasar almazsınız.
+  prevent_fall_damage: false
+
+  # Gizlenme ya da izleyici modundayken uçuş modunu devre dışı bırakır.
+  # Gerekli: EssentialsX ya da PremiumVanish
+  vanish_bypass: true
+
+worlds:
+  # Bunun yerine belirli dünyalarda devre dışı bırakmak istiyorsanız "enable" bölgesini "disable" olarak değiştirin.
+  enable:
+    - DUNYA1
+
+# Gerekli: WorldGuard (ve WorldEdit)
+# Birbiriyle çakışan birden fazla bölgeniz varsa, "/rg setpriority bölge ismi numara" komutunu kullanınız.
+# Bu plugin en yüksek numaralı bölgeyi kontrol eder
+regions:
+  # Bunun yerine belirli bölgelerde devre dışı bırakmak istiyorsanız "enable" bölgesini "disable" olarak değiştirin.
+  enable:
+    DUNYA1:
+    - BOLGE1
+    DUNYA2:
+    - BOLGE2
+
+# Gerekli: Factions (by MassiveCraft), FactionsUUID, ya da SavageFactions
+factions:
+  # "example" bir kategoridir. (kullanmak için "flightcontrol.factions.example" iznine sahip olmanız gerekmektedir.)
+  # Kategori adlarını istediğiniz her şeye ayarlıyabilirsiniz. (sadece alfanümerik karakterler, boşluk yok)
+  example:
+    # Bunun yerine belirli faction bölgelerinde devre dışı bırakmak istiyorsanız "enable" bölgesini "disable" olarak değiştirin.
+    enable:
+    # Faction topraklarının 8 çeşidi vardır; (OWN, ALLY, TRUCE, NEUTRAL, ENEMY, WARZONE, SAFEZONE, WILDERNESS)
+    # Oyuncu kendi faction bölgesinde uçuş modunu sağlar
+    - OWN
+    - ALLY
+
+  # "example2" bir kategoridir. (kullanmak için "flightcontrol.factions.example2" iznine sahip olmanız gerekmektedir.)
+  example2:
+    enable:
+    - SAFEZONE
+    - WARZONE
+
+# Parçacıklar sadece haraket halindeyken aktifleşir.
+# Gerekli: sürüm/çatal spigot (1.13 kullanmadığınız sürece)
+# Uyumlu: EssentialsX, PremiumVanish (gizlenme modundayken parçacıklar görünmez.)
+trail:
+  enabled: false
+  # 1.8 : https://spazzinq.org/particles/1.8.html
+  # Son (1.13): https://spazzinq.org/particles/1.13.html - Üzgünüm, Spigot bir açıklama vermedi.
+  particle: "CLOUD"
+  amount: 4
+  # Renk toplama "RBG" değerleri ile yapılır, renk seçiçi bulmak için: https://www.google.com/search?q=color+picker
+  # "Kırmızı,yeşil,mavi" formatını kullanın (aksi takdirde değerlere dokunmayın)
+  # Belirli bir renk için 1.8 üzerinde 0 miktarını ayarlamanız gerekir!
+  rgb: "0,0,0"
+
+sounds:
+  # 1.8: https://minecraft.gamepedia.com/Sounds.json/Java_Edition_values_before_1.9
+  # Son (1.13): https://minecraft.gamepedia.com/Sounds.json/Java_Edition_values
+  enable:
+    sound: "NONE"
+    pitch: 1
+    volume: 1
+  disable:
+    sound: "NONE"
+    pitch: 1
+    volume: 1
+  # "can_enable" ve "cannot_enable" yanlızca "command" doğru olduğunda kullanılır
+  can_enable:
+    sound: "NONE"
+    pitch: 1
+    volume: 1
+  cannot_enable:
+    sound: "NONE"
+    pitch: 1
+    volume: 1
+
+# Bir mesaj gönderilmememsini istiyorsanız "" kullanın
+# Renk kodları için "&" kullanınız.
+messages:
+  actionbar: false
+  flight:
+    enable: "&aUçuş modu etkin."
+    disable: "&cUçuş modu devre dışı."
+    # "can_enable" ve "cannot_enable" yanlızca "command" doğru olduğunda kullanılır
+    can_enable: "&bŞimdi /fly komutunu kullanabilirsiniz."
+    cannot_enable: "&cŞuanda uçuş modunu açamazsınız."
+  trail:
+    enable: "&aUçuş parçacığı etkin!"
+    disable: "&cUçuş parçacığı devredışı!"
+  permission_denied: "&cBu komutu kullanmanız için gerekli yetkiye sahip değilsiniz."
+
+#  ____                     _         _                 
+# |  _ \ ___ _ __ _ __ ___ (_)___ ___(_) ___  _ __  ___ 
+# | |_) / _ \ '__| '_ ` _ \| / __/ __| |/ _ \| '_ \/ __|
+# |  __/  __/ |  | | | | | | \__ \__ \ | (_) | | | \__ \
+# |_|   \___|_|  |_| |_| |_|_|___/___/_|\___/|_| |_|___/
+
+# DUNYAADI = Dünyanızın adı
+# BOLGEADI = Bölgenizin adı
+# KATEGORI = Kategorinizin adı
+
+# Önemli izinler
+# flightcontrol.admin - Pluginin komutlarını kullanma yetkisi (otomatik olarak oplara verilir)
+# flightcontrol.bypass - Her zaman uçuş modunu sağlar
+# flightcontrol.factions.KATEGORI - Kategoriye göre uçuş kontrolleri
+# flightcontrol.flyall - Otomatik olarak devre dışı olmayan tüm bölgelerde uçmak için izin
+# flightcontrol.fly - Uçuş modunu etkinleştirir (the Essentials permission "essentials.fly" works too)
+# İsteğe bağlı izinler
+# flightcontrol.fly.DUNYAADI - Belirli dünyada uçma izni
+# flightcontrol.fly.DUNYAADI.BOLGEADI - Belirli bölgede uçma izni
+# flightcontrol.nofly.DUNYAADI - Belirli dünyada uçamama izni
+# flightcontrol.nofly.DUNYAADI.BOLGEADI - Belirli bölgede uçamama izni

@@ -29,7 +29,7 @@ public class Category {
     public final boolean own, ally, truce, neutral, enemy, warzone, safezone, wilderness;
     private String debug;
 
-    Category(boolean blacklist, boolean own, boolean ally, boolean truce, boolean neutral, boolean enemy, boolean warzone, boolean safezone, boolean wilderness) {
+    public Category(boolean blacklist, boolean own, boolean ally, boolean truce, boolean neutral, boolean enemy, boolean warzone, boolean safezone, boolean wilderness) {
         this.blacklist = blacklist; this.own = own; this.ally = ally; this.truce = truce; this.neutral = neutral; this.enemy = enemy; this.warzone = warzone;
         this.safezone = safezone; this.wilderness = wilderness;
 
