@@ -32,7 +32,7 @@
     <parent>
         <artifactId>FlightControl-parent</artifactId>
         <groupId>org.Spazzinq</groupId>
-        <version>LATEST</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>v8</artifactId>

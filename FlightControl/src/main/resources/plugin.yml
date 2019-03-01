@@ -1,6 +1,6 @@
 name: FlightControl
 main: org.Spazzinq.FlightControl.FlightControl
-version: ${project.parent.version}
+version: ${revision}
 api-version: 1.13
 author: Spazzinq
 description: "An elegant solution for controlling player flight"
