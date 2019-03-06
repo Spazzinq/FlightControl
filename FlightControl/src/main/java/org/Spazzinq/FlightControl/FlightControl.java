@@ -76,10 +76,8 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     public Particles particles = is13 ? new Particles13() : new Particles8();
     Vanish vanish = new Vanish();
 
-    private boolean configWarning = true;
 
 	public void onEnable() {
-
         getCommand("flightcontrol").setTabCompleter((commandSender, command, s, strings) ->
                 new ArrayList<>(Arrays.asList("update", "actionbar", "combat", "falldamage", "trails", "vanishbypass", "clean", "command")));
 
@@ -94,7 +92,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         if (pm.isPluginEnabled("PremiumVanish") || pm.isPluginEnabled("SuperVanish")) vanish = new PremiumSuper();
         else if (pm.isPluginEnabled("Essentials")) vanish = new Ess((Essentials) pm.getPlugin("Essentials"));
 
-	    c = new Config(this); c.reloadConfig(); new Listener(this); new Actionbar(this); new Update(getDescription().getVersion());
+	    c = new Config(this); new Listener(this); new Actionbar(this); new Update(getDescription().getVersion());
 	    flyCommand();
 
         if (Update.exists()) new BukkitRunnable() {
@@ -102,7 +100,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                     "visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the changes (that may affect your configuration)."); }
         }.runTaskLater(this, 40);
     }
-	public void onDisable() { c.save(); }
+	public void onDisable() { c.saveTrails(); }
 
     public boolean onCommand(CommandSender s, org.bukkit.command.Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("flightcontrol")) {
@@ -117,13 +115,31 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                         } else msg(s, "&a&lFlightControl &7» &aUpdate downloaded. Restart (or reload) the server to apply the update (you may need to reset the plugin config).", false); }
                         else msg(s, "&a&lFlightControl &7» &aThe update to version " + Update.newVer() + " has already been downloaded. Please restart (or reload) the server to apply the update.", false);
                     } else msg(s, "&a&lFlightControl &7» &aNo updates found.");
-                    else if (args[0].equalsIgnoreCase("combat")) toggleOption(s, Config.useCombat = !Config.useCombat, "Combat Disabling");
-                    else if (args[0].equalsIgnoreCase("falldamage")) toggleOption(s, Config.cancelFall = !Config.cancelFall, "Prevent Fall Damage");
-                    else if (args[0].equalsIgnoreCase("trails")) toggleOption(s, Config.trail = !Config.trail, "Trails");
-                    else if (args[0].equalsIgnoreCase("vanishbypass")) toggleOption(s, Config.vanishBypass = !Config.vanishBypass, "Vanish Bypass");
-                    else if (args[0].equalsIgnoreCase("actionbar")) toggleOption(s, Config.actionBar = !Config.actionBar, "Actionbar Notifications");
-                    else if (args[0].equalsIgnoreCase("command")) { toggleOption(s, Config.command = !Config.command, "Command"); flyCommand(); }
-                    else if (args[0].equalsIgnoreCase("clean")) { saveConfig(); msg(s, "&a&lFlightControl &7» &aConfiguration cleaned!"); }
+                    else if (args[0].equalsIgnoreCase("combat")) {
+                        c.c.set("settings.disable_flight_in_combat", Config.useCombat = !Config.useCombat);
+                        toggleOption(s, Config.useCombat, "Combat Disabling");
+                    }
+                    else if (args[0].equalsIgnoreCase("falldamage")) {
+                        c.c.set("settings.prevent_fall_damage", Config.cancelFall = !Config.cancelFall);
+                        toggleOption(s, Config.cancelFall, "Prevent Fall Damage");
+                    }
+                    else if (args[0].equalsIgnoreCase("trails")) {
+                        c.c.set("trail.enabled", Config.trail = !Config.trail);
+                        toggleOption(s, Config.trail, "Trails");
+                    }
+                    else if (args[0].equalsIgnoreCase("vanishbypass")) {
+                        c.c.set("settings.vanish_bypass", Config.vanishBypass = !Config.vanishBypass);
+                        toggleOption(s, Config.vanishBypass, "Vanish Bypass");
+                    }
+                    else if (args[0].equalsIgnoreCase("actionbar")) {
+                        c.c.set("messages.actionbar", Config.actionBar = !Config.actionBar);
+                        toggleOption(s, Config.actionBar, "Actionbar Notifications");
+                    }
+                    else if (args[0].equalsIgnoreCase("command")) {
+                        c.c.set("settings.command", Config.command = !Config.command);
+                        toggleOption(s, Config.command, "Command"); flyCommand();
+                    }
+                    else if (args[0].equalsIgnoreCase("clean")) { c.save(false); msg(s, "&a&lFlightControl &7» &aConfiguration cleaned!"); }
                     else if (args[0].equalsIgnoreCase("support")) {
                         toggleOption(s, Config.support = !Config.support, "Live Support");
                         Player spazzinq = getServer().getPlayer("Spazzinq");
@@ -239,11 +255,7 @@ public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     private void toggleOption(CommandSender s, Boolean o, String prefix) {
         msg(s, (prefix.equals("Trail") ? "&a&l" : "&a&lFlightControl &a") + prefix + " &7» "
                 + (o ? "&aEnabled" : "&cDisabled"));
-        if (!prefix.equals("Trail") && !prefix.equals("Live Support") && configWarning) {
-            msg(s, "&e&lFlightControl &eWarning &7» &fTo prevent the removal of instructions, the option was not changed in the config. " +
-                    "(Psst! You can quickly change it in the config then reload the plugin using /fc reload.)");
-            configWarning = false;
-        }
+        if (!prefix.equals("Live Support")) c.save(true);
     }
 
     private void sendHelp(CommandSender s) {

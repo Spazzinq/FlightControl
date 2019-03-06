@@ -43,7 +43,8 @@ import java.util.*;
 
 public class Config {
 	private FlightControl pl;
-	private FileConfiguration c;
+	public CommentedConfig c;
+	private File f;
     private static PluginManager pm;
     private static File dTrailF;
 	private static FileConfiguration dTrailC;
@@ -59,15 +60,18 @@ public class Config {
 
 	public Config(FlightControl i) {
         pl = i;
+        f = new File(pl.getDataFolder(), "config.yml");
         pm = pl.getServer().getPluginManager();
         isSpigot = pl.getServer().getVersion().contains("Spigot");
         dTrailF = new File(pl.getDataFolder(), "disabled_trail.yml");
+
+        reloadConfig();
     }
 
 	public void reloadConfig() {
+        c = new CommentedConfig();
         pl.saveDefaultConfig();
-        pl.reloadConfig();
-        c = pl.getConfig();
+        if (f.exists()) try { c.load(f); } catch (Exception e) { e.printStackTrace(); }
 
         command = c.getBoolean("settings.command");
         worldBL = c.isList("worlds.disable");
@@ -205,8 +209,10 @@ public class Config {
 		return null;
 	}
 
+	public void save(boolean comments) { try { c.loadComments(f); c.save(f, comments); } catch (IOException e) { e.printStackTrace(); } }
+
     // Saves personal trail preferences
-	public void save() {
+	public void saveTrails() {
 	    if (dTrailC != null) {
             dTrailC.set("disabled_trail", (trailPrefs != null && !trailPrefs.isEmpty()) ? trailPrefs : null);
             try { dTrailC.save(dTrailF); } catch (IOException e) { e.printStackTrace(); }
