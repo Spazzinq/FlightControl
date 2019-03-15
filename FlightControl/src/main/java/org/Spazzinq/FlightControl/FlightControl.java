@@ -46,6 +46,9 @@ import org.Spazzinq.FlightControl.Multiversion.v13.Particles13;
 import org.Spazzinq.FlightControl.Multiversion.v13.Regions13;
 import org.Spazzinq.FlightControl.Multiversion.v8.Particles8;
 import org.Spazzinq.FlightControl.Multiversion.v8.Regions8;
+import org.Spazzinq.FlightControl.Object.Category;
+import org.Spazzinq.FlightControl.Object.Eval;
+import org.Spazzinq.FlightControl.Object.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -62,7 +65,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-public class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
+public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     private Config c;
     private PluginManager pm = Bukkit.getPluginManager();
     private boolean is13 = getServer().getVersion().contains("1.13");

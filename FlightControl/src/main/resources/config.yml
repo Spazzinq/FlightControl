@@ -7,9 +7,14 @@
 #              __/ |                                            
 #             |___/                                  By Spazzinq
 
-# Before leaving a negative review, you should first read through the information in this configuration
-# and then contact me on Discord if it does not solve your problem (my Discord link is below).
-# https://spazzinq.org/discord
+# Spigot Page: https://www.spigotmc.org/resources/flightcontrol.55168/
+# Discord: https://spazzinq.org/discord
+# Github: https://github.com/Spazzinq/FlightControl/issues
+
+# Before you leave a negative review:
+# - Read through ALL the information in this configuration
+# - Contact me on Discord (if the config does not answer your problem)
+# - Create a bug report/feature request on GitHub
 
 # Available languages: English (en-us), Turkish (tr-tr)
 # Please use the abbreviation in parentheses
@@ -29,13 +34,13 @@ settings:
   # Enables /fly instead of automatic flight
   # When "command" is enabled, "can_enable" and "cannot_enable" messages/sounds are used
   command: false
-  # Requires: CombatTagPlus, CombatLogX, or AntiCombatLogging
+  # Requires CombatTagPlus, CombatLogX, or AntiCombatLogging
   # NOTE: in the combat plugin config, disable its option to stop flight while in combat (prevents issues)
   disable_flight_in_combat: false
   # Prevents fall damage when flight is disabled mid-air by FlightControl
   prevent_fall_damage: false
   # Bypasses the disabling of flight while in vanish (or spectating)
-  # Requires: EssentialsX or PremiumVanish
+  # Requires EssentialsX or PremiumVanish
   vanish_bypass: true
 
 worlds:
@@ -44,7 +49,7 @@ worlds:
   enable:
     - exampleworld
 
-# Requires: WorldGuard (and WorldEdit)
+# Requires WorldGuard (and WorldEdit)
 # If you have multiple regions overlapping each other, please use /rg setpriority REGIONNAME NUMBER
 # FlightControl checks the HIGHEST priority region (otherwise it checks the first in REVERSE alphabetical order)
 regions:
@@ -56,7 +61,7 @@ regions:
     exapleworld2:
     - exampleregion2
 
-# Requires: Factions (by MassiveCraft), FactionsUUID, or SavageFactions
+# Requires Factions (by MassiveCraft), FactionsUUID, or SavageFactions
 factions:
   # "example" is a category (the permission to use it is flightcontrol.factions.example)
   # Keep in mind you can set category names to whatever you want (only alphanumeric characters, no spaces)
@@ -75,8 +80,14 @@ factions:
     - SAFEZONE
     - WARZONE
 
+# Requires Towny
+towny:
+  enable_in_own_tuwn: false
+  # Ignore towny flight setting(s) above during war?
+  during_war: false
+
 # The trail is only active while IN MOTION
-# Requires: version/fork of SPIGOT (unless you are using 1.13)
+# Requires a version/fork of SPIGOT (unless you are using 1.13)
 # Compatible: EssentialsX, PremiumVanish (disables while vanished)
 trail:
   enabled: false

@@ -22,18 +22,10 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Plot;
+package org.Spazzinq.FlightControl.Hooks.Towny;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
+import org.bukkit.entity.Player;
 
-public final class NewSquared extends Plot {
-    @Override public boolean flight(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && p.getFlag(Flags.FLY, false);
-    }
-    @Override public boolean dFlight(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && !p.getFlag(Flags.FLY, true);
-    }
+public class NoTowny {
+    public boolean ownTown(Player p) { return false; }
 }

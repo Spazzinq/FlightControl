@@ -22,18 +22,23 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Plot;
+package org.Spazzinq.FlightControl.Object;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
+public class Category {
+    public final boolean blacklist, own, ally, truce, neutral, enemy, warzone, safezone, wilderness;
+    private String debug;
 
-public final class NewSquared extends Plot {
-    @Override public boolean flight(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && p.getFlag(Flags.FLY, false);
+    public Category(boolean blacklist, boolean own, boolean ally, boolean truce, boolean neutral, boolean enemy, boolean warzone, boolean safezone, boolean wilderness) {
+        this.blacklist = blacklist; this.own = own; this.ally = ally; this.truce = truce; this.neutral = neutral; this.enemy = enemy; this.warzone = warzone;
+        this.safezone = safezone; this.wilderness = wilderness;
+
+        debug = blacklist + " [" + (own ? "own," : "") + (ally ? "ally," : "") + (truce ? "truce," : "") + (neutral ? "neutral," : "")
+                + (enemy ? "enemy," : "") + (warzone ? "warzone," : "") + (safezone ? "safezone," : "") + (wilderness ? "wilderness," : "");
+        debug = debug.substring(0, debug.length() - 1) + "]";
     }
-    @Override public boolean dFlight(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && !p.getFlag(Flags.FLY, true);
+
+    @Override
+    public String toString() {
+        return debug;
     }
 }

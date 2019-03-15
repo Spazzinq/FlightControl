@@ -27,4 +27,4 @@ package org.Spazzinq.FlightControl.Hooks.Combat;
 import com.vk2gpz.anticombatlogging.AntiCombatLoggingAPI;
 import org.bukkit.entity.Player;
 
-public class AntiLogging extends Combat { @Override public boolean tagged(Player p) { return AntiCombatLoggingAPI.isInCombat(p); } }
+public final class AntiLogging extends Combat { @Override public boolean tagged(Player p) { return AntiCombatLoggingAPI.isInCombat(p); } }

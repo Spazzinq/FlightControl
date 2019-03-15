@@ -22,18 +22,17 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Plot;
+package org.Spazzinq.FlightControl.Object;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-
-public final class NewSquared extends Plot {
-    @Override public boolean flight(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && p.getFlag(Flags.FLY, false);
+public class Eval {
+    private boolean disable, enable;
+    public Eval(boolean blacklist, boolean value) {
+        if (blacklist && value) disable = true; else if (blacklist || value) enable = true;
     }
-    @Override public boolean dFlight(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && !p.getFlag(Flags.FLY, true);
+    public Eval(boolean disable, boolean enable, boolean eval) {
+        this(disable, enable);
+        if (!eval) { this.disable = disable; this.enable = enable; }
     }
+    public boolean disable() { return disable; }
+    public boolean enable() { return enable; }
 }

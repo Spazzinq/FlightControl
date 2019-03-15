@@ -44,7 +44,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.List;
 
-class Listener implements org.bukkit.event.Listener {
+final class Listener implements org.bukkit.event.Listener {
     private FlightControl pl;
     private boolean particles;
 

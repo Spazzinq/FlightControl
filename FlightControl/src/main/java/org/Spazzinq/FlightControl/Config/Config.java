@@ -24,10 +24,10 @@
 
 package org.Spazzinq.FlightControl.Config;
 
-import org.Spazzinq.FlightControl.Category;
+import org.Spazzinq.FlightControl.Object.Category;
 import org.Spazzinq.FlightControl.FlightControl;
 import org.Spazzinq.FlightControl.Hooks.Factions.Factions;
-import org.Spazzinq.FlightControl.Sound;
+import org.Spazzinq.FlightControl.Object.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -41,7 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class Config {
+public final class Config {
 	private FlightControl pl;
 	public CommentedConfig c;
 	private File f;
@@ -50,7 +50,7 @@ public class Config {
 	private static FileConfiguration dTrailC;
 
 	public static boolean isSpigot, command, support, worldBL, regionBL, fac,
-            useCombat, cancelFall, vanishBypass, trail, actionBar;
+            useCombat, ownTown, ignoreTownyWar, cancelFall, vanishBypass, trail, actionBar;
 	public static Sound eSound, dSound, cSound, nSound;
 	public static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, permDenied;
 //	static double abLength;
@@ -71,7 +71,9 @@ public class Config {
 	public void reloadConfig() {
         c = new CommentedConfig();
         pl.saveDefaultConfig();
-        if (f.exists()) try { c.load(f); } catch (Exception e) { e.printStackTrace(); }
+        // TODO Updates comments from old config?
+        //.TODO Need to compare to prevent constant config reload on NP++?
+        if (f.exists()) try { c.loadComments(pl.getResource("config.yml")); save(true); c.load(f); } catch (Exception e) { e.printStackTrace(); }
 
         command = c.getBoolean("settings.command");
         worldBL = c.isList("worlds.disable");
@@ -209,7 +211,7 @@ public class Config {
 		return null;
 	}
 
-	public void save(boolean comments) { try { c.loadComments(f); c.save(f, comments); } catch (IOException e) { e.printStackTrace(); } }
+	public void save(boolean comments) { try { c.save(f, comments); } catch (IOException e) { e.printStackTrace(); } }
 
     // Saves personal trail preferences
 	public void saveTrails() {

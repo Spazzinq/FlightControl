@@ -26,15 +26,14 @@ package org.Spazzinq.FlightControl.Hooks.Plot;
 
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
 
-public class OldSquared extends org.Spazzinq.FlightControl.Hooks.Plot.Plot {
+public final class OldSquared extends Plot {
     @Override public boolean flight(String world, int x, int y, int z) {
-        Plot p = Plot.getPlot(new Location(world, x, y, z));
+        com.intellectualcrafters.plot.object.Plot p = com.intellectualcrafters.plot.object.Plot.getPlot(new Location(world, x, y, z));
         return p != null && p.getFlag(Flags.FLY, false);
     }
     @Override public boolean dFlight(String world, int x, int y, int z) {
-        Plot p = Plot.getPlot(new Location(world, x, y, z));
+        com.intellectualcrafters.plot.object.Plot p = com.intellectualcrafters.plot.object.Plot.getPlot(new Location(world, x, y, z));
         return p != null && !p.getFlag(Flags.FLY, true);
     }
 }

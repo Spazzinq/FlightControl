@@ -22,18 +22,15 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Plot;
+package org.Spazzinq.FlightControl.Object;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
+import org.bukkit.entity.Player;
 
-public final class NewSquared extends Plot {
-    @Override public boolean flight(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && p.getFlag(Flags.FLY, false);
-    }
-    @Override public boolean dFlight(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && !p.getFlag(Flags.FLY, true);
-    }
+public class Sound {
+    private org.bukkit.Sound value;
+    private float v, p;
+    public Sound(String name, float v, float p) { value = org.bukkit.Sound.valueOf(name); this.v = v; this.p = p; }
+
+    public static void play(Player p, Sound s) { if (s != null) p.playSound(p.getLocation(), s.value, s.v, s.p); }
+    public static boolean is(String s) { try { org.bukkit.Sound.valueOf(s); return true; } catch (Exception e) { return false; } }
 }

@@ -42,6 +42,18 @@ import java.util.Map;
 public class CommentedConfig extends YamlConfiguration {
     private HashMap<String, String> comments;
 
+    // Rewritten to ignore Bukkit "headers" in saveToString & loadFromString
+    private final DumperOptions yamlOptions = new DumperOptions();
+    private final Representer yamlRepresenter = new YamlRepresenter();
+    private final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
+
+    CommentedConfig() {
+        // TODO moved from save/load methods causes issues (maybe gc)?
+        yamlOptions.setIndent(2);
+        yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+    }
+
     void save(File f, boolean comments) throws IOException {
         if (f != null) {
             //noinspection UnstableApiUsage
@@ -51,23 +63,31 @@ public class CommentedConfig extends YamlConfiguration {
     }
 
     private String leadSpaces(String s) { return s.startsWith(" ") ? s.split("[^\\s]")[0] : ""; }
+    private String strFromIS(InputStream is) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024]; int length;
+        while ((length = is.read(buffer)) != -1) out.write(buffer, 0, length);
+        is.close();
 
+        return out.toString();
+    }
+
+    // Comments should already have "#" at the beginning
     private String insertComments(String config) {
         String[] lines = config.split("\n");
         StringBuilder newConf = new StringBuilder(config);
         String key = ""; int i = 0, depth = 0;
 
         for (String line : lines) {
-            // Is a key
+            // Is a key?
             if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
                 String localKey = line.replaceAll("\\s+", "").split(":")[0];
                 String spaces = leadSpaces(line); int nDepth = spaces.length();
 
                 if (depth >= nDepth) {
-                    // lol.xd.420
-                    // depth - nDepth == 0 -> "lol.xd"
-                    // shallower by 1 -> "lol"
-                    //              2 -> ""
+                    // example key -> "lol.xd.420"
+                    // same depth -> "lol.xd" | shallower by 1 -> "lol" | by 2 -> ""
+                    // (add key on later)
                     int back = (depth - nDepth) / 2 + 1;
                     for (int j = 0; j < back; j++) if (!key.isEmpty()) key = key.contains(".") ? key.substring(0, key.lastIndexOf(".")) : "";
                 }
@@ -76,8 +96,10 @@ public class CommentedConfig extends YamlConfiguration {
                 // Add comment(s)
                 if (comments.containsKey(key)) {
                     String c = spaces + comments.get(key).replaceAll("\n", "\n" + spaces);
+                    // Remove spaces at the end from above replaceAll
                     c = c.substring(0, c.length() - depth);
                     newConf.insert(newConf.indexOf(line, i), c);
+                    // Set location to continue from
                     i = newConf.indexOf("\n", i + c.length()) + 1;
                 }
             }
@@ -85,9 +107,11 @@ public class CommentedConfig extends YamlConfiguration {
         return newConf.toString() + (comments.getOrDefault("footer", ""));
     }
 
+    // TODO Does this work for comments on the same line as content? (lol: # example)
     private void loadComments(String config) {
         comments = new HashMap<>();
         String[] lines = config.split("\n");
+        // c = comment
         String key = "", c = ""; int depth = 0;
 
         for (String line : lines) {
@@ -110,25 +134,11 @@ public class CommentedConfig extends YamlConfiguration {
         }
         if (!c.isEmpty()) comments.put("footer", c.substring(0, c.length() - 1));
     }
-    void loadComments(File f) throws IOException {
-        InputStream is = new FileInputStream(f);
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024]; int length;
-        while ((length = is.read(buffer)) != -1) output.write(buffer, 0, length);
-        is.close();
-
-        loadComments(output.toString());
-    }
-
-    private final DumperOptions yamlOptions = new DumperOptions();
-    private final Representer yamlRepresenter = new YamlRepresenter();
-    private final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
+    void loadComments(InputStream is) throws  IOException { loadComments(strFromIS(is)); }
+    @Override public void load(File f) throws IOException, InvalidConfigurationException { load(new FileInputStream(f)); }
+    @SuppressWarnings("deprecation") @Override public void load(InputStream is) throws InvalidConfigurationException, IOException { loadFromString(strFromIS(is)); }
 
     @Override public String saveToString() {
-        yamlOptions.setIndent(2);
-        yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
         String dump = yaml.dump(getValues(false));
         return dump.equals(BLANK_CONFIG) ? "" : dump;
     }
@@ -141,16 +151,5 @@ public class CommentedConfig extends YamlConfiguration {
         catch (ClassCastException e) { throw new InvalidConfigurationException("Top level is not a Map."); }
 
         if (input != null) convertMapsToSections(input, this);
-    }
-    @Override public void load(File f) throws IOException, InvalidConfigurationException { load(new FileInputStream(f)); }
-
-    @SuppressWarnings("deprecation")
-    @Override public void load(InputStream is) throws InvalidConfigurationException, IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024]; int length;
-        while ((length = is.read(buffer)) != -1) output.write(buffer, 0, length);
-        is.close();
-
-        loadFromString(output.toString());
     }
 }

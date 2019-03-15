@@ -24,7 +24,7 @@
 
 package org.Spazzinq.FlightControl.Hooks.Factions;
 
-import org.Spazzinq.FlightControl.Category;
+import org.Spazzinq.FlightControl.Object.Category;
 import org.bukkit.entity.Player;
 
 public class Factions { public boolean rel(Player p, Category c) { return false; } }

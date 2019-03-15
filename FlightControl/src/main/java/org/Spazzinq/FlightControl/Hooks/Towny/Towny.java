@@ -22,18 +22,21 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Plot;
+package org.Spazzinq.FlightControl.Hooks.Towny;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
+import org.bukkit.entity.Player;
 
-public final class NewSquared extends Plot {
-    @Override public boolean flight(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && p.getFlag(Flags.FLY, false);
-    }
-    @Override public boolean dFlight(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && !p.getFlag(Flags.FLY, true);
+public final class Towny extends NoTowny {
+    @Override
+    public boolean ownTown(Player p) {
+        Resident r;
+        try { r = TownyUniverse.getDataSource().getResident(p.getName()); } catch (NotRegisteredException e) { return false; }
+        if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock()))
+            try { if (r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) return true;
+            } catch (NotRegisteredException e) { e.printStackTrace(); }
+        return false;
     }
 }
