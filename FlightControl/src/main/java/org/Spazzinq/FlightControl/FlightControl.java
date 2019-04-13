@@ -26,7 +26,6 @@ package org.Spazzinq.FlightControl;
 
 import com.earth2me.essentials.Essentials;
 import net.minelink.ctplus.CombatTagPlus;
-import org.Spazzinq.FlightControl.Config.Config;
 import org.Spazzinq.FlightControl.Hooks.Combat.AntiLogging;
 import org.Spazzinq.FlightControl.Hooks.Combat.Combat;
 import org.Spazzinq.FlightControl.Hooks.Combat.LogX;
@@ -37,6 +36,8 @@ import org.Spazzinq.FlightControl.Hooks.Factions.UUIDSavage;
 import org.Spazzinq.FlightControl.Hooks.Plot.NewSquared;
 import org.Spazzinq.FlightControl.Hooks.Plot.OldSquared;
 import org.Spazzinq.FlightControl.Hooks.Plot.Plot;
+import org.Spazzinq.FlightControl.Hooks.Towny.BaseTowny;
+import org.Spazzinq.FlightControl.Hooks.Towny.Towny;
 import org.Spazzinq.FlightControl.Hooks.Vanish.Ess;
 import org.Spazzinq.FlightControl.Hooks.Vanish.PremiumSuper;
 import org.Spazzinq.FlightControl.Hooks.Vanish.Vanish;
@@ -46,14 +47,15 @@ import org.Spazzinq.FlightControl.Multiversion.v13.Particles13;
 import org.Spazzinq.FlightControl.Multiversion.v13.Regions13;
 import org.Spazzinq.FlightControl.Multiversion.v8.Particles8;
 import org.Spazzinq.FlightControl.Multiversion.v8.Regions8;
-import org.Spazzinq.FlightControl.Object.Category;
-import org.Spazzinq.FlightControl.Object.Eval;
-import org.Spazzinq.FlightControl.Object.Sound;
+import org.Spazzinq.FlightControl.Objects.Category;
+import org.Spazzinq.FlightControl.Objects.Eval;
+import org.Spazzinq.FlightControl.Objects.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.*;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -62,32 +64,43 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
-    private Config c;
-    private PluginManager pm = Bukkit.getPluginManager();
-    private boolean is13 = getServer().getVersion().contains("1.13");
+    public Config c;
+    PluginManager pm = Bukkit.getPluginManager();
+
+    // Msg when command enabled
     private ArrayList<Player> notif = new ArrayList<>();
     ArrayList<Player> fall = new ArrayList<>();
 
     private Combat combat = new Combat();
+    private BaseTowny towny = new BaseTowny();
     private Plot plot;
-    public Regions regions;
-    public Factions fac;
-    public Particles particles = is13 ? new Particles13() : new Particles8();
+    Regions regions;
+    Factions fac;
+    Particles particles;
     Vanish vanish = new Vanish();
 
 
 	public void onEnable() {
-        getCommand("flightcontrol").setTabCompleter((commandSender, command, s, strings) ->
-                new ArrayList<>(Arrays.asList("update", "actionbar", "combat", "falldamage", "trails", "vanishbypass", "clean", "command")));
+	    getCommand("flightcontrol").setExecutor(new CMD(this));
+	    // Anonymous toggletrail class
+	    getCommand("toggletrail").setExecutor((s, cmd, label, args) -> {
+            if (s instanceof Player) {
+                String uuid = ((Player) s).getUniqueId().toString();
+                if (Config.trailPrefs.contains(uuid)) { Config.trailPrefs.remove(uuid); msg(s, Config.eTrail, Config.actionBar); }
+                else { Config.trailPrefs.add(uuid); msg(s, Config.dTrail, Config.actionBar); }
+            } else getLogger().info("Only players can use this command (the console isn't a player!)");
+            return true;
+        });
 
-        // oml if you initialize on declaration it doesn't wait for the softdepends first...
+        boolean is13 = getServer().getVersion().contains("1.13");
+        // Remember, if you initialize on declaration it doesn't wait for the softdepends first...
         plot = pm.isPluginEnabled("PlotSquared") ? (is13 ? new NewSquared() : new OldSquared()) : new Plot();
         regions = pm.isPluginEnabled("WorldGuard") ? (is13 ? new Regions13() : new Regions8()) : new Regions();
         fac = pm.isPluginEnabled("Factions") ? (pm.isPluginEnabled("MassiveCore") ? new Massive() : new UUIDSavage()) : new Factions();
+        particles = is13 ? new Particles13() : (getServer().getVersion().contains("Spigot") ? new Particles8() : null);
 
         if (pm.isPluginEnabled("CombatLogX")) combat = new LogX();
         else if (pm.isPluginEnabled("CombatTagPlus")) combat = new TagPlus(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
@@ -95,6 +108,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         if (pm.isPluginEnabled("PremiumVanish") || pm.isPluginEnabled("SuperVanish")) vanish = new PremiumSuper();
         else if (pm.isPluginEnabled("Essentials")) vanish = new Ess((Essentials) pm.getPlugin("Essentials"));
 
+        if (pm.isPluginEnabled("Towny")) towny = new Towny();
+
+        // Load classes
 	    c = new Config(this); new Listener(this); new Actionbar(this); new Update(getDescription().getVersion());
 	    flyCommand();
 
@@ -105,198 +121,70 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     }
 	public void onDisable() { c.saveTrails(); }
 
-    public boolean onCommand(CommandSender s, org.bukkit.command.Command cmd, String label, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("flightcontrol")) {
-            if (s instanceof ConsoleCommandSender || s.hasPermission("flightcontrol.admin")) {
-                if (args.length == 1) {
-                    if (args[0].equalsIgnoreCase("reload")) {
-                        c.reloadConfig(); msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!"); }
-                    else if (args[0].equalsIgnoreCase("update")) if (Update.exists()) {
-                        if (!Update.dled) { Update.dl(); if (pm.isPluginEnabled("Plugman")) {
-                            msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (you may need to reset the configuration)! Welcome to FlightControl " + Update.newVer() + " :D");
-                            getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload FlightControl");
-                        } else msg(s, "&a&lFlightControl &7» &aUpdate downloaded. Restart (or reload) the server to apply the update (you may need to reset the plugin config).", false); }
-                        else msg(s, "&a&lFlightControl &7» &aThe update to version " + Update.newVer() + " has already been downloaded. Please restart (or reload) the server to apply the update.", false);
-                    } else msg(s, "&a&lFlightControl &7» &aNo updates found.");
-                    else if (args[0].equalsIgnoreCase("combat")) {
-                        c.c.set("settings.disable_flight_in_combat", Config.useCombat = !Config.useCombat);
-                        toggleOption(s, Config.useCombat, "Combat Disabling");
-                    }
-                    else if (args[0].equalsIgnoreCase("falldamage")) {
-                        c.c.set("settings.prevent_fall_damage", Config.cancelFall = !Config.cancelFall);
-                        toggleOption(s, Config.cancelFall, "Prevent Fall Damage");
-                    }
-                    else if (args[0].equalsIgnoreCase("trails")) {
-                        c.c.set("trail.enabled", Config.trail = !Config.trail);
-                        toggleOption(s, Config.trail, "Trails");
-                    }
-                    else if (args[0].equalsIgnoreCase("vanishbypass")) {
-                        c.c.set("settings.vanish_bypass", Config.vanishBypass = !Config.vanishBypass);
-                        toggleOption(s, Config.vanishBypass, "Vanish Bypass");
-                    }
-                    else if (args[0].equalsIgnoreCase("actionbar")) {
-                        c.c.set("messages.actionbar", Config.actionBar = !Config.actionBar);
-                        toggleOption(s, Config.actionBar, "Actionbar Notifications");
-                    }
-                    else if (args[0].equalsIgnoreCase("command")) {
-                        c.c.set("settings.command", Config.command = !Config.command);
-                        toggleOption(s, Config.command, "Command"); flyCommand();
-                    }
-                    else if (args[0].equalsIgnoreCase("clean")) { c.save(false); msg(s, "&a&lFlightControl &7» &aConfiguration cleaned!"); }
-                    else if (args[0].equalsIgnoreCase("support")) {
-                        toggleOption(s, Config.support = !Config.support, "Live Support");
-                        Player spazzinq = getServer().getPlayer("Spazzinq");
-                        if (Config.support) {
-                            msg(s, "&e&lFlightControl &eWarning &7» &fLive support enables Spazzinq to check debug information on why flight is disabled. " +
-                                    "You can disable support at any time by repeating the command, and the access only lasts until you restart FlightControl/the server.");
-                            if (spazzinq != null) if (spazzinq.isOnline()) msg(spazzinq, "&c&lFlightControl &7» &c" + s.getName() + " has requested support.");
-                        }
-                    }
-                    else if (args[0].equalsIgnoreCase("debug"))
-                        if (s instanceof Player) debug((Player) s); else getLogger().info("Only players can use this command (it's information based on the player's location)");
-                    else sendHelp(s);
-                } else sendHelp(s);
-            } else if (args.length == 1 && args[0].equalsIgnoreCase("debug") && s instanceof Player && s.getName().equals("Spazzinq")) {
-                if (Config.support) debug((Player) s);
-                else msg(s, "&c&lFlightControl &7» &cSorry bud, you don't have permission to view debug information :I");
-            }
-            else msg(s, Config.permDenied);
-        } else if (cmd.getName().equalsIgnoreCase("fly")) {
-            if (s instanceof Player)
-                if (s.hasPermission("essentials.fly") || s.hasPermission("flightcontrol.fly")) {
-                    Player p = (Player) s;
-                    if (p.getAllowFlight()) { disableFlight(p); notif.add(p); }
-                    else checkCMD(p);
-                } else msg(s, Config.permDenied);
-            else getLogger().info("Only players can use this command (the console can't fly, can it?)");
-        } else if (cmd.getName().equalsIgnoreCase("toggletrail")) {
-            if (s instanceof Player) {
-                String uuid = ((Player) s).getUniqueId().toString();
-                boolean o = Config.trailPrefs.contains(uuid);
-                if (o) {
-                    Config.trailPrefs.remove(uuid);
-                    msg(s, Config.eTrail, Config.actionBar);
-                } else {
-                    Config.trailPrefs.add(uuid);
-                    msg(s, Config.dTrail, Config.actionBar);
-                }
-            } else getLogger().info("Only players can use this command (the console isn't a player!)");
-        }
-        return true;
-    }
-
-    private void checkCMD(Player p) { check(p, p.getLocation(), true); }
-    void check(Player p) { check(p, p.getLocation(), false); }
-    void check(Player p, Location l, boolean cmd) {
+    void check(Player p) { check(p, p.getLocation()); }
+    void check(Player p, Location l) {
         if (!p.hasPermission("flightcontrol.bypass") && !(vanish.vanished(p) && Config.vanishBypass) && p.getGameMode() != GameMode.SPECTATOR) {
-            String world = l.getWorld().getName();
-            String region = regions.region(l);
-            Eval categories = evalCategories(p), worlds = new Eval(Config.worldBL, Config.worlds.contains(world)),
-                    regions = new Eval(Config.regionBL, Config.regions.containsKey(world) && Config.regions.get(world).contains(region));
-            boolean enable = categories.enable() || plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
-                    || p.hasPermission("flightcontrol.flyall")
-                    || p.hasPermission("flightcontrol.fly." + world)
-                    || region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)
-                    || worlds.enable() || regions.enable(),
-                    disable = combat.tagged(p) || categories.disable()
-                            || plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
-                            || p.hasPermission("flightcontrol.nofly." + world)
-                            || region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)
-                            || worlds.disable() || regions.disable();
+            Eval eval = eval(p, l); boolean enable = eval.enable(), disable = eval.disable();
+
             if (p.getAllowFlight()) { if (disable || !enable) disableFlight(p); }
-            else {
-                // TODO Better command solution
-                if (enable && !disable) canEnable(p, cmd);
-                else if (cmd) cannotEnable(p);
-            }
-        } else if (!p.getAllowFlight()) canEnable(p, cmd);
+            else if (enable && !disable) canEnable(p);
+        } else if (!p.getAllowFlight()) canEnable(p);
+    }
+    private Eval eval(Player p, Location l) {
+        String world = l.getWorld().getName();
+        String region = regions.region(l);
+        Eval categories = evalCategories(p), worlds = new Eval(Config.worldBL, Config.worlds.contains(world)),
+                regions = new Eval(Config.regionBL, Config.regions.containsKey(world) && Config.regions.get(world).contains(region));
+        boolean enable = categories.enable() || plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
+                || p.hasPermission("flightcontrol.flyall")
+                || p.hasPermission("flightcontrol.fly." + world)
+                || region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)
+                || worlds.enable() || regions.enable()
+                || (Config.ownTown || p.hasPermission("flightcontrol.owntown")) && towny.ownTown(p) && (!Config.townyWar || !towny.wartime()),
+                disable = combat.tagged(p) || categories.disable()
+                        || plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
+                        || p.hasPermission("flightcontrol.nofly." + world)
+                        || region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)
+                        || worlds.disable() || regions.disable();
+        return new Eval(disable, enable, false);
     }
 
-    private void debug(Player p) {
-        Location l = p.getLocation();
-        String world = l.getWorld().getName();
+    void debug(Player p) {
+        Location l = p.getLocation(); String world = l.getWorld().getName();
         String region = regions.region(l);
         ArrayList<Category> cats = categories(p);
         Eval categories = evalCategories(p), worlds = new Eval(Config.worldBL, Config.worlds.contains(world)),
                 regions = new Eval(Config.regionBL, Config.regions.containsKey(world) && Config.regions.get(world).contains(region));
-        msg(p, (Config.fac && (cats != null) ? cats + "\n \n" : "") + world + "." + region + "\n" + Config.regions  + "\n \n&a&lEnable\n" +
-                (Config.fac ? "&aFC &7» &f" + categories.enable() + "\n" : "") +
-                "&aAll &7» &f" + p.hasPermission("flightcontrol.flyall") + "\n" +
-                "&aPlot &7» &f" + plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) + "\n" +
-                "&aPWorld &7» &f" + p.hasPermission("flightcontrol.fly." + world) + "\n" +
-                "&aPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)) + "\n" +
-                "&aCWorld &7» &f" + worlds.enable() + "\n" +
-                "&aCRegion &7» &f" + regions.enable() + "\n \n" +
-                "&c&lDisable\n" +
-                (Config.fac ? "&cFC &7» &f" + categories.disable() + "\n" : "") +
-                "&cCombat &7» &f" + combat.tagged(p) + "\n" +
-                "&cPlot &7» &f" + plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) + "\n" +
-                "&cPWorld &7» &f" + p.hasPermission("flightcontrol.nofly." + world) + "\n" +
-                "&cPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)) + "\n" +
-                "&cCWorld &7» &f" + worlds.disable() + "\n" +
-                "&cCRegion &7» &f" + regions.disable());
+        msg(p, (Config.fac && (cats != null) ? cats + "\n \n" : "") + world + "." + region + "\n" + Config.regions  + "\n \n&a&lEnable" +
+                (Config.fac ? "\n&aFC &7» &f" + categories.enable() : "") +
+                "\n&aAll &7» &f" + p.hasPermission("flightcontrol.flyall") +
+                "\n&aPlot &7» &f" + plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) +
+                "\n&aPWorld &7» &f" + p.hasPermission("flightcontrol.fly." + world) +
+                "\n&aPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)) +
+                "\n&aPTowny &7» &f" + (p.hasPermission("flightcontrol.owntown") && towny.ownTown(p) && (!Config.townyWar || !towny.wartime())) +
+                "\n&aCWorld &7» &f" + worlds.enable() +
+                "\n&aCRegion &7» &f" + regions.enable() +
+                "\n&aCTowny &7» &f" + (Config.ownTown && towny.ownTown(p) && (!Config.townyWar || !towny.wartime())) +
+                "\n \n&c&lDisable" +
+                (Config.fac ? "\n&cFC &7» &f" + categories.disable() : "") +
+                "\n&cCombat &7» &f" + combat.tagged(p) +
+                "\n&cPlot &7» &f" + plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) +
+                "\n&cPWorld &7» &f" + p.hasPermission("flightcontrol.nofly." + world) +
+                "\n&cPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)) +
+                "\n&cCWorld &7» &f" + worlds.disable() +
+                "\n&cCRegion &7» &f" + regions.disable());
     }
 
-    private Eval evalCategories(Player p) {
-	    ArrayList<Category> cats = categories(p);
-	    boolean disable = false, enable = false;
-	    if (cats != null) for (Category c : cats) {
-	        boolean cat = fac.rel(p, c);
-            if (c.blacklist && cat) disable = true; else if (c.blacklist || cat) enable = true;
-        }
-	    return new Eval(disable, enable, false);
-    }
-
-    private ArrayList<Category> categories(Player p) {
-	    ArrayList<Category> c = new ArrayList<>();
-        if (Config.fac) {
-            for (Map.Entry<String, Category> entry : Config.categories.entrySet()) if (p.hasPermission("flightcontrol.factions." + entry.getKey())) c.add(entry.getValue());
-            return c;
-        } return null;
-    }
-
-    private void toggleOption(CommandSender s, Boolean o, String prefix) {
-        msg(s, (prefix.equals("Trail") ? "&a&l" : "&a&lFlightControl &a") + prefix + " &7» "
-                + (o ? "&aEnabled" : "&cDisabled"));
-        if (!prefix.equals("Live Support")) c.save(true);
-    }
-
-    private void sendHelp(CommandSender s) {
-        msg(s, " \n&a&lFlightControl &f" + getDescription().getVersion() + "\n" +
-                "&aBy &fSpazzinq\n " +
-                "\n&a/fc &7» &fHelp\n" +
-                "&a/fc update &7» &fUpdate FlightControl\n" +
-                "&a/fc actionbar &7» &fSend notifications through action bar\n" +
-                "&a/fc combat &7» &fToggle automatic combat disabling\n" +
-                "&a/fc falldamage &7» &fToggle fall damage prevention\n" +
-                "&a/fc trails &7» &fToggle trails for the server\n" +
-                "&a/fc vanishbypass &7» &fToggle vanish bypass\n" +
-                "&a/fc clean &7» &fRemove instructions in config (ADVANCED users)\n" +
-                "&a/fc command &7» &fUse /fly instead of automatic flight\n" +
-                "\n&a/tt &7» &fPersonal trail toggle");
-    }
-
-    private void msg(CommandSender s, String msg) { msg(s, msg, false); }
-    private void msg(CommandSender s, String msg, boolean actionBar) {
-        if (msg != null && !msg.isEmpty()) {
-            if (s instanceof ConsoleCommandSender) msg = msg.replaceAll("FlightControl &7» ", "[FlightControl] ").replaceAll("»", "-");
-            msg = ChatColor.translateAlternateColorCodes('&', msg);
-            if (actionBar && s instanceof Player) Actionbar.send((Player) s, msg);
-            else s.sendMessage(msg);
-        }
-    }
-
-    private void canEnable(Player p, boolean cmd) {
-        if (!Config.command || cmd) enableFlight(p);
+    private void canEnable(Player p) {
+	    if (!Config.command) enableFlight(p);
         else if (!notif.contains(p)) { notif.add(p); Sound.play(p, Config.cSound); msg(p, Config.cFlight, Config.actionBar); }
     }
     private void cannotEnable(Player p) { Sound.play(p, Config.nSound); msg(p, Config.nFlight, Config.actionBar); }
     private void enableFlight(Player p) {
         p.setAllowFlight(true);
-        Sound.play(p, Config.eSound);
+        if (!Config.everyEnable) Sound.play(p, Config.eSound);
         msg(p, Config.eFlight, Config.actionBar);
     }
-
     private void disableFlight(Player p) {
         if (Config.command) notif.remove(p);
         if (Config.cancelFall && p.isFlying()) { fall.add(p);
@@ -307,7 +195,36 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         msg(p, Config.dFlight, Config.actionBar);
     }
 
-    private void flyCommand() {
+    static void msg(CommandSender s, String msg) { msg(s, msg, false); }
+    static void msg(CommandSender s, String msg, boolean actionBar) {
+        if (msg != null && !msg.isEmpty()) {
+            if (s instanceof ConsoleCommandSender) msg = msg.replaceAll("FlightControl &7» ", "[FlightControl] ").replaceAll("»", "-");
+            msg = ChatColor.translateAlternateColorCodes('&', msg);
+            if (actionBar && s instanceof Player) Actionbar.send((Player) s, msg);
+            else s.sendMessage(msg);
+        }
+    }
+
+    private Eval evalCategories(Player p) {
+        ArrayList<Category> cats = categories(p);
+        boolean disable = false, enable = false;
+        if (cats != null) for (Category c : cats) {
+            boolean cat = fac.rel(p, c);
+            if (c.blacklist && cat) disable = true; else if (c.blacklist || cat) enable = true;
+        }
+        return new Eval(disable, enable, false);
+    }
+
+    private ArrayList<Category> categories(Player p) {
+        ArrayList<Category> c = new ArrayList<>();
+        if (Config.fac) {
+            for (Map.Entry<String, Category> entry : Config.categories.entrySet())
+                if (p.hasPermission("flightcontrol.factions." + entry.getKey())) c.add(entry.getValue());
+            return c;
+        } return null;
+    }
+
+    void flyCommand() {
         try {
             Field cmdMap = Bukkit.getServer().getClass().getDeclaredField("commandMap"), knownCMDS = SimpleCommandMap.class.getDeclaredField("knownCommands");
             Constructor<PluginCommand> plCMD = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
@@ -321,7 +238,17 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 map.register(plName, fly);
                 kCMDMap.put(plName.toLowerCase() + ":fly", fly);
                 kCMDMap.put("fly", fly);
-                fly.setExecutor(this);
+                // Anonymous fly class
+                fly.setExecutor((s, cmd, label, args) -> {
+                    if (s instanceof Player)
+                        if (s.hasPermission("essentials.fly") || s.hasPermission("flightcontrol.fly")) {
+                            Player p = (Player) s;
+                            if (p.getAllowFlight()) { disableFlight(p); notif.add(p); }
+                            else { Eval eval = eval(p, p.getLocation()); if (eval.enable() && !eval.disable()) enableFlight(p); else cannotEnable(p); }
+                        } else msg(s, Config.permDenied);
+                    else getLogger().info("Only players can use this command (the console can't fly, can it?)");
+                    return true;
+                });
             } else if (getCommand("fly") != null && getCommand("fly").getPlugin() == this) {
                 kCMDMap.remove(plName.toLowerCase() + ":fly");
                 kCMDMap.remove("fly");
@@ -332,4 +259,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             }
         } catch (Exception e) { e.printStackTrace(); }
     }
+
+    @Override public FileConfiguration getConfig() { return c.c; }
 }

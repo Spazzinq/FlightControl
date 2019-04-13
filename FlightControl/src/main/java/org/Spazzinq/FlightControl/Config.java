@@ -25,6 +25,9 @@
 package org.Spazzinq.FlightControl;
 
 import org.Spazzinq.FlightControl.Hooks.Factions.Factions;
+import org.Spazzinq.FlightControl.Objects.Category;
+import org.Spazzinq.FlightControl.Objects.CommentedConfig;
+import org.Spazzinq.FlightControl.Objects.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -35,49 +38,59 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-class Config {
+final class Config {
 	private FlightControl pl;
-	private FileConfiguration c;
+	CommentedConfig c;
+    private File f;
     private static PluginManager pm;
     private static File dTrailF;
 	private static FileConfiguration dTrailC;
 
-	static boolean isSpigot, command, support, worldBL, regionBL, fac,
-            useCombat, cancelFall, vanishBypass, trail, actionBar;
+	// TODO get rid of this --------------------------------------vvv
+	static boolean command, support, worldBL, regionBL, fac,
+            useCombat, ownTown, townyWar, cancelFall,
+            vanishBypass, trail, actionBar, everyEnable;
 	static Sound eSound, dSound, cSound, nSound;
 	static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, permDenied;
-//	static double abLength;
     static HashSet<String> worlds, trailPrefs;
-	static HashMap<String, List<String>> regions;
+    static HashMap<String, List<String>> regions;
     static HashMap<String, Category> categories;
 
 	Config(FlightControl i) {
         pl = i;
         pm = pl.getServer().getPluginManager();
-        isSpigot = pl.getServer().getVersion().contains("Spigot");
         dTrailF = new File(pl.getDataFolder(), "disabled_trail.yml");
+        f = new File(pl.getDataFolder(), "config.yml");
 
         reloadConfig();
+        updateConfig();
+        try {
+            if (!c.comments().equals(new CommentedConfig().loadComments(new FileInputStream(f)))) save();
+        } catch (IOException e) { e.printStackTrace(); }
     }
 
 	void reloadConfig() {
-        pl.saveDefaultConfig();
-        pl.reloadConfig();
-        c = pl.getConfig();
+	    pl.saveDefaultConfig();
+        try { c = new CommentedConfig(f, pl.getResource("config.yml")); } catch (Exception e) { e.printStackTrace(); }
 
-        command = c.getBoolean("settings.command"); pl.flyCommand();
+        // TODO Updates comments from old config?
+        // TODO Need to compare to prevent constant config reload on NP++?
+
+        command = c.getBoolean("settings.command");
         worldBL = c.isList("worlds.disable");
         regionBL = c.isConfigurationSection("regions.disable");
         fac = !Factions.class.equals(pl.fac.getClass());
 
         useCombat = c.getBoolean("settings.disable_flight_in_combat");
+        ownTown = c.getBoolean("towny.enable_own_town");
+        townyWar = c.getBoolean("towny.disable_during_war");
         cancelFall = c.getBoolean("settings.prevent_fall_damage");
         vanishBypass = c.getBoolean("settings.vanish_bypass");
         actionBar = c.getBoolean("messages.actionbar");
-//        abLength = c.getDouble("messages.actionbar.duration") * 20;
         dFlight = c.getString("messages.flight.disable");
         dFlight = c.getString("messages.flight.disable");
         eFlight = c.getString("messages.flight.enable");
@@ -87,12 +100,33 @@ class Config {
         eTrail = c.getString("messages.trail.enable");
         permDenied = c.getString("messages.permission_denied");
         loadWorlds(); loadSounds(); loadTrail(); loadTrailPrefs();
+        regions = new HashMap<>();
         if (pm.isPluginEnabled("WorldGuard")) loadRegions();
         if (pm.isPluginEnabled("Factions")) loadCategories();
         for (World w : Bukkit.getWorlds()) { String name = w.getName(); defaultPerms(name); for (String rg : pl.regions.regions(w)) defaultPerms(name + "." + rg); }
     }
 
-	static void defaultPerms(String suffix) {
+    private void updateConfig() {
+	    addDefault("settings");
+	    addDefault("worlds");
+	    addDefault("regions");
+	    addDefault("factions");
+	    addDefault("towny");
+	    if (!c.isConfigurationSection("towny")) {
+            c.addDefault("towny.enable_own_town", false);
+            c.addDefault("towny.disable_during_war", false);
+        }
+	    addDefault("trail");
+	    addDefault("sounds");
+	    if (!c.isBoolean("sounds.every_enable")) c.addDefault("sounds.every_enable",  false);
+	    addDefault("messages");
+
+        c.options().copyDefaults(true);
+    }
+
+    private void addDefault(String cs) { if (c.isConfigurationSection(cs)) c.addDefault(cs, ""); }
+
+    static void defaultPerms(String suffix) {
         if (pm.getPermission("flightcontrol.fly." + suffix) == null)
             pm.addPermission(new Permission("flightcontrol.fly." + suffix, PermissionDefault.FALSE));
         if (pm.getPermission("flightcontrol.nofly." + suffix) == null)
@@ -124,7 +158,6 @@ class Config {
     }
 
     private void loadRegions() {
-        regions = new HashMap<>();
         ConfigurationSection regionsCS = load(c,"regions");
         if (regionsCS != null) addRegions(regionsCS.getConfigurationSection(Config.regionBL ? "disable" : "enable"));
     }
@@ -144,14 +177,17 @@ class Config {
 	}
 
     private void loadSounds() {
-	    String e = c.getString("sounds.enable.sound").toUpperCase().replaceAll("\\.", "_"),
-                d = c.getString("sounds.disable.sound").toUpperCase().replaceAll("\\.", "_"),
-                cE = c.getString("sounds.can_enable.sound").toUpperCase().replaceAll("\\.", "_"),
-                n = c.getString("sounds.cannot_enable.sound").toUpperCase().replaceAll("\\.", "_");
-        if (Sound.is(e)) eSound = new Sound(e, (float) c.getDouble("sounds.enable.volume"), (float) c.getDouble("sounds.enable.pitch"));
-        if (Sound.is(d)) dSound = new Sound(d, (float) c.getDouble("sounds.disable.volume"), (float) c.getDouble("sounds.disable.pitch"));
-        if (Sound.is(cE)) cSound = new Sound(cE, (float) c.getDouble("sounds.can_enable.volume"), (float) c.getDouble("sounds.can_enable.pitch"));
-        if (Sound.is(n)) nSound = new Sound(n, (float) c.getDouble("sounds.cannot_enable.volume"), (float) c.getDouble("sounds.cannot_enable.pitch"));
+        everyEnable = c.getBoolean("sounds.every_enable");
+	    eSound = getSound("sounds.enable");
+	    dSound = getSound("sounds.disable");
+	    cSound = getSound("sounds.can_enable");
+	    nSound = getSound("sounds.cannot_enable");
+    }
+
+    private Sound getSound(String key) {
+	    String s = c.getString(key + ".sound").toUpperCase().replaceAll("\\.", "_");
+	    if (Sound.is(s)) return new Sound(s, (float) c.getDouble(key + ".volume"), (float) c.getDouble(key + ".pitch"));
+	    return null;
     }
 
     private void loadTrail() {
@@ -205,10 +241,12 @@ class Config {
 	}
 
     // Saves personal trail preferences
-	static void save() {
+    void saveTrails() {
 	    if (dTrailC != null) {
             dTrailC.set("disabled_trail", (trailPrefs != null && !trailPrefs.isEmpty()) ? trailPrefs : null);
             try { dTrailC.save(dTrailF); } catch (IOException e) { e.printStackTrace(); }
         }
     }
+
+    void save() { try { c.save(f); } catch (IOException e) { e.printStackTrace(); } }
 }

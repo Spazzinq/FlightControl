@@ -26,18 +26,15 @@ package org.Spazzinq.FlightControl.Multiversion.v8;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 public class Particles8 implements org.Spazzinq.FlightControl.Multiversion.Particles {
     private Effect e = Effect.CLOUD;
-    private float r = 0, g = 0, b = 0, speed = 0;
+    private float r = 0, g = 0, b = 0, speed = 0F;
     private int amount = 4, data = 0;
 
-    public void play(World w, Player p, Location to, Location from) {
-        p.spigot().playEffect(to, e, 0, data, r, g, b, speed, amount, 0);
-        p.getWorld().spigot().playEffect(from.clone().subtract(to.clone().subtract(from)), e, 0, data, r, g, b, speed, amount, 160);
-
+    public void play(Location l) {
+        //                    playEffect(to, e, 0, data, r, g, b, speed, amount, 0);
+        l.getWorld().spigot().playEffect(l, e, 0, data, r, g, b, speed, amount, 160);
     }
     public void setParticle(String s) {
         try { Effect.valueOf(s); } catch (Exception e) { return; }
@@ -45,5 +42,5 @@ public class Particles8 implements org.Spazzinq.FlightControl.Multiversion.Parti
         if (e == Effect.COLOURED_DUST) { speed = 1; data = 1; } else { speed = 0; data = 0; }
     }
     public void setAmount(int amount) { this.amount = amount; }
-    public void setRBG(int r, int g, int b) { if (!(r == 0 && g == 0 && b == 0)) { this.r = (r / 255F) - 1; this.g = g / 255F; this.b = b / 255F; } }
+    public void setRBG(int r, int g, int b) { if ((r == 0 && g == 0 && b == 0)) { this.r=0;this.g=0;this.b=0; } else { this.r = (r / 255F) - 1; this.g = g / 255F; this.b = b / 255F; } }
 }

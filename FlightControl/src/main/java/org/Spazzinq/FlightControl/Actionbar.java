@@ -8,13 +8,10 @@ package org.Spazzinq.FlightControl;
 import org.bukkit.entity.Player;
 
 class Actionbar {
-//    private static FlightControl pl;
     private static String nms;
-//    private static ArrayList<Player> sending = new ArrayList<>();
     private static boolean useOldMethods = false;
 
     Actionbar(FlightControl pl) {
-//        Actionbar.pl = pl;
         nms = pl.getServer().getClass().getPackage().getName();
         nms = nms.substring(nms.lastIndexOf(".") + 1);
         // 1_7 may work with protocol hack

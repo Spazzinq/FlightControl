@@ -24,20 +24,9 @@
 
 package org.Spazzinq.FlightControl.Hooks.Towny;
 
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
 import org.bukkit.entity.Player;
 
-public final class Towny extends BaseTowny {
-    @Override
-    public boolean ownTown(Player p) {
-        Resident r;
-        try { r = TownyUniverse.getDataSource().getResident(p.getName()); } catch (NotRegisteredException e) { return false; }
-        if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock()))
-            try { if (r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) return true;
-            } catch (NotRegisteredException e) { e.printStackTrace(); }
-        return false;
-    }
-    @Override public boolean wartime() { return TownyUniverse.isWarTime(); }
+public class BaseTowny {
+    public boolean ownTown(Player p) { return false; }
+    public boolean wartime() { return false; }
 }

@@ -32,9 +32,9 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-class Update {
-    static private String version, newVersion;
-    static boolean dled;
+final class Update {
+    private static String version, newVersion;
+    private static boolean dled;
 
     Update(String version) { Update.version = version; }
 
@@ -45,7 +45,7 @@ class Update {
         return version.matches("\\d+(.\\d+)?") && newVersion.matches("\\d+(.\\d+)?") ? Double.parseDouble(newVersion) > Double.parseDouble(version) : !version.equals(newVersion);
     }
 
-    static void dl() {
+   static void dl() {
         if (exists()) {
             try {
                 URL website = new URL("https://github.com/Spazzinq/FlightControl/releases/download/" + newVersion + "/FlightControl.jar");
@@ -57,5 +57,6 @@ class Update {
         }
     }
 
+    static boolean dled() { return dled; }
     static String newVer() { return newVersion; }
 }

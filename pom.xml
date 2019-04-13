@@ -33,7 +33,7 @@
     <packaging>pom</packaging>
     <version>${revision}</version>
 
-    <properties><revision>2.6</revision></properties>
+    <properties><revision>2.7</revision></properties>
 
     <modules>
         <module>FlightControl</module>

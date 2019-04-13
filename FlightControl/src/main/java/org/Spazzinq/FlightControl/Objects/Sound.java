@@ -22,22 +22,15 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Towny;
+package org.Spazzinq.FlightControl.Objects;
 
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
 import org.bukkit.entity.Player;
 
-public final class Towny extends BaseTowny {
-    @Override
-    public boolean ownTown(Player p) {
-        Resident r;
-        try { r = TownyUniverse.getDataSource().getResident(p.getName()); } catch (NotRegisteredException e) { return false; }
-        if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock()))
-            try { if (r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) return true;
-            } catch (NotRegisteredException e) { e.printStackTrace(); }
-        return false;
-    }
-    @Override public boolean wartime() { return TownyUniverse.isWarTime(); }
+public class Sound {
+    private org.bukkit.Sound value;
+    private float v, p;
+    public Sound(String name, float v, float p) { value = org.bukkit.Sound.valueOf(name); this.v = v; this.p = p; }
+
+    public static void play(Player p, Sound s) { if (s != null) p.playSound(p.getLocation(), s.value, s.v, s.p); }
+    public static boolean is(String s) { try { org.bukkit.Sound.valueOf(s); return true; } catch (Exception e) { return false; } }
 }

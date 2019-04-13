@@ -22,22 +22,23 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Towny;
+package org.Spazzinq.FlightControl.Objects;
 
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
-import org.bukkit.entity.Player;
+public class Category {
+    public final boolean blacklist, own, ally, truce, neutral, enemy, warzone, safezone, wilderness;
+    private String debug;
 
-public final class Towny extends BaseTowny {
-    @Override
-    public boolean ownTown(Player p) {
-        Resident r;
-        try { r = TownyUniverse.getDataSource().getResident(p.getName()); } catch (NotRegisteredException e) { return false; }
-        if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock()))
-            try { if (r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) return true;
-            } catch (NotRegisteredException e) { e.printStackTrace(); }
-        return false;
+    public Category(boolean blacklist, boolean own, boolean ally, boolean truce, boolean neutral, boolean enemy, boolean warzone, boolean safezone, boolean wilderness) {
+        this.blacklist = blacklist; this.own = own; this.ally = ally; this.truce = truce; this.neutral = neutral; this.enemy = enemy; this.warzone = warzone;
+        this.safezone = safezone; this.wilderness = wilderness;
+
+        debug = blacklist + " [" + (own ? "own," : "") + (ally ? "ally," : "") + (truce ? "truce," : "") + (neutral ? "neutral," : "")
+                + (enemy ? "enemy," : "") + (warzone ? "warzone," : "") + (safezone ? "safezone," : "") + (wilderness ? "wilderness," : "");
+        debug = debug.substring(0, debug.length() - 1) + "]";
     }
-    @Override public boolean wartime() { return TownyUniverse.isWarTime(); }
+
+    @Override
+    public String toString() {
+        return debug;
+    }
 }

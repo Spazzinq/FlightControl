@@ -22,22 +22,16 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Towny;
+package org.Spazzinq.FlightControl.Objects;
 
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
-import org.bukkit.entity.Player;
-
-public final class Towny extends BaseTowny {
-    @Override
-    public boolean ownTown(Player p) {
-        Resident r;
-        try { r = TownyUniverse.getDataSource().getResident(p.getName()); } catch (NotRegisteredException e) { return false; }
-        if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock()))
-            try { if (r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) return true;
-            } catch (NotRegisteredException e) { e.printStackTrace(); }
-        return false;
+public class Eval {
+    private boolean disable, enable;
+    public Eval(boolean blacklist, boolean value) {
+        if (blacklist && value) disable = true; else if (blacklist || value) enable = true;
     }
-    @Override public boolean wartime() { return TownyUniverse.isWarTime(); }
+    public Eval(boolean disable, boolean enable, boolean evaluate) {
+        this(disable, enable); if (!evaluate) { this.disable = disable; this.enable = enable; }
+    }
+    public boolean disable() { return disable; }
+    public boolean enable() { return enable; }
 }

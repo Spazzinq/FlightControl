@@ -30,7 +30,7 @@ import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColl;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
-import org.Spazzinq.FlightControl.Object.Category;
+import org.Spazzinq.FlightControl.Objects.Category;
 import org.bukkit.entity.Player;
 
 public final class Massive extends Factions {

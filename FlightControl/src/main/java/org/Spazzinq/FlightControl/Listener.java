@@ -24,9 +24,7 @@
 
 package org.Spazzinq.FlightControl;
 
-import org.Spazzinq.FlightControl.Config.Config;
-import org.Spazzinq.FlightControl.Multiversion.v13.Particles13;
-import org.Spazzinq.FlightControl.Multiversion.v8.Particles8;
+import org.Spazzinq.FlightControl.Objects.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;
@@ -35,45 +33,74 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 final class Listener implements org.bukkit.event.Listener {
     private FlightControl pl;
-    private boolean particles;
+    private HashMap<Player, BukkitTask> partTasks = new HashMap<>();
 
-	Listener(FlightControl i) {
-	    pl = i; Bukkit.getPluginManager().registerEvents(this, i);
-	    particles = pl.particles instanceof Particles13 || (Config.isSpigot && pl.particles instanceof Particles8);
+	Listener(FlightControl i) { pl = i; Bukkit.getPluginManager().registerEvents(this, i); }
+
+	private void trailCheck(Player p) {
+	    if (pl.particles != null)
+            partTasks.put(p, new BukkitRunnable() {
+                public void run() {
+                    if (Config.trail && !Config.trailPrefs.contains(p.getUniqueId().toString()) && !pl.vanish.vanished(p))
+                        pl.particles.play(p.getLocation());
+                }
+            }.runTaskTimerAsynchronously(pl, 0, 4));
+    }
+    // Fly particles
+	@EventHandler private void onFly(PlayerToggleFlightEvent e) {
+	    Player p = e.getPlayer();
+	    if (e.isFlying()) {
+	        if (Config.everyEnable) Sound.play(p, Config.eSound);
+	        trailCheck(p);
+        }
+	    else {
+            BukkitTask task = partTasks.remove(p);
+            if (task != null) task.cancel();
+        }
+    }
+    @EventHandler private void onGamemode(PlayerGameModeChangeEvent e) {
+	    if (e.getNewGameMode() == GameMode.SPECTATOR) {
+            BukkitTask task = partTasks.remove(e.getPlayer());
+            if (task != null) task.cancel();
+        }
+	    else if (e.getPlayer().isFlying()) trailCheck(e.getPlayer());
 	}
 
-	@EventHandler
-    private void onPlayerDamage(EntityDamageEvent e) {
+	// Check fly status
+	@EventHandler(priority = EventPriority.HIGHEST) private void onMove(PlayerMoveEvent e) {
+		Player p = e.getPlayer();
+		pl.check(p, e.getTo());
+	}
+	@EventHandler private void onLeave(PlayerQuitEvent e) { BukkitTask task = partTasks.remove(e.getPlayer()); if (task != null) task.cancel(); }
+	@EventHandler private void onJoin(PlayerJoinEvent e) {
+	    Player p = e.getPlayer(); pl.check(p);
+        new BukkitRunnable() { public void run() { trailCheck(p); } }.runTaskLater(pl, 2);
+	}
+	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) { new BukkitRunnable() { public void run() { pl.check(e.getPlayer()); } }.runTaskLater(pl, 1);  }
+
+	// Fall damage prevention
+    @EventHandler private void onFallDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL) {
             Player p = (Player) e.getEntity();
             if (pl.fall.contains(p)) { e.setCancelled(true); pl.fall.remove(p); }
         }
-	}
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-    private void onMove(PlayerMoveEvent e) {
-		Player p = e.getPlayer();
-
-		pl.check(p, e.getTo(), false);
-		if (particles && Config.trail && !Config.trailPrefs.contains(p.getUniqueId().toString()) &&
-                e.getFrom().distance(e.getTo()) > 0 && p.isFlying() && p.getGameMode() != GameMode.SPECTATOR && !pl.vanish.vanished(p)) pl.particles.play(p.getWorld(), p, e.getTo(), e.getFrom());
-	}
-
-	@EventHandler private void onJoin(PlayerJoinEvent e) { pl.check(e.getPlayer()); }
-	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) { new BukkitRunnable() { public void run() { pl.check(e.getPlayer()); } }.runTaskLater(pl, 1);  }
+    // On-the-fly permission management
     @EventHandler private void onWorldLoad(WorldLoadEvent e) {
         String w = e.getWorld().getName();
+        // Set default false permission for new world
         Config.defaultPerms(w); for (String rg : pl.regions.regions(e.getWorld())) Config.defaultPerms(w + "." + rg);
 
         ConfigurationSection worldsCS = Config.load(pl.getConfig(),"worlds");
