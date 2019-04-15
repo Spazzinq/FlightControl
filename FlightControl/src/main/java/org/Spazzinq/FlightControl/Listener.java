@@ -85,7 +85,7 @@ final class Listener implements org.bukkit.event.Listener {
 	@EventHandler private void onLeave(PlayerQuitEvent e) { BukkitTask task = partTasks.remove(e.getPlayer()); if (task != null) task.cancel(); }
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
 	    Player p = e.getPlayer(); pl.check(p);
-        new BukkitRunnable() { public void run() { trailCheck(p); } }.runTaskLater(pl, 2);
+	    if (p.isFlying()) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTaskLater(pl, 2);
 	}
 	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) { new BukkitRunnable() { public void run() { pl.check(e.getPlayer()); } }.runTaskLater(pl, 1);  }
 
