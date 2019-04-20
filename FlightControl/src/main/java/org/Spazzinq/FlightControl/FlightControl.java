@@ -56,6 +56,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.*;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -72,7 +73,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
     // Msg when command enabled
     private ArrayList<Player> notif = new ArrayList<>();
-    ArrayList<Player> fall = new ArrayList<>();
+    ArrayList<Entity> fall = new ArrayList<>();
 
     private Combat combat = new Combat();
     private BaseTowny towny = new BaseTowny();
@@ -188,7 +189,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     private void disableFlight(Player p) {
         if (Config.command) notif.remove(p);
         if (Config.cancelFall && p.isFlying()) { fall.add(p);
-            new BukkitRunnable() { public void run() { fall.remove(p); } }.runTaskLater(this, 120); }
+            new BukkitRunnable() { public void run() { fall.remove(p); } }.runTaskLater(this, 300); }
         p.setAllowFlight(false);
         p.setFlying(false);
         Sound.play(p, Config.dSound);

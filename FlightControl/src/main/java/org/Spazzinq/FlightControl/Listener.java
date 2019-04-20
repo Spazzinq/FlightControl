@@ -49,13 +49,13 @@ final class Listener implements org.bukkit.event.Listener {
 	Listener(FlightControl i) { pl = i; Bukkit.getPluginManager().registerEvents(this, i); }
 
 	private void trailCheck(Player p) {
-	    if (pl.particles != null)
+	    if (pl.particles != null && p.getGameMode() != GameMode.SPECTATOR)
             partTasks.put(p, new BukkitRunnable() {
                 public void run() {
                     if (Config.trail && !Config.trailPrefs.contains(p.getUniqueId().toString()) && !pl.vanish.vanished(p))
                         pl.particles.play(p.getLocation());
                 }
-            }.runTaskTimerAsynchronously(pl, 0, 4));
+            }.runTaskTimerAsynchronously(pl, 0, 3));
     }
     // Fly particles
 	@EventHandler private void onFly(PlayerToggleFlightEvent e) {
@@ -63,38 +63,34 @@ final class Listener implements org.bukkit.event.Listener {
 	    if (e.isFlying()) {
 	        if (Config.everyEnable) Sound.play(p, Config.eSound);
 	        trailCheck(p);
-        }
+	    }
 	    else {
-            BukkitTask task = partTasks.remove(p);
+	        BukkitTask task = partTasks.remove(p);
             if (task != null) task.cancel();
         }
     }
-    @EventHandler private void onGamemode(PlayerGameModeChangeEvent e) {
-	    if (e.getNewGameMode() == GameMode.SPECTATOR) {
-            BukkitTask task = partTasks.remove(e.getPlayer());
-            if (task != null) task.cancel();
-        }
-	    else if (e.getPlayer().isFlying()) trailCheck(e.getPlayer());
-	}
 
 	// Check fly status
-	@EventHandler(priority = EventPriority.HIGHEST) private void onMove(PlayerMoveEvent e) {
-		Player p = e.getPlayer();
-		pl.check(p, e.getTo());
-	}
+	@EventHandler(priority = EventPriority.HIGHEST) private void onMove(PlayerMoveEvent e) { pl.check(e.getPlayer(), e.getTo()); }
 	@EventHandler private void onLeave(PlayerQuitEvent e) { BukkitTask task = partTasks.remove(e.getPlayer()); if (task != null) task.cancel(); }
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
 	    Player p = e.getPlayer(); pl.check(p);
-	    if (p.isFlying()) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTaskLater(pl, 2);
+	    if (p.isFlying()) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTask(pl);
 	}
-	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) { new BukkitRunnable() { public void run() { pl.check(e.getPlayer()); } }.runTaskLater(pl, 1);  }
+	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
+        Player p = e.getPlayer();
+	    new BukkitRunnable() { public void run() {
+	        pl.check(p);
+            // TODO Only check fly commands/Move spectator back to trailCheck
+	        if (p.isFlying() && !partTasks.containsKey(p)) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTask(pl);
+	        else if ((!p.isFlying() || p.getGameMode() == GameMode.SPECTATOR) && partTasks.containsKey(p)) { BukkitTask task = partTasks.remove(e.getPlayer()); if (task != null) task.cancel();  }
+	    } }.runTask(pl);
+	}
 
 	// Fall damage prevention
     @EventHandler private void onFallDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL) {
-            Player p = (Player) e.getEntity();
-            if (pl.fall.contains(p)) { e.setCancelled(true); pl.fall.remove(p); }
-        }
+        if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL &&
+            pl.fall.remove(e.getEntity())) e.setCancelled(true);
     }
 
     // On-the-fly permission management

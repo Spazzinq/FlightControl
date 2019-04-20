@@ -37,8 +37,8 @@
 
     <modules>
         <module>FlightControl</module>
+        <module>Multiversion</module>
         <module>v8</module>
         <module>v13</module>
-        <module>Multiversion</module>
     </modules>
 </project>
