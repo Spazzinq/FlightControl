@@ -35,6 +35,7 @@ public class Particles13 implements org.Spazzinq.FlightControl.Multiversion.Part
 
     public void play(Location loc) {
         //                                           amnt    x      y      z
+        //noinspection ConstantConditions
         loc.getWorld().spawnParticle(particle, loc, 1, 0, 0, 0, extra, o);
     }
     public void setParticle(String s) {

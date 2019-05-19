@@ -94,7 +94,7 @@ final class CMD implements CommandExecutor, TabCompleter {
                     if (Config.support) {
                         msg(s, "&e&lFlightControl &eWarning &7» &fLive support enables Spazzinq to check debug information on why flight is disabled. " +
                                 "You can disable support at any time by repeating the command, and the access only lasts until you restart FlightControl/the server.");
-                        if (spazzinq != null) if (spazzinq.isOnline()) msg(spazzinq, "&c&lFlightControl &7» &c" + s.getName() + " has requested support.");
+                        if (spazzinq != null && spazzinq.isOnline()) msg(spazzinq, "&c&lFlightControl &7» &c" + s.getName() + " has requested support.");
                     }
                 }
                 else if (args[0].equalsIgnoreCase("debug"))

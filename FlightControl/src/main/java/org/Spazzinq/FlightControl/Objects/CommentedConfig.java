@@ -36,12 +36,15 @@ import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // Rewritten to ignore Bukkit "headers" in saveToString & loadFromString
 public class CommentedConfig extends YamlConfiguration {
-    private HashMap<String, String> comments;
+    private HashMap<String, String> comments, addSection = new HashMap<>();
+    private HashMap<String, List<String>> addSubsection = new HashMap<>();
     private final Yaml yaml;
 
     public CommentedConfig() {
@@ -53,12 +56,15 @@ public class CommentedConfig extends YamlConfiguration {
     public CommentedConfig(File f, InputStream is) throws IOException, InvalidConfigurationException { this(); load(f); loadComments(is); }
 
     public HashMap<String, String> comments() { return comments; }
+    public void addSection(String relativeKey, String key) { addSection.put(relativeKey, key); }
+    public void addSubsections(String relativeKey, List<String> key) { addSubsection.put(relativeKey, key); }
+    public void addSubsection(String relativeKey, String key) { addSubsection.put(relativeKey, Collections.singletonList(key)); }
 
     public void save(File f) throws IOException {
         if (f != null) {
             //noinspection UnstableApiUsage
             Files.createParentDirs(f);
-            try (FileWriter writer = new FileWriter(f)) { writer.write(insertComments(saveToString())); }
+            try (FileWriter writer = new FileWriter(f)) { writer.write(insertComments(insertSubKeys(insertKeys(saveToString())))); }
         }
     }
 
@@ -76,6 +82,7 @@ public class CommentedConfig extends YamlConfiguration {
     private String insertComments(String config) {
         String[] lines = config.split("\n");
         StringBuilder newConf = new StringBuilder(config);
+        //              config index
         String key = ""; int i = 0, depth = 0;
 
         for (String line : lines) {
@@ -89,8 +96,10 @@ public class CommentedConfig extends YamlConfiguration {
                     // same depth -> "lol.xd" | shallower by 1 -> "lol" | by 2 -> ""
                     // (add key on later)
                     int back = (depth - nDepth) / 2 + 1;
+                    // Back the key down
                     for (int j = 0; j < back; j++) if (!key.isEmpty()) key = key.contains(".") ? key.substring(0, key.lastIndexOf(".")) : "";
                 }
+                // Add the key up
                 key = key.concat((key.isEmpty() ? "" : ".") + localKey);
                 depth = nDepth;
                 // Add comment(s)
@@ -100,11 +109,80 @@ public class CommentedConfig extends YamlConfiguration {
                     c = c.substring(0, c.length() - depth);
                     newConf.insert(newConf.indexOf(line, i), c);
                     // Set location to continue from
-                    i = newConf.indexOf("\n", i + c.length()) + 1;
+                    i += c.length();
                 }
             }
+            i += line.length();
         }
         return newConf.toString() + (comments.getOrDefault("footer", ""));
+    }
+
+    // BEFORE
+    // TODO Fix temporary solution for main keys (Stop copy pasting code)
+    private String insertKeys(String config) {
+        String[] lines = config.split("\n");
+        StringBuilder newConf = new StringBuilder(config);
+        String key = ""; int i = 0, depth = 0;
+
+        for (String line : lines) {
+            if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
+                String localKey = line.replaceAll("\\s+", "").split(":")[0];
+                String spaces = leadSpaces(line); int nDepth = spaces.length();
+
+                if (depth >= nDepth) {
+                    int back = (depth - nDepth) / 2 + 1;
+                    for (int j = 0; j < back; j++) if (!key.isEmpty()) key = key.contains(".") ? key.substring(0, key.lastIndexOf(".")) : "";
+                }
+                key = key.concat((key.isEmpty() ? "" : ".") + localKey);
+                depth = nDepth;
+
+                if (addSection.containsKey(key)) {
+                    String k = spaces + addSection.get(key).replaceAll("\n", "\n" + spaces);
+                    k = k.substring(0, k.length() - depth) + "\n";
+                    // Insert BEFORE
+                    newConf.insert(newConf.indexOf(line, i), k);
+                    i += k.length();
+                }
+
+            }
+            i += line.length();
+        }
+        return newConf.toString();
+    }
+
+    // AFTER
+    private String insertSubKeys(String config) {
+        String[] lines = config.split("\n");
+        StringBuilder newConf = new StringBuilder(config);
+        String key = ""; int i = 0, depth = 0;
+
+        for (String line : lines) {
+            if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
+                String localKey = line.replaceAll("\\s+", "").split(":")[0];
+                String spaces = leadSpaces(line); int nDepth = spaces.length();
+
+                if (depth >= nDepth) {
+                    int back = (depth - nDepth) / 2 + 1;
+                    for (int j = 0; j < back; j++) if (!key.isEmpty()) key = key.contains(".") ? key.substring(0, key.lastIndexOf(".")) : "";
+                }
+                key = key.concat((key.isEmpty() ? "" : ".") + localKey);
+                depth = nDepth;
+
+                int length = 0;
+
+                if (addSubsection.containsKey(key))
+                    for (String section : addSubsection.get(key)) {
+                        String k = spaces + "  " + section.replaceAll("\n", "\n" + spaces + "  ");
+                        k = "\n" + k.substring(0, k.length() - depth);
+                        // Insert AFTER
+                        newConf.insert(newConf.indexOf(line, i) + line.length(), k);
+                        length += k.length();
+                    }
+                i += length;
+            }
+            i += line.length();
+        }
+        return newConf.toString();
     }
 
     // TODO Does this work for comments on the same line as content? (lol: # example)
@@ -136,7 +214,7 @@ public class CommentedConfig extends YamlConfiguration {
     }
     public HashMap<String, String> loadComments(InputStream is) throws IOException { loadComments(strFromIS(is)); return comments; }
     @Override public void load(File f) throws IOException, InvalidConfigurationException { load(new FileInputStream(f)); }
-    @SuppressWarnings("deprecation") @Override public void load(InputStream is) throws InvalidConfigurationException, IOException { loadFromString(strFromIS(is)); }
+    @SuppressWarnings("deprecation") public void load(InputStream is) throws InvalidConfigurationException, IOException { loadFromString(strFromIS(is)); }
 
     @Override public String saveToString() {
         String dump = yaml.dump(getValues(false));

@@ -31,17 +31,14 @@ class Actionbar {
                             iChatBaseComponentClass.cast(chatSerializerClass.getDeclaredMethod("a", String.class).invoke(
                                     chatSerializerClass, "{\"text\": \"" + msg + "\"}")), (byte) 2);
                 } else {
-                    Object chatComponentText = Class.forName("net.minecraft.server." + nms + ".ChatComponentText")
-                            .getConstructor(new Class<?>[]{String.class}).newInstance(msg);
+                    Object chatComponentText = Class.forName("net.minecraft.server." + nms + ".ChatComponentText").getConstructor(new Class<?>[]{String.class}).newInstance(msg);
                     Class<?> iChatBaseComponentClass = Class.forName("net.minecraft.server." + nms + ".IChatBaseComponent");
                     try {
                         Class<?> chatMessageTypeClass = Class.forName("net.minecraft.server." + nms + ".ChatMessageType");
                         Object chatMessageType = null;
                         for (Object obj : chatMessageTypeClass.getEnumConstants()) if (obj.toString().equals("GAME_INFO")) chatMessageType = obj;
-                        packet = packetPlayOutChatClass.getConstructor(new Class<?>[]{iChatBaseComponentClass, chatMessageTypeClass})
-                                .newInstance(chatComponentText, chatMessageType);
-                    } catch (ClassNotFoundException e) { packet = packetPlayOutChatClass.getConstructor(new Class<?>[]{iChatBaseComponentClass, byte.class})
-                            .newInstance(chatComponentText, (byte) 2); }
+                        packet = packetPlayOutChatClass.getConstructor(new Class<?>[]{iChatBaseComponentClass, chatMessageTypeClass}).newInstance(chatComponentText, chatMessageType);
+                    } catch (ClassNotFoundException e) { packet = packetPlayOutChatClass.getConstructor(new Class<?>[]{iChatBaseComponentClass, byte.class}).newInstance(chatComponentText, (byte) 2); }
                 }
                 Object craftPlayerHandle = craftPlayerClass.getDeclaredMethod("getHandle").invoke(craftPlayerClass.cast(p));
                 Object playerConnection = craftPlayerHandle.getClass().getDeclaredField("playerConnection").get(craftPlayerHandle);

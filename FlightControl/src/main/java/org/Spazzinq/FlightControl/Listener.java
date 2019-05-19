@@ -44,7 +44,7 @@ import java.util.List;
 
 final class Listener implements org.bukkit.event.Listener {
     private FlightControl pl;
-    private HashMap<Player, BukkitTask> partTasks = new HashMap<>();
+    private static HashMap<Player, BukkitTask> partTasks = new HashMap<>();
 
 	Listener(FlightControl i) { pl = i; Bukkit.getPluginManager().registerEvents(this, i); }
 
@@ -57,6 +57,12 @@ final class Listener implements org.bukkit.event.Listener {
                 }
             }.runTaskTimerAsynchronously(pl, 0, 3));
     }
+    // TODO Remove trail on disableFlight
+    static void trailRemove(Player p) {
+        BukkitTask task = partTasks.remove(p);
+        if (task != null) task.cancel();
+    }
+
     // Fly particles
 	@EventHandler private void onFly(PlayerToggleFlightEvent e) {
 	    Player p = e.getPlayer();
@@ -64,15 +70,12 @@ final class Listener implements org.bukkit.event.Listener {
 	        if (Config.everyEnable) Sound.play(p, Config.eSound);
 	        trailCheck(p);
 	    }
-	    else {
-	        BukkitTask task = partTasks.remove(p);
-            if (task != null) task.cancel();
-        }
+	    else trailRemove(p);
     }
 
 	// Check fly status
 	@EventHandler(priority = EventPriority.HIGHEST) private void onMove(PlayerMoveEvent e) { pl.check(e.getPlayer(), e.getTo()); }
-	@EventHandler private void onLeave(PlayerQuitEvent e) { BukkitTask task = partTasks.remove(e.getPlayer()); if (task != null) task.cancel(); }
+	@EventHandler private void onLeave(PlayerQuitEvent e) { trailRemove(e.getPlayer()); }
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
 	    Player p = e.getPlayer(); pl.check(p);
 	    if (p.isFlying()) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTask(pl);
@@ -83,7 +86,7 @@ final class Listener implements org.bukkit.event.Listener {
 	        pl.check(p);
             // TODO Only check fly commands/Move spectator back to trailCheck
 	        if (p.isFlying() && !partTasks.containsKey(p)) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTask(pl);
-	        else if ((!p.isFlying() || p.getGameMode() == GameMode.SPECTATOR) && partTasks.containsKey(p)) { BukkitTask task = partTasks.remove(e.getPlayer()); if (task != null) task.cancel();  }
+	        else if ((!p.isFlying() || p.getGameMode() == GameMode.SPECTATOR) && partTasks.containsKey(p)) trailRemove(p);
 	    } }.runTask(pl);
 	}
 

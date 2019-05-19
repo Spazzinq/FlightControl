@@ -25,6 +25,9 @@ permissions:
   flightcontrol.flyall:
     description: Ability to fly in all regions
     default: false
+  flightcontrol.owntown:
+    description: Ability to fly in own town
+    default: false
   flightcontrol.admin:
     description: Access to FlightControl commands
     default: op

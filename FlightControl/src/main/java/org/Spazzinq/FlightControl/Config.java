@@ -50,7 +50,7 @@ final class Config {
     private static File dTrailF;
 	private static FileConfiguration dTrailC;
 
-	// TODO get rid of this --------------------------------------vvv
+	// TODO get rid of this ----------------------------vvv
 	static boolean command, support, worldBL, regionBL, fac,
             useCombat, ownTown, townyWar, cancelFall,
             vanishBypass, trail, actionBar, everyEnable;
@@ -107,24 +107,17 @@ final class Config {
     }
 
     private void updateConfig() {
-	    addDefault("settings");
-	    addDefault("worlds");
-	    addDefault("regions");
-	    addDefault("factions");
-	    addDefault("towny");
-	    if (!c.isConfigurationSection("towny")) {
-            c.addDefault("towny.enable_own_town", false);
-            c.addDefault("towny.disable_during_war", false);
+	    boolean cheanged = false;
+	    if (!c.isConfigurationSection("towny"))  {
+	        c.addSection("trail", "towny:");
+	        c.addSubsections("towny", Arrays.asList("disable_during_war: false", "enable_own_town: false"));
+            cheanged = true;
         }
-	    addDefault("trail");
-	    addDefault("sounds");
-	    if (!c.isBoolean("sounds.every_enable")) c.addDefault("sounds.every_enable",  false);
-	    addDefault("messages");
-
-        c.options().copyDefaults(true);
+	    if (!c.isBoolean("sounds.every_enable")) {
+	        c.addSubsection("sounds","every_enable: false"); cheanged = true;
+        }
+        if (cheanged) save();
     }
-
-    private void addDefault(String cs) { if (c.isConfigurationSection(cs)) c.addDefault(cs, ""); }
 
     static void defaultPerms(String suffix) {
         if (pm.getPermission("flightcontrol.fly." + suffix) == null)

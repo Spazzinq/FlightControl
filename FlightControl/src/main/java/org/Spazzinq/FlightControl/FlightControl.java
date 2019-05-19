@@ -96,12 +96,12 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             return true;
         });
 
-        boolean is13 = getServer().getVersion().contains("1.13");
+        boolean is13 = getServer().getVersion().contains("1.13") || getServer().getVersion().contains("1.14");
         // Remember, if you initialize on declaration it doesn't wait for the softdepends first...
         plot = pm.isPluginEnabled("PlotSquared") ? (is13 ? new NewSquared() : new OldSquared()) : new Plot();
         regions = pm.isPluginEnabled("WorldGuard") ? (is13 ? new Regions13() : new Regions8()) : new Regions();
         fac = pm.isPluginEnabled("Factions") ? (pm.isPluginEnabled("MassiveCore") ? new Massive() : new UUIDSavage()) : new Factions();
-        particles = is13 ? new Particles13() : (getServer().getVersion().contains("Spigot") ? new Particles8() : null);
+        particles = is13 ? new Particles13() : new Particles8();
 
         if (pm.isPluginEnabled("CombatLogX")) combat = new LogX();
         else if (pm.isPluginEnabled("CombatTagPlus")) combat = new TagPlus(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
@@ -131,6 +131,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             else if (enable && !disable) canEnable(p);
         } else if (!p.getAllowFlight()) canEnable(p);
     }
+
     private Eval eval(Player p, Location l) {
         String world = l.getWorld().getName();
         String region = regions.region(l);
@@ -141,7 +142,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 || p.hasPermission("flightcontrol.fly." + world)
                 || region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)
                 || worlds.enable() || regions.enable()
-                || (Config.ownTown || p.hasPermission("flightcontrol.owntown")) && towny.ownTown(p) && (!Config.townyWar || !towny.wartime()),
+                || (Config.ownTown || p.hasPermission("flightcontrol.owntown")) && towny.ownTown(p) && !(Config.townyWar && towny.wartime()),
                 disable = combat.tagged(p) || categories.disable()
                         || plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
                         || p.hasPermission("flightcontrol.nofly." + world)
@@ -192,6 +193,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             new BukkitRunnable() { public void run() { fall.remove(p); } }.runTaskLater(this, 300); }
         p.setAllowFlight(false);
         p.setFlying(false);
+        Listener.trailRemove(p);
         Sound.play(p, Config.dSound);
         msg(p, Config.dFlight, Config.actionBar);
     }
