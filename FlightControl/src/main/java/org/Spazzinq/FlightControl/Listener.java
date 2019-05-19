@@ -57,7 +57,8 @@ final class Listener implements org.bukkit.event.Listener {
                 }
             }.runTaskTimerAsynchronously(pl, 0, 3));
     }
-    // TODO Remove trail on disableFlight
+
+    // TODO Is this static bad code practice?
     static void trailRemove(Player p) {
         BukkitTask task = partTasks.remove(p);
         if (task != null) task.cancel();

@@ -50,6 +50,7 @@ import org.Spazzinq.FlightControl.Multiversion.v8.Regions8;
 import org.Spazzinq.FlightControl.Objects.Category;
 import org.Spazzinq.FlightControl.Objects.Eval;
 import org.Spazzinq.FlightControl.Objects.Sound;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -119,6 +120,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             public void run() { getLogger().info("FlightControl " + Update.newVer() + " is available for update. Perform /fc update to update and " +
                     "visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the changes (that may affect your configuration)."); }
         }.runTaskLater(this, 40);
+
+        new Metrics(this); // bStats
     }
 	public void onDisable() { c.saveTrails(); }
 
