@@ -84,7 +84,6 @@ towny:
   # (this also affects the permission!)
   disable_during_war: false
 
-# The trail is only active while IN MOTION
 # Requires a version/fork of SPIGOT (unless you are using 1.13)
 # Compatible: EssentialsX, PremiumVanish (disables while vanished)
 trail:
