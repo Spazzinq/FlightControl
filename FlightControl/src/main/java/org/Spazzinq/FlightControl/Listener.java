@@ -53,7 +53,7 @@ final class Listener implements org.bukkit.event.Listener {
             partTasks.put(p, new BukkitRunnable() {
                 public void run() {
                     if (Config.trail && !Config.trailPrefs.contains(p.getUniqueId().toString()) && !pl.vanish.vanished(p))
-                        pl.particles.play(p.getLocation());
+                        pl.particles.spawn(p.getLocation());
                 }
             }.runTaskTimerAsynchronously(pl, 0, 3));
     }
@@ -70,8 +70,7 @@ final class Listener implements org.bukkit.event.Listener {
 	    if (e.isFlying()) {
 	        if (Config.everyEnable) Sound.play(p, Config.eSound);
 	        trailCheck(p);
-	    }
-	    else trailRemove(p);
+	    } else trailRemove(p);
     }
 
 	// Check fly status
@@ -79,8 +78,11 @@ final class Listener implements org.bukkit.event.Listener {
 	@EventHandler private void onLeave(PlayerQuitEvent e) { trailRemove(e.getPlayer()); }
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
 	    Player p = e.getPlayer(); pl.check(p);
-	    if (p.isFlying()) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTask(pl);
+	    if (p.isFlying()) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTaskLater(pl, 4);
 	}
+	// Because onMove doesn't trigger right after a TP
+    @EventHandler private void onTP(PlayerTeleportEvent e) { pl.check(e.getPlayer(), e.getTo()); }
+	// Because commands might affect permissions/fly
 	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
 	    new BukkitRunnable() { public void run() {
@@ -90,13 +92,11 @@ final class Listener implements org.bukkit.event.Listener {
 	        else if ((!p.isFlying() || p.getGameMode() == GameMode.SPECTATOR) && partTasks.containsKey(p)) trailRemove(p);
 	    } }.runTask(pl);
 	}
-
 	// Fall damage prevention
     @EventHandler private void onFallDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL &&
             pl.fall.remove(e.getEntity())) e.setCancelled(true);
     }
-
     // On-the-fly permission management
     @EventHandler private void onWorldLoad(WorldLoadEvent e) {
         String w = e.getWorld().getName();

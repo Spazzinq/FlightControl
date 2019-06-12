@@ -34,8 +34,7 @@ import org.Spazzinq.FlightControl.Objects.Category;
 import org.bukkit.entity.Player;
 
 public final class Massive extends Factions {
-    @Override
-    public boolean rel(Player p, Category c) {
+    @Override public boolean rel(Player p, Category c) {
         if (c != null) {
             MPlayer mp = MPlayer.get(p);
             Faction f = BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));

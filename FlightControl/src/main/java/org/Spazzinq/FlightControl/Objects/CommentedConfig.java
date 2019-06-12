@@ -78,6 +78,7 @@ public class CommentedConfig extends YamlConfiguration {
         return out.toString();
     }
 
+    // BEFORE
     // Comments should already have "#" at the beginning
     private String insertComments(String config) {
         String[] lines = config.split("\n");

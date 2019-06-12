@@ -87,7 +87,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
 	public void onEnable() {
 	    getCommand("flightcontrol").setExecutor(new CMD(this));
-	    // Anonymous toggletrail class
+	    // Anonymous command class
 	    getCommand("toggletrail").setExecutor((s, cmd, label, args) -> {
             if (s instanceof Player) {
                 String uuid = ((Player) s).getUniqueId().toString();
@@ -98,6 +98,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         });
 
         boolean is13 = getServer().getVersion().contains("1.13") || getServer().getVersion().contains("1.14");
+
         // Remember, if you initialize on declaration it doesn't wait for the softdepends first...
         plot = pm.isPluginEnabled("PlotSquared") ? (is13 ? new NewSquared() : new OldSquared()) : new Plot();
         regions = pm.isPluginEnabled("WorldGuard") ? (is13 ? new Regions13() : new Regions8()) : new Regions();
@@ -118,7 +119,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
         if (Update.exists()) new BukkitRunnable() {
             public void run() { getLogger().info("FlightControl " + Update.newVer() + " is available for update. Perform /fc update to update and " +
-                    "visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the changes (that may affect your configuration)."); }
+                    "visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the changes. The configuration should automatically update."); }
         }.runTaskLater(this, 40);
 
         new Metrics(this); // bStats
@@ -160,24 +161,28 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         ArrayList<Category> cats = categories(p);
         Eval categories = evalCategories(p), worlds = new Eval(Config.worldBL, Config.worlds.contains(world)),
                 regions = new Eval(Config.regionBL, Config.regions.containsKey(world) && Config.regions.get(world).contains(region));
-        msg(p, (Config.fac && (cats != null) ? cats + "\n \n" : "") + world + "." + region + "\n" + Config.regions  + "\n \n&a&lEnable" +
-                (Config.fac ? "\n&aFC &7» &f" + categories.enable() : "") +
-                "\n&aAll &7» &f" + p.hasPermission("flightcontrol.flyall") +
-                "\n&aPlot &7» &f" + plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) +
-                "\n&aPWorld &7» &f" + p.hasPermission("flightcontrol.fly." + world) +
-                "\n&aPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)) +
-                "\n&aPTowny &7» &f" + (p.hasPermission("flightcontrol.owntown") && towny.ownTown(p) && (!Config.townyWar || !towny.wartime())) +
-                "\n&aCWorld &7» &f" + worlds.enable() +
-                "\n&aCRegion &7» &f" + regions.enable() +
-                "\n&aCTowny &7» &f" + (Config.ownTown && towny.ownTown(p) && (!Config.townyWar || !towny.wartime())) +
-                "\n \n&c&lDisable" +
+        msg(p, ((Config.fac && (cats != null) ? "&eFC &7»" + cats + "\n \n" : "") +
+                "&eWG &7» &f" + world + "." + region + "\n" +
+                "&eRGs &f(&e" + Config.worldBL + "&f) &7» &f" + Config.worlds  +
+                "&eRGs &f(&e" + Config.regionBL + "&f) &7» &f" + Config.regions  +
+                "\n \n&e&lEnable" +
+                (Config.fac ? "\nFC &7» &f" + categories.enable() : "") +
+                "\nAll &7» &f" + p.hasPermission("flightcontrol.flyall") +
+                "\nPlot &7» &f" + plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) +
+                "\nPWorld &7» &f" + p.hasPermission("flightcontrol.fly." + world) +
+                "\nPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)) +
+                "\nPTowny &7» &f" + (p.hasPermission("flightcontrol.owntown") && towny.ownTown(p) && (!Config.townyWar || !towny.wartime())) +
+                "\nCWorld &7» &f" + worlds.enable() +
+                "\nCRegion &7» &f" + regions.enable() +
+                "\nCTowny &7» &f" + (Config.ownTown && towny.ownTown(p) && (!Config.townyWar || !towny.wartime())) +
+                "\n \n&e&lDisable" +
                 (Config.fac ? "\n&cFC &7» &f" + categories.disable() : "") +
                 "\n&cCombat &7» &f" + combat.tagged(p) +
                 "\n&cPlot &7» &f" + plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) +
                 "\n&cPWorld &7» &f" + p.hasPermission("flightcontrol.nofly." + world) +
                 "\n&cPRegion &7» &f" + (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)) +
                 "\n&cCWorld &7» &f" + worlds.disable() +
-                "\n&cCRegion &7» &f" + regions.disable());
+                "\n&cCRegion &7» &f" + regions.disable()).replaceAll("false", "&cfalse").replaceAll("true", "&atrue"));
     }
 
     private void canEnable(Player p) {

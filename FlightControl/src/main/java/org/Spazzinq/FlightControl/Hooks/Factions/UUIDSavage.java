@@ -30,8 +30,7 @@ import org.Spazzinq.FlightControl.Objects.Category;
 import org.bukkit.entity.Player;
 
 public final class UUIDSavage extends Factions {
-    @Override
-    public boolean rel(Player p, Category c) {
+    @Override public boolean rel(Player p, Category c) {
         if (c != null) {
             Faction f = Board.getInstance().getFactionAt(new FLocation(p.getLocation()));
             FPlayer fP = FPlayers.getInstance().getByPlayer(p);

@@ -171,10 +171,10 @@ final class Config {
 
     private void loadSounds() {
         everyEnable = c.getBoolean("sounds.every_enable");
-	    eSound = getSound("sounds.enable");
-	    dSound = getSound("sounds.disable");
-	    cSound = getSound("sounds.can_enable");
-	    nSound = getSound("sounds.cannot_enable");
+	    if (c.isConfigurationSection("sounds.enable")) eSound = getSound("sounds.enable");
+        if (c.isConfigurationSection("sounds.disable")) dSound = getSound("sounds.disable");
+        if (c.isConfigurationSection("sounds.can_enable")) cSound = getSound("sounds.can_enable");
+        if (c.isConfigurationSection("sounds.cannot_enable")) nSound = getSound("sounds.cannot_enable");
     }
 
     private Sound getSound(String key) {

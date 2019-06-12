@@ -97,14 +97,31 @@
 
     <repositories>
         <repository>
-            <id>sk89q</id>
-            <url>http://maven.sk89q.com/repo/</url>
+            <id>spazz-repo</id>
+            <url>https://mvn.spazzinq.org/repository/</url>
+        </repository>
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>https://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
             <id>CodeMC</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>ess-facs-repo</id>
+            <url>https://ci.ender.zone/plugin/repository/everything/</url>
+        </repository>
+        <repository>
+            <id>towny-repo</id>
+            <url>https://nexus.articdive.de/repository/maven-public/</url>
         </repository>
     </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.bstats</groupId>
@@ -121,9 +138,8 @@
         <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
-            <version>2.16.3</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/EssentialsX-2.16.0.3.jar</systemPath>
+            <version>2.16.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
@@ -140,76 +156,68 @@
         <dependency>
             <groupId>com.massivecraft</groupId>
             <artifactId>Factions</artifactId>
-            <version>1.6.9.5-U0.2.3-b126</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/FactionsUUID.jar</systemPath>
+            <version>1.6.9.5-U0.3.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.massivecraft</groupId>
             <artifactId>factions</artifactId>
             <version>2.14.0</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/Factions.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.massivecraft</groupId>
             <artifactId>massivecore</artifactId>
             <version>2.14.0</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/MassiveCore.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.plotsquared</groupId>
             <artifactId>plotsquared-api</artifactId>
-            <version>19.02.22-47ce4b2-695</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/PlotSquared-Bukkit-19.02.22-47ce4b2-695.jar
-            </systemPath>
+            <version>19.05.28</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.IntellectualSites</groupId>
-            <artifactId>PlotSquared</artifactId>
-            <version>4.179</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/PlotSquared-Bukkit-4.179.jar</systemPath>
+            <groupId>com.github.intellectualsites</groupId>
+            <artifactId>plotsquared</artifactId>
+            <version>4.291</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.palmergames.bukkit</groupId>
+            <groupId>com.palmergames</groupId>
             <artifactId>Towny</artifactId>
-            <version>0.93.0.0</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/Towny.jar</systemPath>
+            <version>0.93.1.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.minelink</groupId>
+            <groupId>net.minelink.ctplus</groupId>
             <artifactId>CombatTagPlus</artifactId>
             <version>1.3.2-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/CombatTagPlus.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.vk2gpz</groupId>
             <artifactId>anticombatlogging</artifactId>
             <version>LATEST</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/AntiCombatLoggingAPI.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.SirBlobman</groupId>
             <artifactId>combatlogx</artifactId>
-            <version>9.3.1.0</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/${env.USERNAME}/IdeaProjects/repository/CombatLogX.jar</systemPath>
+            <version>9.7.1.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.Spazzinq</groupId>
             <artifactId>v8</artifactId>
             <version>SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.Spazzinq</groupId>
             <artifactId>v13</artifactId>
             <version>SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

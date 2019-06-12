@@ -33,7 +33,7 @@ public class Particles13 implements org.Spazzinq.FlightControl.Multiversion.Part
     private Particle.DustOptions o;
     private int amount = 4, extra = 0;
 
-    public void play(Location loc) {
+    public void spawn(Location loc) {
         //                                           amnt    x      y      z
         //noinspection ConstantConditions
         loc.getWorld().spawnParticle(particle, loc, 1, 0, 0, 0, extra, o);

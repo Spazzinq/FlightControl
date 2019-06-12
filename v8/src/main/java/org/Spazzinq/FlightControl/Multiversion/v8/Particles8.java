@@ -32,7 +32,7 @@ public class Particles8 implements org.Spazzinq.FlightControl.Multiversion.Parti
     private float r = 0, g = 0, b = 0, speed = 0F;
     private int amount = 4, data = 0;
 
-    public void play(Location l) {
+    public void spawn(Location l) {
         //                    playEffect(to, e, 0, data, r, g, b, speed, amount, 0);
         l.getWorld().spigot().playEffect(l, e, 0, data, r, g, b, speed, amount, 160);
     }

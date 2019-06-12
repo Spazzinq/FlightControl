@@ -27,7 +27,7 @@ package org.Spazzinq.FlightControl.Multiversion;
 import org.bukkit.Location;
 
 public interface Particles {
-    void play(Location l);
+    void spawn(Location l);
     void setParticle(String s);
     void setAmount(int amount);
     void setRBG(int r, int g, int b);
