@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl-parent, which is licensed under the MIT License
  *
- * Copyright (cFile) 2019 Spazzinq
+ * Copyright (c) 2019 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,27 +45,27 @@ import static org.Spazzinq.FlightControl.FlightControl.defaultPerms;
 
 final class Config {
     private FlightControl pl;
-	static CommentedConfig cFile;
+    static CommentedConfig cFile;
     private static PluginManager pm;
 
     private File f;
     private File dTrailF;
-	private static FileConfiguration dTrailC;
+    private static FileConfiguration dTrailC;
 
-	static boolean autoUpdate, command, support, worldBL, regionBL,
-            useCombat, ownTown, townyWar, cancelFall,
-            vanishBypass, trail, actionBar, everyEnable,
-            useFacEnemyRange;
-	static double facEnemyRange;
-	static float flightSpeed;
+    static boolean autoUpdate, command, support,
+            worldBL, regionBL, useCombat, ownTown,
+            townyWar, cancelFall, vanishBypass, trail,
+            actionBar, everyEnable, useFacEnemyRange;
+    static double facEnemyRange;
+    static float flightSpeed;
     static String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, noPerm;
-	static Sound eSound, dSound, cSound, nSound;
+    static Sound eSound, dSound, cSound, nSound;
     static HashSet<String> worlds, trailPrefs;
     static HashMap<String, List<String>> regions;
     static HashMap<String, Category> categories;
 
-	Config(FlightControl pl) {
-	    this.pl = pl;
+    Config(FlightControl pl) {
+        this.pl = pl;
         pm = pl.getServer().getPluginManager();
         dTrailF = new File(pl.getDataFolder(), "disabled_trail.yml");
         f = new File(pl.getDataFolder(), "config.yml");
@@ -74,9 +74,11 @@ final class Config {
         updateConfig();
     }
 
-	void reloadConfig() {
-	    pl.saveDefaultConfig();
-        try { cFile = new CommentedConfig(f, pl.getResource("config.yml")); } catch (Exception e) { e.printStackTrace(); }
+    void reloadConfig() {
+        pl.saveDefaultConfig();
+        try { cFile = new CommentedConfig(f, pl.getResource("config.yml")); } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // booleans
         autoUpdate = cFile.getBoolean("auto_update");
@@ -91,7 +93,7 @@ final class Config {
         actionBar = cFile.getBoolean("messages.actionbar");
         // ints
         int range = cFile.getInt("settings.disable_enemy_range");
-        if (useFacEnemyRange  = range != -1) facEnemyRange = range;
+        if (useFacEnemyRange = range != -1) facEnemyRange = range;
         // Messages
         dFlight = cFile.getString("messages.flight.disable");
         dFlight = cFile.getString("messages.flight.disable");
@@ -102,11 +104,20 @@ final class Config {
         eTrail = cFile.getString("messages.trail.enable");
         noPerm = cFile.getString("messages.permission_denied");
         // Load other stuff that have separate methods
-        loadWorlds(); loadSounds(); loadTrail(); loadTrailPrefs(); loadFlightSpeed();
-        regions = new HashMap<>(); if (pm.isPluginEnabled("WorldGuard")) loadRegions();
+        loadWorlds();
+        loadSounds();
+        loadTrail();
+        loadTrailPrefs();
+        loadFlightSpeed();
+        regions = new HashMap<>();
+        if (pm.isPluginEnabled("WorldGuard")) loadRegions();
         if (pm.isPluginEnabled("Factions")) loadCategories();
         // Region permission registering
-        for (World w : Bukkit.getWorlds()) { String name = w.getName(); defaultPerms(name); for (String rg : pl.regions.regions(w)) defaultPerms(name + "." + rg); }
+        for (World w : Bukkit.getWorlds()) {
+            String name = w.getName();
+            defaultPerms(name);
+            for (String rg : pl.regions.regions(w)) defaultPerms(name + "." + rg);
+        }
         // Set for players already online
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.isFlying()) FlightManager.trailCheck(p);
@@ -115,17 +126,26 @@ final class Config {
     }
 
     private void updateConfig() {
-	    boolean modified = false;
-	    // 3
-	    if (!cFile.isConfigurationSection("towny"))  {
-	        cFile.addNode("trail", "towny:");
-	        cFile.addSubnodes("towny", Arrays.asList("disable_during_war: false", "enable_own_town: false"));
+        boolean modified = false;
+        // 3
+        if (!cFile.isConfigurationSection("towny")) {
+            cFile.addNode("trail", "towny:");
+            cFile.addSubnodes("towny", Arrays.asList("disable_during_war: false", "enable_own_town: false"));
             modified = true;
         }
-	    if (!cFile.isBoolean("sounds.every_enable")) { cFile.addSubnode("sounds","every_enable: false"); modified = true; }
-	    // 3.1
-        if (!(cFile.isInt("settings.flight_speed") || cFile.isDouble("settings.flight_speed"))) { cFile.addSubnode("settings.command", "flight_speed: 1.0"); modified = true; }
-	    if (!cFile.isInt("settings.disable_enemy_range")) { cFile.addSubnode("settings.vanish_bypass", "disable_enemy_range: -1"); modified = true; }
+        if (!cFile.isBoolean("sounds.every_enable")) {
+            cFile.addSubnode("sounds", "every_enable: false");
+            modified = true;
+        }
+        // 3.1
+        if (!(cFile.isInt("settings.flight_speed") || cFile.isDouble("settings.flight_speed"))) {
+            cFile.addSubnode("settings.command", "flight_speed: 1.0");
+            modified = true;
+        }
+        if (!cFile.isInt("settings.disable_enemy_range")) {
+            cFile.addSubnode("settings.vanish_bypass", "disable_enemy_range: -1");
+            modified = true;
+        }
         if (modified) save();
     }
 
@@ -147,32 +167,35 @@ final class Config {
 
     private void loadWorlds() {
         worlds = new HashSet<>();
-	    ConfigurationSection worldsCS = load(cFile,"worlds");
-	    if (worldsCS != null) {
+        ConfigurationSection worldsCS = load(cFile, "worlds");
+        if (worldsCS != null) {
             List<String> type = worldsCS.getStringList(worldBL ? "disable" : "enable");
             if (type != null) for (String w : type) if (Bukkit.getWorld(w) != null) worlds.add(w);
         }
     }
 
     private void loadRegions() {
-        ConfigurationSection regionsCS = load(cFile,"regions");
+        ConfigurationSection regionsCS = load(cFile, "regions");
         if (regionsCS != null) addRegions(regionsCS.getConfigurationSection(regionBL ? "disable" : "enable"));
     }
 
-	private void loadCategories() {
+    private void loadCategories() {
         categories = new HashMap<>();
-	    ConfigurationSection facs = load(cFile,"factions");
-	    if (facs != null) for (String cName : facs.getKeys(false)) {
-	        // Register permission defaults
-            if (pm.getPermission("flightcontrol.factions." + cName) == null) pm.addPermission(new Permission("flightcontrol.factions." + cName, PermissionDefault.FALSE));
+        ConfigurationSection facs = load(cFile, "factions");
+        if (facs != null) for (String cName : facs.getKeys(false)) {
+            // Register permission defaults
+            if (pm.getPermission("flightcontrol.factions." + cName) == null)
+                pm.addPermission(new Permission("flightcontrol.factions." + cName, PermissionDefault.FALSE));
             ConfigurationSection categorySect = load(facs, cName);
             if (categorySect != null) {
                 String type = categorySect.isList("disable") ? "disable" : (categorySect.isList("enable") ? "enable" : null);
-                if (type != null) categories.put(cName, createCategory(categorySect.getStringList(type), type.equals("disable")));
-                else pl.getLogger().warning("Factions category \"" + cName + "\" is invalid! (missing \"enable\"/\"disable\")");
+                if (type != null)
+                    categories.put(cName, createCategory(categorySect.getStringList(type), type.equals("disable")));
+                else
+                    pl.getLogger().warning("Factions category \"" + cName + "\" is invalid! (missing \"enable\"/\"disable\")");
             }
-	    }
-	}
+        }
+    }
 
     private void loadTrail() {
         trail = cFile.getBoolean("trail.enabled");
@@ -182,28 +205,33 @@ final class Config {
             String offset = cFile.getString("trail.rgb");
             if (offset != null && (offset = offset.replaceAll("\\s+", "")).split(",").length == 3) {
                 String[] xyz = offset.split(",");
-                pl.particles.setRBG(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[0]) : 0,
-                        xyz[1].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[1]) : 0,
-                        xyz[2].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[2]) : 0);
+                pl.particles.setRBG(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[0]) : 0, xyz[1].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[1]) : 0, xyz[2].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[2]) : 0);
             }
         }
     }
 
-	// Per-player trail preferences
-	private void loadTrailPrefs() {
+    // Per-player trail preferences
+    private void loadTrailPrefs() {
         trailPrefs = new HashSet<>();
-		if (!dTrailF.exists()) { try { //noinspection ResultOfMethodCallIgnored
-            dTrailF.createNewFile(); } catch (IOException e) { e.printStackTrace(); } }
-		dTrailC = YamlConfiguration.loadConfiguration(dTrailF);
+        if (!dTrailF.exists()) {
+            try { //noinspection ResultOfMethodCallIgnored
+                dTrailF.createNewFile();
+            } catch (IOException e) { e.printStackTrace(); }
+        }
+        dTrailC = YamlConfiguration.loadConfiguration(dTrailF);
 
-		if (dTrailC.isList("disabled_trail")) {
-			if (dTrailC.getStringList("disabled_trail") != null && !dTrailC.getStringList("disabled_trail").isEmpty()) {
-				for (String uuid : dTrailC.getStringList("disabled_trail")) {
-					try { if (pl.getServer().getPlayer(UUID.fromString(uuid)) != null || pl.getServer().getOfflinePlayer(UUID.fromString(uuid)) != null) trailPrefs.add(uuid); } catch (IllegalArgumentException ignored) { }
-				}
-			}
-		} else dTrailC.createSection("disabled_trail");
-	}
+        if (dTrailC.isList("disabled_trail")) {
+            if (dTrailC.getStringList("disabled_trail") != null && !dTrailC.getStringList("disabled_trail").isEmpty()) {
+                for (String uuid : dTrailC.getStringList("disabled_trail")) {
+                    try {
+                        if (pl.getServer().getPlayer(UUID.fromString(uuid)) != null || pl.getServer().getOfflinePlayer(UUID.fromString(uuid)) != null)
+                            trailPrefs.add(uuid);
+                    } catch (IllegalArgumentException ignored) { }
+                }
+            }
+        }
+        else dTrailC.createSection("disabled_trail");
+    }
 
     private void loadSounds() {
         everyEnable = cFile.getBoolean("sounds.every_enable");
@@ -215,7 +243,8 @@ final class Config {
 
     private void loadFlightSpeed() {
         float wrongSpeed = (float) cFile.getDouble("settings.flight_speed");
-        if (wrongSpeed > 10f) wrongSpeed = 10f; else if (wrongSpeed < 0.0001f) wrongSpeed = 0.0001f;
+        if (wrongSpeed > 10f) wrongSpeed = 10f;
+        else if (wrongSpeed < 0.0001f) wrongSpeed = 0.0001f;
 
         float defaultSpeed = 0.1f, maxSpeed = 1f;
 
@@ -229,7 +258,8 @@ final class Config {
     // LOAD HELPER METHODS
     private Sound getSound(String key) {
         String s = cFile.getString(key + ".sound").toUpperCase().replaceAll("\\.", "_");
-        if (Sound.is(s)) return new Sound(s, (float) cFile.getDouble(key + ".volume"), (float) cFile.getDouble(key + ".pitch"));
+        if (Sound.is(s))
+            return new Sound(s, (float) cFile.getDouble(key + ".volume"), (float) cFile.getDouble(key + ".pitch"));
         return null;
     }
 
@@ -243,23 +273,24 @@ final class Config {
         }
     }
 
-	private Category createCategory(List<String> types, boolean blacklist) {
-		if (types != null && !types.isEmpty() && (types.contains("OWN") || types.contains("ALLY") || types.contains("TRUCE")
-                || types.contains("NEUTRAL") || types.contains("ENEMY") || types.contains("WARZONE")
-                || types.contains("SAFEZONE") || types.contains("WILDERNESS"))) {
-            return new Category(blacklist, types.contains("OWN"), types.contains("ALLY"), types.contains("TRUCE"), types.contains("NEUTRAL"), types.contains("ENEMY"), types.contains("WARZONE"),types.contains("SAFEZONE"), types.contains("WILDERNESS"));
-		}
-		return null;
-	}
+    private Category createCategory(List<String> types, boolean blacklist) {
+        if (types != null && !types.isEmpty() && (types.contains("OWN") || types.contains("ALLY") || types.contains("TRUCE") || types.contains("NEUTRAL") || types.contains("ENEMY") || types.contains("WARZONE") || types.contains("SAFEZONE") || types.contains("WILDERNESS"))) {
+            return new Category(blacklist, types.contains("OWN"), types.contains("ALLY"), types.contains("TRUCE"), types.contains("NEUTRAL"), types.contains("ENEMY"), types.contains("WARZONE"), types.contains("SAFEZONE"), types.contains("WILDERNESS"));
+        }
+        return null;
+    }
 
-	// FILE CONFIG METHODS
+    // FILE CONFIG METHODS
     void saveTrails() { // Saves personal trail preferences
-	    if (dTrailC != null && dTrailF != null) {
+        if (dTrailC != null && dTrailF != null) {
             dTrailC.set("disabled_trail", !trailPrefs.isEmpty() ? trailPrefs : null);
             try { dTrailC.save(dTrailF); } catch (IOException e) { e.printStackTrace(); }
         }
     }
 
-    void set(String path, Object value) { cFile.set(path, value); save(); }
+    void set(String path, Object value) {
+        cFile.set(path, value);
+        save();
+    }
     private void save() { try { cFile.save(f); } catch (IOException e) { e.printStackTrace(); } }
 }

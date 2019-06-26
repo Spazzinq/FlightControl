@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl-parent, which is licensed under the MIT License
  *
- * Copyright (cFile) 2019 Spazzinq
+ * Copyright (c) 2019 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -289,7 +289,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 kCMDMap.remove(plName.toLowerCase() + ":fly");
                 kCMDMap.remove("fly");
 
-                PluginManager pm = Bukkit.getPluginManager();
                 if (pm.isPluginEnabled("Essentials")) {
                     map.register("Essentials", fly);
                     fly.setExecutor(pm.getPlugin("Essentials"));
