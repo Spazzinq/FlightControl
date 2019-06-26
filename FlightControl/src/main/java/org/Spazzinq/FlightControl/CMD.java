@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl-parent, which is licensed under the MIT License
  *
- * Copyright (c) 2019 Spazzinq
+ * Copyright (cFile) 2019 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,10 +34,10 @@ import java.util.List;
 import static org.Spazzinq.FlightControl.FlightControl.msg;
 
 final class CMD implements CommandExecutor, TabCompleter {
-    private FlightControl pl;
+    private static FlightControl pl;
     private String help;
     CMD(FlightControl pl) {
-        this.pl = pl;
+        CMD.pl = pl;
         help = " \n&a&lFlightControl &f" + pl.getDescription().getVersion() + "\n" +
                 "&aBy &fSpazzinq\n " +
                 "\n&a/fc &7» &fHelp\n" +
@@ -55,45 +55,38 @@ final class CMD implements CommandExecutor, TabCompleter {
         if (s instanceof ConsoleCommandSender || s.hasPermission("flightcontrol.admin")) {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("reload")) {
-                    // TODO Verify that config reloading still works
                     pl.c.reloadConfig(); msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!"); }
-                else if (args[0].equalsIgnoreCase("update")) if (Update.exists()) {
-                    if (!Update.dled()) { Update.dl(); if (pl.pm.isPluginEnabled("Plugman")) {
-                        msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (you may need to reset the configuration)! Welcome to FlightControl " + Update.newVer() + " :D");
-                        pl.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload FlightControl");
-                    } else msg(s, "&a&lFlightControl &7» &aUpdate downloaded. Restart (or reload) the server to apply the update (you may need to reset the plugin config).", false); }
-                    else msg(s, "&a&lFlightControl &7» &aThe update to version " + Update.newVer() + " has already been downloaded. Please restart (or reload) the server to apply the update.", false);
-                } else msg(s, "&a&lFlightControl &7» &aNo updates found.");
+                else if (args[0].equalsIgnoreCase("update")) Update.install(s);
                 else if (args[0].equalsIgnoreCase("combat")) {
-                    pl.c.c.set("settings.disable_flight_in_combat", Config.useCombat = !Config.useCombat);
+                    pl.c.set("settings.disable_flight_in_combat", Config.useCombat = !Config.useCombat);
                     toggleOption(s, Config.useCombat, "Combat Disabling");
                 }
                 else if (args[0].equalsIgnoreCase("falldamage")) {
-                    pl.c.c.set("settings.prevent_fall_damage", Config.cancelFall = !Config.cancelFall);
+                    pl.c.set("settings.prevent_fall_damage", Config.cancelFall = !Config.cancelFall);
                     toggleOption(s, Config.cancelFall, "Prevent Fall Damage");
                 }
                 else if (args[0].equalsIgnoreCase("trails")) {
-                    pl.c.c.set("trail.enabled", Config.trail = !Config.trail);
+                    pl.c.set("trail.enabled", Config.trail = !Config.trail);
                     toggleOption(s, Config.trail, "Trails");
+                    if (Config.trail) {
+                        for (Player p : Bukkit.getOnlinePlayers()) if (p.isFlying()) FlightManager.trailCheck(p);
+                    } else FlightManager.disableEnabledTrails();
                 }
                 else if (args[0].equalsIgnoreCase("vanishbypass")) {
-                    pl.c.c.set("settings.vanish_bypass", Config.vanishBypass = !Config.vanishBypass);
+                    pl.c.set("settings.vanish_bypass", Config.vanishBypass = !Config.vanishBypass);
                     toggleOption(s, Config.vanishBypass, "Vanish Bypass");
                 }
                 else if (args[0].equalsIgnoreCase("actionbar")) {
-                    pl.c.c.set("messages.actionbar", Config.actionBar = !Config.actionBar);
+                    pl.c.set("messages.actionbar", Config.actionBar = !Config.actionBar);
                     toggleOption(s, Config.actionBar, "Actionbar Notifications");
                 }
-                else if (args[0].equalsIgnoreCase("command")) {
-                    pl.c.c.set("settings.command", Config.command = !Config.command);
-                    toggleOption(s, Config.command, "Command"); pl.flyCommand();
-                }
+                else if (args[0].equalsIgnoreCase("command")) { toggleCommand(s); }
                 else if (args[0].equalsIgnoreCase("support")) {
                     toggleOption(s, Config.support = !Config.support, "Live Support");
                     Player spazzinq = pl.getServer().getPlayer("Spazzinq");
                     if (Config.support) {
                         msg(s, "&e&lFlightControl &eWarning &7» &fLive support enables Spazzinq to check debug information on why flight is disabled. " +
-                                "You can disable support at any time by repeating the command, and the access only lasts until you restart FlightControl/the server.");
+                                "You can disable support at any time by repeating the command, but by default the access only lasts until you restart FlightControl/the server.");
                         if (spazzinq != null && spazzinq.isOnline()) msg(spazzinq, "&c&lFlightControl &7» &c" + s.getName() + " has requested support.");
                     }
                 }
@@ -104,7 +97,7 @@ final class CMD implements CommandExecutor, TabCompleter {
         } else if (args.length == 1 && args[0].equalsIgnoreCase("debug") && s instanceof Player && s.getName().equals("Spazzinq")) {
             if (Config.support) pl.debug((Player) s);
             else msg(s, "&c&lFlightControl &7» &cSorry bud, you don't have permission to view debug information :I");
-        } else msg(s, Config.permDenied);
+        } else msg(s, Config.noPerm);
 
         return true;
     }
@@ -112,9 +105,13 @@ final class CMD implements CommandExecutor, TabCompleter {
         return Arrays.asList("update", "actionbar", "combat", "falldamage", "trails", "vanishbypass", "command");
     }
 
-    private void toggleOption(CommandSender s, Boolean o, String prefix) {
+    private static void toggleOption(CommandSender s, Boolean o, String prefix) {
         msg(s, (prefix.equals("Trail") ? "&a&l" : "&a&lFlightControl &a") + prefix + " &7» "
                 + (o ? "&aEnabled" : "&cDisabled"));
-        if (!prefix.equals("Live Support")) pl.c.save();
+    }
+
+    static void toggleCommand(CommandSender s) {
+        pl.c.set("settings.command", Config.command = !Config.command);
+        toggleOption(s, Config.command, "Command"); pl.flyCommand();
     }
 }

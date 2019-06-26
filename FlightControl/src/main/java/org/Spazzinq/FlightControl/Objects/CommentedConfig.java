@@ -41,182 +41,165 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// Rewritten to ignore Bukkit "headers" in saveToString & loadFromString
-public class CommentedConfig extends YamlConfiguration {
-    private HashMap<String, String> comments, addSection = new HashMap<>();
-    private HashMap<String, List<String>> addSubsection = new HashMap<>();
+// Rewritten to allow comment saving & to ignore
+// Bukkit "headers" in saveToString & loadFromString
+public final class CommentedConfig extends YamlConfiguration {
+    private HashMap<String, String> comments, addNodes = new HashMap<>();
+    private HashMap<String, List<String>> addSubnodes = new HashMap<>();
     private final Yaml yaml;
 
-    public CommentedConfig() {
-        // TODO moved from save/load methods causes issues (maybe gc)?
+    private CommentedConfig() {
         DumperOptions yamlOptions = new DumperOptions(); yamlOptions.setIndent(options().indent()); yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         Representer yamlRepresenter = new YamlRepresenter(); yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
     }
-    public CommentedConfig(File f, InputStream is) throws IOException, InvalidConfigurationException { this(); load(f); loadComments(is); }
+    public CommentedConfig(File configFile, InputStream configResource) throws IOException, InvalidConfigurationException {
+        this();
+        load(configFile);
+        HashMap<String, String> newC = loadComments(configResource), oldC = loadComments(new FileInputStream(configFile));
+        // If comments from modified config do not match new ones, then save new version
+        // (only matches ones from the MODIFIED config)
+        for (Map.Entry<String, String> e : oldC.entrySet())
+            if (!e.getValue().equals(newC.get(e.getKey()))) save(configFile);
+    }
 
-    public HashMap<String, String> comments() { return comments; }
-    public void addSection(String relativeKey, String key) { addSection.put(relativeKey, key); }
-    public void addSubsections(String relativeKey, List<String> key) { addSubsection.put(relativeKey, key); }
-    public void addSubsection(String relativeKey, String key) { addSubsection.put(relativeKey, Collections.singletonList(key)); }
+    public void addNode(String relativeKey, String node) { addNodes.put(relativeKey, node); }
+    public void addSubnodes(String relativeKey, List<String> node) { addSubnodes.put(relativeKey, node); }
+    public void addSubnode(String relativeKey, String node) { addSubnodes.put(relativeKey, Collections.singletonList(node)); }
 
     public void save(File f) throws IOException {
         if (f != null) {
             //noinspection UnstableApiUsage
             Files.createParentDirs(f);
-            try (FileWriter writer = new FileWriter(f)) { writer.write(insertComments(insertSubKeys(insertKeys(saveToString())))); }
+            try (FileWriter writer = new FileWriter(f)) { writer.write(insertComments(insertSubnodes(insertNodes(saveToString())))); }
         }
     }
 
     private String leadSpaces(String s) { return s.startsWith(" ") ? s.split("[^\\s]")[0] : ""; }
-    private String strFromIS(InputStream is) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024]; int length;
-        while ((length = is.read(buffer)) != -1) out.write(buffer, 0, length);
-        is.close();
 
-        return out.toString();
-    }
-
-    // BEFORE
+    // Insert BEFORE node
     // Comments should already have "#" at the beginning
-    private String insertComments(String config) {
+    private String insertBefore(String config, HashMap<String, String> toInsert, boolean lineSeparator) {
         String[] lines = config.split("\n");
         StringBuilder newConf = new StringBuilder(config);
         //              config index
-        String key = ""; int i = 0, depth = 0;
+        String node = ""; int i = 0, depth = 0;
 
         for (String line : lines) {
-            // Is a key?
+            // Is it a node?
             if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
-                String localKey = line.replaceAll("\\s+", "").split(":")[0];
+                String localNode = line.replaceAll("\\s+", "").split(":")[0];
                 String spaces = leadSpaces(line); int nDepth = spaces.length();
 
                 if (depth >= nDepth) {
-                    // example key -> "lol.xd.420"
+                    // example node -> "lol.xd.420"
                     // same depth -> "lol.xd" | shallower by 1 -> "lol" | by 2 -> ""
-                    // (add key on later)
+                    // (add node on later)
                     int back = (depth - nDepth) / 2 + 1;
-                    // Back the key down
-                    for (int j = 0; j < back; j++) if (!key.isEmpty()) key = key.contains(".") ? key.substring(0, key.lastIndexOf(".")) : "";
+                    // Back the node down
+                    for (int j = 0; j < back; j++) if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
                 }
-                // Add the key up
-                key = key.concat((key.isEmpty() ? "" : ".") + localKey);
+                // Update the node
+                node = node.concat((node.isEmpty() ? "" : ".") + localNode);
                 depth = nDepth;
-                // Add comment(s)
-                if (comments.containsKey(key)) {
-                    String c = spaces + comments.get(key).replaceAll("\n", "\n" + spaces);
+
+                if (toInsert.containsKey(node)) {
+                    // Add the spaces from the depth of the node
+                    String insert = spaces + toInsert.get(node).replaceAll("\n", "\n" + spaces);
                     // Remove spaces at the end from above replaceAll
-                    c = c.substring(0, c.length() - depth);
-                    newConf.insert(newConf.indexOf(line, i), c);
+                    insert = insert.substring(0, insert.length() - depth) + (lineSeparator ? "\n" : "");
+                    // Insert into newConf
+                    newConf.insert(newConf.indexOf(line, i), insert);
                     // Set location to continue from
-                    i += c.length();
+                    i += insert.length();
                 }
-            }
-            i += line.length();
-        }
-        return newConf.toString() + (comments.getOrDefault("footer", ""));
-    }
-
-    // BEFORE
-    // TODO Fix temporary solution for main keys (Stop copy pasting code)
-    private String insertKeys(String config) {
-        String[] lines = config.split("\n");
-        StringBuilder newConf = new StringBuilder(config);
-        String key = ""; int i = 0, depth = 0;
-
-        for (String line : lines) {
-            if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
-                String localKey = line.replaceAll("\\s+", "").split(":")[0];
-                String spaces = leadSpaces(line); int nDepth = spaces.length();
-
-                if (depth >= nDepth) {
-                    int back = (depth - nDepth) / 2 + 1;
-                    for (int j = 0; j < back; j++) if (!key.isEmpty()) key = key.contains(".") ? key.substring(0, key.lastIndexOf(".")) : "";
-                }
-                key = key.concat((key.isEmpty() ? "" : ".") + localKey);
-                depth = nDepth;
-
-                if (addSection.containsKey(key)) {
-                    String k = spaces + addSection.get(key).replaceAll("\n", "\n" + spaces);
-                    k = k.substring(0, k.length() - depth) + "\n";
-                    // Insert BEFORE
-                    newConf.insert(newConf.indexOf(line, i), k);
-                    i += k.length();
-                }
-
             }
             i += line.length();
         }
         return newConf.toString();
     }
 
-    // AFTER
-    private String insertSubKeys(String config) {
+    private String insertComments(String config) {
+        return insertBefore(config, comments, false) + comments.getOrDefault("footer", "");
+    }
+    private String insertNodes(String config) {
+        return insertBefore(config, addNodes, true);
+    }
+
+    // Insert AFTER node
+    private String insertSubnodes(String config) {
         String[] lines = config.split("\n");
         StringBuilder newConf = new StringBuilder(config);
-        String key = ""; int i = 0, depth = 0;
+        String node = ""; int i = 0, depth = 0;
 
         for (String line : lines) {
             if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
-                String localKey = line.replaceAll("\\s+", "").split(":")[0];
+                String localNode = line.replaceAll("\\s+", "").split(":")[0];
                 String spaces = leadSpaces(line); int nDepth = spaces.length();
 
                 if (depth >= nDepth) {
                     int back = (depth - nDepth) / 2 + 1;
-                    for (int j = 0; j < back; j++) if (!key.isEmpty()) key = key.contains(".") ? key.substring(0, key.lastIndexOf(".")) : "";
+                    for (int j = 0; j < back; j++) if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
                 }
-                key = key.concat((key.isEmpty() ? "" : ".") + localKey);
+                node = node.concat((node.isEmpty() ? "" : ".") + localNode);
                 depth = nDepth;
 
-                int length = 0;
-
-                if (addSubsection.containsKey(key))
-                    for (String section : addSubsection.get(key)) {
-                        String k = spaces + "  " + section.replaceAll("\n", "\n" + spaces + "  ");
-                        k = "\n" + k.substring(0, k.length() - depth);
+                int insertLength = 0;
+                if (addSubnodes.containsKey(node))
+                    // Get all sections for node
+                    for (String section : addSubnodes.get(node)) {
+                        String k = "\n" + spaces + (node.contains(".") ? "" : "  ") + section.replaceAll("\n", "\n" + spaces + (node.contains(".") ? "" : "  "));
+                        k = k.substring(0, k.length() - depth + (node.contains(".") ? 2 : 0));
                         // Insert AFTER
                         newConf.insert(newConf.indexOf(line, i) + line.length(), k);
-                        length += k.length();
+                        insertLength += k.length();
                     }
-                i += length;
+                i += insertLength;
             }
             i += line.length();
         }
         return newConf.toString();
     }
 
-    // TODO Does this work for comments on the same line as content? (lol: # example)
+    // WARNING: This does NOT work for inlined comments (eg. test: #lol)
     private void loadComments(String config) {
         comments = new HashMap<>();
         String[] lines = config.split("\n");
         // c = comment
-        String key = "", c = ""; int depth = 0;
+        String node = "", c = ""; int depth = 0;
 
         for (String line : lines) {
             if (line.contains("#")) c = c.concat(line.substring(leadSpaces(line).length()) + "\n");
             else if (line.isEmpty()) c = c.concat("\n");
             else if (line.contains(": ") || line.endsWith(":")) {
-                String localKey = line.replaceAll("\\s+", "").split(":")[0];
+                String localNode = line.replaceAll("\\s+", "").split(":")[0];
                 String spaces = leadSpaces(line); int nDepth = spaces.length();
 
                 if (depth >= nDepth) {
                     int back = (depth - nDepth) / 2 + 1;
                     for (int j = 0; j < back; j++)
-                        if (!key.isEmpty()) key = key.contains(".") ? key.substring(0, key.lastIndexOf(".")) : "";
+                        if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
                 }
-                key = key.concat((key.isEmpty() ? "" : ".") + localKey);
+                node = node.concat((node.isEmpty() ? "" : ".") + localNode);
                 depth = nDepth;
 
-                if (!c.isEmpty()) { comments.put(key, c); c = ""; }
+                if (!c.isEmpty()) { comments.put(node, c); c = ""; }
             }
         }
         if (!c.isEmpty()) comments.put("footer", c.substring(0, c.length() - 1));
     }
-    public HashMap<String, String> loadComments(InputStream is) throws IOException { loadComments(strFromIS(is)); return comments; }
-    @Override public void load(File f) throws IOException, InvalidConfigurationException { load(new FileInputStream(f)); }
-    @SuppressWarnings("deprecation") public void load(InputStream is) throws InvalidConfigurationException, IOException { loadFromString(strFromIS(is)); }
 
+    private HashMap<String, String> loadComments(InputStream is) throws IOException { loadComments(IStoString(is)); return comments; }
+    @Override public void load(File f) throws IOException, InvalidConfigurationException { load(new FileInputStream(f)); }
+    @SuppressWarnings("deprecation") public void load(InputStream is) throws InvalidConfigurationException, IOException { loadFromString(IStoString(is)); }
+
+    private String IStoString(InputStream is) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024]; int length;
+        while ((length = is.read(buffer)) != -1) out.write(buffer, 0, length);
+
+        return out.toString();
+    }
     @Override public String saveToString() {
         String dump = yaml.dump(getValues(false));
         return dump.equals(BLANK_CONFIG) ? "" : dump;

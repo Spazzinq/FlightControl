@@ -4,7 +4,7 @@ version: ${revision}
 api-version: 1.13
 author: Spazzinq
 description: "An elegant solution for controlling player flight"
-softdepend: [AntiCombatLogging, CombatLogX, CombatTagPlus, Essentials, Factions, PlotSquared, WorldGuard]
+softdepend: [AntiCombatLogging, CombatLogX, CombatTagPlus, Essentials, Factions, PlotSquared, WorldGuard, Plugman]
 
 commands:
   flightcontrol:
@@ -13,21 +13,29 @@ commands:
   toggletrail:
     description: Per-player trail toggle
     aliases: [trail, tt]
+  tempfly:
+    description: Allows temporary bypass flight until the next server restart
+    aliases: [tfly]
 
 
 permissions:
   flightcontrol.fly:
-    description: Access to fly command
-    default: false
-  flightcontrol.bypass:
-    description: Bypasses fly restrictions
-    default: false
-  flightcontrol.flyall:
-    description: Ability to fly in all regions
+    description: Access to the fly command when the command option is enabled in the config
     default: false
   flightcontrol.owntown:
-    description: Ability to fly in own town
+    description: Ability to fly in player's own town
+    default: false
+  flightcontrol.flyall:
+    description: Ability to automatically fly in all regions that are not disabled
+    default: false
+  flightcontrol.bypass:
+    description: Bypasses all fly restrictions and always allows flight
+    default: false
+  flightcontrol.bypasstemp:
+    description: Same function as bypass permission, but meant to be temporary
+  flightcontrol.flyother:
+    description: Ability to enable another player's fly and bypass all restrictions (like bypass permission) until server restart
     default: false
   flightcontrol.admin:
-    description: Access to FlightControl commands
+    description: Ability to use FlightControl administrative commands (automatically given to OPs)
     default: op

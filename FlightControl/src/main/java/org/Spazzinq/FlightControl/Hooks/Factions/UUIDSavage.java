@@ -25,7 +25,6 @@
 package org.Spazzinq.FlightControl.Hooks.Factions;
 
 import com.massivecraft.factions.*;
-import com.massivecraft.factions.struct.Relation;
 import org.Spazzinq.FlightControl.Objects.Category;
 import org.bukkit.entity.Player;
 
@@ -39,7 +38,7 @@ public final class UUIDSavage extends Factions {
             if (fP.hasFaction()) {
                 if (c.own) own = fP.isInOwnTerritory();
                 if (c.ally) ally = fP.isInAllyTerritory();
-                if (c.truce) truce = fP.getRelationToLocation() == Relation.TRUCE;
+                if (c.truce) truce = fP.getRelationToLocation().isTruce();
                 if (c.neutral) neutral = fP.isInNeutralTerritory();
                 if (c.enemy) enemy = fP.isInEnemyTerritory();
             }
@@ -47,4 +46,9 @@ public final class UUIDSavage extends Factions {
         }
         return false;
     }
+
+    @Override public boolean isEnemy(Player p, Player otherP) {
+        return FPlayers.getInstance().getByPlayer(p).getRelationTo(FPlayers.getInstance().getByPlayer(otherP)).isEnemy();
+    }
+    @Override public boolean isHooked() { return true; }
 }

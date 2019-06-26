@@ -41,4 +41,8 @@
         <module>v8</module>
         <module>v13</module>
     </modules>
+
+    <build>
+        <defaultGoal>clean package</defaultGoal>
+    </build>
 </project>

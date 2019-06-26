@@ -24,7 +24,7 @@
 
 package org.Spazzinq.FlightControl.Objects;
 
-public class Category {
+public final class Category {
     public final boolean blacklist, own, ally, truce, neutral, enemy, warzone, safezone, wilderness;
     private String debug;
 

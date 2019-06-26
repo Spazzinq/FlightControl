@@ -7,9 +7,10 @@
 #              __/ |                                            
 #             |___/                                  by Spazzinq
 
-# Spigot Page: https://www.spigotmc.org/resources/flightcontrol.55168/
 # Discord: https://spazzinq.org/discord
 # Github: https://github.com/Spazzinq/FlightControl/issues
+# Spigot Page: https://www.spigotmc.org/resources/flightcontrol.55168/
+# Donate: https://spazzinq.org/donate
 
 # Before you leave a negative review:
 # ✓ Read through ALL the information in this configuration
@@ -23,21 +24,32 @@
 #  \____\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
 #                         |___/
 
-# A VERY IMPORTANT idea to understand for part of this configuration is that flight only enables when it
+# Should FlightControl automatically update to the latest version?
+# (It will update the config automatically and add new features!)
+auto_update: true
+
+# An EXTREMELY IMPORTANT idea to understand for part of this configuration is that flight only enables when it
 # has a reason to (it does not stay enabled in a neutral/un-enabled location).
 
 settings:
   # Enables /fly instead of automatic flight
   # When "command" is enabled, "can_enable" and "cannot_enable" messages/sounds are used
   command: false
+  # Controls flight speed (default speed is 1)
+  # The speed values match Essential's /flyspeed command (the number range is 0-10)
+  flight_speed: 1.0
   # Requires CombatTagPlus, CombatLogX, or AntiCombatLogging
-  # NOTE: in the combat plugin config, disable its option to stop flight while in combat (prevents issues)
+  # NOTE: in the combat plugin config, deactivate its option to disable flight while in combat to prevents issues
   disable_flight_in_combat: false
   # Prevents fall damage when flight is disabled mid-air by FlightControl
   prevent_fall_damage: false
-  # Bypasses the disabling of flight while in vanish (or spectating)
   # Requires EssentialsX or PremiumVanish
+  # Bypasses the disabling of flight while in vanish (or spectating)
   vanish_bypass: true
+  # Requires Factions (by MassiveCraft), FactionsUUID, or SavageFactions
+  # Disables flight while a faction enemy is within a certain block range (set to -1 to disable)
+  # NOTE: this feature may cause performance issues on larger servers
+  disable_enemy_range: -1
 
 worlds:
   # Change "enable" to "disable" if you want it to disable in certain worlds instead
@@ -49,7 +61,7 @@ worlds:
 # If you have multiple regions overlapping each other, please use /rg setpriority REGIONNAME NUMBER
 # FlightControl checks the HIGHEST priority region (otherwise it checks the first in REVERSE alphabetical order)
 regions:
-  # Change "enable" to "disable" if you want it to disable in certain regions instead
+  # Change "enable" to "disable" if you want flight to disable in certain regions instead
   # (and enable in the ones unlisted)
   enable:
     exampleworld:
@@ -64,13 +76,12 @@ factions:
   # "example" is a category (the permission to use it is flightcontrol.factions.example)
   # Keep in mind you can set category names to whatever you want (only alphanumeric characters, no spaces)
   example:
-    # Change "enable" to "disable" if you want it to disable in certain faction territories instead
+    # Change "enable" to "disable" if you want flight to disable in certain faction territories instead
     # (and enable in the ones unlisted)
     enable:
     - OWN
     - ALLY
-
-  # "example2" is a category (the permission to use it is flightcontrol.factions.example2)
+  # "example2" is another category (the permission to use it is flightcontrol.factions.example2)
   example2:
     enable:
     - SAFEZONE
@@ -84,18 +95,17 @@ towny:
   # (this also affects the permission!)
   disable_during_war: false
 
-# Requires a version/fork of SPIGOT (unless you are using 1.13)
 # Compatible: EssentialsX, PremiumVanish (disables while vanished)
 trail:
   enabled: false
   # 1.8 List: https://spazzinq.org/particles/1.8.html
-  # Latest (1.13) List: https://spazzinq.org/particles/1.13.html - Sorry, Spigot did not provide a description
+  # 1.14 List: https://spazzinq.org/particles/1.14.html
   particle: "CLOUD"
-  amount: 4
-  # This option is used with colored particles (eg. COLOURED_DUST [1.8], REDSTONE [1.13])
-  # Use the format "red,green,blue" (otherwise, do not touch the values)
-  # A color picker can be found here: https://www.google.com/search?q=color+picker
-  # You MUST set the amount to 0 on 1.8 for one specific color!
+  amount: 2
+  # This option is used with colored particles (format: "red,green,blue")
+  # Color picker: https://www.google.com/search?q=color+picker
+  # For one specific color, you MUST set the amount to 0 if you use
+  # COLOURED_DUST on 1.8, SPELL_MOB on 1.14, SPELL_MOB_AMBIENT on 1.14, or NOTE on 1.14.
   rgb: "0,0,0"
 
 sounds:
@@ -104,7 +114,7 @@ sounds:
   every_enable: false
   # Please use the sound names from the "Sound Event" column
   # 1.8 List: https://minecraft.gamepedia.com/Sounds.json/Java_Edition_values_before_1.9
-  # Latest (1.13) List: https://minecraft.gamepedia.com/Sounds.json/Java_Edition_values
+  # 1.14 List: https://minecraft.gamepedia.com/Sounds.json/Java_Edition_values
   enable:
     sound: "NONE"
     pitch: 1
@@ -124,7 +134,7 @@ sounds:
     pitch: 1
     volume: 1
 
-# If you do not wish for a message to be sent, set it to ""
+# If you do not wish for a certain message to be sent, make it empty (set it to "")
 # You can use "&" for color codes just like any other plugin!
 messages:
   # Use the actionbar (area above hotbar) instead of chat for notifications
@@ -152,12 +162,13 @@ messages:
 #         CATEGORY with the name of the category
 
 # Important Permissions
-# flightcontrol.admin - Ability to use FlightControl commands (automatically given to OPs)
+# flightcontrol.admin - Ability to use FlightControl administrative commands (automatically given to OPs)
 # flightcontrol.bypass - Bypasses all fly restrictions and always allows flight
-# flightcontrol.factions.CATEGORY - Controls flight based upon the category
+# flightcontrol.factions.CATEGORY - Controls flight based upon the defined category
 # flightcontrol.flyall - Ability to automatically fly in all regions that are not disabled
-# flightcontrol.fly - Access to /fly when the command is enabled (the Essentials permission "essentials.fly" works too)
+# flightcontrol.fly - Access to /fly when the command option is enabled in the config (the Essentials permission "essentials.fly" works too)
 # Optional Permissions
+# flightcontrol.flyother - Ability to enable another player's fly and bypass all restrictions (like bypass permission) until server restart
 # flightcontrol.fly.WORLDNAME - Ability to fly in a certain world
 # flightcontrol.fly.WORLDNAME.REGIONNAME - Ability to fly in a certain region
 # flightcontrol.nofly.WORLDNAME - Denies flight in a certain world

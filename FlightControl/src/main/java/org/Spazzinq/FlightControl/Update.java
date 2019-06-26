@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl-parent, which is licensed under the MIT License
  *
- * Copyright (c) 2019 Spazzinq
+ * Copyright (cFile) 2019 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,9 @@
 
 package org.Spazzinq.FlightControl;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +34,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+
+import static org.Spazzinq.FlightControl.FlightControl.msg;
 
 final class Update {
     private static String version, newVersion;
@@ -59,4 +64,16 @@ final class Update {
 
     static boolean dled() { return dled; }
     static String newVer() { return newVersion; }
+
+    static void install(CommandSender s) {
+        if (exists()) {
+            if (!dled) {
+                dl();
+                if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
+                    msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the config has automatically updated too)! Welcome to FlightControl " + newVer() + "!");
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload FlightControl");
+                } else msg(s, "&a&lFlightControl &7» &aVersion &f" + newVer() + " &aupdate downloaded. Restart (or reload) the server to apply the update.");
+            } else msg(s, "&a&lFlightControl &7» &aVersion &f" + newVer() + " &aupdate has already been downloaded. Restart (or reload) the server to apply the update.");
+        } else msg(s, "&a&lFlightControl &7» &aNo updates found.");
+    }
 }

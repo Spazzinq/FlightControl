@@ -5,14 +5,15 @@
 
 package org.Spazzinq.FlightControl;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-class Actionbar {
+final class Actionbar {
     private static String nms;
     private static boolean useOldMethods = false;
 
-    Actionbar(FlightControl pl) {
-        nms = pl.getServer().getClass().getPackage().getName();
+    Actionbar() {
+        nms = Bukkit.getServer().getClass().getPackage().getName();
         nms = nms.substring(nms.lastIndexOf(".") + 1);
         // 1_7 may work with protocol hack
         if (nms.equalsIgnoreCase("v1_8_R1") || nms.startsWith("v1_7_")) useOldMethods = true;
@@ -21,7 +22,6 @@ class Actionbar {
     static void send(Player p, String msg) {
         if (p.isOnline()) {
             try {
-                Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + nms + ".entity.CraftPlayer");
                 Object packet;
                 Class<?> packetPlayOutChatClass = Class.forName("net.minecraft.server." + nms + ".PacketPlayOutChat");
                 if (useOldMethods) {
@@ -40,6 +40,7 @@ class Actionbar {
                         packet = packetPlayOutChatClass.getConstructor(new Class<?>[]{iChatBaseComponentClass, chatMessageTypeClass}).newInstance(chatComponentText, chatMessageType);
                     } catch (ClassNotFoundException e) { packet = packetPlayOutChatClass.getConstructor(new Class<?>[]{iChatBaseComponentClass, byte.class}).newInstance(chatComponentText, (byte) 2); }
                 }
+                Class<?> craftPlayerClass = Class.forName("org.bukkit.craftbukkit." + nms + ".entity.CraftPlayer");
                 Object craftPlayerHandle = craftPlayerClass.getDeclaredMethod("getHandle").invoke(craftPlayerClass.cast(p));
                 Object playerConnection = craftPlayerHandle.getClass().getDeclaredField("playerConnection").get(craftPlayerHandle);
                 playerConnection.getClass().getDeclaredMethod("sendPacket", Class.forName("net.minecraft.server." + nms + ".Packet")).invoke(playerConnection, packet);

@@ -53,4 +53,7 @@ public final class Massive extends Factions {
         }
         return false;
     }
+
+    @Override public boolean isEnemy(Player p, Player otherP) { return MPlayer.get(p).getRelationTo(MPlayer.get(otherP)) == Rel.ENEMY; }
+    @Override public boolean isHooked() { return true; }
 }

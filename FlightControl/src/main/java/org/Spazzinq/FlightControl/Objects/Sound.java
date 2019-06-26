@@ -26,7 +26,7 @@ package org.Spazzinq.FlightControl.Objects;
 
 import org.bukkit.entity.Player;
 
-public class Sound {
+public final class Sound {
     private org.bukkit.Sound value;
     private float v, p;
     public Sound(String name, float v, float p) { value = org.bukkit.Sound.valueOf(name); this.v = v; this.p = p; }

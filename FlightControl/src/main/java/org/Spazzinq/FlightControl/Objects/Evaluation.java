@@ -22,13 +22,16 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Vanish;
+package org.Spazzinq.FlightControl.Objects;
 
-import com.earth2me.essentials.Essentials;
-import org.bukkit.entity.Player;
-
-public final class Ess extends Vanish {
-    private Essentials e;
-    public Ess(Essentials e) { this.e = e; }
-    @Override public boolean vanished(Player p) { return e.getUser(p).isVanished(); }
+public final class Evaluation {
+    private boolean disable, enable;
+    public Evaluation(boolean blacklist, boolean value) {
+        if (blacklist && value) disable = true; else if (blacklist || value) enable = true;
+    }
+    public Evaluation(boolean disable, boolean enable, boolean ignoreLogic) {
+        this(disable, enable); if (ignoreLogic) { this.disable = disable; this.enable = enable; }
+    }
+    public boolean disable() { return disable; }
+    public boolean enable() { return enable; }
 }

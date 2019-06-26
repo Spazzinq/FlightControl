@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl-parent, which is licensed under the MIT License
  *
- * Copyright (c) 2019 Spazzinq
+ * Copyright (cFile) 2019 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ package org.Spazzinq.FlightControl;
 
 import org.Spazzinq.FlightControl.Objects.Sound;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,72 +36,66 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
+
+import static org.Spazzinq.FlightControl.FlightManager.*;
 
 final class Listener implements org.bukkit.event.Listener {
     private FlightControl pl;
-    private static HashMap<Player, BukkitTask> partTasks = new HashMap<>();
 
 	Listener(FlightControl i) { pl = i; Bukkit.getPluginManager().registerEvents(this, i); }
 
-	private void trailCheck(Player p) {
-	    if (pl.particles != null && p.getGameMode() != GameMode.SPECTATOR)
-            partTasks.put(p, new BukkitRunnable() {
-                public void run() {
-                    if (Config.trail && !Config.trailPrefs.contains(p.getUniqueId().toString()) && !pl.vanish.vanished(p))
-                        pl.particles.spawn(p.getLocation());
-                }
-            }.runTaskTimerAsynchronously(pl, 0, 3));
-    }
-
-    // TODO Is this static bad code practice?
-    static void trailRemove(Player p) {
-        BukkitTask task = partTasks.remove(p);
-        if (task != null) task.cancel();
-    }
-
+    // Check fly status
+    @EventHandler(priority = EventPriority.HIGHEST) private void onMove(PlayerMoveEvent e) { FlightManager.check(e.getPlayer(), e.getTo()); }
     // Fly particles
-	@EventHandler private void onFly(PlayerToggleFlightEvent e) {
-	    Player p = e.getPlayer();
-	    if (e.isFlying()) {
-	        if (Config.everyEnable) Sound.play(p, Config.eSound);
-	        trailCheck(p);
-	    } else trailRemove(p);
+    @EventHandler private void onToggleFly(PlayerToggleFlightEvent e) {
+        Player p = e.getPlayer();
+        if (e.isFlying()) {
+            trailCheck(p);
+            if (Config.everyEnable) Sound.play(p, Config.eSound);
+        } else trailRemove(p);
     }
-
-	// Check fly status
-	@EventHandler(priority = EventPriority.HIGHEST) private void onMove(PlayerMoveEvent e) { pl.check(e.getPlayer(), e.getTo()); }
-	@EventHandler private void onLeave(PlayerQuitEvent e) { trailRemove(e.getPlayer()); }
+    // Because onMove doesn't trigger right after a TP
+    @EventHandler private void onTP(PlayerTeleportEvent e) { FlightManager.check(e.getPlayer(), e.getTo()); }
+	@EventHandler private void onQuit(PlayerQuitEvent e) { trailRemove(e.getPlayer()); }
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
-	    Player p = e.getPlayer(); pl.check(p);
-	    if (p.isFlying()) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTaskLater(pl, 4);
+	    Player p = e.getPlayer(); FlightManager.check(p);
+	    if (p.isFlying()) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTaskLater(pl, 5);
+	    p.setFlySpeed(Config.flightSpeed);
 	}
-	// Because onMove doesn't trigger right after a TP
-    @EventHandler private void onTP(PlayerTeleportEvent e) { pl.check(e.getPlayer(), e.getTo()); }
 	// Because commands might affect permissions/fly
 	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
+        if (e.getMessage().toLowerCase().startsWith("/fly") && !Config.command &&
+                (p.isOp() || p.hasPermission("flightcontrol.admin"))) {
+            e.setCancelled(true);
+            for (CommandSender s : Arrays.asList(Bukkit.getConsoleSender(), p))
+                FlightControl.msg(s, "&e&lFlightControl &7» &e" +
+                    "You tried to use /fly while the \"command\" setting in the config is disabled! By default, FlightControl automatically enables and disables flight " +
+                    "without any commands. Because you used /fly, FlightControl has &aautomatically enabled the command setting&e. If you wish to disable the \"command\" setting again, " +
+                    "perform &f/fc command &eor &fdisable &ethe option in the config.");
+            CMD.toggleCommand(p);
+        }
 	    new BukkitRunnable() { public void run() {
-	        pl.check(p);
-            // TODO Only check fly commands/Move spectator back to trailCheck
+            FlightManager.check(p);
 	        if (p.isFlying() && !partTasks.containsKey(p)) new BukkitRunnable() { public void run() { trailCheck(p); } }.runTask(pl);
-	        else if ((!p.isFlying() || p.getGameMode() == GameMode.SPECTATOR) && partTasks.containsKey(p)) trailRemove(p);
+	        else if (!p.isFlying() && partTasks.containsKey(p)) trailRemove(p);
 	    } }.runTask(pl);
 	}
+
 	// Fall damage prevention
     @EventHandler private void onFallDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL &&
-            pl.fall.remove(e.getEntity())) e.setCancelled(true);
+            FlightManager.fall.remove(e.getEntity())) e.setCancelled(true);
     }
     // On-the-fly permission management
     @EventHandler private void onWorldLoad(WorldLoadEvent e) {
         String w = e.getWorld().getName();
         // Set default false permission for new world
-        Config.defaultPerms(w); for (String rg : pl.regions.regions(e.getWorld())) Config.defaultPerms(w + "." + rg);
+        FlightControl.defaultPerms(w); for (String rg : pl.regions.regions(e.getWorld())) FlightControl.defaultPerms(w + "." + rg);
 
         ConfigurationSection worldsCS = Config.load(pl.getConfig(),"worlds");
         if (worldsCS != null) {
