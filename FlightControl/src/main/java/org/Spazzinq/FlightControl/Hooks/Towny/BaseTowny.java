@@ -24,9 +24,10 @@
 
 package org.Spazzinq.FlightControl.Hooks.Towny;
 
+import org.Spazzinq.FlightControl.Hooks.Hook;
 import org.bukkit.entity.Player;
 
-public class BaseTowny {
+public class BaseTowny extends Hook {
     public boolean ownTown(Player p) { return false; }
     public boolean wartime() { return false; }
 }

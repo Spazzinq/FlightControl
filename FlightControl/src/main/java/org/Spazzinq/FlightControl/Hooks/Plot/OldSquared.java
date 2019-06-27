@@ -36,4 +36,5 @@ public final class OldSquared extends Plot {
         com.intellectualcrafters.plot.object.Plot p = com.intellectualcrafters.plot.object.Plot.getPlot(new Location(world, x, y, z));
         return p != null && !p.getFlag(Flags.FLY, true);
     }
+    @Override public boolean isHooked() { return true; }
 }

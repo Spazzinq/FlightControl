@@ -24,8 +24,9 @@
 
 package org.Spazzinq.FlightControl.Hooks.Plot;
 
-public class Plot {
+import org.Spazzinq.FlightControl.Hooks.Hook;
+
+public class Plot extends Hook {
     public boolean flight(String world, int x, int y, int z) { return false; }
     public boolean dFlight(String world, int x, int y, int z) { return false; }
 }
-

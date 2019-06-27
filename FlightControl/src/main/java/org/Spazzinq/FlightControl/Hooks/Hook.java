@@ -22,11 +22,8 @@
  * SOFTWARE.
  */
 
-package org.Spazzinq.FlightControl.Hooks.Combat;
+package org.Spazzinq.FlightControl.Hooks;
 
-import org.bukkit.entity.Player;
-
-public final class LogX extends Combat {
-    @Override public boolean tagged(Player p) { return com.SirBlobman.combatlogx.utility.CombatUtil.isInCombat(p); }
-    @Override public boolean isHooked() { return true; }
+public class Hook {
+    public boolean isHooked() { return false; }
 }

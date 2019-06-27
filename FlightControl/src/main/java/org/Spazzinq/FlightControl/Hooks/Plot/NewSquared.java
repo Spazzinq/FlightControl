@@ -36,4 +36,5 @@ public final class NewSquared extends Plot {
         com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
         return p != null && !p.getFlag(Flags.FLY, true);
     }
+    @Override public boolean isHooked() { return true; }
 }

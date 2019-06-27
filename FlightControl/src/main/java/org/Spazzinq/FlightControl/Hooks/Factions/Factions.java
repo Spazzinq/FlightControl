@@ -24,11 +24,11 @@
 
 package org.Spazzinq.FlightControl.Hooks.Factions;
 
+import org.Spazzinq.FlightControl.Hooks.Hook;
 import org.Spazzinq.FlightControl.Objects.Category;
 import org.bukkit.entity.Player;
 
-public class Factions {
+public class Factions extends Hook {
     public boolean rel(Player p, Category c) { return false; }
     public boolean isEnemy(Player p, Player otherP) { return false; }
-    public boolean isHooked() { return false; }
 }

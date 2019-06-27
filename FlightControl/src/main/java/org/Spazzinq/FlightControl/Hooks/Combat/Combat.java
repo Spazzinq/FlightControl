@@ -24,7 +24,10 @@
 
 package org.Spazzinq.FlightControl.Hooks.Combat;
 
+import org.Spazzinq.FlightControl.Hooks.Hook;
 import org.bukkit.entity.Player;
 
-public class Combat { public boolean tagged(Player p) { return false; } }
+public class Combat extends Hook {
+    public boolean tagged(Player p) { return false; }
+}
 

@@ -197,20 +197,20 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 "\n&eWRLDs &f(&e" + Config.worldBL + "&f) &7» &f" + Config.worlds  +
                 "\n&eRGs &f(&e" + Config.regionBL + "&f) &7» &f" + Config.regions  +
                 "\n \n&e&lEnable" +
-                (fac.isHooked() ? "\n&fFC &7» " + categories.enable() : "") +
                 "\n&fBypass &7» " + p.hasPermission("flightcontrol.bypass") + " " + FlightManager.tempBypass.contains(p) +
                 "\n&fAll &7» " + p.hasPermission("flightcontrol.flyall") +
-                "\n&fPlot &7» " + plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) +
+                (fac.isHooked() ? "\n&fFC &7» " + categories.enable() : "") +
+                (plot.isHooked() ? "\n&fPlot &7» " + plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) : "") +
                 "\n&fWorld &7» " + worlds.enable() + " " + p.hasPermission("flightcontrol.fly." + world) +
                 "\n&fRegion &7» " + regions.enable() + " " + (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)) +
-                "\n&fTowny &7» " + (Config.ownTown && towny.ownTown(p) && (!Config.townyWar || !towny.wartime())) + " " +
-                                   (p.hasPermission("flightcontrol.owntown") && towny.ownTown(p) && (!Config.townyWar || !towny.wartime())) +
+                (towny.isHooked() ? "\n&fTowny &7» " + (Config.ownTown && towny.ownTown(p) && (!Config.townyWar || !towny.wartime())) + " " +
+                        (p.hasPermission("flightcontrol.owntown") && towny.ownTown(p) && (!Config.townyWar || !towny.wartime())) : "") +
                 "\n \n&e&lDisable" +
                 (fac.isHooked() ? "\n&fFC &7» " + categories.disable() : "") +
-                "\n&fCombat &7» " + combat.tagged(p) +
-                "\n&fPlot &7» " + plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) +
+                (combat.isHooked() ? "\n&fCombat &7» " + combat.tagged(p) : "") +
+                (plot.isHooked() ? "\n&fPlot &7» " + plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) : "") +
                 "\n&fWorld &7» " + worlds.disable() + " " + p.hasPermission("flightcontrol.nofly." + world) +
-                "\n&fPRegion &7» " + regions.disable() + " " + (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region))).replaceAll("false", "&cfalse").replaceAll("true", "&atrue"));
+                "\n&fRegion &7» " + regions.disable() + " " + (region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region))).replaceAll("false", "&cfalse").replaceAll("true", "&atrue"));
     }
 
     private Evaluation evalCategories(Player p) {
@@ -252,12 +252,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
     }
 
-    static boolean hasPerm(CommandSender s, String permission) {
-	    boolean hasPerm = s.hasPermission(permission);
-	    if (!hasPerm) msg(s, Config.noPerm);
-	    return hasPerm;
-    }
-
     void flyCommand() {
         try {
             Field cmdMap = Bukkit.getServer().getClass().getDeclaredField("commandMap"), knownCMDS = SimpleCommandMap.class.getDeclaredField("knownCommands");
@@ -275,13 +269,13 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 // Anonymous fly class
                 fly.setExecutor((s, cmd, label, args) -> {
                     if (args.length == 0) {
-                        if (s instanceof Player)
-                            if (hasPerm(s, "essentials.fly") || hasPerm(s, "flightcontrol.fly")) {
+                        if (s instanceof Player) {
+                            if (s.hasPermission("flightcontrol.fly") || s.hasPermission("essentials.fly")) {
                                 Player p = (Player) s;
                                 if (p.getAllowFlight()) { FlightManager.disableFlight(p); FlightManager.notif.add(p); }
-                                else { Evaluation eval = eval(p, p.getLocation()); if (eval.enable() && !eval.disable()) FlightManager.enableFlight(p); else FlightManager.cannotEnable(p); }
-                            }
-                            else getLogger().info("Only players can use this command (the console can't fly, can it?)");
+                                else FlightManager.check(p, p.getLocation(), true);
+                            } else msg(s, Config.noPerm);
+                        } else getLogger().info("Only players can use this command (the console can't fly, can it?)");
                     } else if (args.length == 1) tempFly.onCommand(s, cmd, label, args);
                     return true;
                 });

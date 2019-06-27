@@ -28,13 +28,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import static org.Spazzinq.FlightControl.FlightControl.msg;
 
 final class TempFly implements CommandExecutor {
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
-        if (FlightControl.hasPerm(s, "flightcontrol.flyother")) {
+        if (s instanceof ConsoleCommandSender || s.hasPermission("flightcontrol.flyother")) {
             if (args.length == 1) {
                 Player p = Bukkit.getPlayer(args[0]);
                 if (p != null) {
@@ -50,7 +51,7 @@ final class TempFly implements CommandExecutor {
                     //        (Config.command ? "just do /fly?" : "let your flight automatically enable?"));
                 } else msg(s, "&e&lFlightControl &7» &eInvalid player! Please provide a valid player to give temporary bypass flight!");
             } else msg(s, "&c&lFlightControl &7» &cPlease provide a player to give temporary bypass flight!");
-        }
+        } else msg(s, Config.noPerm);
         return true;
     }
 }

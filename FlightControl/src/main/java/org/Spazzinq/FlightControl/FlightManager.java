@@ -49,22 +49,27 @@ final class FlightManager {
     FlightManager(FlightControl pl) { FlightManager.pl = pl; }
 
     // MANAGE FLIGHT
-    static void check(Player p) { check(p, p.getLocation()); }
-    static void check(Player p, Location l) {
-        if (!(p.hasPermission("flightcontrol.bypass") || tempBypass.contains(p) || (pl.vanish.vanished(p) && Config.vanishBypass) || p.getGameMode() == GameMode.SPECTATOR)) {
+    static void check(Player p) { check(p, p.getLocation(), false); }
+    static void check(Player p, Location l) { check(p, l, false); }
+    static void check(Player p, Location l, boolean cmd) {
+        if (!p.hasPermission("flightcontrol.bypass") && p.getGameMode() != GameMode.SPECTATOR && !(Config.vanishBypass && pl.vanish.vanished(p)) && !tempBypass.contains(p)) {
             Evaluation eval = pl.eval(p, l); boolean enable = eval.enable(), disable = eval.disable();
 
             if (p.getAllowFlight()) { if (disable || !enable) disableFlight(p); }
             else if (enable && !disable) canEnable(p);
-        } else if (!p.getAllowFlight()) canEnable(p);
+            else if (cmd) cannotEnable(p);
+        } else if (!p.getAllowFlight()) {
+            if (cmd) enableFlight(p); else canEnable(p);
+        }
     }
 
-    static private void canEnable(Player p) {
+    private static void canEnable(Player p) {
         if (!Config.command) enableFlight(p);
         else if (!notif.contains(p)) { notif.add(p); Sound.play(p, Config.cSound); FlightControl.msg(p, Config.cFlight, Config.actionBar); }
     }
-    static void cannotEnable(Player p) { Sound.play(p, Config.nSound); FlightControl.msg(p, Config.nFlight, Config.actionBar); }
-    static void enableFlight(Player p) {
+    private static void cannotEnable(Player p) { Sound.play(p, Config.nSound); FlightControl.msg(p, Config.nFlight, Config.actionBar); }
+
+    private static void enableFlight(Player p) {
         p.setAllowFlight(true);
         if (!Config.everyEnable) Sound.play(p, Config.eSound);
         FlightControl.msg(p, Config.eFlight, Config.actionBar);

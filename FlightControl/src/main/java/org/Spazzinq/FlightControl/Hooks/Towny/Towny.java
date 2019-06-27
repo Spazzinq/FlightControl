@@ -40,4 +40,5 @@ public final class Towny extends BaseTowny {
         return false;
     }
     @Override public boolean wartime() { return TownyUniverse.isWarTime(); }
+    @Override public boolean isHooked() { return true; }
 }
