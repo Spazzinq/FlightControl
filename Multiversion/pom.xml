@@ -31,7 +31,7 @@
     </properties>
     <parent>
         <artifactId>FlightControl-parent</artifactId>
-        <groupId>org.Spazzinq</groupId>
+        <groupId>org.spazzinq</groupId>
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>

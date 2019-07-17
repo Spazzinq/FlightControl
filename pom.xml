@@ -28,12 +28,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.Spazzinq</groupId>
+    <groupId>org.spazzinq</groupId>
     <artifactId>FlightControl-parent</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
 
-    <properties><revision>3.2</revision></properties>
+    <properties><revision>3.3</revision></properties>
 
     <modules>
         <module>FlightControl</module>

@@ -31,7 +31,7 @@
     </properties>
     <parent>
         <artifactId>FlightControl-parent</artifactId>
-        <groupId>org.Spazzinq</groupId>
+        <groupId>org.spazzinq</groupId>
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -71,14 +71,14 @@
                 <configuration>
                     <artifactSet>
                         <includes>
-                            <include>org.Spazzinq:*</include>
+                            <include>org.spazzinq:*</include>
                             <include>org.bstats:*</include>
                         </includes>
                     </artifactSet>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>org.Spazzinq</shadedPattern>
+                            <shadedPattern>org.spazzinq</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -204,13 +204,13 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.Spazzinq</groupId>
+            <groupId>org.spazzinq</groupId>
             <artifactId>v8</artifactId>
             <version>SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.Spazzinq</groupId>
+            <groupId>org.spazzinq</groupId>
             <artifactId>v13</artifactId>
             <version>SNAPSHOT</version>
             <scope>compile</scope>

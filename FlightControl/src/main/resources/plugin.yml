@@ -1,5 +1,5 @@
 name: FlightControl
-main: org.Spazzinq.FlightControl.FlightControl
+main: org.spazzinq.flightcontrol.FlightControl
 version: ${revision}
 api-version: 1.13
 author: Spazzinq
