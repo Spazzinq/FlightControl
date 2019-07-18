@@ -33,7 +33,11 @@ public final class UUIDSavage extends Factions {
         if (c != null) {
             Faction f = Board.getInstance().getFactionAt(new FLocation(p.getLocation()));
             FPlayer fP = FPlayers.getInstance().getByPlayer(p);
-            boolean own = false, ally = false, truce = false, neutral = false, enemy = false,
+            boolean own = false,
+                    ally = false,
+                    truce = false,
+                    neutral = false,
+                    enemy = false,
                     warzone = c.warzone && f.isWarZone(), safezone = c.safezone && f.isSafeZone(), wilderness = c.wilderness && f.isWilderness();
             if (fP.hasFaction()) {
                 if (c.own) own = fP.isInOwnTerritory();

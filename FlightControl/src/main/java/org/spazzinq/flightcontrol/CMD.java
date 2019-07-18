@@ -35,10 +35,10 @@ import java.util.UUID;
 import static org.spazzinq.flightcontrol.FlightControl.msg;
 
 final class CMD implements CommandExecutor, TabCompleter {
-    private static FlightControl pl;
+    private FlightControl pl;
     private String help;
     CMD(FlightControl pl) {
-        CMD.pl = pl;
+        this.pl = pl;
         help = " \n&a&lFlightControl &f" + pl.getDescription().getVersion() + "\n" +
                 "&aBy &fSpazzinq\n " +
                 "\n&a/fc &7» &fHelp\n" +
@@ -57,33 +57,33 @@ final class CMD implements CommandExecutor, TabCompleter {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("reload")) {
                     pl.config.reloadConfig(); msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!"); }
-                else if (args[0].equalsIgnoreCase("update")) Update.install(s);
+                else if (args[0].equalsIgnoreCase("update")) pl.update.install(s);
                 else if (args[0].equalsIgnoreCase("combat")) {
                     pl.config.set("settings.disable_flight_in_combat", pl.config.useCombat = !pl.config.useCombat);
-                    toggleOption(s, pl.config.useCombat, "Combat Disabling");
+                    msgToggle(s, pl.config.useCombat, "Combat Disabling");
                 }
                 else if (args[0].equalsIgnoreCase("falldamage")) {
                     pl.config.set("settings.prevent_fall_damage", pl.config.cancelFall = !pl.config.cancelFall);
-                    toggleOption(s, pl.config.cancelFall, "Prevent Fall Damage");
+                    msgToggle(s, pl.config.cancelFall, "Prevent Fall Damage");
                 }
                 else if (args[0].equalsIgnoreCase("trails")) {
                     pl.config.set("trail.enabled", pl.config.trail = !pl.config.trail);
-                    toggleOption(s, pl.config.trail, "Trails");
+                    msgToggle(s, pl.config.trail, "Trails");
                     if (pl.config.trail) {
                         for (Player p : Bukkit.getOnlinePlayers()) if (p.isFlying()) pl.trail.trailCheck(p);
                     } else pl.trail.disableEnabledTrails();
                 }
                 else if (args[0].equalsIgnoreCase("vanishbypass")) {
                     pl.config.set("settings.vanish_bypass", pl.config.vanishBypass = !pl.config.vanishBypass);
-                    toggleOption(s, pl.config.vanishBypass, "Vanish Bypass");
+                    msgToggle(s, pl.config.vanishBypass, "Vanish Bypass");
                 }
                 else if (args[0].equalsIgnoreCase("actionbar")) {
                     pl.config.set("messages.actionbar", pl.config.actionBar = !pl.config.actionBar);
-                    toggleOption(s, pl.config.actionBar, "Actionbar Notifications");
+                    msgToggle(s, pl.config.actionBar, "Actionbar Notifications");
                 }
-                else if (args[0].equalsIgnoreCase("command")) { toggleCommand(s); }
+                else if (args[0].equalsIgnoreCase("command")) { pl.toggleCommand(s); }
                 else if (args[0].equalsIgnoreCase("support")) {
-                    toggleOption(s, pl.config.support = !pl.config.support, "Live Support");
+                    msgToggle(s, pl.config.support = !pl.config.support, "Live Support");
                     Player spazzinq = pl.getServer().getPlayer(UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c"));
                     if (pl.config.support) {
                         msg(s, "&e&lFlightControl &eWarning &7» &fLive support enables Spazzinq to check debug information on why flight is disabled. " +
@@ -108,14 +108,8 @@ final class CMD implements CommandExecutor, TabCompleter {
         return Arrays.asList("update", "actionbar", "combat", "falldamage", "trails", "vanishbypass", "command");
     }
 
-    private static void toggleOption(CommandSender s, Boolean o, String prefix) {
-        msg(s, (prefix.equals("Trail") ? "&a&l" : "&a&lFlightControl &a") + prefix + " &7» "
+    static void msgToggle(CommandSender s, Boolean o, String prefix) {
+        msg(s, ("Trail".equals(prefix) ? "&a&l" : "&a&lFlightControl &a") + prefix + " &7» "
                 + (o ? "&aEnabled" : "&cDisabled"));
-    }
-
-    static void toggleCommand(CommandSender s) {
-        pl.config.set("settings.command", pl.config.command = !pl.config.command);
-        toggleOption(s, pl.config.command, "Command");
-        pl.flyCommand();
     }
 }

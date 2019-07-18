@@ -44,19 +44,26 @@ import java.util.Map;
 // Rewritten to allow comment saving & to ignore
 // Bukkit "headers" in saveToString & loadFromString
 public final class CommentedConfig extends YamlConfiguration {
-    private HashMap<String, String> comments, addNodes = new HashMap<>();
+    private HashMap<String, String> comments,
+                                    addNodes = new HashMap<>();
     private HashMap<String, List<String>> addSubnodes = new HashMap<>();
     private final Yaml yaml;
 
     private CommentedConfig() {
-        DumperOptions yamlOptions = new DumperOptions(); yamlOptions.setIndent(options().indent()); yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        Representer yamlRepresenter = new YamlRepresenter(); yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        DumperOptions yamlOptions = new DumperOptions();
+        yamlOptions.setIndent(options().indent());
+        yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+
+        Representer yamlRepresenter = new YamlRepresenter();
+        yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+
         yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
     }
     public CommentedConfig(File configFile, InputStream configResource) throws IOException, InvalidConfigurationException {
         this();
         load(configFile);
-        HashMap<String, String> newC = loadComments(configResource), oldC = loadComments(new FileInputStream(configFile));
+        HashMap<String, String> newC = loadComments(configResource),
+                                oldC = loadComments(new FileInputStream(configFile));
         // If comments from modified config do not match new ones, then save new version
         // (only matches ones from the MODIFIED config)
         for (Map.Entry<String, String> e : oldC.entrySet())
@@ -83,7 +90,9 @@ public final class CommentedConfig extends YamlConfiguration {
         String[] lines = config.split("\n");
         StringBuilder newConf = new StringBuilder(config);
         //              config index
-        String node = ""; int i = 0, depth = 0;
+        String node = "";
+        int i = 0,
+            depth = 0;
 
         for (String line : lines) {
             // Is it a node?
@@ -130,7 +139,9 @@ public final class CommentedConfig extends YamlConfiguration {
     private String insertSubnodes(String config) {
         String[] lines = config.split("\n");
         StringBuilder newConf = new StringBuilder(config);
-        String node = ""; int i = 0, depth = 0;
+        String node = "";
+        int i = 0,
+            depth = 0;
 
         for (String line : lines) {
             if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
@@ -189,11 +200,11 @@ public final class CommentedConfig extends YamlConfiguration {
         if (!c.isEmpty()) comments.put("footer", c.substring(0, c.length() - 1));
     }
 
-    private HashMap<String, String> loadComments(InputStream is) throws IOException { loadComments(IStoString(is)); return comments; }
+    private HashMap<String, String> loadComments(InputStream is) throws IOException { loadComments(isToString(is)); return comments; }
     @Override public void load(File f) throws IOException, InvalidConfigurationException { load(new FileInputStream(f)); }
-    @SuppressWarnings("deprecation") public void load(InputStream is) throws InvalidConfigurationException, IOException { loadFromString(IStoString(is)); }
+    @SuppressWarnings("deprecation") public void load(InputStream is) throws InvalidConfigurationException, IOException { loadFromString(isToString(is)); }
 
-    private String IStoString(InputStream is) throws IOException {
+    private String isToString(InputStream is) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024]; int length;
         while ((length = is.read(buffer)) != -1) out.write(buffer, 0, length);

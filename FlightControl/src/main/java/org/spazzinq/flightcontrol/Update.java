@@ -38,36 +38,37 @@ import java.nio.channels.ReadableByteChannel;
 import static org.spazzinq.flightcontrol.FlightControl.msg;
 
 final class Update {
-    private static String version, newVersion;
-    private static boolean dled;
+    private String version, newVersion;
+    private boolean downloaded;
 
-    Update(String version) { Update.version = version; }
+    Update(String version) { this.version = version; }
 
-    static boolean exists() {
+    boolean exists() {
         try {
-        newVersion = new BufferedReader(new InputStreamReader(new URL("https://api.spigotmc.org/legacy/update.php?resource=55168").openConnection().getInputStream())).readLine();
-        } catch (Exception ignored) { return false; }
+            newVersion = new BufferedReader(new InputStreamReader(new URL("https://api.spigotmc.org/legacy/update.php?resource=55168").openConnection().getInputStream())).readLine();
+        } catch (Exception ignored) {
+            return false;
+        }
         return version.matches("\\d+(.\\d+)?") && newVersion.matches("\\d+(.\\d+)?") ? Double.parseDouble(newVersion) > Double.parseDouble(version) : !version.equals(newVersion);
     }
 
-   static void dl() {
+   private void dl() {
         if (exists()) {
             try {
                 URL website = new URL("https://github.com/Spazzinq/FlightControl/releases/download/" + newVersion + "/flightcontrol.jar");
                 ReadableByteChannel rbc = Channels.newChannel(website.openStream());
                 FileOutputStream fos = new FileOutputStream(new File( "plugins/flightcontrol.jar"));
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE); fos.close();
-                dled = true;
+                downloaded = true;
             } catch (Exception ignored) {}
         }
     }
 
-    static boolean dled() { return dled; }
-    static String newVer() { return newVersion; }
+    String newVer() { return newVersion; }
 
-    static void install(CommandSender s) {
+    void install(CommandSender s) {
         if (exists()) {
-            if (!dled) {
+            if (!downloaded) {
                 dl();
                 if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
                     msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the config has automatically updated too)! Welcome to flightcontrol " + newVer() + "!");

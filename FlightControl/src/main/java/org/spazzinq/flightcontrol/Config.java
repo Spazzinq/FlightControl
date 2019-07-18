@@ -183,7 +183,7 @@ final class Config {
             if (categorySect != null) {
                 String type = categorySect.isList("disable") ? "disable" : (categorySect.isList("enable") ? "enable" : null);
                 if (type != null)
-                    categories.put(cName, createCategory(categorySect.getStringList(type), type.equals("disable")));
+                    categories.put(cName, createCategory(categorySect.getStringList(type), "disable".equals(type)));
                 else
                     pl.getLogger().warning("Factions category \"" + cName + "\" is invalid! (missing \"enable\"/\"disable\")");
             }
@@ -238,7 +238,8 @@ final class Config {
 
     private void loadFlightSpeed() {
         float wrongSpeed = (float) configData.getDouble("settings.flight_speed"),
-                defaultSpeed = 0.1f, maxSpeed = 1f;
+              defaultSpeed = 0.1f,
+              maxSpeed = 1f;
 
         if (wrongSpeed > 10f) wrongSpeed = 10f;
         else if (wrongSpeed < 0.0001f) wrongSpeed = 0.0001f;

@@ -39,7 +39,11 @@ public final class Massive extends Factions {
             MPlayer mp = MPlayer.get(p);
             Faction f = BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));
             FactionColl fColl = FactionColl.get();
-            boolean own = false, ally = false, truce = false, neutral = false, enemy = false,
+            boolean own = false,
+                    ally = false,
+                    truce = false,
+                    neutral = false,
+                    enemy = false,
                     warzone = c.warzone && f == fColl.getWarzone(), safezone = c.safezone && f == fColl.getSafezone(), wilderness = c.wilderness && f.isNone();
             if (mp.hasFaction()) {
                 Rel r = f.getRelationWish(mp.getFaction());

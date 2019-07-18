@@ -73,6 +73,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     public Config config;
     FlightManager manager;
     Trail trail;
+    Update update;
     private TempFly tempFly;
     private PluginManager pm = Bukkit.getPluginManager();
     private HashSet<String> registeredPerms = new HashSet<>();
@@ -130,15 +131,15 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         config = new Config(this);
         new Actionbar();
         new Listener(this);
-        new Update(getDescription().getVersion());
+        update = new Update(getDescription().getVersion());
 
         tempFly = new TempFly(this);
         getCommand("tempfly").setExecutor(tempFly);
         flyCommand();
 
-        if (config.autoUpdate) Update.install(Bukkit.getConsoleSender());
-        else if (Update.exists()) new BukkitRunnable() {
-            public void run() { getLogger().info("flightcontrol " + Update.newVer() + " is available for update. Perform \"/fc update\" to update and " +
+        if (config.autoUpdate) update.install(Bukkit.getConsoleSender());
+        else if (update.exists()) new BukkitRunnable() {
+            public void run() { getLogger().info("flightcontrol " + update.newVer() + " is available for update. Perform \"/fc update\" to update and " +
                     "visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates)."); }
         }.runTaskLater(this, 40);
         new Metrics(this); // bStats
@@ -146,10 +147,14 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 	public void onDisable() { config.saveTrails(); }
 
     Evaluation eval(Player p, Location l) {
-        String world = l.getWorld().getName(), region = regions.region(l);
+        String world = l.getWorld().getName(),
+               region = regions.region(l);
+        Evaluation categories = evalCategories(p),
+                   worlds = new Evaluation(config.worldBL, config.worlds.contains(world)),
+                   regions = new Evaluation(config.regionBL, config.regions.containsKey(world) && config.regions.get(world).contains(region));
+
         if (region != null) defaultPerms(world + "." + region); // Register new regions dynamically
-        Evaluation categories = evalCategories(p), worlds = new Evaluation(config.worldBL, config.worlds.contains(world)),
-                regions = new Evaluation(config.regionBL, config.regions.containsKey(world) && config.regions.get(world).contains(region));
+
         boolean enable = categories.enable() || plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
                 || p.hasPermission("flightcontrol.flyall")
                 || p.hasPermission("flightcontrol.fly." + world)
@@ -162,9 +167,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                         || region != null && p.hasPermission("flightcontrol.nofly." + world + "." + region)
                         || worlds.disable() || regions.disable();
 
-        if (config.useFacEnemyRange) {
-            List<Player> worldPlayers = l.getWorld().getPlayers(); worldPlayers.remove(p);
+        if (config.useFacEnemyRange && p.getWorld().equals(l.getWorld())) { // TODO Does second boolean actually prevent error from onTP?
+            List<Player> worldPlayers = l.getWorld().getPlayers();
+            worldPlayers.remove(p);
             List<Entity> nearbyEntities = p.getNearbyEntities(config.facEnemyRange, config.facEnemyRange, config.facEnemyRange);
+
             if (nearbyEntities.size() <= worldPlayers.size()) {
                 for (Entity e : nearbyEntities)
                     if (e instanceof Player) {
@@ -189,10 +196,12 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
     void debug(Player p) {
         Location l = p.getLocation();
-        String world = l.getWorld().getName(), region = regions.region(l);
+        String world = l.getWorld().getName(),
+               region = regions.region(l);
         ArrayList<Category> cats = categories(p);
-        Evaluation categories = evalCategories(p), worlds = new Evaluation(config.worldBL, config.worlds.contains(world)),
-                regions = new Evaluation(config.regionBL, config.regions.containsKey(world) && config.regions.get(world).contains(region));
+        Evaluation categories = evalCategories(p),
+                   worlds = new Evaluation(config.worldBL, config.worlds.contains(world)),
+                   regions = new Evaluation(config.regionBL, config.regions.containsKey(world) && config.regions.get(world).contains(region));
         // config options (settings) and permissions that act upon the same function are listed as
         // setting boolean (space) permission boolean
         msg(p, "&a&lFlightControl &f" + getDescription().getVersion() +
@@ -219,7 +228,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
     private Evaluation evalCategories(Player p) {
         ArrayList<Category> cats = categories(p);
-        boolean disable = false, enable = false;
+        boolean disable = false,
+                enable = false;
+
         if (cats != null) for (Category c : cats) {
             boolean cat = fac.rel(p, c);
             if (c.blacklist && cat) disable = true; else if (c.blacklist || cat) enable = true;
@@ -239,10 +250,13 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     static void msg(CommandSender s, String msg) { msg(s, msg, false); }
     static void msg(CommandSender s, String msg, boolean actionBar) {
         if (msg != null && !msg.isEmpty()) {
-            if (s instanceof ConsoleCommandSender) msg = msg.replaceAll("FlightControl &7» ", "[flightcontrol] ").replaceAll("»", "-");
-            msg = ChatColor.translateAlternateColorCodes('&', msg);
-            if (actionBar && s instanceof Player) Actionbar.send((Player) s, msg);
-            else s.sendMessage(msg);
+            String finalMsg = msg;
+
+            if (s instanceof ConsoleCommandSender) finalMsg = finalMsg.replaceAll("FlightControl &7» ", "[flightcontrol] ").replaceAll("»", "-");
+            finalMsg = ChatColor.translateAlternateColorCodes('&', finalMsg);
+
+            if (actionBar && s instanceof Player) Actionbar.send((Player) s, finalMsg);
+            else s.sendMessage(finalMsg);
         }
     }
 
@@ -256,9 +270,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
     }
 
-    void flyCommand() {
+    private void flyCommand() {
         try {
-            Field cmdMap = Bukkit.getServer().getClass().getDeclaredField("commandMap"), knownCMDS = SimpleCommandMap.class.getDeclaredField("knownCommands");
+            Field cmdMap = Bukkit.getServer().getClass().getDeclaredField("commandMap"),
+                  knownCMDS = SimpleCommandMap.class.getDeclaredField("knownCommands");
             Constructor<PluginCommand> plCMD = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
             cmdMap.setAccessible(true); knownCMDS.setAccessible(true); plCMD.setAccessible(true);
             CommandMap map = (CommandMap) cmdMap.get(Bukkit.getServer());
@@ -294,5 +309,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 }
             }
         } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    void toggleCommand(CommandSender s) {
+        config.set("settings.command", config.command = !config.command);
+        CMD.msgToggle(s, config.command, "Command");
+        flyCommand();
     }
 }

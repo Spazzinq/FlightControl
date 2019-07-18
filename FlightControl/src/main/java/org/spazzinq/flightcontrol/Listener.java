@@ -75,7 +75,7 @@ final class Listener implements org.bukkit.event.Listener {
                     "You tried to use /fly while the \"command\" setting in the config is disabled! By default, flightcontrol automatically enables and disables flight " +
                     "without any commands. Because you used /fly, flightcontrol has &aautomatically enabled the command setting&e. If you wish to disable the \"command\" setting again, " +
                     "perform &f/fc command &eor &fdisable &ethe option in the config.");
-            CMD.toggleCommand(p);
+            pl.toggleCommand(p);
         }
 	    new BukkitRunnable() { public void run() {
             pl.manager.check(p);

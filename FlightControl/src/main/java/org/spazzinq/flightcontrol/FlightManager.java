@@ -48,7 +48,9 @@ final class FlightManager {
     void check(Player p, Location l) { check(p, l, false); }
     void check(Player p, Location l, boolean usingCMD) {
         if (!p.hasPermission("flightcontrol.bypass") && p.getGameMode() != GameMode.SPECTATOR && !(pl.config.vanishBypass && pl.vanish.vanished(p)) && !tempBypass.contains(p)) {
-            Evaluation eval = pl.eval(p, l); boolean enable = eval.enable(), disable = eval.disable();
+            Evaluation eval = pl.eval(p, l);
+            boolean enable = eval.enable(),
+                    disable = eval.disable();
 
             if (p.getAllowFlight()) { if (disable || !enable) disableFlight(p); }
             else if (enable && !disable) {

@@ -41,7 +41,7 @@ public class Particles13 implements org.spazzinq.flightcontrol.multiversion.Part
         try { particle = Particle.valueOf(s); } catch (Exception ignored) { }
         switch (particle) {
             case REDSTONE: case SPELL_MOB: case SPELL_MOB_AMBIENT: case NOTE: extra = 1; break;
-            default: extra = 0;
+            default: extra = 0; break;
         }
     }
     public void setAmount(int amount) { this.amount = amount; }
@@ -51,6 +51,7 @@ public class Particles13 implements org.spazzinq.flightcontrol.multiversion.Part
             case REDSTONE: o = new Particle.DustOptions(Color.fromRGB(r,g,b), amount); break;
             case SPELL_MOB: case SPELL_MOB_AMBIENT: { x = r / 255d; y = g / 255d; z = b / 255d; break; }
             case NOTE: x = r / 24.0; break;
+            default: break;
         }
     }
 }

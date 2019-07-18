@@ -42,7 +42,7 @@ final class TempFly implements CommandExecutor {
             if (args.length == 1) {
                 Player p = Bukkit.getPlayer(args[0]);
                 if (p != null) {
-                    if (s != p) {
+                    if (!s.equals(p)) { // FIXME If broken
                         if (pl.manager.tempBypass.contains(p)) {
                             pl.manager.tempBypass.remove(p);
                             msg(s, "&e&lFlightControl &7» &eYou disabled " + p.getName() + "'s temporary bypass flight!");

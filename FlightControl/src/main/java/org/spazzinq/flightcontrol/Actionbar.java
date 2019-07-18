@@ -34,13 +34,13 @@ import org.bukkit.entity.Player;
 
 final class Actionbar {
     private static String nms;
-    private static boolean useOldMethods = false;
+    private static boolean oldMethod;
 
-    Actionbar() {
+    static {
         nms = Bukkit.getServer().getClass().getPackage().getName();
         nms = nms.substring(nms.lastIndexOf(".") + 1);
         // 1_7 may work with protocol hack
-        if (nms.equalsIgnoreCase("v1_8_R1") || nms.startsWith("v1_7_")) useOldMethods = true;
+        if (nms.equalsIgnoreCase("v1_8_R1") || nms.startsWith("v1_7_")) oldMethod = true;
     }
 
     static void send(Player p, String msg) {
@@ -48,7 +48,7 @@ final class Actionbar {
             try {
                 Object packet;
                 Class<?> packetPlayOutChatClass = Class.forName("net.minecraft.server." + nms + ".PacketPlayOutChat");
-                if (useOldMethods) {
+                if (oldMethod) {
                     Class<?> chatSerializerClass = Class.forName("net.minecraft.server." + nms + ".ChatSerializer");
                     Class<?> iChatBaseComponentClass = Class.forName("net.minecraft.server." + nms + ".IChatBaseComponent");
                     packet = packetPlayOutChatClass.getConstructor(new Class<?>[]{iChatBaseComponentClass, byte.class}).newInstance(
