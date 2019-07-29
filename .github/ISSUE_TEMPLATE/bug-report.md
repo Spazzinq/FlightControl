@@ -15,10 +15,10 @@ assignees: Spazzinq
 **Error** *(if there's an error, use hastebin or gist)*
  ...
  
-**Configuration** *(hastebin or gist)*
+**Configuration** *(gist)*
  ...
  
-**FlightControl Permissions** *(given to player)* **& OP Status**
+**FlightControl Permissions** *(given to player)* **& OP Status** *(does the player have OP?)*
  ...
  
 **Server Version** *(e.g. Spigot 1.8.8)*
