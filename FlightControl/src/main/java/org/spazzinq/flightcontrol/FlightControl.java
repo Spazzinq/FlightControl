@@ -26,10 +26,21 @@ package org.spazzinq.flightcontrol;
 
 import com.earth2me.essentials.Essentials;
 import net.minelink.ctplus.CombatTagPlus;
-import org.spazzinq.flightcontrol.hooks.combat.AntiLogging;
-import org.spazzinq.flightcontrol.hooks.combat.Combat;
-import org.spazzinq.flightcontrol.hooks.combat.LogX;
-import org.spazzinq.flightcontrol.hooks.combat.TagPlus;
+import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.spazzinq.flightcontrol.commands.FlyCommand;
+import org.spazzinq.flightcontrol.commands.TempFlyCommand;
+import org.spazzinq.flightcontrol.hooks.combat.*;
 import org.spazzinq.flightcontrol.hooks.factions.Factions;
 import org.spazzinq.flightcontrol.hooks.factions.Massive;
 import org.spazzinq.flightcontrol.hooks.factions.UUIDSavage;
@@ -49,18 +60,6 @@ import org.spazzinq.flightcontrol.multiversion.v8.Particles8;
 import org.spazzinq.flightcontrol.multiversion.v8.Regions8;
 import org.spazzinq.flightcontrol.objects.Category;
 import org.spazzinq.flightcontrol.objects.Evaluation;
-import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.command.*;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -71,10 +70,10 @@ import java.util.Map;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     public Config config;
-    FlightManager manager;
+    public FlightManager manager;
     Trail trail;
     Update update;
-    private TempFly tempFly;
+    public TempFlyCommand tempFlyCommand;
     private PluginManager pm = Bukkit.getPluginManager();
     private HashSet<String> registeredPerms = new HashSet<>();
 
@@ -87,9 +86,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     private Plot plot;
 
 	public void onEnable() {
-        // If loaded from a plugin manager, still register permissions
-        for (Permission p : getDescription().getPermissions()) if (pm.getPermission(p.getName()) == null) pm.addPermission(p);
-
 	    getCommand("flightcontrol").setExecutor(new CMD(this));
 	    // Anonymous command class
 	    getCommand("toggletrail").setExecutor((s, cmd, label, args) -> {
@@ -118,6 +114,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         if (pm.isPluginEnabled("CombatLogX")) combat = new LogX();
         else if (pm.isPluginEnabled("CombatTagPlus")) combat = new TagPlus(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
         else if (pm.isPluginEnabled("AntiCombatLogging")) combat = new AntiLogging();
+        else if (pm.isPluginEnabled("CombatLogPro")) combat = new LogPro(pm.getPlugin("CombatLogPro"));
 
         if (pm.isPluginEnabled("PremiumVanish") || pm.isPluginEnabled("SuperVanish")) vanish = new PremiumSuperVanish();
         else if (pm.isPluginEnabled("Essentials")) vanish = new EssentialsVanish((Essentials) pm.getPlugin("Essentials"));
@@ -133,8 +130,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         new Listener(this);
         update = new Update(getDescription().getVersion());
 
-        tempFly = new TempFly(this);
-        getCommand("tempfly").setExecutor(tempFly);
+        tempFlyCommand = new TempFlyCommand(this);
+        getCommand("tempfly").setExecutor(tempFlyCommand);
         flyCommand();
 
         if (config.autoUpdate) update.install(Bukkit.getConsoleSender());
@@ -247,7 +244,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         } return null;
     }
 
-    static void msg(CommandSender s, String msg) { msg(s, msg, false); }
+    public static void msg(CommandSender s, String msg) { msg(s, msg, false); }
     static void msg(CommandSender s, String msg, boolean actionBar) {
         if (msg != null && !msg.isEmpty()) {
             String finalMsg = msg;
@@ -286,18 +283,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 kCMDMap.put(plName.toLowerCase() + ":fly", fly);
                 kCMDMap.put("fly", fly);
                 // Anonymous fly class
-                fly.setExecutor((s, cmd, label, args) -> {
-                    if (args.length == 0) {
-                        if (s instanceof Player) {
-                            if (s.hasPermission("flightcontrol.fly") || s.hasPermission("essentials.fly")) {
-                                Player p = (Player) s;
-                                if (p.getAllowFlight()) { manager.disableFlight(p); manager.notif.add(p); }
-                                else manager.check(p, p.getLocation(), true);
-                            } else msg(s, config.noPerm);
-                        } else getLogger().info("Only players can use this command (the console can't fly, can it?)");
-                    } else if (args.length == 1) tempFly.onCommand(s, cmd, label, args);
-                    return true;
-                });
+                fly.setExecutor(new FlyCommand(this));
             } else if (getCommand("fly") != null && getCommand("fly").getPlugin() == this) {
                 kCMDMap.remove(plName.toLowerCase() + ":fly");
                 kCMDMap.remove("fly");

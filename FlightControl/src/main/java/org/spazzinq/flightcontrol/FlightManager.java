@@ -24,29 +24,29 @@
 
 package org.spazzinq.flightcontrol;
 
-import org.spazzinq.flightcontrol.objects.Evaluation;
-import org.spazzinq.flightcontrol.objects.Sound;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.spazzinq.flightcontrol.objects.Evaluation;
+import org.spazzinq.flightcontrol.objects.Sound;
 
 import java.util.ArrayList;
 
-final class FlightManager {
+public final class FlightManager {
     private FlightControl pl;
     // Msg when command enabled
-    ArrayList<Player> notif = new ArrayList<>();
+    public ArrayList<Player> notif = new ArrayList<>();
     ArrayList<Entity> fall = new ArrayList<>();
-    ArrayList<Player> tempBypass = new ArrayList<>();
+    public ArrayList<Player> tempBypass = new ArrayList<>();
 
     FlightManager(FlightControl pl) { this.pl = pl; }
 
     // MANAGE FLIGHT
     void check(Player p) { check(p, p.getLocation(), false); }
     void check(Player p, Location l) { check(p, l, false); }
-    void check(Player p, Location l, boolean usingCMD) {
+    public void check(Player p, Location l, boolean usingCMD) {
         if (!p.hasPermission("flightcontrol.bypass") && p.getGameMode() != GameMode.SPECTATOR && !(pl.config.vanishBypass && pl.vanish.vanished(p)) && !tempBypass.contains(p)) {
             Evaluation eval = pl.eval(p, l);
             boolean enable = eval.enable(),
@@ -64,7 +64,7 @@ final class FlightManager {
     }
 
     private void canEnable(Player p) {
-        if (!pl.config.command) enableFlight(p);
+        if (pl.config.autoEnable) enableFlight(p);
         else if (!notif.contains(p)) {
             notif.add(p); Sound.play(p, pl.config.cSound);
             FlightControl.msg(p, pl.config.cFlight, pl.config.actionBar);
@@ -77,8 +77,8 @@ final class FlightManager {
         if (!pl.config.everyEnable) Sound.play(p, pl.config.eSound);
         FlightControl.msg(p, pl.config.eFlight, pl.config.actionBar);
     }
-    void disableFlight(Player p) {
-        if (pl.config.command) notif.remove(p);
+    public void disableFlight(Player p) {
+        if (!pl.config.autoEnable) notif.remove(p);
         if (pl.config.cancelFall && p.isFlying()) {
             fall.add(p);
             new BukkitRunnable() { public void run() { fall.remove(p); } }.runTaskLater(pl, 300);

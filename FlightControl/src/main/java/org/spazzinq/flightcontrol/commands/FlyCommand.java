@@ -22,23 +22,28 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion.v8;
+package org.spazzinq.flightcontrol.commands;
 
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.spazzinq.flightcontrol.multiversion.Regions;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.FlightControl;
 
-import java.util.Iterator;
-import java.util.Set;
+public final class FlyCommand implements CommandExecutor {
+    private FlightControl pl;
+    public FlyCommand(FlightControl pl) { this.pl = pl; }
 
-public class Regions8 extends Regions {
-    public String region(Location l) {
-        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
-        if (iter.hasNext()) return iter.next().getId(); return null;
+    @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
+        if (args.length == 0) {
+            if (s instanceof Player) {
+                if (s.hasPermission("flightcontrol.fly") || s.hasPermission("essentials.fly")) {
+                    Player p = (Player) s;
+                    if (p.getAllowFlight()) { pl.manager.disableFlight(p); pl.manager.notif.add(p); }
+                    else pl.manager.check(p, p.getLocation(), true);
+                } else FlightControl.msg(s, pl.config.noPerm);
+            } else pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
+        } else if (args.length == 1) pl.tempFlyCommand.onCommand(s, cmd, label, args);
+        return true;
     }
-    public Set<String> regions(World w) { return WGBukkit.getRegionManager(w).getRegions().keySet(); }
-    public boolean hasRegion(String world, String region) { return WGBukkit.getRegionManager(Bukkit.getWorld(world)).hasRegion(region); }
 }

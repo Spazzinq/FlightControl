@@ -27,10 +27,10 @@ package org.spazzinq.flightcontrol.multiversion.v13;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.spazzinq.flightcontrol.multiversion.Regions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.spazzinq.flightcontrol.multiversion.Regions;
 
 import java.util.Iterator;
 import java.util.Set;

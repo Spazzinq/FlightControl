@@ -156,15 +156,18 @@ public final class CommentedConfig extends YamlConfiguration {
                 depth = nDepth;
 
                 int insertLength = 0;
-                if (addSubnodes.containsKey(node))
+                if (addSubnodes.containsKey(node)) {
                     // Get all sections for node
                     for (String section : addSubnodes.get(node)) {
-                        String k = "\n" + spaces + (node.contains(".") ? "" : "  ") + section.replaceAll("\n", "\n" + spaces + (node.contains(".") ? "" : "  "));
+                        String k = "\n" + spaces
+                                // If the node is a main node, indent
+                                + (node.contains(".") ? "" : "  ") + section.replaceAll("\n", "\n" + spaces + (node.contains(".") ? "" : "  "));
                         k = k.substring(0, k.length() - depth + (node.contains(".") ? 2 : 0));
                         // Insert AFTER
                         newConf.insert(newConf.indexOf(line, i) + line.length(), k);
                         insertLength += k.length();
                     }
+                }
                 i += insertLength;
             }
             i += line.length();
@@ -177,7 +180,9 @@ public final class CommentedConfig extends YamlConfiguration {
         comments = new HashMap<>();
         String[] lines = config.split("\n");
         // config = comment
-        String node = "", c = ""; int depth = 0;
+        String node = "",
+               c = "";
+        int depth = 0;
 
         for (String line : lines) {
             if (line.contains("#")) c = c.concat(line.substring(leadSpaces(line).length()) + "\n");

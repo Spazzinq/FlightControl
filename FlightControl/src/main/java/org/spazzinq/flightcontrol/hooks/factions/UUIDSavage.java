@@ -25,8 +25,8 @@
 package org.spazzinq.flightcontrol.hooks.factions;
 
 import com.massivecraft.factions.*;
-import org.spazzinq.flightcontrol.objects.Category;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.objects.Category;
 
 public final class UUIDSavage extends Factions {
     @Override public boolean rel(Player p, Category c) {

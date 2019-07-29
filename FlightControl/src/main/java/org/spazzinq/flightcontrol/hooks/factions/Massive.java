@@ -30,8 +30,8 @@ import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColl;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
-import org.spazzinq.flightcontrol.objects.Category;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.objects.Category;
 
 public final class Massive extends Factions {
     @Override public boolean rel(Player p, Category c) {

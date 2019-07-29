@@ -204,6 +204,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>cx.sfy</groupId>
+            <artifactId>CombatLogPro</artifactId>
+            <version>1.5.9</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.spazzinq</groupId>
             <artifactId>v8</artifactId>
             <version>SNAPSHOT</version>

@@ -32,9 +32,11 @@ auto_update: true
 # has a reason to (it does not stay enabled in a neutral/un-enabled location).
 
 settings:
-  # Enables /fly instead of automatic flight
+  # Enables flight automatically (no command necessary)
+  auto_enable: true
+  # Enables the /fly command (disable it if you don't want the command at all)
   # When "command" is enabled, "can_enable" and "cannot_enable" messages/sounds are used
-  command: false
+  command: true
   # Controls flight speed (default speed is 1)
   # The speed values match Essential's /flyspeed command (the number range is 0-10)
   flight_speed: 1.0

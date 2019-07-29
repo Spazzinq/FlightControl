@@ -24,9 +24,6 @@
 
 package org.spazzinq.flightcontrol;
 
-import org.spazzinq.flightcontrol.objects.Category;
-import org.spazzinq.flightcontrol.objects.CommentedConfig;
-import org.spazzinq.flightcontrol.objects.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -36,12 +33,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
+import org.spazzinq.flightcontrol.objects.Category;
+import org.spazzinq.flightcontrol.objects.CommentedConfig;
+import org.spazzinq.flightcontrol.objects.Sound;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-final class Config {
+public final class Config {
     private FlightControl pl;
     private CommentedConfig configData;
     private PluginManager pm;
@@ -50,13 +50,16 @@ final class Config {
     private File trailFile;
     private FileConfiguration trailConfig;
 
-    boolean autoUpdate, command, support,
-            worldBL, regionBL, useCombat, ownTown,
-            townyWar, cancelFall, vanishBypass, trail,
-            actionBar, everyEnable, useFacEnemyRange;
+    public boolean command, autoEnable;
+    boolean autoUpdate, support, worldBL, regionBL,
+            useCombat, ownTown, townyWar, cancelFall,
+            vanishBypass, trail, actionBar, everyEnable,
+            useFacEnemyRange;
     double facEnemyRange;
     float flightSpeed;
-    String dFlight, eFlight, cFlight, nFlight, dTrail, eTrail, noPerm;
+    String dFlight, eFlight, cFlight, nFlight,
+           dTrail, eTrail;
+    public String noPerm;
     Sound eSound, dSound, cSound, nSound;
     HashSet<String> worlds, trailPrefs;
     HashMap<String, List<String>> regions;
@@ -82,6 +85,7 @@ final class Config {
 
         // booleans
         autoUpdate = configData.getBoolean("auto_update");
+        autoEnable = configData.getBoolean("settings.auto_enable");
         command = configData.getBoolean("settings.command");
         worldBL = configData.isList("worlds.disable");
         regionBL = configData.isConfigurationSection("regions.disable");
@@ -152,6 +156,11 @@ final class Config {
         }
         if (!configData.isInt("settings.disable_enemy_range")) {
             configData.addSubnode("settings.vanish_bypass", "disable_enemy_range: -1");
+            modified = true;
+        }
+        // 3.3
+        if (!configData.isBoolean("settings.auto_enable")) {
+            configData.addSubnode("settings",  "auto_enable: " + (command ? "false" : "true"));
             modified = true;
         }
         if (modified) save();

@@ -39,17 +39,17 @@ final class CMD implements CommandExecutor, TabCompleter {
     private String help;
     CMD(FlightControl pl) {
         this.pl = pl;
-        help = " \n&a&lFlightControl &f" + pl.getDescription().getVersion() + "\n" +
-                "&aBy &fSpazzinq\n " +
-                "\n&a/fc &7» &fHelp\n" +
-                "&a/fc update &7» &fUpdate flightcontrol\n" +
-                "&a/fc actionbar &7» &fSend notifications through action bar\n" +
-                "&a/fc combat &7» &fToggle automatic combat disabling\n" +
-                "&a/fc falldamage &7» &fToggle fall damage prevention\n" +
-                "&a/fc trails &7» &fToggle trails for the server\n" +
-                "&a/fc vanishbypass &7» &fToggle vanish bypass\n" +
-                "&a/fc command &7» &fUse /fly instead of automatic flight\n" +
-                "\n&a/tt &7» &fPersonal trail toggle";
+        help = " \n&a&lFlightControl &f" + pl.getDescription().getVersion() + "\n"
+                + "&aBy &fSpazzinq\n \n"
+                + "&a/fc reload &7» &fReload FlightControl's configuration\n"
+                + "&a/fc update &7» &fUpdate FlightControl\n"
+                + "&a/fc actionbar &7» &fSend notifications through action bar\n"
+                + "&a/fc combat &7» &fToggle combat disabling\n"
+                + "&a/fc falldamage &7» &fToggle fall damage prevention\n"
+                + "&a/fc trails &7» &fToggle trails for the server\n"
+                + "&a/fc vanishbypass &7» &fToggle vanish bypass\n"
+                + "&a/fc command &7» &fUse /fly instead of automatic flight\n \n"
+                + "&a/tt &7» &fPersonal trail toggle";
     }
 
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
