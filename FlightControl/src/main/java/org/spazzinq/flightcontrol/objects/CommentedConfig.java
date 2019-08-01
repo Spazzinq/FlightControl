@@ -36,10 +36,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 // Rewritten to allow comment saving & to ignore
 // Bukkit "headers" in saveToString & loadFromString
@@ -47,6 +44,7 @@ public final class CommentedConfig extends YamlConfiguration {
     private HashMap<String, String> comments,
                                     addNodes = new HashMap<>();
     private HashMap<String, List<String>> addSubnodes = new HashMap<>();
+    private Set<String> removeNodes = new HashSet<>();
     private final Yaml yaml;
 
     private CommentedConfig() {
@@ -75,16 +73,27 @@ public final class CommentedConfig extends YamlConfiguration {
         configResource.close();
     }
 
-    public void addNode(String relativeKey, String node) { addNodes.put(relativeKey, node); }
-    public void addSubnodes(String relativeKey, List<String> node) { addSubnodes.put(relativeKey, node); }
-    public void addSubnode(String relativeKey, String node) { addSubnodes.put(relativeKey, Collections.singletonList(node)); }
+    public void addNode(String relativeKey, String node) {
+        addNodes.put(relativeKey, node);
+    }
+    public void addSubnodes(String relativeKey, List<String> node) {
+        addSubnodes.put(relativeKey, node);
+    }
+    public void addSubnode(String relativeKey, String node) {
+        addSubnodes.put(relativeKey, Collections.singletonList(node));
+    }
+    public void removeNode(String node) {
+        removeNodes.add(node);
+    }
 
     public void save(File f) throws IOException {
         if (f != null) {
             //noinspection UnstableApiUsage
             Files.createParentDirs(f);
             try (FileWriter writer = new FileWriter(f)) {
-                writer.write(insertComments(insertSubnodes(insertNodes(new StringBuilder(saveToString())))).toString());
+                writer.write(
+                        insertComments(insertSubnodes(insertNodes(
+                                removeNodes(new StringBuilder(saveToString()))))).toString());
             }
         }
     }
@@ -93,45 +102,48 @@ public final class CommentedConfig extends YamlConfiguration {
 
     // Insert BEFORE node
     // Comments should already have "#" at the beginning
-    private StringBuilder insertBefore(StringBuilder tempConfig, HashMap<String, String> toInsert, boolean lineSeparator) {
-        String[] lines = tempConfig.toString().split("\n");
-        //              config index
-        String node = "";
-        int i = 0,
-            depth = 0;
+    private void insertBefore(StringBuilder tempConfig, HashMap<String, String> toInsert, boolean lineSeparator) {
+        if (!toInsert.isEmpty()) {
+            String[] lines = tempConfig.toString().split("\n");
+            //              config index
+            String node = "";
+            int i = 0,
+                    depth = 0;
 
-        for (String line : lines) {
-            // Is it a node?
-            if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
-                String localNode = line.replaceAll("\\s+", "").split(":")[0];
-                String spaces = leadSpaces(line); int nDepth = spaces.length();
+            for (String line : lines) {
+                // Is it a node?
+                if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
+                    // TODO Should probably substring after finding char location not split
+                    String localNode = line.replaceAll("\\s+", "").split(":")[0];
+                    String spaces = leadSpaces(line); int nDepth = spaces.length();
 
-                if (depth >= nDepth) {
-                    // example node -> "lol.xd.420"
-                    // same depth -> "lol.xd" | shallower by 1 -> "lol" | by 2 -> ""
-                    // (add node on later)
-                    int back = (depth - nDepth) / 2 + 1;
-                    // Back the node down
-                    for (int j = 0; j < back; j++) if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
+                    if (depth >= nDepth) {
+                        // example node -> "lol.xd.420"
+                        // same depth -> "lol.xd" | shallower by 1 -> "lol" | by 2 -> ""
+                        // (add node on later)
+                        int back = (depth - nDepth) / 2 + 1;
+                        // Back the node down
+                        for (int j = 0; j < back; j++) if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
+                    }
+                    // Update the node
+                    node = node.concat((node.isEmpty() ? "" : ".") + localNode);
+                    depth = nDepth;
+
+                    if (toInsert.containsKey(node)) {
+                        // Add the spaces from the depth of the node
+                        String insert = spaces + toInsert.get(node).replaceAll("\n", "\n" + spaces);
+                        // Remove spaces at the end from above replaceAll
+                        insert = insert.substring(0, insert.length() - depth) + (lineSeparator ? "\n" : "");
+                        // Insert into newConf
+                        tempConfig.insert(tempConfig.indexOf(line, i), insert);
+                        // Set location to continue from
+                        i += insert.length();
+                    }
                 }
-                // Update the node
-                node = node.concat((node.isEmpty() ? "" : ".") + localNode);
-                depth = nDepth;
-
-                if (toInsert.containsKey(node)) {
-                    // Add the spaces from the depth of the node
-                    String insert = spaces + toInsert.get(node).replaceAll("\n", "\n" + spaces);
-                    // Remove spaces at the end from above replaceAll
-                    insert = insert.substring(0, insert.length() - depth) + (lineSeparator ? "\n" : "");
-                    // Insert into newConf
-                    tempConfig.insert(tempConfig.indexOf(line, i), insert);
-                    // Set location to continue from
-                    i += insert.length();
-                }
+                // Include the newline that was split
+                i += line.length() + 1;
             }
-            i += line.length();
         }
-        return tempConfig;
     }
 
     private StringBuilder insertComments(StringBuilder tempConfig) {
@@ -142,44 +154,92 @@ public final class CommentedConfig extends YamlConfiguration {
     }
 
     private StringBuilder insertNodes(StringBuilder tempConfig) {
-        return insertBefore(tempConfig, addNodes, true);
+        insertBefore(tempConfig, addNodes, true);
+        addNodes.clear();
+        return tempConfig;
     }
 
     // Insert AFTER node
     private StringBuilder insertSubnodes(StringBuilder tempConfig) {
-        String[] lines = tempConfig.toString().split("\n");
-        String node = "";
-        int i = 0,
-            depth = 0;
+        if (!addSubnodes.isEmpty()) {
+            String[] lines = tempConfig.toString().split("\n");
+            String node = "";
+            int i = 0,
+                    depth = 0;
 
-        for (String line : lines) {
-            if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
-                String localNode = line.replaceAll("\\s+", "").split(":")[0];
-                String spaces = leadSpaces(line); int nDepth = spaces.length();
+            for (String line : lines) {
+                if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
+                    String localNode = line.replaceAll("\\s+", "").split(":")[0];
+                    String spaces = leadSpaces(line); int nDepth = spaces.length();
 
-                if (depth >= nDepth) {
-                    int back = (depth - nDepth) / 2 + 1;
-                    for (int j = 0; j < back; j++) if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
+                    if (depth >= nDepth) {
+                        int back = (depth - nDepth) / 2 + 1;
+                        for (int j = 0; j < back; j++) if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
+                    }
+                    node = node.concat((node.isEmpty() ? "" : ".") + localNode);
+                    depth = nDepth;
+
+                    int insertLength = 0;
+                    if (addSubnodes.containsKey(node)) {
+                        // Get all sections for node
+                        for (String section : addSubnodes.get(node)) {
+                            String k = "\n" + spaces
+                                    // If the node is a main node, indent
+                                    + (node.contains(".") ? "" : "  ") + section.replaceAll("\n", "\n" + spaces + (node.contains(".") ? "" : "  "));
+                            k = k.substring(0, k.length() - depth + (node.contains(".") ? 2 : 0));
+                            // Insert AFTER
+                            tempConfig.insert(tempConfig.indexOf(line, i) + line.length(), k);
+                            insertLength += k.length();
+                        }
+                    }
+                    i += insertLength;
                 }
-                node = node.concat((node.isEmpty() ? "" : ".") + localNode);
-                depth = nDepth;
+                // Include the newline that was split
+                i += line.length() + 1;
+            }
+            addSubnodes.clear();
+        }
+        return tempConfig;
+    }
 
-                int insertLength = 0;
-                if (addSubnodes.containsKey(node)) {
-                    // Get all sections for node
-                    for (String section : addSubnodes.get(node)) {
-                        String k = "\n" + spaces
-                                // If the node is a main node, indent
-                                + (node.contains(".") ? "" : "  ") + section.replaceAll("\n", "\n" + spaces + (node.contains(".") ? "" : "  "));
-                        k = k.substring(0, k.length() - depth + (node.contains(".") ? 2 : 0));
-                        // Insert AFTER
-                        tempConfig.insert(tempConfig.indexOf(line, i) + line.length(), k);
-                        insertLength += k.length();
+    // Works for both nodes and subnodes
+    private StringBuilder removeNodes(StringBuilder tempConfig) {
+        if (!removeNodes.isEmpty()) {
+            String[] lines = tempConfig.toString().split("\n");
+            String node = "",
+                   target = "";
+            Integer start = null;
+            int end = 0,
+                    depth = 0;
+
+            for (String line : lines) {
+                if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
+                    String localNode = line.replaceAll("\\s+", "").split(":")[0];
+                    String spaces = leadSpaces(line); int nDepth = spaces.length();
+
+                    if (depth >= nDepth) {
+                        int back = (depth - nDepth) / 2 + 1;
+                        for (int j = 0; j < back; j++) if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
+                    }
+                    node = node.concat((node.isEmpty() ? "" : ".") + localNode);
+                    depth = nDepth;
+
+                    if (removeNodes.contains(node) && start == null) {
+                        start = end;
+                        target = node;
                     }
                 }
-                i += insertLength;
+                // Allow it to take one of the empty lines
+                end += line.length() + 1;
+
+                //               If subnode is over                         If whole node is over
+                if (((removeNodes.contains(node) && node.contains(".")) || !node.contains(target)) && start != null) {
+                    //                                                    Don't remove next whole node
+                    tempConfig.delete(start, end - (!node.contains(target) ? line.length() + 1 : 0));
+                    start = null;
+                }
             }
-            i += line.length();
+            removeNodes.clear();
         }
         return tempConfig;
     }
@@ -219,7 +279,9 @@ public final class CommentedConfig extends YamlConfiguration {
                     headerDone = true;
                 }
 
-                if (!c.isEmpty()) { comments.put(node, c); c = ""; }
+                if (!c.isEmpty()) {
+                    comments.put(node, c); c = "";
+                }
             }
         }
         //                                                          Remove \n

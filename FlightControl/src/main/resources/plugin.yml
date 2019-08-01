@@ -10,6 +10,9 @@ commands:
   flightcontrol:
     description: FlightControl administration
     aliases: [fc]
+  fly:
+    description: Toggles flight
+    aliases: [fcfly, ffly]
   toggletrail:
     description: Per-player trail toggle
     aliases: [trail, tt]

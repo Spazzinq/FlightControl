@@ -31,16 +31,17 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.command.*;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.APIManager;
+import org.spazzinq.flightcontrol.commands.FlightControlCommand;
 import org.spazzinq.flightcontrol.commands.FlyCommand;
 import org.spazzinq.flightcontrol.commands.TempFlyCommand;
 import org.spazzinq.flightcontrol.hooks.combat.*;
@@ -64,21 +65,17 @@ import org.spazzinq.flightcontrol.multiversion.v1_8.WorldGuard6;
 import org.spazzinq.flightcontrol.objects.Category;
 import org.spazzinq.flightcontrol.objects.Evaluation;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.*;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
-    @Getter private TempFlyCommand tempFlyCommand;
+    @Getter private APIManager apiManager = APIManager.getInstance();
     private PluginManager pm = Bukkit.getPluginManager();
-    private HashSet<String> registeredPerms = new HashSet<>();
 
     @Getter ConfigManager configManager;
     @Getter FlightManager flightManager;
-    Trail trail;
-    Update update;
-    @Getter
-    private APIManager apiManager = APIManager.getInstance();
+    @Getter TrailManager trailManager;
+    @Getter Updater updater;
+    @Getter private TempFlyCommand tempFlyCommand;
 
     WorldGuard worldGuard;
     Particles particles;
@@ -88,8 +85,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     private Factions fac;
     private Plot plot;
 
+    private HashSet<String> registeredPerms = new HashSet<>();
+
 	public void onEnable() {
-        getCommand("flightcontrol").setExecutor(new CMD(this));
+        getCommand("flightcontrol").setExecutor(new FlightControlCommand(this));
         // Anonymous command class
         getCommand("toggletrail").setExecutor((s, cmd, label, args) -> {
             if (s instanceof Player) {
@@ -98,12 +97,12 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 if (configManager.trailPrefs.contains(uuid)) {
                     configManager.trailPrefs.remove(uuid);
                     // No need to check for trail enable because of command listener
-                    msg(s, configManager.eTrail, configManager.actionBar);
+                    msg(s, configManager.eTrail, configManager.byActionBar);
                 }
                 else {
                     configManager.trailPrefs.add(uuid);
-                    trail.trailRemove(p);
-                    msg(s, configManager.dTrail, configManager.actionBar);
+                    trailManager.trailRemove(p);
+                    msg(s, configManager.dTrail, configManager.byActionBar);
                 }
             }
             else getLogger().info("Only players can use this command (the console isn't a player!)");
@@ -133,19 +132,19 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         flightManager = new FlightManager(this);
         configManager = new ConfigManager(this);
         // Loads from Config
-        trail = new Trail(this);
+        trailManager = new TrailManager(this);
         new Actionbar();
         new Listener(this);
-        update = new Update(getDescription().getVersion());
+        updater = new Updater(getDescription().getVersion());
 
         tempFlyCommand = new TempFlyCommand(this);
         getCommand("tempfly").setExecutor(tempFlyCommand);
-        flyCommand();
+        getCommand("fly").setExecutor(new FlyCommand(this));
 
-        if (configManager.autoUpdate) update.install(Bukkit.getConsoleSender(), true);
-        else if (update.exists()) new BukkitRunnable() {
+        if (configManager.autoUpdate) updater.install(Bukkit.getConsoleSender(), true);
+        else if (updater.exists()) new BukkitRunnable() {
             public void run() {
-                getLogger().info("flightcontrol " + update.newVer() + " is available for update. Perform \"/fc update\" to update and " + "visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
+                getLogger().info("flightcontrol " + updater.newVer() + " is available for update. Perform \"/fc update\" to update and " + "visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
             }
         }.runTaskLater(this, 40);
 
@@ -161,11 +160,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 	}
 
     // Set for players already online
-	void checkCurrentPlayers() {
+    public void checkCurrentPlayers() {
 	    float actualSpeed = calcActualSpeed(configManager.flightSpeed);
         for (Player p : Bukkit.getOnlinePlayers()) {
             flightManager.check(p);
-            trail.trailCheck(p);
+            trailManager.trailCheck(p);
             p.setFlySpeed(actualSpeed);
         }
     }
@@ -218,7 +217,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         return new Evaluation(disable, enable, true);
     }
 
-    void debug(Player p) {
+    public void debug(Player p) {
         Location l = p.getLocation();
         String world = l.getWorld().getName(),
                region = worldGuard.getRegion(l);
@@ -294,43 +293,38 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
     }
 
-    private void flyCommand() {
-        try {
-            Field cmdMap = Bukkit.getServer().getClass().getDeclaredField("commandMap"),
-                  knownCMDS = SimpleCommandMap.class.getDeclaredField("knownCommands");
-            Constructor<PluginCommand> plCMD = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
-            cmdMap.setAccessible(true); knownCMDS.setAccessible(true); plCMD.setAccessible(true);
-            CommandMap map = (CommandMap) cmdMap.get(Bukkit.getServer());
-            @SuppressWarnings("unchecked") Map<String, Command> kCMDMap = (Map<String, Command>) knownCMDS.get(cmdMap.get(Bukkit.getServer()));
-            PluginCommand fly = plCMD.newInstance("fly", this);
-            String plName = getDescription().getName();
-            if (configManager.command) {
-                fly.setDescription("Enables flight");
-                map.register(plName, fly);
-                kCMDMap.put(plName.toLowerCase() + ":fly", fly);
-                kCMDMap.put("fly", fly);
-                // Anonymous fly class
-                fly.setExecutor(new FlyCommand(this));
-            } else if (getCommand("fly") != null && getCommand("fly").getPlugin() == this) {
-                kCMDMap.remove(plName.toLowerCase() + ":fly");
-                kCMDMap.remove("fly");
+//    private void flyCommand() {
+//        try {
+//            Field cmdMap = Bukkit.getServer().getClass().getDeclaredField("commandMap"),
+//                  knownCMDS = SimpleCommandMap.class.getDeclaredField("knownCommands");
+//            Constructor<PluginCommand> plCMD = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+//            cmdMap.setAccessible(true); knownCMDS.setAccessible(true); plCMD.setAccessible(true);
+//            CommandMap map = (CommandMap) cmdMap.get(Bukkit.getServer());
+//            @SuppressWarnings("unchecked") Map<String, Command> kCMDMap = (Map<String, Command>) knownCMDS.get(cmdMap.get(Bukkit.getServer()));
+//            PluginCommand fly = plCMD.newInstance("fly", this);
+//            String plName = getDescription().getName();
+//            if (configManager.command) {
+//                fly.setDescription("Toggles flight");
+//                map.register(plName, fly);
+//                kCMDMap.put(plName.toLowerCase() + ":fly", fly);
+//                kCMDMap.put("fly", fly);
+//                // Anonymous fly class
+//                fly.setExecutor(new FlyCommand(this));
+//            } else if (getCommand("fly") != null && getCommand("fly").getPlugin() == this) {
+//                kCMDMap.remove(plName.toLowerCase() + ":fly");
+//                kCMDMap.remove("fly");
+//
+//                if (pm.isPluginEnabled("Essentials")) {
+//                    map.register("Essentials", fly);
+//                    fly.setExecutor(pm.getPlugin("Essentials"));
+//                    fly.setTabCompleter(pm.getPlugin("Essentials"));
+//                }
+//            }
+//        } catch (Exception e) { e.printStackTrace(); }
+//    }
 
-                if (pm.isPluginEnabled("Essentials")) {
-                    map.register("Essentials", fly);
-                    fly.setExecutor(pm.getPlugin("Essentials"));
-                    fly.setTabCompleter(pm.getPlugin("Essentials"));
-                }
-            }
-        } catch (Exception e) { e.printStackTrace(); }
-    }
 
-    void toggleCommand(CommandSender s) {
-        configManager.set("settings.command", configManager.command = !configManager.command);
-        CMD.msgToggle(s, configManager.command, "Command");
-        flyCommand();
-    }
-
-    float calcActualSpeed(float wrongSpeed) {
+    public float calcActualSpeed(float wrongSpeed) {
         float actualSpeed,
                 defaultSpeed = 0.1f,
                 maxSpeed = 1f;

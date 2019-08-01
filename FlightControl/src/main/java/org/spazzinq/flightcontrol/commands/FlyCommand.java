@@ -53,7 +53,7 @@ public final class FlyCommand implements CommandExecutor {
                         manager.check(p, p.getLocation(), true);
                         manager.getDisabledByPlayerList().remove(p);
                     }
-                } else FlightControl.msg(s, pl.getConfigManager().getNoPerm());
+                } else FlightControl.msg(s, pl.getConfigManager().getNoPermission());
             } else pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
         } else if (args.length == 1) pl.getTempFlyCommand().onCommand(s, cmd, label, args);
         return true;

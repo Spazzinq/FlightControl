@@ -52,6 +52,7 @@ public abstract class FlightListener {
         }
     }
 
+    // FIXME Potential accountability issue (plugin can set to whatever plugin they want)
     public FlightListener setPlugin(Plugin pl) {
         this.pl = pl;
         return this;

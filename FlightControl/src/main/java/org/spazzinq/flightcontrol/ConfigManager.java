@@ -25,6 +25,7 @@
 package org.spazzinq.flightcontrol;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -43,27 +44,26 @@ import java.util.*;
 
 public final class ConfigManager {
     private FlightControl pl;
-    private CommentedConfig configData;
     private PluginManager pm;
+    CommentedConfig configData;
 
     private File f;
     private File trailFile;
     private FileConfiguration trailConfig;
 
-    @Getter
-    boolean autoUpdate;
-
-    boolean command, autoEnable, support,
-            worldBL, regionBL, useCombat,
-            ownTown, townyWar, cancelFall,
-            vanishBypass, trail, actionBar,
+    @Getter @Setter
+    boolean autoEnable, autoUpdate, support,
+            worldBL, regionBL, combatChecked,
+            ownTown, townyWar, fallCancelled,
+            vanishBypass, trail, byActionBar,
             everyEnable, useFacEnemyRange;
+    @Getter @Setter
     double facEnemyRange;
-    float flightSpeed;
+    @Getter @Setter float flightSpeed;
     String dFlight, eFlight, cFlight, nFlight,
            dTrail, eTrail;
     @Getter
-    String noPerm;
+    String noPermission;
     Sound eSound, dSound, cSound, nSound;
     HashSet<String> worlds;
     HashSet<UUID> trailPrefs;
@@ -80,7 +80,7 @@ public final class ConfigManager {
         updateConfig();
     }
 
-    void reloadConfig() {
+    public void reloadConfig() {
         if (trailPrefs != null) saveTrailPrefs();
 
         pl.saveDefaultConfig();
@@ -93,22 +93,21 @@ public final class ConfigManager {
         // booleans
         autoUpdate = configData.getBoolean("auto_update");
         autoEnable = configData.getBoolean("settings.auto_enable");
-        command = configData.getBoolean("settings.command");
         worldBL = configData.isList("worlds.disable");
         regionBL = configData.isConfigurationSection("regions.disable");
-        useCombat = configData.getBoolean("settings.disable_flight_in_combat");
+        combatChecked = configData.getBoolean("settings.disable_flight_in_combat");
         ownTown = configData.getBoolean("towny.enable_own_town");
         townyWar = configData.getBoolean("towny.disable_during_war");
-        cancelFall = configData.getBoolean("settings.prevent_fall_damage");
+        fallCancelled = configData.getBoolean("settings.prevent_fall_damage");
         vanishBypass = configData.getBoolean("settings.vanish_bypass");
-        actionBar = configData.getBoolean("messages.actionbar");
+        byActionBar = configData.getBoolean("messages.actionbar");
 
         // ints
         int range = configData.getInt("settings.disable_enemy_range");
         if (useFacEnemyRange = (range != -1)) facEnemyRange = range;
 
         // floats
-        flightSpeed = (float) configData.getDouble("settings.flight_speed");
+        flightSpeed = pl.calcActualSpeed((float) configData.getDouble("settings.flight_speed"));
 
         // Messages
         dFlight = configData.getString("messages.flight.disable");
@@ -118,7 +117,7 @@ public final class ConfigManager {
         nFlight = configData.getString("messages.flight.cannot_enable");
         dTrail = configData.getString("messages.trail.disable");
         eTrail = configData.getString("messages.trail.enable");
-        noPerm = configData.getString("messages.permission_denied");
+        noPermission = configData.getString("messages.permission_denied");
 
         // Load other stuff that have separate methods
         loadWorlds();
@@ -167,9 +166,15 @@ public final class ConfigManager {
         }
         // 3.3
         if (!configData.isBoolean("settings.auto_enable")) {
-            configData.addSubnode("settings",  "auto_enable: " + (command ? "false" : "true"));
+            configData.addSubnode("settings",  "auto_enable: "
+                    + (configData.getBoolean("settings.command") ? "false" : "true"));
             modified = true;
         }
+        if (configData.isBoolean("settings.command")) {
+            configData.removeNode("settings.command");
+            modified = true;
+        }
+
         if (modified) save();
     }
 
@@ -307,7 +312,7 @@ public final class ConfigManager {
         }
     }
 
-    void set(String path, Object value) {
+    public void set(String path, Object value) {
         configData.set(path, value);
         save();
     }

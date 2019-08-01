@@ -24,7 +24,6 @@
 
 package org.spazzinq.flightcontrol.api;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.spazzinq.flightcontrol.api.events.FlightCanEnableEvent;
 import org.spazzinq.flightcontrol.api.events.FlightCannotEnableEvent;
@@ -60,9 +59,7 @@ public class APIManager {
             for (HandlerMethod m : listener.getHandlers()) {
                 sortInsert(m);
             }
-
         }
-
     }
     public void removeListener(FlightListener listener) {
         listeners.remove(listener);
@@ -125,11 +122,11 @@ public class APIManager {
         if (i != methods.size()) methods.add(i, insert);
         else methods.add(insert);
 
-        StringBuilder sb = new StringBuilder();
-        for (HandlerMethod m : methods) {
-            sb.append(m.getPriority() + "(" + m.getMethod().getName() + "), ");
-        }
-        Bukkit.getLogger().severe(sb.toString());
+//        StringBuilder sb = new StringBuilder();
+//        for (HandlerMethod m : methods) {
+//            sb.append(m.getPriority() + "(" + m.getMethod().getName() + "), ");
+//        }
+//        Bukkit.getLogger().severe(sb.toString());
     }
 
     public static APIManager getInstance() {

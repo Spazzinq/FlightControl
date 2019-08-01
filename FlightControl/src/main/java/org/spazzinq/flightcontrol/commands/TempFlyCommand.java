@@ -38,7 +38,7 @@ public final class TempFlyCommand implements CommandExecutor {
 
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
         if (s instanceof ConsoleCommandSender || s.hasPermission("flightcontrol.flyother")) {
-            if (args.length == 1) {
+            if (args.length >= 1) {
                 Player p = Bukkit.getPlayer(args[0]);
                 if (p != null) {
                     if (!s.equals(p)) {
@@ -46,6 +46,24 @@ public final class TempFlyCommand implements CommandExecutor {
                             pl.getFlightManager().getTempBypassList().remove(p);
                             FlightControl.msg(s, "&e&lFlightControl &7» &eYou disabled " + p.getName() + "'s temporary bypass flight!");
                         } else {
+                            // TODO timed temp-fly
+//                            if (args.length == 2) {
+//                                args[1] = args[1].toLowerCase();
+//                                if (args[1].matches("\\d+[smhd]")) {
+//                                    char unit = args[1].charAt(args[1].length() - 1);
+//                                    // Just in case it's a really
+//                                    long time = Long.parseLong(args[1].substring(0, args[1].length() - 1)) * 1000;
+//
+//                                    switch (unit) {
+//                                        case 'm': time *= 60; break;
+//                                        case 'h': time *= 3600; break;
+//                                        case 'd': time *= 86400; break;
+//                                        default: break;
+//                                    }
+//
+//                                    System.currentTimeMillis() + time
+//                                }
+//                            }
                             pl.getFlightManager().getTempBypassList().add(p);
                             FlightControl.msg(s, "&e&lFlightControl &7» &e" + p.getName() + " now has temporary bypass flight until the next server restart!");
                         }
@@ -53,7 +71,7 @@ public final class TempFlyCommand implements CommandExecutor {
                             (pl.getConfigManager().isAutoUpdate() ? "let your flight automatically enable?" : "just do /fly?"));
                 } else FlightControl.msg(s, "&e&lFlightControl &7» &eInvalid player! Please provide a valid player to give temporary bypass flight!");
             } else FlightControl.msg(s, "&c&lFlightControl &7» &cPlease provide a player to give temporary bypass flight!");
-        } else FlightControl.msg(s, pl.getConfigManager().getNoPerm());
+        } else FlightControl.msg(s, pl.getConfigManager().getNoPermission());
         return true;
     }
 }

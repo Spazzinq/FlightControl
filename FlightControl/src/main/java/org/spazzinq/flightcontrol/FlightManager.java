@@ -80,7 +80,7 @@ public final class FlightManager {
     private void canEnable(Player p) {
         if (!alreadyCanMsgList.contains(p)) {
             alreadyCanMsgList.add(p);
-            FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), pl.configManager.cFlight, pl.configManager.cSound, pl.configManager.actionBar);
+            FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), pl.configManager.cFlight, pl.configManager.cSound, pl.configManager.byActionBar);
 
             pl.getApiManager().callEvent(e);
             if (!e.isCancelled()) {
@@ -91,7 +91,7 @@ public final class FlightManager {
 
     }
     private void cannotEnable(Player p) {
-        FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), pl.configManager.nFlight, pl.configManager.nSound, pl.configManager.actionBar);
+        FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), pl.configManager.nFlight, pl.configManager.nSound, pl.configManager.byActionBar);
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
@@ -102,7 +102,7 @@ public final class FlightManager {
     }
 
     private void enableFlight(Player p, boolean isCommand) {
-        FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), pl.configManager.eFlight, pl.configManager.eSound, pl.configManager.actionBar, isCommand);
+        FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), pl.configManager.eFlight, pl.configManager.eSound, pl.configManager.byActionBar, isCommand);
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
@@ -112,18 +112,18 @@ public final class FlightManager {
         }
     }
     public void disableFlight(Player p, boolean isCommand) {
-        FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), pl.configManager.dFlight, pl.configManager.dSound, pl.configManager.actionBar, isCommand);
+        FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), pl.configManager.dFlight, pl.configManager.dSound, pl.configManager.byActionBar, isCommand);
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
             alreadyCanMsgList.remove(p);
-            if (pl.configManager.cancelFall && p.isFlying()) {
+            if (pl.configManager.fallCancelled && p.isFlying()) {
                 cancelFallList.add(p);
                 new BukkitRunnable() { public void run() { cancelFallList.remove(p); } }.runTaskLater(pl, 300);
             }
             p.setAllowFlight(false);
             p.setFlying(false);
-            pl.trail.trailRemove(p);
+            pl.trailManager.trailRemove(p);
             Sound.play(p, pl.configManager.dSound);
             FlightControl.msg(p, e.getMessage(), e.isByActionbar());
         }
