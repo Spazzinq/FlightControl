@@ -41,34 +41,32 @@ public final class TempFlyCommand implements CommandExecutor {
             if (args.length >= 1) {
                 Player p = Bukkit.getPlayer(args[0]);
                 if (p != null) {
-                    if (!s.equals(p)) {
-                        if (pl.getFlightManager().getTempBypassList().contains(p)) {
-                            pl.getFlightManager().getTempBypassList().remove(p);
-                            FlightControl.msg(s, "&e&lFlightControl &7» &eYou disabled " + p.getName() + "'s temporary bypass flight!");
-                        } else {
-                            // TODO timed temp-fly
-//                            if (args.length == 2) {
-//                                args[1] = args[1].toLowerCase();
-//                                if (args[1].matches("\\d+[smhd]")) {
-//                                    char unit = args[1].charAt(args[1].length() - 1);
-//                                    // Just in case it's a really
-//                                    long time = Long.parseLong(args[1].substring(0, args[1].length() - 1)) * 1000;
-//
-//                                    switch (unit) {
-//                                        case 'm': time *= 60; break;
-//                                        case 'h': time *= 3600; break;
-//                                        case 'd': time *= 86400; break;
-//                                        default: break;
-//                                    }
-//
-//                                    System.currentTimeMillis() + time
-//                                }
-//                            }
-                            pl.getFlightManager().getTempBypassList().add(p);
-                            FlightControl.msg(s, "&e&lFlightControl &7» &e" + p.getName() + " now has temporary bypass flight until the next server restart!");
-                        }
-                    } else FlightControl.msg(s, "&e&lFlightControl &7» &eControlling yourself is redundant... why don't you " +
-                            (pl.getConfigManager().isAutoUpdate() ? "let your flight automatically enable?" : "just do /fly?"));
+                    // TODO Messages for self-tempfly (enabling it on yourself)
+                    if (pl.getFlightManager().getTempBypassList().contains(p)) {
+                        pl.getFlightManager().getTempBypassList().remove(p);
+                        FlightControl.msg(s, "&e&lFlightControl &7» &eYou disabled " + p.getName() + "'s temporary bypass flight!");
+                    } else {
+                        // TODO timed temp-fly
+                        //                            if (args.length == 2) {
+                        //                                args[1] = args[1].toLowerCase();
+                        //                                if (args[1].matches("\\d+[smhd]")) {
+                        //                                    char unit = args[1].charAt(args[1].length() - 1);
+                        //                                    // Just in case it's a really
+                        //                                    long time = Long.parseLong(args[1].substring(0, args[1].length() - 1)) * 1000;
+                        //
+                        //                                    switch (unit) {
+                        //                                        case 'm': time *= 60; break;
+                        //                                        case 'h': time *= 3600; break;
+                        //                                        case 'd': time *= 86400; break;
+                        //                                        default: break;
+                        //                                    }
+                        //
+                        //                                    System.currentTimeMillis() + time
+                        //                                }
+                        //                            }
+                        pl.getFlightManager().getTempBypassList().add(p);
+                        FlightControl.msg(s, "&e&lFlightControl &7» &e" + p.getName() + " now has temporary bypass flight until the next server restart!");
+                    }
                 } else FlightControl.msg(s, "&e&lFlightControl &7» &eInvalid player! Please provide a valid player to give temporary bypass flight!");
             } else FlightControl.msg(s, "&c&lFlightControl &7» &cPlease provide a player to give temporary bypass flight!");
         } else FlightControl.msg(s, pl.getConfigManager().getNoPermission());
