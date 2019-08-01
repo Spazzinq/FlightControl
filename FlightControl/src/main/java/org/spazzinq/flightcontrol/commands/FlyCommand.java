@@ -29,21 +29,33 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.FlightManager;
 
 public final class FlyCommand implements CommandExecutor {
     private FlightControl pl;
-    public FlyCommand(FlightControl pl) { this.pl = pl; }
+    private FlightManager manager;
+    public FlyCommand(FlightControl pl) {
+        this.pl = pl;
+        manager = pl.getFlightManager();
+    }
 
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
         if (args.length == 0) {
             if (s instanceof Player) {
                 if (s.hasPermission("flightcontrol.fly") || s.hasPermission("essentials.fly")) {
                     Player p = (Player) s;
-                    if (p.getAllowFlight()) { pl.manager.disableFlight(p); pl.manager.notif.add(p); }
-                    else pl.manager.check(p, p.getLocation(), true);
-                } else FlightControl.msg(s, pl.config.noPerm);
+                    if (p.getAllowFlight()) {
+                        manager.disableFlight(p, true);
+                        manager.getDisabledByPlayerList().add(p);
+                        manager.getAlreadyCanMsgList().add(p);
+                    }
+                    else {
+                        manager.check(p, p.getLocation(), true);
+                        manager.getDisabledByPlayerList().remove(p);
+                    }
+                } else FlightControl.msg(s, pl.getConfigManager().getNoPerm());
             } else pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
-        } else if (args.length == 1) pl.tempFlyCommand.onCommand(s, cmd, label, args);
+        } else if (args.length == 1) pl.getTempFlyCommand().onCommand(s, cmd, label, args);
         return true;
     }
 }

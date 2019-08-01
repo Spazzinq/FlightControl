@@ -22,18 +22,42 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hooks.combat;
+package org.spazzinq.flightcontrol.api.objects;
 
-import cx.sfy.combatlogpro.core.CombatLogProCore;
+import lombok.Getter;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
-public final class LogPro extends Combat {
-    private CombatLogProCore core;
-    public LogPro(Plugin pl) { core = (CombatLogProCore) pl; }
+@SuppressWarnings({"WeakerAccess", "unused"})
+public final class Sound {
+    @Getter private org.bukkit.Sound sound;
+    @Getter private float volume, pitch;
 
-    @Override public boolean tagged(Player p) {
-        return core.requestPlayer(p).isInCombat();
+    public Sound(org.bukkit.Sound sound) {
+        this(sound, 1, 1);
     }
-    @Override public boolean isHooked() { return true; }
+    public Sound(String name) {
+        this(name, 1, 1);
+    }
+    public Sound(org.bukkit.Sound sound, float volume, float pitch) {
+        this.sound = sound;
+        this.volume = volume;
+        this.pitch = pitch;
+    }
+    public Sound(String name, float volume, float pitch) {
+        this(org.bukkit.Sound.valueOf(name), volume, pitch);
+    }
+
+    public static void play(Player p, Sound s) {
+        if (s != null) {
+            p.playSound(p.getLocation(), s.sound, s.volume, s.pitch);
+        }
+    }
+
+    public static boolean is(String s) {
+        try {
+            org.bukkit.Sound.valueOf(s); return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

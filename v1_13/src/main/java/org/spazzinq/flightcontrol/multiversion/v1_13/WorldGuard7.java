@@ -22,18 +22,24 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hooks.combat;
+package org.spazzinq.flightcontrol.multiversion.v1_13;
 
-import cx.sfy.combatlogpro.core.CombatLogProCore;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.spazzinq.flightcontrol.multiversion.WorldGuard;
 
-public final class LogPro extends Combat {
-    private CombatLogProCore core;
-    public LogPro(Plugin pl) { core = (CombatLogProCore) pl; }
+import java.util.Iterator;
+import java.util.Set;
 
-    @Override public boolean tagged(Player p) {
-        return core.requestPlayer(p).isInCombat();
+@SuppressWarnings("ALL")
+public class WorldGuard7 extends WorldGuard {
+    public String getRegion(Location l) {
+        Iterator<ProtectedRegion> iter = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery().getApplicableRegions(BukkitAdapter.adapt(l)).iterator();
+        if (iter.hasNext()) return iter.next().getId(); return null;
     }
-    @Override public boolean isHooked() { return true; }
+    public Set<String> getRegions(World w) { return com.sk89q.worldguard.WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(w)).getRegions().keySet(); }
+    public boolean hasRegion(String world, String region) { return com.sk89q.worldguard.WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(Bukkit.getWorld(world))).hasRegion(region); }
 }

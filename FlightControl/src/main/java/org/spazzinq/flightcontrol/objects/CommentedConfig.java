@@ -62,12 +62,17 @@ public final class CommentedConfig extends YamlConfiguration {
     public CommentedConfig(File configFile, InputStream configResource) throws IOException, InvalidConfigurationException {
         this();
         load(configFile);
-        HashMap<String, String> newC = loadComments(configResource),
-                                oldC = loadComments(new FileInputStream(configFile));
+
+        comments = loadComments(configResource);
+        HashMap<String, String> oldComments = loadComments(new FileInputStream(configFile));
+
         // If comments from modified config do not match new ones, then save new version
         // (only matches ones from the MODIFIED config)
-        for (Map.Entry<String, String> e : oldC.entrySet())
-            if (!e.getValue().equals(newC.get(e.getKey()))) save(configFile);
+        for (Map.Entry<String, String> e : oldComments.entrySet()) {
+            if (!e.getValue().equals(comments.get(e.getKey()))) save(configFile);
+        }
+
+        configResource.close();
     }
 
     public void addNode(String relativeKey, String node) { addNodes.put(relativeKey, node); }
@@ -78,7 +83,9 @@ public final class CommentedConfig extends YamlConfiguration {
         if (f != null) {
             //noinspection UnstableApiUsage
             Files.createParentDirs(f);
-            try (FileWriter writer = new FileWriter(f)) { writer.write(insertComments(insertSubnodes(insertNodes(saveToString())))); }
+            try (FileWriter writer = new FileWriter(f)) {
+                writer.write(insertComments(insertSubnodes(insertNodes(new StringBuilder(saveToString())))).toString());
+            }
         }
     }
 
@@ -86,9 +93,8 @@ public final class CommentedConfig extends YamlConfiguration {
 
     // Insert BEFORE node
     // Comments should already have "#" at the beginning
-    private String insertBefore(String config, HashMap<String, String> toInsert, boolean lineSeparator) {
-        String[] lines = config.split("\n");
-        StringBuilder newConf = new StringBuilder(config);
+    private StringBuilder insertBefore(StringBuilder tempConfig, HashMap<String, String> toInsert, boolean lineSeparator) {
+        String[] lines = tempConfig.toString().split("\n");
         //              config index
         String node = "";
         int i = 0,
@@ -118,27 +124,30 @@ public final class CommentedConfig extends YamlConfiguration {
                     // Remove spaces at the end from above replaceAll
                     insert = insert.substring(0, insert.length() - depth) + (lineSeparator ? "\n" : "");
                     // Insert into newConf
-                    newConf.insert(newConf.indexOf(line, i), insert);
+                    tempConfig.insert(tempConfig.indexOf(line, i), insert);
                     // Set location to continue from
                     i += insert.length();
                 }
             }
             i += line.length();
         }
-        return newConf.toString();
+        return tempConfig;
     }
 
-    private String insertComments(String config) {
-        return insertBefore(config, comments, false) + comments.getOrDefault("footer", "");
+    private StringBuilder insertComments(StringBuilder tempConfig) {
+        insertBefore(tempConfig, comments, false);
+        tempConfig.insert(0, comments.getOrDefault("header", ""));
+        tempConfig.append(comments.getOrDefault("footer", ""));
+        return tempConfig;
     }
-    private String insertNodes(String config) {
-        return insertBefore(config, addNodes, true);
+
+    private StringBuilder insertNodes(StringBuilder tempConfig) {
+        return insertBefore(tempConfig, addNodes, true);
     }
 
     // Insert AFTER node
-    private String insertSubnodes(String config) {
-        String[] lines = config.split("\n");
-        StringBuilder newConf = new StringBuilder(config);
+    private StringBuilder insertSubnodes(StringBuilder tempConfig) {
+        String[] lines = tempConfig.toString().split("\n");
         String node = "";
         int i = 0,
             depth = 0;
@@ -164,7 +173,7 @@ public final class CommentedConfig extends YamlConfiguration {
                                 + (node.contains(".") ? "" : "  ") + section.replaceAll("\n", "\n" + spaces + (node.contains(".") ? "" : "  "));
                         k = k.substring(0, k.length() - depth + (node.contains(".") ? 2 : 0));
                         // Insert AFTER
-                        newConf.insert(newConf.indexOf(line, i) + line.length(), k);
+                        tempConfig.insert(tempConfig.indexOf(line, i) + line.length(), k);
                         insertLength += k.length();
                     }
                 }
@@ -172,19 +181,21 @@ public final class CommentedConfig extends YamlConfiguration {
             }
             i += line.length();
         }
-        return newConf.toString();
+        return tempConfig;
     }
 
     // WARNING: This does NOT work for inlined comments (eg. test: #lol)
-    private void loadComments(String config) {
-        comments = new HashMap<>();
+    private HashMap<String, String> loadComments(String config) {
+        HashMap<String, String> comments = new HashMap<>();
         String[] lines = config.split("\n");
         // config = comment
         String node = "",
                c = "";
         int depth = 0;
+        boolean headerDone = false;
 
         for (String line : lines) {
+            // Substring of leadSpaces length also includes the comment symbol (#)
             if (line.contains("#")) c = c.concat(line.substring(leadSpaces(line).length()) + "\n");
             else if (line.isEmpty()) c = c.concat("\n");
             else if (line.contains(": ") || line.endsWith(":")) {
@@ -199,13 +210,24 @@ public final class CommentedConfig extends YamlConfiguration {
                 node = node.concat((node.isEmpty() ? "" : ".") + localNode);
                 depth = nDepth;
 
+                if (!headerDone) {
+                    if (countBlankLines(c) > 1) {
+                        int index = c.lastIndexOf("\n\n") + 2;
+                        comments.put("header", c.substring(0, index));
+                        c = c.substring(index);
+                    }
+                    headerDone = true;
+                }
+
                 if (!c.isEmpty()) { comments.put(node, c); c = ""; }
             }
         }
+        //                                                          Remove \n
         if (!c.isEmpty()) comments.put("footer", c.substring(0, c.length() - 1));
+        return comments;
     }
 
-    private HashMap<String, String> loadComments(InputStream is) throws IOException { loadComments(isToString(is)); return comments; }
+    private HashMap<String, String> loadComments(InputStream is) throws IOException { return loadComments(isToString(is)); }
     @Override public void load(File f) throws IOException, InvalidConfigurationException { load(new FileInputStream(f)); }
     @SuppressWarnings("deprecation") public void load(InputStream is) throws InvalidConfigurationException, IOException { loadFromString(isToString(is)); }
 
@@ -216,10 +238,7 @@ public final class CommentedConfig extends YamlConfiguration {
 
         return out.toString();
     }
-    @Override public String saveToString() {
-        String dump = yaml.dump(getValues(false));
-        return dump.equals(BLANK_CONFIG) ? "" : dump;
-    }
+
     @Override public void loadFromString(String contents) throws InvalidConfigurationException {
         Validate.notNull(contents, "Contents cannot be null");
 
@@ -229,5 +248,21 @@ public final class CommentedConfig extends YamlConfiguration {
         catch (ClassCastException e) { throw new InvalidConfigurationException("Top level is not a Map."); }
 
         if (input != null) convertMapsToSections(input, this);
+    }
+
+    @Override public String saveToString() {
+        String dump = yaml.dump(getValues(false));
+        return dump.equals(BLANK_CONFIG) ? "" : dump;
+    }
+
+    private int countBlankLines(String data) {
+        int count = 0,
+            index = 0;
+        while (data.indexOf("\n\n", index) != -1) {
+            count++;
+            //                                  Second new line
+            index += data.indexOf("\n\n", index) + 2;
+        }
+        return count;
     }
 }

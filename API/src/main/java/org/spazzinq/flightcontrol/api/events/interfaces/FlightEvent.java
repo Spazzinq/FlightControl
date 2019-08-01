@@ -22,18 +22,6 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hooks.combat;
+package org.spazzinq.flightcontrol.api.events.interfaces;
 
-import cx.sfy.combatlogpro.core.CombatLogProCore;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
-public final class LogPro extends Combat {
-    private CombatLogProCore core;
-    public LogPro(Plugin pl) { core = (CombatLogProCore) pl; }
-
-    @Override public boolean tagged(Player p) {
-        return core.requestPlayer(p).isInCombat();
-    }
-    @Override public boolean isHooked() { return true; }
-}
+public interface FlightEvent {}

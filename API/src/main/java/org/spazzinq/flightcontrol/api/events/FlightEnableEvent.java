@@ -22,18 +22,30 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hooks.combat;
+package org.spazzinq.flightcontrol.api.events;
 
-import cx.sfy.combatlogpro.core.CombatLogProCore;
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import org.spazzinq.flightcontrol.api.events.interfaces.*;
+import org.spazzinq.flightcontrol.api.objects.Sound;
 
-public final class LogPro extends Combat {
-    private CombatLogProCore core;
-    public LogPro(Plugin pl) { core = (CombatLogProCore) pl; }
+public class FlightEnableEvent implements PlayerFlightEvent, LocationFlightEvent, MessageFlightEvent, SoundFlightEvent, CommandFlightEvent, Cancellable {
+    @Getter private Player player;
+    @Getter private Location location;
+    @Getter @Setter private String message;
+    @Getter @Setter private Sound sound;
+    @Getter @Setter private boolean byActionbar;
+    @Getter private boolean byCommand;
+    @Getter @Setter private boolean cancelled;
 
-    @Override public boolean tagged(Player p) {
-        return core.requestPlayer(p).isInCombat();
+    public FlightEnableEvent(Player player, Location location, String message, Sound sound, boolean byActionbar, boolean byCommand) {
+        this.player = player;
+        this.location = location;
+        this.message = message;
+        this.sound = sound;
+        this.byActionbar = byActionbar;
+        this.byCommand = byCommand;
     }
-    @Override public boolean isHooked() { return true; }
 }

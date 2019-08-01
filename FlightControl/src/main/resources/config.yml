@@ -15,7 +15,7 @@
 # Before you leave a negative review:
 # ✓ Read through ALL the information in this configuration
 # ✓ Contact me on Discord (if the config does not solve your problem)
-# ✓ Create an official bug report/feature request on GitHub
+# ✓ Create an official bug report or feature request on GitHub
 
 #   ____             __ _                       _   _             
 #  / ___|___  _ __  / _(_) __ _ _   _ _ __ __ _| |_(_) ___  _ __  
@@ -24,12 +24,12 @@
 #  \____\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
 #                         |___/
 
+# An EXTREMELY IMPORTANT idea to understand for part of this configuration is that flight only enables when it
+# has a reason to (it does not stay enabled in a neutral/un-enabled location).
+
 # Should FlightControl automatically update to the latest version?
 # (It will update the config automatically and add new features!)
 auto_update: true
-
-# An EXTREMELY IMPORTANT idea to understand for part of this configuration is that flight only enables when it
-# has a reason to (it does not stay enabled in a neutral/un-enabled location).
 
 settings:
   # Enables flight automatically (no command necessary)

@@ -41,7 +41,7 @@ final class Trail {
     Trail(FlightControl pl) { this.pl = pl; }
 
     void trailCheck(Player p) {
-        if (pl.particles != null && pl.config.trail && !pl.config.trailPrefs.contains(p.getUniqueId().toString())) {
+        if (pl.particles != null && pl.configManager.trail && !pl.configManager.trailPrefs.contains(p.getUniqueId())) {
             partTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
                     if (!(p.getGameMode() == GameMode.SPECTATOR || pl.vanish.vanished(p) || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
@@ -49,11 +49,9 @@ final class Trail {
                         // For some terrible reason the locations are never in the correct spot so you have to time them later
                         new BukkitRunnable() { @Override public void run() { pl.particles.spawn(l); } }.runTaskLater(pl, 2);
                     }
-
                 }
             }.runTaskTimerAsynchronously(pl, 0, 4));
         }
-
     }
 
     void trailRemove(Player p) {

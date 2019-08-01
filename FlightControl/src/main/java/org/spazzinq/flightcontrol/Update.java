@@ -66,7 +66,7 @@ final class Update {
 
     String newVer() { return newVersion; }
 
-    void install(CommandSender s) {
+    void install(CommandSender s, boolean silentCheck) {
         if (exists()) {
             if (!downloaded) {
                 dl();
@@ -75,6 +75,6 @@ final class Update {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload flightcontrol");
                 } else msg(s, "&a&lFlightControl &7» &aVersion &f" + newVer() + " &aupdate downloaded. Restart (or reload) the server to apply the update.");
             } else msg(s, "&a&lFlightControl &7» &aVersion &f" + newVer() + " &aupdate has already been downloaded. Restart (or reload) the server to apply the update.");
-        } else msg(s, "&a&lFlightControl &7» &aNo updates found.");
+        } else if (!silentCheck) msg(s, "&a&lFlightControl &7» &aNo updates found.");
     }
 }

@@ -22,18 +22,19 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hooks.combat;
+package org.spazzinq.flightcontrol.api.objects;
 
-import cx.sfy.combatlogpro.core.CombatLogProCore;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public final class LogPro extends Combat {
-    private CombatLogProCore core;
-    public LogPro(Plugin pl) { core = (CombatLogProCore) pl; }
-
-    @Override public boolean tagged(Player p) {
-        return core.requestPlayer(p).isInCombat();
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface FlightEventHandler {
+    @SuppressWarnings("unused")
+    enum Priority implements Comparable<Priority> {
+        HIGH, NORMAL, LOW;
     }
-    @Override public boolean isHooked() { return true; }
+    Priority priority() default Priority.NORMAL;
 }

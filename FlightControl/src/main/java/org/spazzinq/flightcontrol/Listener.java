@@ -35,7 +35,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.spazzinq.flightcontrol.objects.Sound;
+import org.spazzinq.flightcontrol.api.objects.Sound;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,27 +47,30 @@ final class Listener implements org.bukkit.event.Listener {
 	Listener(FlightControl pl) { this.pl = pl; Bukkit.getPluginManager().registerEvents(this, pl); }
 
     // Check fly status
-    @EventHandler(priority = EventPriority.HIGHEST) private void onMove(PlayerMoveEvent e) { pl.manager.check(e.getPlayer(), e.getTo()); }
+    @EventHandler(priority = EventPriority.HIGHEST)
+    private void onMove(PlayerMoveEvent e) {
+	    pl.flightManager.check(e.getPlayer(), e.getTo());
+	}
     // Fly particles
     @EventHandler private void onToggleFly(PlayerToggleFlightEvent e) {
         Player p = e.getPlayer();
         if (e.isFlying()) {
             pl.trail.trailCheck(p);
-            if (pl.config.everyEnable) Sound.play(p, pl.config.eSound);
+            if (pl.configManager.everyEnable) Sound.play(p, pl.configManager.eSound);
         } else pl.trail.trailRemove(p);
     }
     // Because onMove doesn't trigger right after a TP
-    @EventHandler private void onTP(PlayerTeleportEvent e) { pl.manager.check(e.getPlayer(), e.getTo()); }
+    @EventHandler private void onTP(PlayerTeleportEvent e) { pl.flightManager.check(e.getPlayer(), e.getTo()); }
 	@EventHandler private void onQuit(PlayerQuitEvent e) { pl.trail.trailRemove(e.getPlayer()); }
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
-	    Player p = e.getPlayer(); pl.manager.check(p);
+	    Player p = e.getPlayer(); pl.flightManager.check(p);
 	    if (p.isFlying()) new BukkitRunnable() { public void run() { pl.trail.trailCheck(p); } }.runTaskLater(pl, 5);
-	    p.setFlySpeed(pl.config.flightSpeed);
+	    p.setFlySpeed(pl.configManager.flightSpeed);
 	}
 	// Because commands might affect permissions/fly
 	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
-        if (e.getMessage().toLowerCase().startsWith("/fly") && !pl.config.command &&
+        if (e.getMessage().toLowerCase().startsWith("/fly") && !pl.configManager.command &&
                 (p.isOp() || p.hasPermission("flightcontrol.admin"))) {
             e.setCancelled(true);
             for (CommandSender s : Arrays.asList(Bukkit.getConsoleSender(), p))
@@ -78,7 +81,7 @@ final class Listener implements org.bukkit.event.Listener {
             pl.toggleCommand(p);
         }
 	    new BukkitRunnable() { public void run() {
-            pl.manager.check(p);
+            pl.flightManager.check(p);
 	        if (p.isFlying() && !pl.trail.partTasks.containsKey(p)) new BukkitRunnable() { public void run() { pl.trail.trailCheck(p); } }.runTask(pl);
 	        else if (!p.isFlying() && pl.trail.partTasks.containsKey(p)) pl.trail.trailRemove(p);
 	    } }.runTask(pl);
@@ -87,26 +90,26 @@ final class Listener implements org.bukkit.event.Listener {
 	// Fall damage prevention
     @EventHandler private void onFallDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL &&
-            pl.manager.fall.remove(e.getEntity())) e.setCancelled(true);
+            pl.flightManager.cancelFallList.remove(e.getEntity())) e.setCancelled(true);
     }
     // On-the-fly permission management
     @EventHandler private void onWorldLoad(WorldLoadEvent e) {
         String w = e.getWorld().getName();
         // Set default false permission for new world
-        pl.defaultPerms(w); for (String rg : pl.regions.regions(e.getWorld())) pl.defaultPerms(w + "." + rg);
+        pl.defaultPerms(w); for (String rg : pl.worldGuard.getRegions(e.getWorld())) pl.defaultPerms(w + "." + rg);
 
-        ConfigurationSection worldsCS = Config.load(pl.getConfig(),"worlds");
+        ConfigurationSection worldsCS = ConfigManager.load(pl.getConfig(),"worlds");
         if (worldsCS != null) {
-            List<String> type = worldsCS.getStringList(pl.config.worldBL ? "disable" : "enable");
-            if (type != null && type.contains(w)) pl.config.worlds.add(w);
+            List<String> type = worldsCS.getStringList(pl.configManager.worldBL ? "disable" : "enable");
+            if (type != null && type.contains(w)) pl.configManager.worlds.add(w);
         }
 
-        ConfigurationSection regionsCS = Config.load(pl.getConfig(),"regions");
+        ConfigurationSection regionsCS = ConfigManager.load(pl.getConfig(),"regions");
         if (regionsCS != null) {
-            ConfigurationSection dE = regionsCS.getConfigurationSection(pl.config.regionBL ? "disable" : "enable");
+            ConfigurationSection dE = regionsCS.getConfigurationSection(pl.configManager.regionBL ? "disable" : "enable");
             if (dE.isList(w)) {
-                ArrayList<String> rgs = new ArrayList<>(); for (String rg : dE.getStringList(w)) if (pl.regions.hasRegion(w, rg)) rgs.add(rg);
-                pl.config.regions.put(w, rgs);
+                ArrayList<String> rgs = new ArrayList<>(); for (String rg : dE.getStringList(w)) if (pl.worldGuard.hasRegion(w, rg)) rgs.add(rg);
+                pl.configManager.regions.put(w, rgs);
             }
         }
     }

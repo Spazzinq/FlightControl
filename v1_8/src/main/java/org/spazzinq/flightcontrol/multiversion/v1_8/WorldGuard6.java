@@ -22,18 +22,23 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hooks.combat;
+package org.spazzinq.flightcontrol.multiversion.v1_8;
 
-import cx.sfy.combatlogpro.core.CombatLogProCore;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.spazzinq.flightcontrol.multiversion.WorldGuard;
 
-public final class LogPro extends Combat {
-    private CombatLogProCore core;
-    public LogPro(Plugin pl) { core = (CombatLogProCore) pl; }
+import java.util.Iterator;
+import java.util.Set;
 
-    @Override public boolean tagged(Player p) {
-        return core.requestPlayer(p).isInCombat();
+public class WorldGuard6 extends WorldGuard {
+    public String getRegion(Location l) {
+        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
+        if (iter.hasNext()) return iter.next().getId(); return null;
     }
-    @Override public boolean isHooked() { return true; }
+    public Set<String> getRegions(World w) { return WGBukkit.getRegionManager(w).getRegions().keySet(); }
+    public boolean hasRegion(String world, String region) { return WGBukkit.getRegionManager(Bukkit.getWorld(world)).hasRegion(region); }
 }

@@ -42,18 +42,18 @@ public final class TempFlyCommand implements CommandExecutor {
                 Player p = Bukkit.getPlayer(args[0]);
                 if (p != null) {
                     if (!s.equals(p)) {
-                        if (pl.manager.tempBypass.contains(p)) {
-                            pl.manager.tempBypass.remove(p);
+                        if (pl.getFlightManager().getTempBypassList().contains(p)) {
+                            pl.getFlightManager().getTempBypassList().remove(p);
                             FlightControl.msg(s, "&e&lFlightControl &7» &eYou disabled " + p.getName() + "'s temporary bypass flight!");
                         } else {
-                            pl.manager.tempBypass.add(p);
+                            pl.getFlightManager().getTempBypassList().add(p);
                             FlightControl.msg(s, "&e&lFlightControl &7» &e" + p.getName() + " now has temporary bypass flight until the next server restart!");
                         }
                     } else FlightControl.msg(s, "&e&lFlightControl &7» &eControlling yourself is redundant... why don't you " +
-                            (pl.config.autoEnable ? "let your flight automatically enable?" : "just do /fly?"));
+                            (pl.getConfigManager().isAutoUpdate() ? "let your flight automatically enable?" : "just do /fly?"));
                 } else FlightControl.msg(s, "&e&lFlightControl &7» &eInvalid player! Please provide a valid player to give temporary bypass flight!");
             } else FlightControl.msg(s, "&c&lFlightControl &7» &cPlease provide a player to give temporary bypass flight!");
-        } else FlightControl.msg(s, pl.config.noPerm);
+        } else FlightControl.msg(s, pl.getConfigManager().getNoPerm());
         return true;
     }
 }
