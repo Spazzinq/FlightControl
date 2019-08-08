@@ -61,8 +61,19 @@ final class Listener implements org.bukkit.event.Listener {
     @EventHandler private void onTP(PlayerTeleportEvent e) { pl.flightManager.check(e.getPlayer(), e.getTo()); }
 	@EventHandler private void onQuit(PlayerQuitEvent e) { pl.trailManager.trailRemove(e.getPlayer()); }
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
-	    Player p = e.getPlayer(); pl.flightManager.check(p);
-	    if (p.isFlying()) new BukkitRunnable() { public void run() { pl.trailManager.trailCheck(p); } }.runTaskLater(pl, 5);
+        Player p = e.getPlayer();
+
+	    pl.getTempflyManager().getAndSetTempfly(p);
+
+        new BukkitRunnable() {
+            public void run() {
+                pl.flightManager.check(p);
+                if (p.isFlying()) {
+                    pl.trailManager.trailCheck(p);
+                }
+            }
+        }.runTaskLater(pl, 5);
+
 	    p.setFlySpeed(pl.configManager.flightSpeed);
 	}
 	// Because commands might affect permissions/fly

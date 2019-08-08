@@ -24,51 +24,39 @@
 
 package org.spazzinq.flightcontrol.commands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.FlightManager;
+import org.spazzinq.flightcontrol.TrailManager;
 
-import static org.spazzinq.flightcontrol.FlightControl.msg;
+import java.util.UUID;
 
-public final class FlyCommand implements CommandExecutor {
+public class ToggleTrailCommand implements CommandExecutor {
     private FlightControl pl;
-    private FlightManager flightManager;
-    public FlyCommand(FlightControl pl) {
+    private TrailManager manager;
+
+    public ToggleTrailCommand(FlightControl pl) {
         this.pl = pl;
-        flightManager = pl.getFlightManager();
+        manager = pl.getTrailManager();
     }
 
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
-        if (args.length == 0) {
-            if (s instanceof Player) {
-                if (s.hasPermission("flightcontrol.fly") || s.hasPermission("essentials.fly")) {
-                    Player p = (Player) s;
-
-                    if (p.getAllowFlight()) {
-                        flightManager.disableFlight(p, true);
-                    }
-                    else {
-                        flightManager.check(p, p.getLocation(), true);
-                    }
-                } else FlightControl.msg(s, pl.getConfigManager().getNoPermission());
-            } else pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
-        } else if (args.length == 1) {
-            Player p = Bukkit.getPlayer(args[0]);
-            // Allow admins to disable flight
-            if (p != null) {
-                FlightControl.msg(s, "&e&lFlightControl &7» &e" + (p.getAllowFlight() ? "Disabled" : "Attempted to enable") + " &f" + p.getName() + "&e's flight!");
-                if (p.getAllowFlight()) {
-                    flightManager.disableFlight(p, true);
-                }
-                else {
-                    flightManager.check(p, p.getLocation(), true);
-                }
-            } else msg(s, "&e&lFlightControl &7» &ePlease provide a valid player!");
-        }
+        if (s instanceof Player) {
+            Player p = (Player) s;
+            UUID uuid = p.getUniqueId();
+            if (manager.getTrailPrefs().contains(uuid)) {
+                manager.getTrailPrefs().remove(uuid);
+                // No need to check for trail enable because of command listener
+                FlightControl.msg(s, pl.getConfigManager().getEnableTrail(), pl.getConfigManager().isByActionBar());
+            }
+            else {
+                manager.getTrailPrefs().add(uuid);
+                manager.trailRemove(p);
+                FlightControl.msg(s, pl.getConfigManager().getDisableTrail(), pl.getConfigManager().isByActionBar());
+            }
+        } else pl.getLogger().info("Only players can use this command (the console isn't a player!)");
         return true;
     }
 }

@@ -44,6 +44,7 @@ import org.spazzinq.flightcontrol.api.APIManager;
 import org.spazzinq.flightcontrol.commands.FlightControlCommand;
 import org.spazzinq.flightcontrol.commands.FlyCommand;
 import org.spazzinq.flightcontrol.commands.TempFlyCommand;
+import org.spazzinq.flightcontrol.commands.ToggleTrailCommand;
 import org.spazzinq.flightcontrol.hooks.combat.*;
 import org.spazzinq.flightcontrol.hooks.factions.Factions;
 import org.spazzinq.flightcontrol.hooks.factions.Massive;
@@ -64,15 +65,22 @@ import org.spazzinq.flightcontrol.multiversion.v1_8.Particles8;
 import org.spazzinq.flightcontrol.multiversion.v1_8.WorldGuard6;
 import org.spazzinq.flightcontrol.objects.Category;
 import org.spazzinq.flightcontrol.objects.Evaluation;
+import org.spazzinq.flightcontrol.utils.Actionbar;
 
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private APIManager apiManager = APIManager.getInstance();
     private PluginManager pm = Bukkit.getPluginManager();
+    @Getter File storageFolder = new File(getDataFolder() + File.separator + "data");
 
     @Getter ConfigManager configManager;
     @Getter FlightManager flightManager;
+    @Getter TempFlyManager tempflyManager;
     @Getter TrailManager trailManager;
     @Getter Updater updater;
     @Getter private TempFlyCommand tempFlyCommand;
@@ -88,26 +96,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     private HashSet<String> registeredPerms = new HashSet<>();
 
 	public void onEnable() {
-        getCommand("flightcontrol").setExecutor(new FlightControlCommand(this));
-        // Anonymous command class
-        getCommand("toggletrail").setExecutor((s, cmd, label, args) -> {
-            if (s instanceof Player) {
-                Player p = (Player) s;
-                UUID uuid = p.getUniqueId();
-                if (configManager.trailPrefs.contains(uuid)) {
-                    configManager.trailPrefs.remove(uuid);
-                    // No need to check for trail enable because of command listener
-                    msg(s, configManager.eTrail, configManager.byActionBar);
-                }
-                else {
-                    configManager.trailPrefs.add(uuid);
-                    trailManager.trailRemove(p);
-                    msg(s, configManager.dTrail, configManager.byActionBar);
-                }
-            }
-            else getLogger().info("Only players can use this command (the console isn't a player!)");
-            return true;
-        });
+	    // Prepare storage folder
+        //noinspection ResultOfMethodCallIgnored
+        storageFolder.mkdirs();
 
         boolean is1_13 = getServer().getBukkitVersion().contains("1.13") || getServer().getBukkitVersion().contains("1.14");
 
@@ -128,18 +119,25 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         if (pm.isPluginEnabled("Towny")) towny = new Towny();
 
         // Load classes
+
         // Load FlightManager before all because Config uses it & only needs to initialize pl
         flightManager = new FlightManager(this);
         configManager = new ConfigManager(this);
         // Loads from Config
         trailManager = new TrailManager(this);
+        // Loads from FlightManager
+        tempflyManager = new TempFlyManager(this);
+
         new Actionbar();
         new Listener(this);
         updater = new Updater(getDescription().getVersion());
 
+        // Load commands
         tempFlyCommand = new TempFlyCommand(this);
         getCommand("tempfly").setExecutor(tempFlyCommand);
         getCommand("fly").setExecutor(new FlyCommand(this));
+        getCommand("flightcontrol").setExecutor(new FlightControlCommand(this));
+        getCommand("toggletrail").setExecutor(new ToggleTrailCommand(this));
 
         if (configManager.autoUpdate) updater.install(Bukkit.getConsoleSender(), true);
         else if (updater.exists()) new BukkitRunnable() {
@@ -154,18 +152,25 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     }
 
 	public void onDisable() {
-	    if (configManager != null) {
-	        configManager.saveTrailPrefs();
+	    if (trailManager != null) {
+	        trailManager.saveTrailPrefs();
         }
 	}
 
+	public void reload() {
+	    configManager.reloadConfig();
+	    trailManager.saveTrailPrefs();
+	    trailManager.reloadTrailPrefs();
+	    tempflyManager.reloadTempflyData();
+	    checkCurrentPlayers();
+    }
+
     // Set for players already online
-    public void checkCurrentPlayers() {
-	    float actualSpeed = calcActualSpeed(configManager.flightSpeed);
+    private void checkCurrentPlayers() {
         for (Player p : Bukkit.getOnlinePlayers()) {
             flightManager.check(p);
             trailManager.trailCheck(p);
-            p.setFlySpeed(actualSpeed);
+            p.setFlySpeed(configManager.flightSpeed);
         }
     }
 
@@ -173,8 +178,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         String world = l.getWorld().getName(),
                region = worldGuard.getRegion(l);
         Evaluation categories = evalCategories(p),
-                   worlds = new Evaluation(configManager.worldBL, configManager.worlds.contains(world)),
-                   regions = new Evaluation(configManager.regionBL, configManager.regions.containsKey(world) && configManager.regions.get(world).contains(region));
+                   worlds = new Evaluation(configManager.worldBL,
+                           configManager.worlds.contains(world)),
+                   regions = new Evaluation(configManager.regionBL,
+                           configManager.regions.containsKey(world)
+                        && configManager.regions.get(world).contains(region));
 
         if (region != null) defaultPerms(world + "." + region); // Register new regions dynamically
 
@@ -202,14 +210,14 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                         // Distance is calculated a second time to match the shape of the other distance calculation
                         // (this would be a cube while the other would be a sphere otherwise)
                         if (fac.isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= configManager.facEnemyRange) {
-                            if (otherP.isFlying()) flightManager.disableFlight(otherP, false);
+                            if (otherP.isFlying()) flightManager.check(otherP);
                             disable = true;
                         }
                     }
             } else {
                 for (Player otherP : worldPlayers)
                     if (fac.isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= configManager.facEnemyRange) {
-                        if (otherP.isFlying()) flightManager.disableFlight(otherP, false);
+                        if (otherP.isFlying()) flightManager.check(otherP);
                         disable = true;
                     }
             }
@@ -271,7 +279,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     }
 
     public static void msg(CommandSender s, String msg) { msg(s, msg, false); }
-    static void msg(CommandSender s, String msg, boolean actionBar) {
+    public static void msg(CommandSender s, String msg, boolean actionBar) {
         if (msg != null && !msg.isEmpty()) {
             String finalMsg = msg;
 

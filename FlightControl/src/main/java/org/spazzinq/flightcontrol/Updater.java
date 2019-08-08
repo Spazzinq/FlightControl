@@ -49,7 +49,7 @@ public final class Updater {
         } catch (Exception ignored) {
             return false;
         }
-        return version.matches("\\d+(.\\d+)?") && newVersion.matches("\\d+(.\\d+)?") ? Double.parseDouble(newVersion) > Double.parseDouble(version) : !version.equals(newVersion);
+        return version.matches("\\d+(\\.\\d+)?") && newVersion.matches("\\d+(\\.\\d+)?") ? Double.parseDouble(newVersion) > Double.parseDouble(version) : !version.equals(newVersion);
     }
 
    private void dl() {
@@ -58,7 +58,8 @@ public final class Updater {
                 URL website = new URL("https://github.com/Spazzinq/FlightControl/releases/download/" + newVersion + "/flightcontrol.jar");
                 ReadableByteChannel rbc = Channels.newChannel(website.openStream());
                 FileOutputStream fos = new FileOutputStream(new File( "plugins/flightcontrol.jar"));
-                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE); fos.close();
+                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+                fos.close();
                 downloaded = true;
             } catch (Exception ignored) {}
         }

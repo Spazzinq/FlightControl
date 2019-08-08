@@ -37,7 +37,7 @@ settings:
   # Controls flight speed (default speed is 1)
   # The speed values match Essential's /flyspeed command (the number range is 0-10)
   flight_speed: 1.0
-  # Requires CombatTagPlus, CombatLogX, or AntiCombatLogging
+  # Requires CombatTagPlus, CombatLogX, CombatLogPro, or AntiCombatLogging
   # NOTE: in the combat plugin config, deactivate its option to disable flight while in combat to prevents issues
   disable_flight_in_combat: false
   # Prevents fall damage when flight is disabled mid-air by FlightControl

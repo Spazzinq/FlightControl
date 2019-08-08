@@ -29,8 +29,6 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
@@ -45,11 +43,9 @@ import java.util.*;
 public final class ConfigManager {
     private FlightControl pl;
     private PluginManager pm;
-    CommentedConfig configData;
 
+    CommentedConfig configData;
     private File f;
-    private File trailFile;
-    private FileConfiguration trailConfig;
 
     @Getter @Setter
     boolean autoEnable, autoUpdate, support,
@@ -60,29 +56,25 @@ public final class ConfigManager {
     @Getter @Setter
     double facEnemyRange;
     @Getter @Setter float flightSpeed;
-    String dFlight, eFlight, cFlight, nFlight,
-           dTrail, eTrail;
+    @Getter
+    String dFlight, eFlight, cFlight, nFlight, disableTrail, enableTrail;
     @Getter
     String noPermission;
     Sound eSound, dSound, cSound, nSound;
     HashSet<String> worlds;
-    HashSet<UUID> trailPrefs;
     HashMap<String, List<String>> regions;
     HashMap<String, Category> categories;
 
     ConfigManager(FlightControl pl) {
         this.pl = pl;
         pm = pl.getServer().getPluginManager();
-        trailFile = new File(pl.getDataFolder(), "disabled_trail.yml");
         f = new File(pl.getDataFolder(), "config.yml");
 
         reloadConfig();
         updateConfig();
     }
 
-    public void reloadConfig() {
-        if (trailPrefs != null) saveTrailPrefs();
-
+    void reloadConfig() {
         pl.saveDefaultConfig();
         try {
             configData = new CommentedConfig(f, pl.getResource("config.yml"));
@@ -115,18 +107,18 @@ public final class ConfigManager {
         eFlight = configData.getString("messages.flight.enable");
         cFlight = configData.getString("messages.flight.can_enable");
         nFlight = configData.getString("messages.flight.cannot_enable");
-        dTrail = configData.getString("messages.trail.disable");
-        eTrail = configData.getString("messages.trail.enable");
+        disableTrail = configData.getString("messages.trail.disable");
+        enableTrail = configData.getString("messages.trail.enable");
         noPermission = configData.getString("messages.permission_denied");
 
         // Load other stuff that have separate methods
         loadWorlds();
         loadSounds();
         loadTrail();
-        loadTrailPrefs();
 
+        // Reassign it anyways because it'll cause an NPE
+        regions = new HashMap<>();
         if (pm.isPluginEnabled("WorldGuard")) {
-            regions = new HashMap<>();
             loadRegions();
         }
         if (pm.isPluginEnabled("Factions")) loadCategories();
@@ -227,28 +219,6 @@ public final class ConfigManager {
         }
     }
 
-    // Per-player trail preferences
-    private void loadTrailPrefs() {
-        trailPrefs = new HashSet<>();
-        if (!trailFile.exists()) {
-            try { //noinspection ResultOfMethodCallIgnored
-                trailFile.createNewFile();
-            } catch (IOException e) { e.printStackTrace(); }
-        }
-        trailConfig = YamlConfiguration.loadConfiguration(trailFile);
-
-        if (trailConfig.isList("disabled_trail")) {
-            if (!trailConfig.getStringList("disabled_trail").isEmpty()) {
-                for (String uuid : trailConfig.getStringList("disabled_trail")) {
-                    try {
-                        if (uuid.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"))
-                            trailPrefs.add(UUID.fromString(uuid));
-                    } catch (IllegalArgumentException ignored) {}
-                }
-            }
-        } else trailConfig.createSection("disabled_trail");
-    }
-
     private void loadSounds() {
         everyEnable = configData.getBoolean("sounds.every_enable");
         eSound = getSound("sounds.enable");
@@ -301,17 +271,6 @@ public final class ConfigManager {
     }
 
     // FILE CONFIG METHODS
-    void saveTrailPrefs() { // Saves personal trail preferences
-        if (trailConfig != null && trailFile != null) {
-            List<String> prefs = new ArrayList<>();
-            for (UUID uuid : trailPrefs) {
-                prefs.add(uuid.toString());
-            }
-            trailConfig.set("disabled_trail", prefs);
-            try { trailConfig.save(trailFile); } catch (IOException e) { e.printStackTrace(); }
-        }
-    }
-
     public void set(String path, Object value) {
         configData.set(path, value);
         save();

@@ -106,6 +106,7 @@ public final class FlightManager {
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
+            if (isCommand) disabledByPlayerList.remove(p);
             p.setAllowFlight(true);
             if (!pl.configManager.everyEnable) Sound.play(p, pl.configManager.eSound);
             FlightControl.msg(p, e.getMessage(), e.isByActionbar());
@@ -116,7 +117,11 @@ public final class FlightManager {
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
-            alreadyCanMsgList.remove(p);
+            if (isCommand) {
+                disabledByPlayerList.add(p);
+                alreadyCanMsgList.add(p);
+            } else alreadyCanMsgList.remove(p);
+
             if (pl.configManager.fallCancelled && p.isFlying()) {
                 cancelFallList.add(p);
                 new BukkitRunnable() { public void run() { cancelFallList.remove(p); } }.runTaskLater(pl, 300);

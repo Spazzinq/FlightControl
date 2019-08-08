@@ -24,24 +24,38 @@
 
 package org.spazzinq.flightcontrol;
 
+import com.google.common.io.Files;
+import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public final class TrailManager {
     private FlightControl pl;
+
+    private File trailFile;
+    private FileConfiguration trailData;
+    @Getter private HashSet<UUID> trailPrefs;
+
     HashMap<Player, BukkitTask> partTasks = new HashMap<>();
 
-    TrailManager(FlightControl pl) { this.pl = pl; }
+    TrailManager(FlightControl pl) {
+        this.pl = pl;
+        trailFile = new File(pl.getStorageFolder(), "disabled_trail.yml");
+        reloadTrailPrefs();
+    }
 
     public void trailCheck(Player p) {
-        if (pl.particles != null && pl.configManager.trail && !pl.configManager.trailPrefs.contains(p.getUniqueId())) {
+        if (pl.particles != null && pl.configManager.trail && !trailPrefs.contains(p.getUniqueId())) {
             partTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
                     if (!(p.getGameMode() == GameMode.SPECTATOR || pl.vanish.vanished(p) || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
@@ -54,7 +68,7 @@ public final class TrailManager {
         }
     }
 
-    void trailRemove(Player p) {
+    public void trailRemove(Player p) {
         BukkitTask task = partTasks.remove(p); if (task != null) task.cancel();
     }
 
@@ -63,5 +77,54 @@ public final class TrailManager {
         // Throws a ConcurrentModificationException as a for-each
         //noinspection WhileLoopReplaceableByForEach
         while (it.hasNext()) trailRemove(it.next());
+    }
+
+    // Per-player trail preferences
+    void reloadTrailPrefs() {
+        trailPrefs = new HashSet<>();
+        if (!trailFile.exists()) {
+            File oldTrailFile = new File(pl.getDataFolder(), "disabled_trail.yml");
+
+            if (oldTrailFile.exists()) {
+                // Transfer old data
+                try { //noinspection UnstableApiUsage
+                    Files.copy(oldTrailFile, trailFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //noinspection ResultOfMethodCallIgnored
+                oldTrailFile.delete();
+            } else {
+                try { //noinspection ResultOfMethodCallIgnored
+                    trailFile.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+        trailData = YamlConfiguration.loadConfiguration(trailFile);
+
+        if (trailData.isList("disabled_trail")) {
+            if (!trailData.getStringList("disabled_trail").isEmpty()) {
+                for (String uuid : trailData.getStringList("disabled_trail")) {
+                    try {
+                        if (uuid.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"))
+                            trailPrefs.add(UUID.fromString(uuid));
+                    } catch (IllegalArgumentException ignored) {}
+                }
+            }
+        } else trailData.createSection("disabled_trail");
+    }
+
+    void saveTrailPrefs() { // Saves personal trail preferences
+        if (trailData != null && trailFile != null) {
+            List<String> prefs = new ArrayList<>();
+            for (UUID uuid : trailPrefs) {
+                prefs.add(uuid.toString());
+            }
+            trailData.set("disabled_trail", prefs);
+            try { trailData.save(trailFile); } catch (IOException e) { e.printStackTrace(); }
+        }
     }
 }

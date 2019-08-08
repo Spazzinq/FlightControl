@@ -36,7 +36,7 @@ import static org.spazzinq.flightcontrol.FlightControl.msg;
 
 public final class FlightControlCommand implements CommandExecutor, TabCompleter {
     private Map<String, String> commands = new TreeMap<String, String>() {{
-        put("actionbar", "Send notifications through action bar");
+        put("actionbar", "Send notifications through the actionbar");
         put("autoenable", "Toggle automatic flight enabling");
         put("autoupdate", "Toggle automatic updates");
         put("combat", "Toggle combat disabling");
@@ -68,6 +68,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
             buildDefaultHelp.append("&a").append(c.getKey()).append(" &7» &f").append(c.getValue()).append("\n");
         }
         buildDefaultHelp.append(" \n&a/tt &7» &fPersonal trail toggle");
+        buildDefaultHelp.append("\n&a/tempfly (player) [length] &7» &fActivate temporary flight");
         defaultHelp = " \n" + buildDefaultHelp.toString();
     }
 
@@ -98,8 +99,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
 
                 switch (autoComplete.isEmpty() ? args[0] : (autoComplete.size() == 1 ? autoComplete.get(0) : "")) {
                     case "reload":
-                        config.reloadConfig();
-                        pl.checkCurrentPlayers();
+                        pl.reload();
                         msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!");
                         break;
                     case "update":
@@ -150,7 +150,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         break;
                     case "speed": case "flightspeed":
                         if (args.length == 2) {
-                            if (args[1].matches("(\\d+)?(.\\d+)?")) {
+                            if (args[1].matches("\\.\\d+|\\d+(\\.\\d+)?")) {
                                 float speed = Float.parseFloat(args[1]);
                                 float actualSpeed = pl.calcActualSpeed(speed);
                                 if (speed > -1 && speed < 11) {
@@ -163,14 +163,14 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                         }
                                         msg(s, "&e&lFlightControl &7» &eSet the global flight speed to &f" + speed + "&e!");
                                     } else msg(s, "&e&lFlightControl &7» &eGreat news! The global flight speed is already &f" + speed + "&e!");
-                                } else msg(s, "&e&lFlightControl &7» &ePlease provide a number between &f0 and 10 &e(inclusive)! The default speed is 1!");
+                                } else msg(s, "&e&lFlightControl &7» &ePlease provide a number between &f0 and 10 &e(inclusive)! The default speed is &f1&e!");
                             } else msg(s, "&e&lFlightControl &7» &ePlease provide a &fvalid decimal&e! Example: /fc speed 1");
                         } else if (args.length == 1) msg(s, "&e&lFlightControl &7» &ePlease provide a speed! Example: /fc speed 1");
                         else msg(s, "&e&lFlightControl &7» &eIncorrect usage! Usage: /fc speed (0-10)");
                         break;
                     case "enemyrange":
                         if (args.length == 2) {
-                            if (args[1].matches("(\\d+)")) {
+                            if (args[1].matches("\\d+|-1")) {
                                 int range = Integer.parseInt(args[1]);
                                 if (range > -2) {
                                     if (config.getFacEnemyRange() != range) {
