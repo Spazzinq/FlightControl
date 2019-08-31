@@ -37,7 +37,7 @@ settings:
   # Controls flight speed (default speed is 1)
   # The speed values match Essential's /flyspeed command (the number range is 0-10)
   flight_speed: 1.0
-  # Requires CombatTagPlus, CombatLogX, CombatLogPro, or AntiCombatLogging
+  # Requires CombatTagPlus, CombatLogX, CombatLogPro, AntiCombatLogging, or DeluxeCombat
   # NOTE: in the combat plugin config, deactivate its option to disable flight while in combat to prevents issues
   disable_flight_in_combat: false
   # Prevents fall damage when flight is disabled mid-air by FlightControl
@@ -93,6 +93,11 @@ towny:
   # Disables all Towny-related flight during war
   # (this also affects the permission!)
   disable_during_war: false
+
+# Requires Lands
+lands:
+  # Enables flight in player's own land
+  enable_own_land: false
 
 # Compatible: EssentialsX, PremiumVanish (disables while vanished)
 trail:

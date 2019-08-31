@@ -63,16 +63,15 @@ final class Listener implements org.bukkit.event.Listener {
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
-	    pl.getTempflyManager().getAndSetTempfly(p);
-
         new BukkitRunnable() {
             public void run() {
+                pl.getTempflyManager().getAndSetTempfly(p);
                 pl.flightManager.check(p);
                 if (p.isFlying()) {
                     pl.trailManager.trailCheck(p);
                 }
             }
-        }.runTaskLater(pl, 5);
+        }.runTaskLater(pl, 10);
 
 	    p.setFlySpeed(pl.configManager.flightSpeed);
 	}

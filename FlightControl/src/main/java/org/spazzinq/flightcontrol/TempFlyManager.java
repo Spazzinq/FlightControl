@@ -99,7 +99,7 @@ public class TempFlyManager {
     public void removeTempfly(Player p) {
         tempflyData.set(p.getUniqueId().toString(), null);
         scheduledExpirations.remove(p.getUniqueId());
-        pl.getFlightManager().getTempBypassList().remove(p);
+        pl.getFlightManager().getTempList().remove(p);
         pl.getFlightManager().check(p);
         saveTempfly();
     }
@@ -107,7 +107,7 @@ public class TempFlyManager {
     private void scheduleExpiration(Player p, long expiration) {
         if (expiration > System.currentTimeMillis()) {
             scheduledExpirations.add(p.getUniqueId());
-            pl.getFlightManager().getTempBypassList().add(p);
+            pl.getFlightManager().getTempList().add(p);
 
             new BukkitRunnable() {
                 @Override public void run() {

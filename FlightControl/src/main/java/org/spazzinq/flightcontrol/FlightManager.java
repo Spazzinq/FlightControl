@@ -44,17 +44,21 @@ public final class FlightManager {
     // Msg when command enabled
     @Getter
     ArrayList<Player> alreadyCanMsgList = new ArrayList<>(),
-                      tempBypassList = new ArrayList<>(),
+                      tempList = new ArrayList<>(),
                       disabledByPlayerList = new ArrayList<>();
     ArrayList<Entity> cancelFallList = new ArrayList<>();
 
     FlightManager(FlightControl pl) { this.pl = pl; }
 
     // MANAGE FLIGHT
-    void check(Player p) { check(p, p.getLocation(), false); }
-    void check(Player p, Location l) { check(p, l, false); }
+    void check(Player p) {
+        check(p, p.getLocation(), false);
+    }
+    void check(Player p, Location l) {
+        check(p, l, false);
+    }
     public void check(Player p, Location l, boolean usingCMD) {
-        if (!p.hasPermission("flightcontrol.bypass") && p.getGameMode() != GameMode.SPECTATOR && !(pl.configManager.vanishBypass && pl.vanish.vanished(p)) && !tempBypassList.contains(p)) {
+        if (!p.hasPermission("flightcontrol.bypass") && p.getGameMode() != GameMode.SPECTATOR && !(pl.configManager.vanishBypass && pl.vanish.vanished(p))) {
             Evaluation eval = pl.eval(p, l);
             boolean enable = eval.enable(),
                     disable = eval.disable();

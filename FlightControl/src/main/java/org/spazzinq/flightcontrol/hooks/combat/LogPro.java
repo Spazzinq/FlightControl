@@ -30,7 +30,9 @@ import org.bukkit.plugin.Plugin;
 
 public final class LogPro extends Combat {
     private CombatLogProCore core;
-    public LogPro(Plugin pl) { core = (CombatLogProCore) pl; }
+    public LogPro(Plugin pl) {
+        core = (CombatLogProCore) pl;
+    }
 
     @Override public boolean tagged(Player p) {
         return core.requestPlayer(p).isInCombat();

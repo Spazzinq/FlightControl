@@ -50,9 +50,9 @@ public final class ConfigManager {
     @Getter @Setter
     boolean autoEnable, autoUpdate, support,
             worldBL, regionBL, combatChecked,
-            ownTown, townyWar, fallCancelled,
-            vanishBypass, trail, byActionBar,
-            everyEnable, useFacEnemyRange;
+            ownTown, townyWar, ownLand,
+            fallCancelled, vanishBypass, trail,
+            byActionBar, everyEnable, useFacEnemyRange;
     @Getter @Setter
     double facEnemyRange;
     @Getter @Setter float flightSpeed;
@@ -90,6 +90,7 @@ public final class ConfigManager {
         combatChecked = configData.getBoolean("settings.disable_flight_in_combat");
         ownTown = configData.getBoolean("towny.enable_own_town");
         townyWar = configData.getBoolean("towny.disable_during_war");
+        ownLand = configData.getBoolean("lands.enable_own_land");
         fallCancelled = configData.getBoolean("settings.prevent_fall_damage");
         vanishBypass = configData.getBoolean("settings.vanish_bypass");
         byActionBar = configData.getBoolean("messages.actionbar");
@@ -164,6 +165,12 @@ public final class ConfigManager {
         }
         if (configData.isBoolean("settings.command")) {
             configData.removeNode("settings.command");
+            modified = true;
+        }
+        // 3.5
+        if (!configData.isConfigurationSection("lands")) {
+            configData.addNode("towny", "lands:");
+            configData.addSubnode("lands", "enable_own_land");
             modified = true;
         }
 

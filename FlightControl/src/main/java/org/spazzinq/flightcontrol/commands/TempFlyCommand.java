@@ -53,13 +53,13 @@ public final class TempFlyCommand implements CommandExecutor {
                 Player p = Bukkit.getPlayer(args[0]);
                 if (p != null) {
                     boolean isSelf = p == s;
-                    if (flightManager.getTempBypassList().contains(p)) {
+                    if (flightManager.getTempList().contains(p)) {
                         if (tempflyManager.getScheduledExpirations().contains(p.getUniqueId())) {
                             tempflyManager.removeTempfly(p);
                         } else {
-                            flightManager.getTempBypassList().remove(p);
+                            flightManager.getTempList().remove(p);
                         }
-                        msg(s, "&e&lFlightControl &7» &eYou disabled &f" + (isSelf ? "your own" : p.getName() + "&e's") + " &etemporary bypass flight!");
+                        msg(s, "&e&lFlightControl &7» &eYou disabled &f" + (isSelf ? "your own" : p.getName() + "&e's") + " &etemporary flight!");
                     } else {
                         boolean set = false;
                         StringBuilder length = null;
@@ -99,14 +99,14 @@ public final class TempFlyCommand implements CommandExecutor {
                             } else msg(s, "&e&lFlightControl &7» &eInvalid format! Please use &f/tempfly (player) (length)&e! Follow the length with " +
                                     "a unit of time (NO SPACE!): &fs (seconds), m (minutes), h (hours), d (days)&e.");
                         } else {
-                            flightManager.getTempBypassList().add(p);
+                            flightManager.getTempList().add(p);
                             set = true;
                         }
-                        if (set) msg(s, "&e&lFlightControl &7» &e" + (isSelf ? "You" : p.getName()) + " now " + (isSelf ? "have" : "has") + " temporary bypass flight "
+                        if (set) msg(s, "&e&lFlightControl &7» &e" + (isSelf ? "You" : p.getName()) + " now " + (isSelf ? "have" : "has") + " temporary flight "
                                 + (length == null ? "until the next server restart/restart of FlightControl" : "for " + length));
                     }
                 } else msg(s, "&e&lFlightControl &7» &ePlease provide a valid player!");
-            } else msg(s, "&c&lFlightControl &7» &cPlease provide a player to give temporary bypass flight!");
+            } else msg(s, "&c&lFlightControl &7» &cPlease provide a player to give temporary flight!");
         } else msg(s, pl.getConfigManager().getNoPermission());
         return true;
     }

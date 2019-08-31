@@ -27,7 +27,10 @@ permissions:
     description: Access to the fly command when the command option is enabled in the config
     default: false
   flightcontrol.owntown:
-    description: Ability to fly in player's own town
+    description: Enables flight in player's own town
+    default: false
+  flightcontrol.ownland:
+    description: Enables flight in player's own land
     default: false
   flightcontrol.flyall:
     description: Ability to automatically fly in all regions that are not disabled

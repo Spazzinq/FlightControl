@@ -49,6 +49,8 @@ import org.spazzinq.flightcontrol.hooks.combat.*;
 import org.spazzinq.flightcontrol.hooks.factions.Factions;
 import org.spazzinq.flightcontrol.hooks.factions.Massive;
 import org.spazzinq.flightcontrol.hooks.factions.UUIDSavage;
+import org.spazzinq.flightcontrol.hooks.lands.BaseLands;
+import org.spazzinq.flightcontrol.hooks.lands.Lands;
 import org.spazzinq.flightcontrol.hooks.plot.NewSquared;
 import org.spazzinq.flightcontrol.hooks.plot.OldSquared;
 import org.spazzinq.flightcontrol.hooks.plot.Plot;
@@ -88,8 +90,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     WorldGuard worldGuard;
     Particles particles;
     Vanish vanish = new Vanish();
-    private BaseTowny towny = new BaseTowny();
-    private Combat combat = new Combat();
+    private BaseTowny towny;
+    // TODO Config & check implementation
+    private BaseLands lands;
+    private Combat combat;
     private Factions fac;
     private Plot plot;
 
@@ -112,11 +116,17 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         else if (pm.isPluginEnabled("CombatTagPlus")) combat = new TagPlus(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
         else if (pm.isPluginEnabled("AntiCombatLogging")) combat = new AntiLogging();
         else if (pm.isPluginEnabled("CombatLogPro")) combat = new LogPro(pm.getPlugin("CombatLogPro"));
+        else if (pm.isPluginEnabled("DeluxeCombat")) combat = new Deluxe();
+        // FIXME if broken
+        else combat = new Combat();
 
         if (pm.isPluginEnabled("PremiumVanish") || pm.isPluginEnabled("SuperVanish")) vanish = new PremiumSuperVanish();
         else if (pm.isPluginEnabled("Essentials")) vanish = new EssentialsVanish((Essentials) pm.getPlugin("Essentials"));
 
-        if (pm.isPluginEnabled("Towny")) towny = new Towny();
+        // FIXME if broken
+        towny = pm.isPluginEnabled("Towny") ? new Towny() : new BaseTowny();
+        // FIXME if broken
+        lands = pm.isPluginEnabled("Lands") ? lands = new Lands(this) : new BaseLands();
 
         // Load classes
 
@@ -187,11 +197,13 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         if (region != null) defaultPerms(world + "." + region); // Register new regions dynamically
 
         boolean enable = categories.enable() || plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
+                || flightManager.tempList.contains(p)
                 || p.hasPermission("flightcontrol.flyall")
                 || p.hasPermission("flightcontrol.fly." + world)
                 || region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)
                 || worlds.enable() || regions.enable()
-                || (configManager.ownTown || p.hasPermission("flightcontrol.owntown")) && towny.ownTown(p) && !(configManager.townyWar && towny.wartime()),
+                || (configManager.ownTown || p.hasPermission("flightcontrol.owntown")) && towny.ownTown(p) && !(configManager.townyWar && towny.wartime())
+                || (configManager.ownLand || p.hasPermission("flightcontrol.ownland")) && lands.ownLand(p),
                 disable = combat.tagged(p) || categories.disable()
                         || plot.dFlight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ())
                         || p.hasPermission("flightcontrol.nofly." + world)
@@ -241,14 +253,16 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 "\n&eWRLDs &f(&e" + configManager.worldBL + "&f) &7» &f" + configManager.worlds  +
                 "\n&eRGs &f(&e" + configManager.regionBL + "&f) &7» &f" + configManager.regions  +
                 "\n \n&e&lEnable" +
-                "\n&fBypass &7» " + p.hasPermission("flightcontrol.bypass") + " " + flightManager.tempBypassList.contains(p) +
+                "\n&fBypass &7» " + p.hasPermission("flightcontrol.bypass") +
+                "\n&fTemp &7» " + flightManager.tempList.contains(p) +
                 "\n&fAll &7» " + p.hasPermission("flightcontrol.flyall") +
                 (fac.isHooked() ? "\n&fFC &7» " + categories.enable() : "") +
                 (plot.isHooked() ? "\n&fPlot &7» " + plot.flight(world, l.getBlockX(), l.getBlockY(), l.getBlockZ()) : "") +
                 "\n&fWorld &7» " + worlds.enable() + " " + p.hasPermission("flightcontrol.fly." + world) +
                 "\n&fRegion &7» " + regions.enable() + " " + (region != null && p.hasPermission("flightcontrol.fly." + world + "." + region)) +
-                (towny.isHooked() ? "\n&fTowny &7» " + (configManager.ownTown && towny.ownTown(p) && (!configManager.townyWar || !towny.wartime())) + " " +
+                (towny.isHooked() ? "\n&fTowny &7» " + (configManager.ownTown && towny.ownTown(p) && !(configManager.townyWar && towny.wartime())) + " " +
                         (p.hasPermission("flightcontrol.owntown") && towny.ownTown(p) && (!configManager.townyWar || !towny.wartime())) : "") +
+                (lands.isHooked() ? "\n&fLands &7» " + (configManager.ownLand && lands.ownLand(p)) + " " + (p.hasPermission("flightcontrol.ownland") && lands.ownLand(p)) : "") +
                 "\n \n&e&lDisable" +
                 (fac.isHooked() ? "\n&fFC &7» " + categories.disable() : "") +
                 (combat.isHooked() ? "\n&fCombat &7» " + combat.tagged(p) : "") +
