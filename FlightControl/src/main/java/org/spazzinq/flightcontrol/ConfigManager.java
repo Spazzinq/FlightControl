@@ -169,8 +169,8 @@ public final class ConfigManager {
         }
         // 3.5
         if (!configData.isConfigurationSection("lands")) {
-            configData.addNode("towny", "lands:");
-            configData.addSubnode("lands", "enable_own_land");
+            configData.addNode("trail", "lands:");
+            configData.addSubnode("lands", "enable_own_land: false");
             modified = true;
         }
 
