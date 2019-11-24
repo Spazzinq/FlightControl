@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -34,7 +34,7 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.api.objects.Sound;
 import org.spazzinq.flightcontrol.objects.Category;
-import org.spazzinq.flightcontrol.objects.CommentedConfig;
+import org.spazzinq.flightcontrol.objects.CommentConf;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,26 +44,23 @@ public final class ConfigManager {
     private FlightControl pl;
     private PluginManager pm;
 
-    CommentedConfig configData;
+    @Getter
+    private CommentConf config;
     private File f;
 
     @Getter @Setter
-    boolean autoEnable, autoUpdate, support,
-            worldBL, regionBL, combatChecked,
-            ownTown, townyWar, ownLand,
-            fallCancelled, vanishBypass, trail,
-            byActionBar, everyEnable, useFacEnemyRange;
-    @Getter @Setter
-    double facEnemyRange;
-    @Getter @Setter float flightSpeed;
-    @Getter
-    String dFlight, eFlight, cFlight, nFlight, disableTrail, enableTrail;
-    @Getter
-    String noPermission;
-    Sound eSound, dSound, cSound, nSound;
-    HashSet<String> worlds;
-    HashMap<String, List<String>> regions;
-    HashMap<String, Category> categories;
+    private boolean autoEnable, autoUpdate, support,
+                    worldBL, regionBL, combatChecked,
+                    ownTown, townyWar, ownLand, cancelFall, vanishBypass, trail,
+                    byActionBar, everyEnable, useFacEnemyRange;
+    @Getter @Setter private double facEnemyRange;
+    @Getter @Setter private float flightSpeed;
+    @Getter private String dFlight, eFlight, cFlight, nFlight, disableTrail, enableTrail;
+    @Getter private String noPermission;
+    @Getter @Setter private Sound eSound, dSound, cSound, nSound;
+    @Getter private HashSet<String> worlds;
+    @Getter private HashMap<String, List<String>> regions;
+    @Getter private HashMap<String, Category> categories;
 
     ConfigManager(FlightControl pl) {
         this.pl = pl;
@@ -77,40 +74,40 @@ public final class ConfigManager {
     void reloadConfig() {
         pl.saveDefaultConfig();
         try {
-            configData = new CommentedConfig(f, pl.getResource("config.yml"));
+            config = new CommentConf(f, pl.getResource("config.yml"));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // booleans
-        autoUpdate = configData.getBoolean("auto_update");
-        autoEnable = configData.getBoolean("settings.auto_enable");
-        worldBL = configData.isList("worlds.disable");
-        regionBL = configData.isConfigurationSection("regions.disable");
-        combatChecked = configData.getBoolean("settings.disable_flight_in_combat");
-        ownTown = configData.getBoolean("towny.enable_own_town");
-        townyWar = configData.getBoolean("towny.disable_during_war");
-        ownLand = configData.getBoolean("lands.enable_own_land");
-        fallCancelled = configData.getBoolean("settings.prevent_fall_damage");
-        vanishBypass = configData.getBoolean("settings.vanish_bypass");
-        byActionBar = configData.getBoolean("messages.actionbar");
+        autoUpdate = config.getBoolean("auto_update");
+        autoEnable = config.getBoolean("settings.auto_enable");
+        worldBL = config.isList("worlds.disable");
+        regionBL = config.isConfigurationSection("regions.disable");
+        combatChecked = config.getBoolean("settings.disable_flight_in_combat");
+        ownTown = config.getBoolean("towny.enable_own_town");
+        townyWar = config.getBoolean("towny.disable_during_war");
+        ownLand = config.getBoolean("lands.enable_own_land");
+        cancelFall = config.getBoolean("settings.prevent_fall_damage");
+        vanishBypass = config.getBoolean("settings.vanish_bypass");
+        byActionBar = config.getBoolean("messages.actionbar");
 
         // ints
-        int range = configData.getInt("settings.disable_enemy_range");
+        int range = config.getInt("settings.disable_enemy_range");
         if (useFacEnemyRange = (range != -1)) facEnemyRange = range;
 
         // floats
-        flightSpeed = pl.calcActualSpeed((float) configData.getDouble("settings.flight_speed"));
+        flightSpeed = pl.calcActualSpeed((float) config.getDouble("settings.flight_speed"));
 
         // Messages
-        dFlight = configData.getString("messages.flight.disable");
-        dFlight = configData.getString("messages.flight.disable");
-        eFlight = configData.getString("messages.flight.enable");
-        cFlight = configData.getString("messages.flight.can_enable");
-        nFlight = configData.getString("messages.flight.cannot_enable");
-        disableTrail = configData.getString("messages.trail.disable");
-        enableTrail = configData.getString("messages.trail.enable");
-        noPermission = configData.getString("messages.permission_denied");
+        dFlight = config.getString("messages.flight.disable");
+        dFlight = config.getString("messages.flight.disable");
+        eFlight = config.getString("messages.flight.enable");
+        cFlight = config.getString("messages.flight.can_enable");
+        nFlight = config.getString("messages.flight.cannot_enable");
+        disableTrail = config.getString("messages.trail.disable");
+        enableTrail = config.getString("messages.trail.enable");
+        noPermission = config.getString("messages.permission_denied");
 
         // Load other stuff that have separate methods
         loadWorlds();
@@ -122,55 +119,59 @@ public final class ConfigManager {
         if (pm.isPluginEnabled("WorldGuard")) {
             loadRegions();
         }
-        if (pm.isPluginEnabled("Factions")) loadCategories();
+        // FIXME Fac loading
+        //if (pm.isPluginEnabled("Factions"))
+        loadCategories();
 
         // Region permission registering
         for (World w : Bukkit.getWorlds()) {
             String name = w.getName();
             pl.defaultPerms(name);
-            for (String rg : pl.worldGuard.getRegions(w)) pl.defaultPerms(name + "." + rg);
+            for (String rg : pl.worldGuard.getRegions(w)) {
+                pl.defaultPerms(name + "." + rg);
+            }
         }
     }
 
     private void updateConfig() {
         boolean modified = false;
         // 3
-        if (!configData.isConfigurationSection("towny")) {
-            configData.addNode("trail", "towny:");
-            configData.addSubnodes("towny", Arrays.asList("disable_during_war: false", "enable_own_town: false"));
+        if (!config.isConfigurationSection("towny")) {
+            config.addNode("trail", "towny:");
+            config.addSubnodes("towny", Arrays.asList("disable_during_war: false", "enable_own_town: false"));
             modified = true;
         }
-        if (!configData.isBoolean("sounds.every_enable")) {
-            configData.addSubnode("sounds", "every_enable: false");
+        if (!config.isBoolean("sounds.every_enable")) {
+            config.addSubnode("sounds", "every_enable: false");
             modified = true;
         }
         // 3.1
-        if (!(configData.isInt("settings.flight_speed") || configData.isDouble("settings.flight_speed"))) {
-            configData.addSubnode("settings.command", "flight_speed: 1.0");
+        if (!(config.isInt("settings.flight_speed") || config.isDouble("settings.flight_speed"))) {
+            config.addSubnode("settings.command", "flight_speed: 1.0");
             modified = true;
         }
-        if (!configData.isInt("settings.disable_enemy_range")) {
-            configData.addSubnode("settings.vanish_bypass", "disable_enemy_range: -1");
+        if (!config.isInt("settings.disable_enemy_range")) {
+            config.addSubnode("settings.vanish_bypass", "disable_enemy_range: -1");
             modified = true;
         }
-        if (!configData.isBoolean("auto_update")) {
-            configData.addNode("settings", "auto_update: true");
+        if (!config.isBoolean("auto_update")) {
+            config.addNode("settings", "auto_update: true");
             modified = true;
         }
         // 3.3
-        if (!configData.isBoolean("settings.auto_enable")) {
-            configData.addSubnode("settings",  "auto_enable: "
-                    + (configData.getBoolean("settings.command") ? "false" : "true"));
+        if (!config.isBoolean("settings.auto_enable")) {
+            config.addSubnode("settings",  "auto_enable: "
+                    + (config.getBoolean("settings.command") ? "false" : "true"));
             modified = true;
         }
-        if (configData.isBoolean("settings.command")) {
-            configData.removeNode("settings.command");
+        if (config.isBoolean("settings.command")) {
+            config.removeNode("settings.command");
             modified = true;
         }
         // 3.5
-        if (!configData.isConfigurationSection("lands")) {
-            configData.addNode("trail", "lands:");
-            configData.addSubnode("lands", "enable_own_land: false");
+        if (!config.isConfigurationSection("lands")) {
+            config.addNode("trail", "lands:");
+            config.addSubnode("lands", "enable_own_land: false");
             modified = true;
         }
 
@@ -180,21 +181,27 @@ public final class ConfigManager {
     // LOAD SECTION
     private void loadWorlds() {
         worlds = new HashSet<>();
-        ConfigurationSection worldsCS = load(configData, "worlds");
+        ConfigurationSection worldsCS = load(config, "worlds");
         if (worldsCS != null) {
             List<String> type = worldsCS.getStringList(worldBL ? "disable" : "enable");
-            if (type != null) for (String w : type) if (Bukkit.getWorld(w) != null) worlds.add(w);
+            if (type != null) {
+                for (String w : type) {
+                    if (Bukkit.getWorld(w) != null) {
+                        worlds.add(w);
+                    }
+                }
+            }
         }
     }
 
     private void loadRegions() {
-        ConfigurationSection regionsCS = load(configData, "regions");
+        ConfigurationSection regionsCS = load(config, "regions");
         if (regionsCS != null) addRegions(regionsCS.getConfigurationSection(regionBL ? "disable" : "enable"));
     }
 
     private void loadCategories() {
         categories = new HashMap<>();
-        ConfigurationSection facs = load(configData, "factions");
+        ConfigurationSection facs = load(config, "factions");
         if (facs != null) for (String cName : facs.getKeys(false)) {
             // Register permission defaults
             if (pm.getPermission("flightcontrol.factions." + cName) == null)
@@ -211,12 +218,12 @@ public final class ConfigManager {
     }
 
     private void loadTrail() {
-        trail = configData.getBoolean("trail.enabled");
+        trail = config.getBoolean("trail.enabled");
 
         if (trail) {
-            pl.particles.setParticle(configData.getString("trail.particle"));
-            pl.particles.setAmount(configData.getInt("trail.amount"));
-            String offset = configData.getString("trail.rgb");
+            pl.particles.setParticle(config.getString("trail.particle"));
+            pl.particles.setAmount(config.getInt("trail.amount"));
+            String offset = config.getString("trail.rgb");
             if (offset != null && (offset = offset.replaceAll("\\s+", "")).split(",").length == 3) {
                 String[] xyz = offset.split(",");
                 pl.particles.setRBG(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[0]) : 0,
@@ -227,7 +234,7 @@ public final class ConfigManager {
     }
 
     private void loadSounds() {
-        everyEnable = configData.getBoolean("sounds.every_enable");
+        everyEnable = config.getBoolean("sounds.every_enable");
         eSound = getSound("sounds.enable");
         dSound = getSound("sounds.disable");
         cSound = getSound("sounds.can_enable");
@@ -235,7 +242,7 @@ public final class ConfigManager {
     }
 
     // LOAD HELPER METHODS
-    static ConfigurationSection load(ConfigurationSection c, String type) {
+    private ConfigurationSection load(ConfigurationSection c, String type) {
         if (c.isConfigurationSection(type)) {
             ConfigurationSection typeS = c.getConfigurationSection(type);
             Set<String> typeKeys = new HashSet<>();
@@ -250,11 +257,42 @@ public final class ConfigManager {
         return null;
     }
 
+    void loadWorld(World world) {
+        String wName = world.getName();
+
+        pl.defaultPerms(wName);
+        for (String rg : pl.worldGuard.getRegions(world)) {
+            pl.defaultPerms(wName + "." + rg);
+        }
+
+        ConfigurationSection worldsCS = load(pl.configManager.config,"worlds");
+        if (worldsCS != null) {
+            List<String> type = worldsCS.getStringList(pl.configManager.worldBL ? "disable" : "enable");
+            if (type != null && type.contains(wName)) {
+                pl.configManager.worlds.add(wName);
+            }
+        }
+
+        ConfigurationSection regionsCS = load(pl.configManager.config,"regions");
+        if (regionsCS != null) {
+            ConfigurationSection dE = regionsCS.getConfigurationSection(pl.configManager.regionBL ? "disable" : "enable");
+            if (dE.isList(wName)) {
+                ArrayList<String> rgs = new ArrayList<>();
+                for (String rg : dE.getStringList(wName)) {
+                    if (pl.worldGuard.hasRegion(wName, rg)) {
+                        rgs.add(rg);
+                    }
+                }
+                pl.configManager.regions.put(wName, rgs);
+            }
+        }
+    }
+
     private Sound getSound(String key) {
-        if (configData.isConfigurationSection(key)) {
-            String s = configData.getString(key + ".sound").toUpperCase().replaceAll("\\.", "_");
+        if (config.isConfigurationSection(key)) {
+            String s = config.getString(key + ".sound").toUpperCase().replaceAll("\\.", "_");
             if (Sound.is(s)) {
-                return new Sound(s, (float) configData.getDouble(key + ".volume"), (float) configData.getDouble(key + ".pitch"));
+                return new Sound(s, (float) config.getDouble(key + ".volume"), (float) config.getDouble(key + ".pitch"));
             }
         }
         return null;
@@ -279,12 +317,12 @@ public final class ConfigManager {
 
     // FILE CONFIG METHODS
     public void set(String path, Object value) {
-        configData.set(path, value);
+        config.set(path, value);
         save();
     }
     private void save() {
         try {
-            configData.save(f);
+            config.save(f);
         } catch (IOException e) {
             e.printStackTrace();
         }

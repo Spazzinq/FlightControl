@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -29,6 +29,10 @@ import org.spazzinq.flightcontrol.api.objects.Sound;
 
 @SuppressWarnings("unused")
 public interface SoundFlightEvent {
+    /**
+     * Returns the Sound that will be played on the event's execution.
+     * @return the Sound that will be played on the event's execution
+     */
     Sound getSound();
     void setSound(Sound sound);
 }

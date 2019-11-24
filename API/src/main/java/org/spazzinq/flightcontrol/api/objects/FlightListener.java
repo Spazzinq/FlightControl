@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -35,8 +35,7 @@ public abstract class FlightListener {
     private List<HandlerMethod> handlers;
     private Plugin pl;
 
-    // Initializer block
-    public FlightListener() {
+    private FlightListener() {
         handlers = new ArrayList<>();
         Method[] declaredMethods = getClass().getDeclaredMethods();
 
@@ -52,16 +51,27 @@ public abstract class FlightListener {
         }
     }
 
-    // FIXME Potential accountability issue (plugin can set to whatever plugin they want)
-    public FlightListener setPlugin(Plugin pl) {
-        this.pl = pl;
-        return this;
+    /**
+     * Initializes a new FlightListener.
+     * @param plugin the listener's plugin owner
+     */
+    public FlightListener(Plugin plugin) {
+        this();
+        this.pl = plugin;
     }
 
-    @SuppressWarnings({"unused", "WeakerAccess"})
+    /**
+     * Returns the listener's plugin owner.
+     * @return the listener's plugin owner
+     */
     public Plugin getPlugin() {
         return pl;
     }
+
+    /**
+     * Returns the list of HandlerMethods.
+     * @return The FlightListener's HandlerMethods
+     */
     public List<HandlerMethod> getHandlers() {
         return handlers;
     }

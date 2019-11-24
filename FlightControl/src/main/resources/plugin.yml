@@ -4,9 +4,8 @@ version: ${revision}
 api-version: 1.13
 author: Spazzinq
 description: "An elegant solution for controlling player flight"
-softdepend: [AntiCombatLogging, CombatLogX, CombatTagPlus, Essentials, Factions, PlotSquared, WorldGuard, Plugman]
+softdepend: [AntiCombatLogging, CombatLogPro, CombatLogX, CombatTagPlus, DeluxeCombat, Essentials, Factions, PlotSquared, WorldGuard, SuperVanish, PremiumVanish, Towny, Lands]
 
-# FIXME Add back permissions to commands
 commands:
   flightcontrol:
     description: FlightControl administration

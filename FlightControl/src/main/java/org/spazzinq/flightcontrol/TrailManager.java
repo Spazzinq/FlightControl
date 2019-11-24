@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -55,7 +55,7 @@ public final class TrailManager {
     }
 
     public void trailCheck(Player p) {
-        if (pl.particles != null && pl.configManager.trail && !trailPrefs.contains(p.getUniqueId())) {
+        if (pl.particles != null && pl.configManager.isTrail() && !trailPrefs.contains(p.getUniqueId())) {
             partTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
                     if (!(p.getGameMode() == GameMode.SPECTATOR || pl.vanish.vanished(p) || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {

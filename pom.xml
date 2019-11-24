@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ This file is part of FlightControl-parent, which is licensed under the MIT License
+  ~ This file is part of FlightControl, which is licensed under the MIT License
   ~
   ~ Copyright (c) 2019 Spazzinq
   ~
@@ -33,14 +33,14 @@
     <packaging>pom</packaging>
     <version>${revision}</version>
 
-    <properties><revision>3.5</revision></properties>
+    <properties><revision>3.6</revision></properties>
 
     <modules>
+        <module>API</module>
         <module>FlightControl</module>
         <module>Multiversion</module>
         <module>v1_8</module>
         <module>v1_13</module>
-        <module>API</module>
     </modules>
 
     <build>

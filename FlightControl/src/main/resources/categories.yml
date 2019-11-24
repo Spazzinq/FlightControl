@@ -1,0 +1,63 @@
+#  _  _     _
+# | \| |___| |_ ___ ___
+# | .` / _ \  _/ -_|_-<
+# |_|\_\___/\__\___/__/
+# true = enable flight
+# false = disable flight
+# Disabling has more priority than enabling, so be careful!
+
+#   ___ _     _          _
+# / __| |___| |__  __ _| |
+# | (_ | / _ \ '_ \/ _` | |
+# \___|_\___/_.__/\__,_|_|
+# "global" is the default setting for everyone unless they have a category permission below.
+global:
+  worlds:
+    WORLDNAME: true
+    WORLDNAME2: false
+  # "regions" requires WorldEdit & WorldGuard
+  regions:
+    WORLDNAME3.REGIONNAME: true
+    WORLDNAME4.REGIONNAME2: false
+  # There are eight types of faction territories (OWN, ALLY, TRUCE, NEUTRAL, ENEMY, WARZONE, SAFEZONE, WILDERNESS)
+  # OWN enables flight in the player's own faction territory
+  factions:
+    enable:
+      - OWN
+      - ALLY
+    disable:
+      - ENEMY
+
+#    ___      _                    _
+#  / __|__ _| |_ ___ __ _ ___ _ _(_)___ ___
+#  | (__/ _` |  _/ -_) _` / _ \ '_| / -_|_-<
+#  \___\__,_|\__\___\__, \___/_| |_\___/__/
+#                   |___/
+# "example" is a category. It's permission is "flightcontrol.category.example"
+# If you change the category names, make sure they are only LETTERS or NUMBERS.
+example:
+  worlds:
+    WORLDNAME: false
+    WORLDNAME2: true
+  regions:
+    WORLDNAME3.REGIONNAME: false
+    WORLDNAME4.REGIONNAME2: true
+  factions:
+    enable:
+      - WILDERNESS
+    disable:
+      - OWN
+# "example2" is another category. It's permission is "flightcontrol.category.example2"
+example2:
+  worlds:
+    WORLDNAME: false
+    WORLDNAME2: true
+  regions:
+    WORLDNAME3.REGIONNAME: false
+    WORLDNAME4.REGIONNAME2: true
+  factions:
+    enable:
+      - WILDERNESS
+    disable:
+      - OWN
+    

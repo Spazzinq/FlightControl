@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -48,7 +48,9 @@ public final class FlightManager {
                       disabledByPlayerList = new ArrayList<>();
     ArrayList<Entity> cancelFallList = new ArrayList<>();
 
-    FlightManager(FlightControl pl) { this.pl = pl; }
+    FlightManager(FlightControl pl) {
+        this.pl = pl;
+    }
 
     // MANAGE FLIGHT
     void check(Player p) {
@@ -58,33 +60,42 @@ public final class FlightManager {
         check(p, l, false);
     }
     public void check(Player p, Location l, boolean usingCMD) {
-        if (!p.hasPermission("flightcontrol.bypass") && p.getGameMode() != GameMode.SPECTATOR && !(pl.configManager.vanishBypass && pl.vanish.vanished(p))) {
+        if (!p.hasPermission("flightcontrol.bypass")
+                && p.getGameMode() != GameMode.SPECTATOR
+                && !(pl.configManager.isVanishBypass() && pl.vanish.vanished(p))) {
             Evaluation eval = pl.eval(p, l);
             boolean enable = eval.enable(),
                     disable = eval.disable();
 
             if (p.getAllowFlight()) {
-                if (disable || !enable) disableFlight(p, false);
+                if (disable || !enable) {
+                    disableFlight(p, false);
+                }
             }
             else if (enable && !disable) {
-                if (usingCMD || (pl.configManager.autoEnable && !disabledByPlayerList.contains(p))) {
+                if (usingCMD || (pl.configManager.isAutoEnable() && !disabledByPlayerList.contains(p))) {
                     enableFlight(p, usingCMD);
-                } else canEnable(p);
+                } else {
+                    canEnable(p);
+                }
             }
             else if (usingCMD || alreadyCanMsgList.contains(p)) {
                 cannotEnable(p);
             }
         } else if (!p.getAllowFlight()) {
-            if (usingCMD || (pl.configManager.autoEnable && !disabledByPlayerList.contains(p))) {
+            if (usingCMD || (pl.configManager.isAutoEnable() && !disabledByPlayerList.contains(p))) {
                 enableFlight(p, usingCMD);
-            } else canEnable(p);
+            } else {
+                canEnable(p);
+            }
         }
     }
 
     private void canEnable(Player p) {
         if (!alreadyCanMsgList.contains(p)) {
             alreadyCanMsgList.add(p);
-            FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), pl.configManager.cFlight, pl.configManager.cSound, pl.configManager.byActionBar);
+            FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), pl.configManager.getCFlight(),
+                    pl.configManager.getCSound(), pl.configManager.isByActionBar());
 
             pl.getApiManager().callEvent(e);
             if (!e.isCancelled()) {
@@ -95,45 +106,54 @@ public final class FlightManager {
 
     }
     private void cannotEnable(Player p) {
-        FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), pl.configManager.nFlight, pl.configManager.nSound, pl.configManager.byActionBar);
+        FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), pl.configManager.getNFlight(),
+                pl.configManager.getNSound(), pl.configManager.isByActionBar());
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
             alreadyCanMsgList.remove(p);
-            Sound.play(p, pl.configManager.nSound);
+            Sound.play(p, pl.configManager.getNSound());
             FlightControl.msg(p, e.getMessage(), e.isByActionbar());
         }
     }
 
     private void enableFlight(Player p, boolean isCommand) {
-        FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), pl.configManager.eFlight, pl.configManager.eSound, pl.configManager.byActionBar, isCommand);
+        FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), pl.configManager.getEFlight(),
+                pl.configManager.getESound(), pl.configManager.isByActionBar(), isCommand);
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
-            if (isCommand) disabledByPlayerList.remove(p);
+            if (isCommand) {
+                disabledByPlayerList.remove(p);
+            }
             p.setAllowFlight(true);
-            if (!pl.configManager.everyEnable) Sound.play(p, pl.configManager.eSound);
+            if (!pl.configManager.isEveryEnable()) {
+                Sound.play(p, pl.configManager.getESound());
+            }
             FlightControl.msg(p, e.getMessage(), e.isByActionbar());
         }
     }
     public void disableFlight(Player p, boolean isCommand) {
-        FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), pl.configManager.dFlight, pl.configManager.dSound, pl.configManager.byActionBar, isCommand);
+        FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), pl.configManager.getDFlight(),
+                pl.configManager.getDSound(), pl.configManager.isByActionBar(), isCommand);
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
             if (isCommand) {
                 disabledByPlayerList.add(p);
                 alreadyCanMsgList.add(p);
-            } else alreadyCanMsgList.remove(p);
+            } else {
+                alreadyCanMsgList.remove(p);
+            }
 
-            if (pl.configManager.fallCancelled && p.isFlying()) {
+            if (pl.configManager.isCancelFall() && p.isFlying()) {
                 cancelFallList.add(p);
                 new BukkitRunnable() { public void run() { cancelFallList.remove(p); } }.runTaskLater(pl, 300);
             }
             p.setAllowFlight(false);
             p.setFlying(false);
             pl.trailManager.trailRemove(p);
-            Sound.play(p, pl.configManager.dSound);
+            Sound.play(p, pl.configManager.getDSound());
             FlightControl.msg(p, e.getMessage(), e.isByActionbar());
         }
     }

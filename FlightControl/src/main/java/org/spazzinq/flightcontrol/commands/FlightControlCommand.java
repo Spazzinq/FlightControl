@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -111,9 +111,9 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         msgToggle(s, config.isCombatChecked(), "Combat Disabling");
                         break;
                     case "falldamage":
-                        config.setFallCancelled(!config.isFallCancelled());
-                        config.set("settings.prevent_fall_damage", config.isFallCancelled());
-                        msgToggle(s, config.isFallCancelled(), "Prevent Fall Damage");
+                        config.setCancelFall(!config.isCancelFall());
+                        config.set("settings.prevent_fall_damage", config.isCancelFall());
+                        msgToggle(s, config.isCancelFall(), "Prevent Fall Damage");
                         break;
                     case "trails":
                         config.setTrail(!config.isTrail());

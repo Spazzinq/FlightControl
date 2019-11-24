@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -24,7 +24,6 @@
 
 package org.spazzinq.flightcontrol.api;
 
-import org.bukkit.plugin.Plugin;
 import org.spazzinq.flightcontrol.api.events.FlightCanEnableEvent;
 import org.spazzinq.flightcontrol.api.events.FlightCannotEnableEvent;
 import org.spazzinq.flightcontrol.api.events.FlightDisableEvent;
@@ -45,22 +44,32 @@ public class APIManager {
     private List<FlightListener> listeners = new ArrayList<>();
 
     private APIManager() {
-        Set<Class> events = new HashSet<>(Arrays.asList(FlightCanEnableEvent.class, FlightCannotEnableEvent.class, FlightDisableEvent.class, FlightEnableEvent.class));
+        Set<Class> events = new HashSet<>(Arrays.asList(FlightCanEnableEvent.class, FlightCannotEnableEvent.class,
+                                                        FlightDisableEvent.class, FlightEnableEvent.class));
 
         for (Class event : events) {
             handlers.put(event, new ArrayList<>());
         }
     }
 
-    public void addListener(FlightListener listener, Plugin plugin) {
+    /**
+     * Adds a listener to the APIManager.
+     * @param listener the FlightListener to add
+     */
+    public void addListener(FlightListener listener) {
         if (!listener.getHandlers().isEmpty()) {
-            listeners.add(listener.setPlugin(plugin));
+            listeners.add(listener);
 
             for (HandlerMethod m : listener.getHandlers()) {
                 sortInsert(m);
             }
         }
     }
+
+    /**
+     * Removes a listener from the APIManager and unregisters its HandlerMethods.
+     * @param listener the FlightListener to unregister
+     */
     public void removeListener(FlightListener listener) {
         listeners.remove(listener);
 
@@ -68,42 +77,88 @@ public class APIManager {
             handlers.get(m.getEventClass()).remove(m);
         }
     }
+
+    /**
+     * Returns if the APIManager contains the listener.
+     * @param listener the FlightListener to search for
+     * @return true if the APIManager contains the listener, false otherwise
+     */
     public boolean containsListener(FlightListener listener) {
         return listeners.contains(listener);
     }
+
+    /**
+     * Returns the list of all registered listeners.
+     * @return The list of all registered listeners
+     */
     public List<FlightListener> getListeners() {
-        return new ArrayList<>(listeners);
+        return listeners;
     }
 
-    public void callEvent(FlightEvent e) {
+    /**
+     * Calls an event.
+     * @param event the FlightEvent to call
+     */
+    public void callEvent(FlightEvent event) {
         try {
-            callMethods(e);
+            callMethods(event);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
+    /**
+     * Calls the HandlerMethods associated with the event type.
+     * @param event the FlightEvent instance
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
     private void callMethods(FlightEvent e) throws InvocationTargetException, IllegalAccessException, InstantiationException {
         // Prevent CME by cloning List
         List<HandlerMethod> handlersCopy = new ArrayList<>(handlers.get(e.getClass()));
 
         for (HandlerMethod m : handlersCopy) {
-            if (m.getPlugin().isEnabled()) m.getMethod().invoke(m.getListener(), e);
-            else if (containsListener(m.getListener())) removeListener(m.getListener());
+            if (m.getPlugin().isEnabled()) {
+                m.getMethod().invoke(m.getListener(), e);
+            }
+            else if (containsListener(m.getListener())) {
+                removeListener(m.getListener());
+            }
         }
     }
 
-    public void registerEvent(FlightEvent flightEvent) {
-        if (!handlers.containsKey(flightEvent.getClass())) {
-            handlers.put(flightEvent.getClass(), new ArrayList<>());
+    /**
+     * Registers the event if it is not already registered.
+     * @param event the FlightEvent to add
+     */
+    public void registerEvent(FlightEvent event) {
+        if (!handlers.containsKey(event.getClass())) {
+            handlers.put(event.getClass(), new ArrayList<>());
         }
     }
-    public void unregisterEvent(FlightEvent flightEvent) {
-        handlers.remove(flightEvent.getClass());
+
+    /**
+     * Unregisters an event.
+     * @param event the FlightEvent to remove
+     */
+    public void unregisterEvent(FlightEvent event) {
+        handlers.remove(event.getClass());
     }
-    public boolean containsEvent(FlightEvent flightEvent) {
-        return handlers.containsKey(flightEvent.getClass());
+
+    /**
+     * Returns true if the APIManager contains the event.
+     * @param event the FlightEvent to search for
+     * @return true if the APIManager contains the event
+     */
+    public boolean containsEvent(FlightEvent event) {
+        return handlers.containsKey(event.getClass());
     }
+
+    /**
+     * Returns all registered events.
+     * @return All registered events
+     */
     public Set<Class> getEvents() {
         return handlers.keySet();
     }
@@ -115,12 +170,18 @@ public class APIManager {
         int i = 0;
 
         for (HandlerMethod m : methods) {
-            if (insert.compareTo(m) < 1) break;
+            if (insert.compareTo(m) < 1) {
+                break;
+            }
             i++;
         }
 
-        if (i != methods.size()) methods.add(i, insert);
-        else methods.add(insert);
+        if (i != methods.size()) {
+            methods.add(i, insert);
+        }
+        else {
+            methods.add(insert);
+        }
 
 //        StringBuilder sb = new StringBuilder();
 //        for (HandlerMethod m : methods) {
@@ -129,8 +190,14 @@ public class APIManager {
 //        Bukkit.getLogger().severe(sb.toString());
     }
 
+    /**
+     * Returns the APIManager instance.
+     * @return The APIManager instance
+     */
     public static APIManager getInstance() {
-        if (instance == null) instance = new APIManager();
+        if (instance == null) {
+            instance = new APIManager();
+        }
         return instance;
     }
 }

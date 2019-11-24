@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -25,6 +25,7 @@
 package org.spazzinq.flightcontrol.hooks.factions;
 
 import com.massivecraft.factions.*;
+import com.massivecraft.factions.perms.Relation;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.objects.Category;
 
@@ -32,17 +33,19 @@ public final class UUIDSavage extends Factions {
     @Override public boolean rel(Player p, Category c) {
         if (c != null) {
             Faction f = Board.getInstance().getFactionAt(new FLocation(p.getLocation()));
-            FPlayer fP = FPlayers.getInstance().getByPlayer(p);
+            FPlayer fP = getPlayer(p);
             boolean own = false,
                     ally = false,
                     truce = false,
                     neutral = false,
                     enemy = false,
-                    warzone = c.warzone && f.isWarZone(), safezone = c.safezone && f.isSafeZone(), wilderness = c.wilderness && f.isWilderness();
+                    warzone = c.warzone && f.isWarZone(),
+                    safezone = c.safezone && f.isSafeZone(),
+                    wilderness = c.wilderness && f.isWilderness();
             if (fP.hasFaction()) {
                 if (c.own) own = fP.isInOwnTerritory();
                 if (c.ally) ally = fP.isInAllyTerritory();
-                if (c.truce) truce = fP.getRelationToLocation().isTruce();
+                if (c.truce) truce = fP.getRelationToLocation() == Relation.TRUCE;
                 if (c.neutral) neutral = fP.isInNeutralTerritory();
                 if (c.enemy) enemy = fP.isInEnemyTerritory();
             }
@@ -52,7 +55,12 @@ public final class UUIDSavage extends Factions {
     }
 
     @Override public boolean isEnemy(Player p, Player otherP) {
-        return FPlayers.getInstance().getByPlayer(p).getRelationTo(FPlayers.getInstance().getByPlayer(otherP)).isEnemy();
+        return getPlayer(p).getRelationTo(getPlayer(otherP)) == Relation.ENEMY;
     }
+
+    private FPlayer getPlayer(Player p) {
+        return FPlayers.getInstance().getByPlayer(p);
+    }
+
     @Override public boolean isHooked() { return true; }
 }

@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -24,4 +24,7 @@
 
 package org.spazzinq.flightcontrol.api.events.interfaces;
 
+/**
+ * The base class for FlightEvents
+ */
 public interface FlightEvent {}

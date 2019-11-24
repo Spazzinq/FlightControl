@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -25,7 +25,6 @@
 package org.spazzinq.flightcontrol;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,9 +34,6 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.objects.Sound;
-
-import java.util.ArrayList;
-import java.util.List;
 
 final class Listener implements org.bukkit.event.Listener {
     private FlightControl pl;
@@ -54,7 +50,9 @@ final class Listener implements org.bukkit.event.Listener {
         Player p = e.getPlayer();
         if (e.isFlying()) {
             pl.trailManager.trailCheck(p);
-            if (pl.configManager.everyEnable) Sound.play(p, pl.configManager.eSound);
+            if (pl.configManager.isEveryEnable()) {
+                Sound.play(p, pl.configManager.getESound());
+            }
         } else pl.trailManager.trailRemove(p);
     }
     // Because onMove doesn't trigger right after a TP
@@ -73,7 +71,7 @@ final class Listener implements org.bukkit.event.Listener {
             }
         }.runTaskLater(pl, 10);
 
-	    p.setFlySpeed(pl.configManager.flightSpeed);
+	    p.setFlySpeed(pl.configManager.getFlightSpeed());
 	}
 	// Because commands might affect permissions/fly
 	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
@@ -92,23 +90,6 @@ final class Listener implements org.bukkit.event.Listener {
     }
     // On-the-fly permission management
     @EventHandler private void onWorldLoad(WorldLoadEvent e) {
-        String w = e.getWorld().getName();
-        // Set default false permission for new world
-        pl.defaultPerms(w); for (String rg : pl.worldGuard.getRegions(e.getWorld())) pl.defaultPerms(w + "." + rg);
-
-        ConfigurationSection worldsCS = ConfigManager.load(pl.configManager.configData,"worlds");
-        if (worldsCS != null) {
-            List<String> type = worldsCS.getStringList(pl.configManager.worldBL ? "disable" : "enable");
-            if (type != null && type.contains(w)) pl.configManager.worlds.add(w);
-        }
-
-        ConfigurationSection regionsCS = ConfigManager.load(pl.configManager.configData,"regions");
-        if (regionsCS != null) {
-            ConfigurationSection dE = regionsCS.getConfigurationSection(pl.configManager.regionBL ? "disable" : "enable");
-            if (dE.isList(w)) {
-                ArrayList<String> rgs = new ArrayList<>(); for (String rg : dE.getStringList(w)) if (pl.worldGuard.hasRegion(w, rg)) rgs.add(rg);
-                pl.configManager.regions.put(w, rgs);
-            }
-        }
+        pl.getConfigManager().loadWorld(e.getWorld());
     }
 }

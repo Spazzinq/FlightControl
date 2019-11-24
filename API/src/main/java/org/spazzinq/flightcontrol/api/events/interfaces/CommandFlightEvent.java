@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -26,5 +26,9 @@ package org.spazzinq.flightcontrol.api.events.interfaces;
 
 @SuppressWarnings("unused")
 public interface CommandFlightEvent {
+    /**
+     * Returns true if the event was triggered manually by player executing a command
+     * @return true if the event was triggered manually by player executing a command
+     */
     boolean isByCommand();
 }

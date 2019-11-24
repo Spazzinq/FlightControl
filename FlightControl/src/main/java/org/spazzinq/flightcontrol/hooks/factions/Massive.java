@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -44,7 +44,9 @@ public final class Massive extends Factions {
                     truce = false,
                     neutral = false,
                     enemy = false,
-                    warzone = c.warzone && f == fColl.getWarzone(), safezone = c.safezone && f == fColl.getSafezone(), wilderness = c.wilderness && f.isNone();
+                    warzone = c.warzone && f == fColl.getWarzone(),
+                    safezone = c.safezone && f == fColl.getSafezone(),
+                    wilderness = c.wilderness && f.isNone();
             if (mp.hasFaction()) {
                 Rel r = f.getRelationWish(mp.getFaction());
                 if (c.own) own = mp.isInOwnTerritory();

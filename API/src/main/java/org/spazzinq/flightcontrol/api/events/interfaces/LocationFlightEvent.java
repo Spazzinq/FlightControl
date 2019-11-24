@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -28,5 +28,9 @@ import org.bukkit.Location;
 
 @SuppressWarnings("unused")
 public interface LocationFlightEvent extends FlightEvent {
+    /**
+     * Returns the event's Location.
+     * @return the event's location
+     */
     Location getLocation();
 }

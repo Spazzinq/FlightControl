@@ -1,5 +1,5 @@
 /*
- * This file is part of FlightControl-parent, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License
  *
  * Copyright (c) 2019 Spazzinq
  *
@@ -36,8 +36,7 @@ public class HandlerMethod implements Comparable<HandlerMethod> {
     @Getter private Method method;
     @Getter private FlightEventHandler.Priority priority;
 
-    @SuppressWarnings("WeakerAccess")
-    public HandlerMethod(FlightListener listener, Method method) {
+    HandlerMethod(FlightListener listener, Method method) {
         method.setAccessible(true);
         this.listener = listener;
         this.method = method;
@@ -48,12 +47,16 @@ public class HandlerMethod implements Comparable<HandlerMethod> {
                 if (APIManager.getInstance().getEvents().contains(firstParameter)) {
                     eventClass = firstParameter;
                 } else throw new IllegalArgumentException("Method does not contain a specific Event parameter");
-            } else throw new IllegalArgumentException("Method contains more than one parameter");
+            } else throw new IllegalArgumentException("Method does not have only one parameter");
 
             priority = method.getAnnotation(FlightEventHandler.class).priority();
         } else throw new IllegalArgumentException("EventHandler annotation is not present");
     }
 
+    /**
+     * Returns the method's plugin owner.
+     * @return the method's plugin owner
+     */
     public Plugin getPlugin() { return getListener().getPlugin(); }
 
     @Override public int compareTo(HandlerMethod o) {
