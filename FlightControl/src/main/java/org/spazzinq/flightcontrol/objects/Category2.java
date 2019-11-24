@@ -22,17 +22,7 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hooks.factions;
+package org.spazzinq.flightcontrol.objects;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.hooks.Hook;
-import org.spazzinq.flightcontrol.objects.Category;
-
-public class Factions extends Hook {
-    public boolean rel(Player p, Category c) {
-        return false;
-    }
-    public boolean isEnemy(Player p, Player otherP) {
-        return false;
-    }
+public class Category2 {
 }

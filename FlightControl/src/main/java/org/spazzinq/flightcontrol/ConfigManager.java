@@ -127,7 +127,7 @@ public final class ConfigManager {
         for (World w : Bukkit.getWorlds()) {
             String name = w.getName();
             pl.defaultPerms(name);
-            for (String rg : pl.worldGuard.getRegions(w)) {
+            for (String rg : pl.getHookManager().getWorldGuard().getRegions(w)) {
                 pl.defaultPerms(name + "." + rg);
             }
         }
@@ -221,12 +221,12 @@ public final class ConfigManager {
         trail = config.getBoolean("trail.enabled");
 
         if (trail) {
-            pl.particles.setParticle(config.getString("trail.particle"));
-            pl.particles.setAmount(config.getInt("trail.amount"));
+            pl.getParticles().setParticle(config.getString("trail.particle"));
+            pl.getParticles().setAmount(config.getInt("trail.amount"));
             String offset = config.getString("trail.rgb");
             if (offset != null && (offset = offset.replaceAll("\\s+", "")).split(",").length == 3) {
                 String[] xyz = offset.split(",");
-                pl.particles.setRBG(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[0]) : 0,
+                pl.getParticles().setRBG(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[0]) : 0,
                         xyz[1].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[1]) : 0,
                         xyz[2].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[2]) : 0);
             }
@@ -261,29 +261,29 @@ public final class ConfigManager {
         String wName = world.getName();
 
         pl.defaultPerms(wName);
-        for (String rg : pl.worldGuard.getRegions(world)) {
+        for (String rg : pl.getHookManager().getWorldGuard().getRegions(world)) {
             pl.defaultPerms(wName + "." + rg);
         }
 
-        ConfigurationSection worldsCS = load(pl.configManager.config,"worlds");
+        ConfigurationSection worldsCS = load(pl.getConfigManager().config,"worlds");
         if (worldsCS != null) {
-            List<String> type = worldsCS.getStringList(pl.configManager.worldBL ? "disable" : "enable");
+            List<String> type = worldsCS.getStringList(pl.getConfigManager().worldBL ? "disable" : "enable");
             if (type != null && type.contains(wName)) {
-                pl.configManager.worlds.add(wName);
+                pl.getConfigManager().worlds.add(wName);
             }
         }
 
-        ConfigurationSection regionsCS = load(pl.configManager.config,"regions");
+        ConfigurationSection regionsCS = load(pl.getConfigManager().config,"regions");
         if (regionsCS != null) {
-            ConfigurationSection dE = regionsCS.getConfigurationSection(pl.configManager.regionBL ? "disable" : "enable");
+            ConfigurationSection dE = regionsCS.getConfigurationSection(pl.getConfigManager().regionBL ? "disable" : "enable");
             if (dE.isList(wName)) {
                 ArrayList<String> rgs = new ArrayList<>();
                 for (String rg : dE.getStringList(wName)) {
-                    if (pl.worldGuard.hasRegion(wName, rg)) {
+                    if (pl.getHookManager().getWorldGuard().hasRegion(wName, rg)) {
                         rgs.add(rg);
                     }
                 }
-                pl.configManager.regions.put(wName, rgs);
+                pl.getConfigManager().regions.put(wName, rgs);
             }
         }
     }
@@ -302,7 +302,7 @@ public final class ConfigManager {
         if (c != null) for (String w : c.getKeys(false)) {
             if (Bukkit.getWorld(w) != null && c.isList(w)) {
                 ArrayList<String> rgs = new ArrayList<>();
-                for (String rg : c.getStringList(w)) if (pl.worldGuard.hasRegion(w, rg)) rgs.add(rg);
+                for (String rg : c.getStringList(w)) if (pl.getHookManager().getWorldGuard().hasRegion(w, rg)) rgs.add(rg);
                 regions.put(w, rgs);
             }
         }

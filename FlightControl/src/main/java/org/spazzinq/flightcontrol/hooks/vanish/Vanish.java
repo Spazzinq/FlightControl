@@ -26,4 +26,8 @@ package org.spazzinq.flightcontrol.hooks.vanish;
 
 import org.bukkit.entity.Player;
 
-public class Vanish { public boolean vanished(Player p) { return false; } }
+public class Vanish {
+    public boolean vanished(Player p) {
+        return false;
+    }
+}

@@ -33,7 +33,7 @@
     <packaging>pom</packaging>
     <version>${revision}</version>
 
-    <properties><revision>3.6</revision></properties>
+    <properties><revision>4</revision></properties>
 
     <modules>
         <module>API</module>

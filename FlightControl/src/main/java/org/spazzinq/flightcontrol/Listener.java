@@ -43,50 +43,50 @@ final class Listener implements org.bukkit.event.Listener {
     // Check fly status
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onMove(PlayerMoveEvent e) {
-	    pl.flightManager.check(e.getPlayer(), e.getTo());
+	    pl.getFlightManager().check(e.getPlayer(), e.getTo());
 	}
     // Fly particles
     @EventHandler private void onToggleFly(PlayerToggleFlightEvent e) {
         Player p = e.getPlayer();
         if (e.isFlying()) {
-            pl.trailManager.trailCheck(p);
-            if (pl.configManager.isEveryEnable()) {
-                Sound.play(p, pl.configManager.getESound());
+            pl.getTrailManager().trailCheck(p);
+            if (pl.getConfigManager().isEveryEnable()) {
+                Sound.play(p, pl.getConfigManager().getESound());
             }
-        } else pl.trailManager.trailRemove(p);
+        } else pl.getTrailManager().trailRemove(p);
     }
     // Because onMove doesn't trigger right after a TP
-    @EventHandler private void onTP(PlayerTeleportEvent e) { pl.flightManager.check(e.getPlayer(), e.getTo()); }
-	@EventHandler private void onQuit(PlayerQuitEvent e) { pl.trailManager.trailRemove(e.getPlayer()); }
+    @EventHandler private void onTP(PlayerTeleportEvent e) { pl.getFlightManager().check(e.getPlayer(), e.getTo()); }
+	@EventHandler private void onQuit(PlayerQuitEvent e) { pl.getTrailManager().trailRemove(e.getPlayer()); }
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
         new BukkitRunnable() {
             public void run() {
                 pl.getTempflyManager().getAndSetTempfly(p);
-                pl.flightManager.check(p);
+                pl.getFlightManager().check(p);
                 if (p.isFlying()) {
-                    pl.trailManager.trailCheck(p);
+                    pl.getTrailManager().trailCheck(p);
                 }
             }
         }.runTaskLater(pl, 10);
 
-	    p.setFlySpeed(pl.configManager.getFlightSpeed());
+	    p.setFlySpeed(pl.getConfigManager().getFlightSpeed());
 	}
 	// Because commands might affect permissions/fly
 	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
 	    new BukkitRunnable() { public void run() {
-            pl.flightManager.check(p);
-	        if (p.isFlying() && !pl.trailManager.partTasks.containsKey(p)) new BukkitRunnable() { public void run() { pl.trailManager.trailCheck(p); } }.runTask(pl);
-	        else if (!p.isFlying() && pl.trailManager.partTasks.containsKey(p)) pl.trailManager.trailRemove(p);
+            pl.getFlightManager().check(p);
+	        if (p.isFlying() && !pl.getTrailManager().partTasks.containsKey(p)) new BukkitRunnable() { public void run() { pl.getTrailManager().trailCheck(p); } }.runTask(pl);
+	        else if (!p.isFlying() && pl.getTrailManager().partTasks.containsKey(p)) pl.getTrailManager().trailRemove(p);
 	    } }.runTask(pl);
 	}
 
 	// Fall damage prevention
     @EventHandler private void onFallDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL &&
-            pl.flightManager.cancelFallList.remove(e.getEntity())) e.setCancelled(true);
+            pl.getFlightManager().cancelFallList.remove(e.getEntity())) e.setCancelled(true);
     }
     // On-the-fly permission management
     @EventHandler private void onWorldLoad(WorldLoadEvent e) {

@@ -55,13 +55,13 @@ public final class TrailManager {
     }
 
     public void trailCheck(Player p) {
-        if (pl.particles != null && pl.configManager.isTrail() && !trailPrefs.contains(p.getUniqueId())) {
+        if (pl.getParticles() != null && pl.getConfigManager().isTrail() && !trailPrefs.contains(p.getUniqueId())) {
             partTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
-                    if (!(p.getGameMode() == GameMode.SPECTATOR || pl.vanish.vanished(p) || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
+                    if (!(p.getGameMode() == GameMode.SPECTATOR || pl.getHookManager().getVanish().vanished(p) || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
                         Location l = p.getLocation();
                         // For some terrible reason the locations are never in the correct spot so you have to time them later
-                        new BukkitRunnable() { @Override public void run() { pl.particles.spawn(l); } }.runTaskLater(pl, 2);
+                        new BukkitRunnable() { @Override public void run() { pl.getParticles().spawn(l); } }.runTaskLater(pl, 2);
                     }
                 }
             }.runTaskTimerAsynchronously(pl, 0, 4));

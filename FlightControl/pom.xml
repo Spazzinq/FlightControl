@@ -118,6 +118,10 @@
             <url>https://ci.ender.zone/plugin/repository/everything/</url>
         </repository>
         <repository>
+            <id>illyria</id>
+            <url>https://nexus.illyria.io/repository/maven-public/</url>
+        </repository>
+        <repository>
             <id>plotsquared-repo</id>
             <url>http://ci.athion.net/job/PlotSquared-Breaking/ws/mvn/</url>
         </repository>
@@ -231,7 +235,7 @@
         <dependency>
             <groupId>com.massivecraft</groupId>
             <artifactId>Factions</artifactId>
-            <version>1.6.9.5-U0.5.0</version>
+            <version>1.6.9.5-U0.5.3</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -251,6 +255,11 @@
                     <groupId>com.google.code.gson</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.massivecraft</groupId>
+            <artifactId>SavageFactions</artifactId>
+            <version>1.6.9.5-U0.2.1-RC-1.6.2-RC-2.5-RC-9</version>
         </dependency>
         <dependency>
             <groupId>com.massivecraft</groupId>
