@@ -39,15 +39,15 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.APIManager;
-import org.spazzinq.flightcontrol.commands.*;
-import org.spazzinq.flightcontrol.hooks.HookManager;
-import org.spazzinq.flightcontrol.managers.*;
+import org.spazzinq.flightcontrol.command.*;
+import org.spazzinq.flightcontrol.hook.HookManager;
+import org.spazzinq.flightcontrol.manager.*;
 import org.spazzinq.flightcontrol.multiversion.Particles;
 import org.spazzinq.flightcontrol.multiversion.current.Particles13;
 import org.spazzinq.flightcontrol.multiversion.old.Particles8;
-import org.spazzinq.flightcontrol.objects.Category;
-import org.spazzinq.flightcontrol.objects.Region;
-import org.spazzinq.flightcontrol.utils.ActionbarUtil;
+import org.spazzinq.flightcontrol.object.Category;
+import org.spazzinq.flightcontrol.object.Region;
+import org.spazzinq.flightcontrol.util.ActionbarUtil;
 
 import java.io.File;
 

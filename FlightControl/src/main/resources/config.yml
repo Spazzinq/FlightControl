@@ -85,7 +85,7 @@ sounds:
 
 # If you don't want a message to be sent, set it to ""
 messages:
-  # Use the actionbar (area above hotbar) instead of chat for notifications
+  # Use the actionbar (area above hotbar) instead of chat
   actionbar: false
   flight:
     enable: "&aYour flight has been enabled."
