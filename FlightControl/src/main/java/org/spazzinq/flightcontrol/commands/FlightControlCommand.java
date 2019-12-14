@@ -27,8 +27,9 @@ package org.spazzinq.flightcontrol.commands;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.ConfigManager;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.managers.ConfigManager;
+import org.spazzinq.flightcontrol.utils.MathUtil;
 
 import java.util.*;
 
@@ -152,15 +153,13 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         if (args.length == 2) {
                             if (args[1].matches("\\.\\d+|\\d+(\\.\\d+)?")) {
                                 float speed = Float.parseFloat(args[1]);
-                                float actualSpeed = pl.calcActualSpeed(speed);
+                                float actualSpeed = MathUtil.calcActualSpeed(speed);
                                 if (speed > -1 && speed < 11) {
-                                    if (config.getFlightSpeed() != actualSpeed) {
+                                    if (config.getDefaultFlightSpeed() != actualSpeed) {
                                         config.set("settings.flight_speed", speed);
-                                        config.setFlightSpeed(actualSpeed);
+                                        config.setDefaultFlightSpeed(actualSpeed);
 
-                                        for (Player p : Bukkit.getOnlinePlayers()) {
-                                            p.setFlySpeed(actualSpeed);
-                                        }
+                                        pl.getPlayerManager().reloadPlayerData();
                                         msg(s, "&e&lFlightControl &7» &eSet the global flight speed to &f" + speed + "&e!");
                                     } else msg(s, "&e&lFlightControl &7» &eGreat news! The global flight speed is already &f" + speed + "&e!");
                                 } else msg(s, "&e&lFlightControl &7» &ePlease provide a number between &f0 and 10 &e(inclusive)! The default speed is &f1&e!");

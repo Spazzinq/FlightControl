@@ -26,222 +26,38 @@ package org.spazzinq.flightcontrol.utils;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 public final class FileUtil extends YamlConfiguration {
-    public static String isToString(InputStream is) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024]; int length;
-        while ((length = is.read(buffer)) != -1) out.write(buffer, 0, length);
+    public static String streamToString(InputStream source) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[1024];
+        while ((nRead = source.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
 
-        return out.toString();
+        buffer.flush();
+        byte[] byteArray = buffer.toByteArray();
+
+        return new String(byteArray, StandardCharsets.UTF_8);
     }
 
-    public static String readFile(Path p) throws IOException {
-        byte[] encoded = Files.readAllBytes(p);
+    public static String readFile(Path path) throws IOException {
+        byte[] encoded = Files.readAllBytes(path);
         return new String(encoded, StandardCharsets.UTF_8);
     }
 
-    public static void insertComments(StringBuilder config, HashMap<String, String> comments) {
-        insertBefore(config, comments, false);
-        config.insert(0, comments.getOrDefault("header", ""));
-        config.append(comments.getOrDefault("footer", ""));
-    }
-
-    public static void insertNodes(StringBuilder config, HashMap<String, String> nodes) {
-        insertBefore(config, nodes, true);
-        nodes.clear();
-    }
-
-    // Insert AFTER node
-    public static void insertSubnodes(StringBuilder config, HashMap<String, List<String>> subnodes) {
-        String[] lines = config.toString().split("\n");
-        String node = "";
-        int i = 0,
-            depth = 0;
-
-        for (String line : lines) {
-            if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
-                String localNode = line.replaceAll("\\s+", "").split(":")[0];
-                String spaces = leadSpaces(line);
-                int nDepth = spaces.length();
-
-                if (depth >= nDepth) {
-                    int back = (depth - nDepth) / 2 + 1;
-                    for (int j = 0; j < back; j++) if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
-                }
-                node = node.concat((node.isEmpty() ? "" : ".") + localNode);
-                depth = nDepth;
-
-                int insertLength = 0;
-                if (subnodes.containsKey(node)) {
-                    // Get all sections for node
-                    for (String section : subnodes.get(node)) {
-                        String k = "\n" + spaces
-                                // If the node is a main node, indent
-                                + (node.contains(".") ? "" : "  ") + section.replaceAll("\n", "\n" + spaces + (node.contains(".") ? "" : "  "));
-                        k = k.substring(0, k.length() - depth + (node.contains(".") ? 2 : 0));
-                        // Insert AFTER
-                        config.insert(config.indexOf(line, i) + line.length(), k);
-                        insertLength += k.length();
-                    }
-                }
-                i += insertLength;
-            }
-            // Include the newline that was split
-            i += line.length() + 1;
-        }
-        subnodes.clear();
-    }
-
-    // Works for both nodes and subnodes
-    public static void removeNodes(StringBuilder config, Set<String> oldNodes) {
-        String[] lines = config.toString().split("\n");
-        String node = "",
-               target = "";
-        Integer start = null;
-        int end = 0,
-            depth = 0;
-
-        for (String line : lines) {
-            if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
-                String localNode = line.replaceAll("\\s+", "").split(":")[0];
-                String spaces = leadSpaces(line); int nDepth = spaces.length();
-
-                if (depth >= nDepth) {
-                    int back = (depth - nDepth) / 2 + 1;
-                    for (int j = 0; j < back; j++) if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
-                }
-                node = node.concat((node.isEmpty() ? "" : ".") + localNode);
-                depth = nDepth;
-
-                if (oldNodes.contains(node) && start == null) {
-                    start = end;
-                    target = node;
-                }
-            }
-            // Allow it to take one of the empty lines
-            end += line.length() + 1;
-
-            //               If subnode is over                         If whole node is over
-            if (((oldNodes.contains(node) && node.contains(".")) || !node.contains(target)) && start != null) {
-                //                                                    Don't remove next whole node
-                config.delete(start, end - (!node.contains(target) ? line.length() + 1 : 0));
-                start = null;
-            }
-        }
-        oldNodes.clear();
-    }
-
-    // WARNING: This does NOT work for inlined comments (eg. test: # This is an inlined comment)
-    public static HashMap<String, String> parseComments(String config) {
-        HashMap<String, String> comments = new HashMap<>();
-        String[] lines = config.split("\n");
-        // config = comment
-        String node = "",
-                c = "";
-        int depth = 0;
-        boolean headerDone = false;
-
-        for (String line : lines) {
-            // Substring of leadSpaces length also includes the comment symbol (#)
-            if (line.contains("#")) c = c.concat(line.substring(leadSpaces(line).length()) + "\n");
-            else if (line.isEmpty()) c = c.concat("\n");
-            else if (line.contains(": ") || line.endsWith(":")) {
-                String localNode = line.replaceAll("\\s+", "").split(":")[0];
-                String spaces = leadSpaces(line); int nDepth = spaces.length();
-
-                if (depth >= nDepth) {
-                    int back = (depth - nDepth) / 2 + 1;
-                    for (int j = 0; j < back; j++)
-                        if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
-                }
-                node = node.concat((node.isEmpty() ? "" : ".") + localNode);
-                depth = nDepth;
-
-                if (!headerDone) {
-                    if (countBlankLines(c) > 1) {
-                        int index = c.lastIndexOf("\n\n") + 2;
-                        comments.put("header", c.substring(0, index));
-                        c = c.substring(index);
-                    }
-                    headerDone = true;
-                }
-
-                if (!c.isEmpty()) {
-                    comments.put(node, c); c = "";
-                }
-            }
-        }
-        //                                                          Remove \n
-        if (!c.isEmpty()) comments.put("footer", c.substring(0, c.length() - 1));
-        return comments;
-    }
-
-    // Insert BEFORE node
-    // Comments should already have "#" at the beginning
-    private static void insertBefore(StringBuilder config, HashMap<String, String> nodes, boolean lineSeparator) {
-        String[] lines = config.toString().split("\n");
-        String node = "";
-        int i = 0,
-            depth = 0;
-
-        for (String line : lines) {
-            // Is it a node?
-            if (!line.contains("#") && (line.contains(": ") || line.endsWith(":"))) {
-                // TODO Should probably substring after finding char location not split
-                String localNode = line.replaceAll("\\s+", "").split(":")[0];
-                String spaces = leadSpaces(line);
-                int nDepth = spaces.length();
-
-                if (depth >= nDepth) {
-                    // example node -> "lol.xd.420"
-                    // same depth -> "lol.xd" | shallower by 1 -> "lol" | by 2 -> ""
-                    // (add node on later)
-                    int back = (depth - nDepth) / 2 + 1;
-                    // Back the node down
-                    for (int j = 0; j < back; j++) if (!node.isEmpty()) node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
-                }
-                // Update the node
-                node = node.concat((node.isEmpty() ? "" : ".") + localNode);
-                depth = nDepth;
-
-                if (nodes.containsKey(node)) {
-                    // Add the spaces from the depth of the node
-                    String insert = spaces + nodes.get(node).replaceAll("\n", "\n" + spaces);
-                    // Remove spaces at the end from above replaceAll
-                    insert = insert.substring(0, insert.length() - depth) + (lineSeparator ? "\n" : "");
-                    // Insert into config
-                    config.insert(config.indexOf(line, i), insert);
-                    // Set location to continue from
-                    i += insert.length();
-                }
-            }
-            // Include the newline that was split
-            i += line.length() + 1;
+    public static void copyFile(InputStream source, File destination) throws IOException {
+        OutputStream output = new FileOutputStream(destination);
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = source.read(buffer)) > 0) {
+            output.write(buffer, 0, length);
         }
     }
 
-    private static String leadSpaces(String s) {
-        return s.startsWith(" ") ? s.split("[^\\s]")[0] : "";
-    }
-
-    private static int countBlankLines(String data) {
-        int count = 0,
-            index = 0;
-        while (data.indexOf("\n\n", index) != -1) {
-            count++;
-            //                                  Second new line
-            index += data.indexOf("\n\n", index) + 2;
-        }
-        return count;
-    }
 }

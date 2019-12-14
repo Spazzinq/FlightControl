@@ -62,6 +62,10 @@
             <id>sk89q</id>
             <url>http://maven.sk89q.com/repo/</url>
         </repository>
+        <repository>
+            <id>facs-repo</id>
+            <url>https://ci.ender.zone/plugin/repository/everything/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -87,6 +91,12 @@
             <groupId>com.sk89q</groupId>
             <artifactId>worldguard</artifactId>
             <version>6.1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.massivecraft</groupId>
+            <artifactId>Factions</artifactId>
+            <version>1.6.9.5-U0.5.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

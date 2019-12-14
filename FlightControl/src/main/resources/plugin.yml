@@ -17,14 +17,14 @@ commands:
     description: Per-player trail toggle
     aliases: [trail, tt]
   tempfly:
-    description: Allows temporary bypass flight until the next server restart
+    description: Gives temporary flight
     aliases: [tfly]
+  flyspeed:
+    description: Sets flight speed
+    aliases: [flightspeed]
 
 
 permissions:
-  flightcontrol.fly:
-    description: Access to the fly command when the command option is enabled in the config
-    default: false
   flightcontrol.owntown:
     description: Enables flight in player's own town
     default: false
@@ -34,13 +34,18 @@ permissions:
   flightcontrol.flyall:
     description: Ability to automatically fly in all regions that are not disabled
     default: false
+  flightcontrol.flyspeed:
+    description: Ability to set flight speed
+    default: op
+    children:
+      others: false
+  flightcontrol.tempfly:
+    description: Ability to give temporary flight
+    default: op
+    children:
+      others: false
   flightcontrol.bypass:
     description: Bypasses all fly restrictions and always allows flight
-    default: false
-  flightcontrol.bypasstemp:
-    description: Same function as bypass permission, but meant to be temporary
-  flightcontrol.flyother:
-    description: Ability to enable another player's fly and bypass all restrictions (like bypass permission) until server restart
     default: false
   flightcontrol.admin:
     description: Ability to use FlightControl administrative commands (automatically given to OPs)

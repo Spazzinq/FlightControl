@@ -98,7 +98,7 @@
 
     <repositories>
         <repository>
-            <id>spazz-repo</id>
+            <id>spazzinq-repo</id>
             <url>https://mvn.spazzinq.org/repository/</url>
         </repository>
         <repository>
@@ -114,12 +114,8 @@
             <url>https://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
-            <id>ess-facs-repo</id>
+            <id>ess-repo</id>
             <url>https://ci.ender.zone/plugin/repository/everything/</url>
-        </repository>
-        <repository>
-            <id>illyria</id>
-            <url>https://nexus.illyria.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>plotsquared-repo</id>
@@ -231,47 +227,6 @@
                     <groupId>com.google.code.findbugs</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.massivecraft</groupId>
-            <artifactId>Factions</artifactId>
-            <version>1.6.9.5-U0.5.3</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>fanciful</artifactId>
-                    <groupId>mkremins</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>particleeffect</artifactId>
-                    <groupId>com.darkblade12</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commodore</artifactId>
-                    <groupId>me.lucko</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>gson</artifactId>
-                    <groupId>com.google.code.gson</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.massivecraft</groupId>
-            <artifactId>SavageFactions</artifactId>
-            <version>1.6.9.5-U0.2.1-RC-1.6.2-RC-2.5-RC-9</version>
-        </dependency>
-        <dependency>
-            <groupId>com.massivecraft</groupId>
-            <artifactId>factions</artifactId>
-            <version>2.14.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.massivecraft</groupId>
-            <artifactId>massivecore</artifactId>
-            <version>2.14.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.plotsquared</groupId>
@@ -408,6 +363,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.8</version>
+        </dependency>
+        <dependency>
             <groupId>org.spazzinq</groupId>
             <artifactId>API</artifactId>
             <version>${revision}</version>
@@ -424,11 +384,6 @@
             <artifactId>v1_13</artifactId>
             <version>${revision}</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.8</version>
         </dependency>
     </dependencies>
 </project>

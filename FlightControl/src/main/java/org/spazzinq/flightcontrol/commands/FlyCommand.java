@@ -31,7 +31,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.FlightManager;
+import org.spazzinq.flightcontrol.managers.FlightManager;
 
 import static org.spazzinq.flightcontrol.FlightControl.msg;
 
@@ -55,14 +55,14 @@ public final class FlyCommand implements CommandExecutor {
                     else {
                         flightManager.check(p, p.getLocation(), true);
                     }
-                } else FlightControl.msg(s, pl.getConfigManager().getNoPermission());
+                } else msg(s, pl.getConfigManager().getNoPermission());
             } else pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
         } else if (args.length == 1) {
             if (s instanceof ConsoleCommandSender || s.hasPermission("flightcontrol.admin")) {
                 Player p = Bukkit.getPlayer(args[0]);
                 // Allow admins to disable flight
                 if (p != null) {
-                    FlightControl.msg(s, "&e&lFlightControl &7» &e" + (p.getAllowFlight() ? "Disabled" : "Attempted to enable") + " &f" + p.getName() + "&e's flight!");
+                    msg(s, "&e&lFlightControl &7» &e" + (p.getAllowFlight() ? "Disabled" : "Attempted to enable") + " &f" + p.getName() + "&e's flight!");
                     if (p.getAllowFlight()) {
                         flightManager.disableFlight(p, true);
                     }
@@ -70,7 +70,7 @@ public final class FlyCommand implements CommandExecutor {
                         flightManager.check(p, p.getLocation(), true);
                     }
                 } else msg(s, "&e&lFlightControl &7» &ePlease provide a valid player!");
-            } else FlightControl.msg(s, pl.getConfigManager().getNoPermission());
+            } else msg(s, pl.getConfigManager().getNoPermission());
         }
         return true;
     }

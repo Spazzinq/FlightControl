@@ -32,7 +32,7 @@ import java.util.Set;
 
 @SuppressWarnings("unused")
 public class WorldGuard {
-    public String getRegion(Location l) { return null; }
-    public Set<String> getRegions(World w) { return Collections.emptySet(); }
+    public String getRegionName(Location l) { return null; }
+    public Set<String> getRegionNames(World w) { return Collections.emptySet(); }
     public boolean hasRegion(String world, String region) { return false; }
 }

@@ -42,15 +42,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static org.spazzinq.flightcontrol.utils.ConfigUtil.*;
+
 /**
  * Actually saves the comments left in the config and updates them dynamically.
  */
 public class CommentConf extends YamlConfiguration {
     private final Yaml yaml;
+    private File file;
 
     private HashMap<String, String> defaultComments,
                                     newNodes = new HashMap<>();
-    private HashMap<String, List<String>> newSubnodes = new HashMap<>();
+    private HashMap<String, List<String>> newSubnodes = new HashMap<>(),
+                                          newIndentedSubnodes = new HashMap<>();
     private Set<String> oldNodes = new HashSet<>();
 
     private CommentConf() {
@@ -58,6 +62,7 @@ public class CommentConf extends YamlConfiguration {
         DumperOptions yamlOptions = new DumperOptions();
         yamlOptions.setIndent(options().indent());
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        yamlOptions.setAllowUnicode(true);
 
         Representer yamlRepresenter = new YamlRepresenter();
         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -74,40 +79,75 @@ public class CommentConf extends YamlConfiguration {
      */
     public CommentConf(File file, InputStream defaultConf) throws IOException, InvalidConfigurationException {
         this();
+        this.file = file;
+        boolean fileExists = file.exists();
 
-        // TODO                         v check if readFile works, class documentation
+        if (!fileExists) {
+            //noinspection UnstableApiUsage
+            Files.createParentDirs(file);
+            FileUtil.copyFile(defaultConf, file);
+        }
         String currentConf = FileUtil.readFile(file.toPath());
 
-        defaultComments = FileUtil.parseComments(FileUtil.isToString(defaultConf));
-        HashMap<String, String> currentComments = FileUtil.parseComments(currentConf);
+        defaultComments = parseComments(FileUtil.streamToString(defaultConf));
+        HashMap<String, String> currentComments = parseComments(currentConf);
 
+        // Load the config for YAMLConfiguration methods
         loadFromString(currentConf);
 
-        // If comments from modified config do not match new ones, then save new version
-        // Only matches ones from the MODIFIED config
-        currentComments.forEach((node, value) -> {
-            if (defaultComments.get(node).equals(value)) {
-                try {
+        if (fileExists) {
+            // If comments from modified config do not match new ones, then save new version
+            // Only matches ones from the MODIFIED config
+            for (Map.Entry<String, String> comment : currentComments.entrySet()) {
+                if (!comment.getValue().equals(defaultComments.get(comment.getKey()))) {
                     save(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    break;
                 }
             }
-        });
+        }
 
         defaultConf.close();
     }
 
-    // TODO System to decide if node/subnode
-    public void addNode(String relativeKey, String node) {
-        newNodes.put(relativeKey, node);
+    /**
+     * Adds the node above the relative node.
+     * @param node the node to add
+     * @param relativeNode the already-existing node/subnode to reference when adding
+     */
+    public void addNode(String node, String relativeNode) {
+        newNodes.put(relativeNode, node);
     }
-    public void addSubnode(String relativeKey, String node) {
-        newSubnodes.put(relativeKey, Collections.singletonList(node));
+
+    /**
+     * Adds the subnode below the relative node.
+     * @param subnode the subnode to add
+     * @param relativeNode the already-existing node/subnode to reference when adding
+     */
+    public void addSubnode(String subnode, String relativeNode) {
+        newSubnodes.put(relativeNode, Collections.singletonList(subnode));
     }
-    public void addSubnodes(String relativeKey, List<String> node) {
-        newSubnodes.put(relativeKey, node);
+
+    public void addIndentedSubnode(String subnode, String relativeSubnode) {
+        newIndentedSubnodes.put(relativeSubnode, Collections.singletonList(subnode));
     }
+
+    public void addIndentedSubnodes(List<String> subnode, String relativeSubnode) {
+        newIndentedSubnodes.put(relativeSubnode, subnode);
+    }
+
+    /**
+     * Adds the subnodes below the relative node.
+     * @param subnodes the subnodes to add
+     * @param relativeNode the already-existing node/subnode to reference when adding
+     */
+    public void addSubnodes(List<String> subnodes, String relativeNode) {
+        newSubnodes.put(relativeNode, subnodes);
+    }
+
+    /**
+     * Removes both master nodes and subnodes.
+     * @param node the node to remove
+     */
     public void removeNode(String node) {
         oldNodes.add(node);
     }
@@ -124,6 +164,18 @@ public class CommentConf extends YamlConfiguration {
             try (FileWriter writer = new FileWriter(file)) {
                 writer.write(saveToString());
             }
+        }
+    }
+
+    /**
+     * Saves the config to the file that was set on initialization.
+     * @throws IOException
+     */
+    public void save() {
+        try {
+            save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -155,14 +207,24 @@ public class CommentConf extends YamlConfiguration {
      * Saves the config to a String.
      */
     @Override public String saveToString() {
-        StringBuilder configBuilder = new StringBuilder(yaml.dump(getValues(false)));
+        String config = yaml.dump(getValues(false));
+        return config.equals(BLANK_CONFIG) ? "" : finalizeConfig(config);
+    }
 
-        FileUtil.removeNodes(configBuilder, oldNodes);
-        FileUtil.insertNodes(configBuilder, newNodes);
-        FileUtil.insertSubnodes(configBuilder, newSubnodes);
-        FileUtil.insertComments(configBuilder, defaultComments);
+    private String finalizeConfig(String config) {
+        StringBuilder configBuilder = new StringBuilder(config);
 
-        String config = configBuilder.toString();
-        return config.equals(BLANK_CONFIG) ? "" : config;
+        removeNodes(configBuilder, oldNodes);
+        insertNodes(configBuilder, newNodes);
+        insertSubnodes(configBuilder, newSubnodes, false);
+        insertSubnodes(configBuilder, newIndentedSubnodes, true);
+        insertComments(configBuilder, defaultComments);
+
+        return configBuilder.toString();
+    }
+
+    @Override
+    public void save(String file) throws IOException {
+        save(new File(file));
     }
 }

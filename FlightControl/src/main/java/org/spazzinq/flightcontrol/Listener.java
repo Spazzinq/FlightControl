@@ -25,6 +25,7 @@
 package org.spazzinq.flightcontrol;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -53,7 +54,12 @@ final class Listener implements org.bukkit.event.Listener {
             if (pl.getConfigManager().isEveryEnable()) {
                 Sound.play(p, pl.getConfigManager().getESound());
             }
-        } else pl.getTrailManager().trailRemove(p);
+        } else {
+            pl.getTrailManager().trailRemove(p);
+            if (pl.getConfigManager().isEveryDisable()) {
+                Sound.play(p, pl.getConfigManager().getDSound());
+            }
+        }
     }
     // Because onMove doesn't trigger right after a TP
     @EventHandler private void onTP(PlayerTeleportEvent e) { pl.getFlightManager().check(e.getPlayer(), e.getTo()); }
@@ -61,35 +67,44 @@ final class Listener implements org.bukkit.event.Listener {
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
+        pl.getPlayerManager().loadStorage(p);
+        p.setFlySpeed(pl.getPlayerManager().getFlightPlayer(p).getActualFlightSpeed());
+
         new BukkitRunnable() {
             public void run() {
-                pl.getTempflyManager().getAndSetTempfly(p);
+                pl.getTempflyManager().checkTempfly(p);
                 pl.getFlightManager().check(p);
                 if (p.isFlying()) {
                     pl.getTrailManager().trailCheck(p);
                 }
             }
         }.runTaskLater(pl, 10);
-
-	    p.setFlySpeed(pl.getConfigManager().getFlightSpeed());
 	}
 	// Because commands might affect permissions/fly
 	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
 	    new BukkitRunnable() { public void run() {
             pl.getFlightManager().check(p);
-	        if (p.isFlying() && !pl.getTrailManager().partTasks.containsKey(p)) new BukkitRunnable() { public void run() { pl.getTrailManager().trailCheck(p); } }.runTask(pl);
-	        else if (!p.isFlying() && pl.getTrailManager().partTasks.containsKey(p)) pl.getTrailManager().trailRemove(p);
+	        if (p.isFlying() && !pl.getTrailManager().getPartTasks().containsKey(p)) new BukkitRunnable() { public void run() { pl.getTrailManager().trailCheck(p); } }.runTask(pl);
+	        else if (!p.isFlying() && pl.getTrailManager().getPartTasks().containsKey(p)) pl.getTrailManager().trailRemove(p);
 	    } }.runTask(pl);
 	}
 
 	// Fall damage prevention
     @EventHandler private void onFallDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL &&
-            pl.getFlightManager().cancelFallList.remove(e.getEntity())) e.setCancelled(true);
+            pl.getFlightManager().getCancelFallDmgList().remove(e.getEntity())) e.setCancelled(true);
     }
     // On-the-fly permission management
     @EventHandler private void onWorldLoad(WorldLoadEvent e) {
-        pl.getConfigManager().loadWorld(e.getWorld());
+        World world = e.getWorld();
+        String worldName = world.getName();
+
+        pl.defaultPerms(worldName);
+        for (String regionName : pl.getHookManager().getWorldGuard().getRegionNames(world)) {
+            pl.defaultPerms(worldName + "." + regionName);
+        }
+
+
     }
 }

@@ -28,11 +28,11 @@ import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 
 public final class NewSquared extends Plot {
-    @Override public boolean flight(String world, int x, int y, int z) {
+    @Override public boolean flightAllowed(String world, int x, int y, int z) {
         com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
         return p != null && p.getFlag(Flags.FLY, false);
     }
-    @Override public boolean dFlight(String world, int x, int y, int z) {
+    @Override public boolean flightDenied(String world, int x, int y, int z) {
         com.github.intellectualsites.plotsquared.plot.object.Plot p = com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
         return p != null && !p.getFlag(Flags.FLY, true);
     }

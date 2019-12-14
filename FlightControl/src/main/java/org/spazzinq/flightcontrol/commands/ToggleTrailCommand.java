@@ -29,31 +29,23 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.TrailManager;
-
-import java.util.UUID;
 
 public class ToggleTrailCommand implements CommandExecutor {
     private FlightControl pl;
-    private TrailManager manager;
 
     public ToggleTrailCommand(FlightControl pl) {
         this.pl = pl;
-        manager = pl.getTrailManager();
     }
 
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
         if (s instanceof Player) {
             Player p = (Player) s;
-            UUID uuid = p.getUniqueId();
-            if (manager.getTrailPrefs().contains(uuid)) {
-                manager.getTrailPrefs().remove(uuid);
+
+            if (pl.getPlayerManager().getFlightPlayer(p).toggleTrail()) {
                 // No need to check for trail enable because of command listener
                 FlightControl.msg(s, pl.getConfigManager().getEnableTrail(), pl.getConfigManager().isByActionBar());
-            }
-            else {
-                manager.getTrailPrefs().add(uuid);
-                manager.trailRemove(p);
+            } else {
+                pl.getTrailManager().trailRemove(p);
                 FlightControl.msg(s, pl.getConfigManager().getDisableTrail(), pl.getConfigManager().isByActionBar());
             }
         } else pl.getLogger().info("Only players can use this command (the console isn't a player!)");

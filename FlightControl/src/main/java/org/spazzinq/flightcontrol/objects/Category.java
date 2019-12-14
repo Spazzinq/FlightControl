@@ -24,28 +24,29 @@
 
 package org.spazzinq.flightcontrol.objects;
 
-public final class Category {
-    public final boolean blacklist, own, ally, truce, neutral, enemy, warzone, safezone, wilderness;
-    private String debug;
+import lombok.Getter;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
+import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 
-    public Category(boolean blacklist, boolean own, boolean ally, boolean truce, boolean neutral, boolean enemy, boolean warzone, boolean safezone, boolean wilderness) {
-        this.blacklist = blacklist;
-        this.own = own;
-        this.ally = ally;
-        this.truce = truce;
-        this.neutral = neutral;
-        this.enemy = enemy;
-        this.warzone = warzone;
-        this.safezone = safezone;
-        this.wilderness = wilderness;
+public class Category implements Comparable<Category> {
+    @Getter private String name;
+    @Getter private int priority;
 
-        debug = blacklist + " [" + (own ? "own," : "") + (ally ? "ally," : "") + (truce ? "truce," : "") + (neutral ? "neutral," : "")
-                + (enemy ? "enemy," : "") + (warzone ? "warzone," : "") + (safezone ? "safezone," : "") + (wilderness ? "wilderness," : "");
-        debug = debug.substring(0, debug.length() - 1) + "]";
+    @Getter private DualStore<World> worlds;
+    @Getter private DualStore<Region> regions;
+    @Getter private DualStore<FactionRelation> factions;
+
+    public Category(String name, DualStore<World> worlds, DualStore<Region> regions, DualStore<FactionRelation> factions, int priority) {
+        this.name = name;
+        this.worlds = worlds;
+        this.regions = regions;
+        this.factions = factions;
+        this.priority = priority;
     }
 
     @Override
-    public String toString() {
-        return debug;
+    public int compareTo(@NotNull Category o) {
+        return o.priority - priority;
     }
 }

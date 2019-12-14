@@ -26,12 +26,16 @@ package org.spazzinq.flightcontrol.objects;
 
 public final class Evaluation {
     private boolean disable, enable;
-    public Evaluation(boolean blacklist, boolean value) {
-        if (blacklist && value) disable = true; else if (blacklist || value) enable = true;
+
+    public Evaluation(boolean disable, boolean enable) {
+       this.disable = disable;
+       this.enable = enable;
     }
-    public Evaluation(boolean disable, boolean enable, boolean ignoreLogic) {
-        this(disable, enable); if (ignoreLogic) { this.disable = disable; this.enable = enable; }
+
+    public boolean enable() {
+        return enable;
     }
-    public boolean disable() { return disable; }
-    public boolean enable() { return enable; }
+    public boolean disable() {
+        return disable;
+    }
 }
