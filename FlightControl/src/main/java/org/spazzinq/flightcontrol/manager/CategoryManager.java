@@ -176,7 +176,7 @@ public class CategoryManager {
 
     private void nonexistent(String category, String section, String type, String error) {
         // Ignore examples
-        if (!error.contains("WORLDNAME")) {
+        if (!"WORLDNAME".contains(error)) {
             pl.getLogger().warning("Category \"" + category + "\" in section \"" + section + "\" contains non-existent " + type + " \"" + error + "\"");
         }
     }

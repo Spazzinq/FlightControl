@@ -184,7 +184,7 @@ public final class ConfigManager {
             List<String> worldList = worlds.getStringList(enable ? "enable" : "disable");
 
             for (String worldName : worldList) {
-                if (!worldName.equals("exampleworld")) {
+                if (!"exampleworld".equals(worldName)) {
                     categoryConf.addIndentedSubnode(worldName + ": " + enable, "global.worlds");
                 }
             }
@@ -201,7 +201,7 @@ public final class ConfigManager {
             Set<String> keys = regions.getConfigurationSection(type).getKeys(false);
 
             for (String worldName : keys) {
-                if (!(worldName.equals("exampleworld") || worldName.equals("exampleworld2"))) {
+                if (!("exampleworld".equals(worldName) || "exampleworld2".equals(worldName))) {
                     List<String> list = regions.getStringList(type + "." + worldName);
                     for (String region : list) {
                         categoryConf.addIndentedSubnode(worldName + "+" + region + ": " + enable, "global.regions");

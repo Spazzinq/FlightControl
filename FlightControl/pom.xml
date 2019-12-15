@@ -136,64 +136,12 @@
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>json-simple</artifactId>
-                    <groupId>com.googlecode.json-simple</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>gson</artifactId>
-                    <groupId>com.google.code.gson</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>ebean</artifactId>
-                    <groupId>org.avaje</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>bungeecord-chat</artifactId>
-                    <groupId>net.md-5</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
             <version>2.17.1</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>paperlib</artifactId>
-                    <groupId>io.papermc</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>NMSProvider</artifactId>
-                    <groupId>net.ess3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>UpdatedMetaProvider</artifactId>
-                    <groupId>net.ess3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>1_8_R1Provider</artifactId>
-                    <groupId>net.ess3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>1_8_R2Provider</artifactId>
-                    <groupId>net.ess3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>LegacyProvider</artifactId>
-                    <groupId>net.ess3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>ReflectionProvider</artifactId>
-                    <groupId>net.ess3</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>FlattenedProvider</artifactId>
-                    <groupId>net.ess3</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
@@ -202,32 +150,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldguard</artifactId>
-            <version>6.1.1-SNAPSHOT</version>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-legacy</artifactId>
+            <version>6.1.3-SNAPSHOT</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>worldedit</artifactId>
-                    <groupId>com.sk89q</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>bukkit-classloader-check</artifactId>
-                    <groupId>com.sk89q.spigot</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>bukkit</artifactId>
-                    <groupId>org.bukkit</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commandbook</artifactId>
-                    <groupId>com.sk89q</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jsr305</artifactId>
-                    <groupId>com.google.code.findbugs</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.plotsquared</groupId>
@@ -240,12 +166,6 @@
             <artifactId>PlotSquared-API</artifactId>
             <version>4.353</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.Sauilitired</groupId>
-                    <artifactId>Jenkins4J</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.palmergames</groupId>
@@ -264,14 +184,6 @@
             <artifactId>CombatTagPlus</artifactId>
             <version>1.3.2-SNAPSHOT</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>CombatTagPlusCompat-API</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusCompat-v1_7_R3</artifactId>
-                    <groupId>net.minelink</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>CombatTagPlusCompat-v1_7_R4</artifactId>
@@ -297,47 +209,6 @@
                     <artifactId>CombatTagPlusCompat-v1_9_R2</artifactId>
                     <groupId>net.minelink</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusCompat-v1_10_R1</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusCompat-v1_11_R1</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusCompat-v1_12_R1</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusHook</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusFactions-v1_6</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusFactions-v1_8</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusFactions-v2_6</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusFactions-v2_7</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusWG-v5</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>CombatTagPlusWG-v6</artifactId>
-                    <groupId>net.minelink</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vk2gpz</groupId>
