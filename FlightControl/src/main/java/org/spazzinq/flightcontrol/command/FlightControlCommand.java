@@ -100,7 +100,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
 
                 switch (autoComplete.isEmpty() ? args[0] : (autoComplete.size() == 1 ? autoComplete.get(0) : "")) {
                     case "reload":
-                        pl.reload();
+                        pl.reloadManagers();
                         msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!");
                         break;
                     case "update":

@@ -93,6 +93,7 @@
                 </executions>
             </plugin>
         </plugins>
+        <defaultGoal>clean package</defaultGoal>
         <finalName>${project.name}</finalName>
     </build>
 

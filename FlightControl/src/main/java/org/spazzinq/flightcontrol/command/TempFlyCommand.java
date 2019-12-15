@@ -32,6 +32,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.TempFlyManager;
+import org.spazzinq.flightcontrol.object.FlightPlayer;
 
 import static org.spazzinq.flightcontrol.FlightControl.msg;
 
@@ -49,11 +50,26 @@ public final class TempFlyCommand implements CommandExecutor {
 
         if (args.length == 1) {
             if (s.hasPermission("flightcontrol.tempfly") || console) {
-                if (console) {
-                    pl.getLogger().warning("You aren't a player! Try /tempfly (length) (player) instead!");
+                Player argPlayer = Bukkit.getPlayer(args[0]);
+
+                if (argPlayer != null) {
+                    FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(argPlayer);
+
+                    if (flightPlayer.getTempFlyEnd() == null) {
+                        msg(s, "&e&lFlightControl &7» &e" + argPlayer.getName() + "'s temporary flight is already disabled!");
+                    } else {
+                        flightPlayer.setTempFly(null);
+                        msg(s, "&e&lFlightControl &7» &eDisabled " + argPlayer.getName() + "'s temporary flight!");
+                    }
                 } else {
-                    setTempFly(s, (Player) s, args[0]);
+                    if (console) {
+                        pl.getLogger().warning("Invalid player! Use /tempfly (player) to disable a player's temporary flight; otherwise, use /tempfly (length) (player) to enable flight.");
+                    } else {
+                        setTempFly(s, (Player) s, args[0]);
+                    }
                 }
+
+
             } else {
                 msg(s, pl.getConfigManager().getNoPermission());
             }

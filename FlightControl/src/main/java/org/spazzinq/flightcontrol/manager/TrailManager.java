@@ -34,7 +34,6 @@ import org.bukkit.scheduler.BukkitTask;
 import org.spazzinq.flightcontrol.FlightControl;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 public final class TrailManager {
     private FlightControl pl;
@@ -64,11 +63,9 @@ public final class TrailManager {
     }
 
     public void disableEnabledTrails() {
-        Iterator<Player> currentTrails = partTasks.keySet().iterator();
-        // Throws a ConcurrentModificationException as a for-each
-        //noinspection WhileLoopReplaceableByForEach
-        while (currentTrails.hasNext()) {
-            trailRemove(currentTrails.next());
+        for (BukkitTask tasks : partTasks.values()) {
+            tasks.cancel();
         }
+        partTasks.clear();
     }
 }

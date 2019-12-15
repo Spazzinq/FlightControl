@@ -37,11 +37,6 @@ public class DualStore<T> {
         disabled = new HashSet<>();
     }
 
-    public DualStore(HashSet<T> enabled, HashSet<T> disabled) {
-        this.enabled = enabled;
-        this.disabled = disabled;
-    }
-
     public void addEnabled(T type) {
         enabled.add(type);
     }
@@ -51,6 +46,8 @@ public class DualStore<T> {
     }
 
     @Override public String toString() {
-        return enabled + "; " + disabled;
+        return (enabled + "; " + disabled)
+                // Remove unnecessary data from World toString
+                .replaceAll("CraftWorld\\{name=", "").replaceAll("}", "");
     }
 }

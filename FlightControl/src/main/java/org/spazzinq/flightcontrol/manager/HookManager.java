@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook;
+package org.spazzinq.flightcontrol.manager;
 
 import com.earth2me.essentials.Essentials;
 import lombok.Getter;

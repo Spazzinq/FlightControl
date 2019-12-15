@@ -40,7 +40,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.APIManager;
 import org.spazzinq.flightcontrol.command.*;
-import org.spazzinq.flightcontrol.hook.HookManager;
 import org.spazzinq.flightcontrol.manager.*;
 import org.spazzinq.flightcontrol.multiversion.Particles;
 import org.spazzinq.flightcontrol.multiversion.current.Particles13;
@@ -77,28 +76,19 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
         boolean is1_13 = getServer().getBukkitVersion().contains("1.13") || getServer().getBukkitVersion().contains("1.14");
         particles = is1_13 ? new Particles13() : new Particles8();
+
         // Load hooks
         hookManager = new HookManager(this, is1_13);
-        // Ensure all plugins load before hook does
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                hookManager.load();
-            }
-        }.runTaskLater(this, 60);
-
-
-        // Load classes
-
+        /* Load classes */
         // Load FlightManager before all because Config uses it & only needs to initialize pl
         flightManager = new FlightManager(this);
         categoryManager = new CategoryManager(this);
         configManager = new ConfigManager(this);
         // Resources from Config
         trailManager = new TrailManager(this);
-        // Variable in tempflyManager
+        // Gets instance of TempFlyManager
         playerManager = new PlayerManager(this);
-        // Resources from FlightManager
+        // Gets instance of FlightManager
         tempflyManager = new TempFlyManager(this);
         statusManager = new StatusManager(this);
 
@@ -120,17 +110,19 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         else if (updater.exists()) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    getLogger().info("flightcontrol " + updater.newVer() + " is available for update. Perform \"/fc update\" to update and " + "visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
+                    getLogger().info("FlightControl " + updater.newVer() + " is available for update. Perform \"/fc update\" to update and " + "visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
                 }
-            }.runTaskLater(this, 50);
+            }.runTaskLater(this, 70);
         }
 
-        reload();
+        // Ensure all plugins load before hook does
+        hookManager.load();
+        reloadManagers();
 
         new Metrics(this); // bStats
     }
 
-	public void reload() {
+	public void reloadManagers() {
         // Prevent permission auto-granting from "*" permission
         for (World w : Bukkit.getWorlds()) {
             String name = w.getName();
@@ -215,18 +207,19 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 	}
     public static void msg(CommandSender s, String msg, boolean actionBar) {
         if (msg != null && !msg.isEmpty()) {
+            boolean console = s instanceof ConsoleCommandSender;
             String finalMsg = msg;
 
-            if (s instanceof ConsoleCommandSender) {
+            if (console) {
                 finalMsg = finalMsg.replaceAll("FlightControl &7» ", "[FlightControl] ").replaceAll("»", "-");
             }
             finalMsg = ChatColor.translateAlternateColorCodes('&', finalMsg);
 
             if (actionBar && s instanceof Player) {
                 ActionbarUtil.send((Player) s, finalMsg);
-            }
-            else {
-                s.sendMessage(finalMsg);
+            } else {
+                s.sendMessage((console && !msg.contains("[FlightControl] ") ? "[FlightControl] " : "")
+                        + finalMsg);
             }
         }
     }
