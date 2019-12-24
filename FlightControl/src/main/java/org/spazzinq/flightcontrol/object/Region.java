@@ -24,19 +24,32 @@
 
 package org.spazzinq.flightcontrol.object;
 
+import lombok.Getter;
 import org.bukkit.World;
 
+import java.util.Objects;
+
 public class Region {
-    private World world;
-    private String regionName;
+    @Getter private World world;
+    @Getter private String regionName;
 
     public Region(World world, String regionName) {
         this.world = world;
         this.regionName = regionName;
     }
 
-    public boolean equals(Region region) {
-        return world.equals(region.world) && regionName.equals(region.regionName);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Region)) return false;
+        Region region = (Region) o;
+        return world.equals(region.world) &&
+                regionName.equals(region.regionName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(world, regionName);
     }
 
     @Override public String toString() {

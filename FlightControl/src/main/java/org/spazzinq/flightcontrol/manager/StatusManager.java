@@ -33,8 +33,6 @@ import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.Evaluation;
 import org.spazzinq.flightcontrol.object.Region;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class StatusManager {
@@ -49,24 +47,9 @@ public class StatusManager {
         String worldName = world.getName(),
                regionName = pl.getHookManager().getWorldGuard().getRegionName(l);
         Region region = new Region(world, regionName);
+        Category category = pl.getCategoryManager().getCategory(p);
 
         if (regionName != null) pl.defaultPerms(worldName + "." + regionName); // Register new regions dynamically
-
-        // TODO Cached category grabbing
-        Category category = null;
-        for (Category c : pl.getCategoryManager().getCategories()) {
-            List<Category> categories = new ArrayList<>();
-            // TODO Remove legacy factions category permission
-            if (p.hasPermission("flightcontrol.category." + c.getName()) || p.hasPermission("flightcontrol.factions." + c.getName())) {
-                categories.add(c);
-            }
-            // Locate the highest priority category
-            Collections.sort(categories);
-            category = categories.isEmpty() ? null : categories.get(0);
-        }
-        if (category == null) {
-            category = pl.getCategoryManager().getGlobal();
-        }
 
         boolean hasWorlds = category.getWorlds() != null,
                 hasRegions = category.getRegions() != null,

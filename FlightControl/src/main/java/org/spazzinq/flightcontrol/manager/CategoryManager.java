@@ -29,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
@@ -41,7 +42,10 @@ import org.spazzinq.flightcontrol.object.Region;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 public class CategoryManager {
     private FlightControl pl;
@@ -179,6 +183,21 @@ public class CategoryManager {
         if (!"WORLDNAME".contains(error)) {
             pl.getLogger().warning("Category \"" + category + "\" in section \"" + section + "\" contains non-existent " + type + " \"" + error + "\"");
         }
+    }
+
+    // TODO Cached category grabbing
+    public Category getCategory(Player p) {
+        List<Category> categories = new ArrayList<>();
+
+        for (Category c : getCategories()) {
+            if (p.hasPermission("flightcontrol.category." + c.getName())) {
+                categories.add(c);
+            }
+        }
+        // Locate the highest priority category
+        Collections.sort(categories);
+        return categories.isEmpty() ? pl.getCategoryManager().getGlobal()
+                : categories.get(0);
     }
 
     public HashSet<Category> getCategories() {

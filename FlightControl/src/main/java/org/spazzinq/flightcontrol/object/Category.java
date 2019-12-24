@@ -26,7 +26,6 @@ package org.spazzinq.flightcontrol.object;
 
 import lombok.Getter;
 import org.bukkit.World;
-import org.jetbrains.annotations.NotNull;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 
 public class Category implements Comparable<Category> {
@@ -46,7 +45,7 @@ public class Category implements Comparable<Category> {
     }
 
     @Override
-    public int compareTo(@NotNull Category o) {
+    public int compareTo(Category o) {
         return o.priority - priority;
     }
 }

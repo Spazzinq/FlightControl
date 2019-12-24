@@ -24,16 +24,16 @@
 
 package org.spazzinq.flightcontrol.manager;
 
+import com.google.common.io.Files;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.configuration.ConfigurationSection;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.objects.Sound;
 import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.io.File;
-import java.util.*;
+import java.io.IOException;
 
 public final class ConfigManager {
     private FlightControl pl;
@@ -107,6 +107,7 @@ public final class ConfigManager {
     // TODO Finish
     public void updateConfig() {
         boolean modified = false;
+        // Example modification
         // 4
 //        if (!config.isConfigurationSection("towny")) {
 //            config.removeNode();
@@ -158,85 +159,12 @@ public final class ConfigManager {
     }
 
     private void migrateFromVersion3() {
-        conf.addSubnode("auto_update: " + conf.getBoolean("auto_update"), "settings");
-        conf.removeNode("auto_update");
-
-        conf.addSubnode("auto_enable_flight: " + conf.getBoolean("settings.auto_enable"), "settings");
-        conf.removeNode("settings.auto_enable");
-
-        conf.addSubnode("disable_enemy_range: " + conf.getInt("settings.disable_enemy_range"), "factions");
-        // Clear other subnodes off of factions
-        conf.removeNode("factions");
-        conf.addNode("factions:", "towny");
-        conf.removeNode("settings.disable_enemy_range");
-
-        conf.addSubnode("negate_during_war: " + conf.getBoolean("towny.disable_during_war"), "towny");
-        conf.removeNode("towny.disable_during_war");
-
-        conf.addSubnode("every_disable: false", "sounds.every_enable");
-
-        CommentConf categoryConf = pl.getCategoryManager().getConf();
-
-        // WORLDS
-        ConfigurationSection worlds = conf.getConfigurationSection("worlds");
-        if (worlds.isList("enable") || worlds.isList("disable")) {
-            boolean enable = worlds.isList("enable");
-            List<String> worldList = worlds.getStringList(enable ? "enable" : "disable");
-
-            for (String worldName : worldList) {
-                if (!"exampleworld".equals(worldName)) {
-                    categoryConf.addIndentedSubnode(worldName + ": " + enable, "global.worlds");
-                }
-            }
+        // TODO Check function
+        try {
+            //noinspection UnstableApiUsage
+            Files.move(confFile, new File(pl.getDataFolder(), "config_old.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        categoryConf.removeNode("global.worlds.WORLDNAME");
-        categoryConf.removeNode("global.worlds.WORLDNAME2");
-        conf.removeNode("worlds");
-
-        // REGIONS
-        ConfigurationSection regions = conf.getConfigurationSection("regions");
-        if (regions.isConfigurationSection("enable") || regions.isConfigurationSection("disable")) {
-            boolean enable = regions.isConfigurationSection("enable");
-            String type = enable ? "enable" : "disable";
-            Set<String> keys = regions.getConfigurationSection(type).getKeys(false);
-
-            for (String worldName : keys) {
-                if (!("exampleworld".equals(worldName) || "exampleworld2".equals(worldName))) {
-                    List<String> list = regions.getStringList(type + "." + worldName);
-                    for (String region : list) {
-                        categoryConf.addIndentedSubnode(worldName + "+" + region + ": " + enable, "global.regions");
-                    }
-
-                }
-            }
-        }
-        conf.removeNode("regions");
-
-        // FACTIONS
-        ConfigurationSection factions = conf.getConfigurationSection("factions");
-
-        HashMap<String, Boolean> oldFactionCategories = new HashMap<>();
-        for (String oldFactionCategory : factions.getKeys(false)) {
-            List<String> categoryInfo = new ArrayList<>(Arrays.asList("priority: 0", "worlds: {}", "regions: {}", "factions:"));
-            categoryConf.addIndentedSubnodes(categoryInfo, "categories." + oldFactionCategory);
-
-            boolean enable = factions.getConfigurationSection(oldFactionCategory).isList("enable");
-
-            categoryConf.addIndentedSubnodes(Arrays.asList("enable", "disable"), "categories." + oldFactionCategory + ".factions");
-            oldFactionCategories.put(oldFactionCategory, enable);
-        }
-        categoryConf.removeNode("categories.example");
-        categoryConf.removeNode("categories.example2");
-
-        categoryConf.save();
-
-        for (Map.Entry<String, Boolean> oldCategory : oldFactionCategories.entrySet()) {
-            String name = oldCategory.getKey();
-            boolean enable = oldCategory.getValue();
-            categoryConf.set("categories." + name + ".factions." + enable, conf.getStringList("factions." + name + "." + enable));
-        }
-
-        conf.save();
-        categoryConf.save();
     }
 }

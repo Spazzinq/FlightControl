@@ -74,7 +74,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         //noinspection ResultOfMethodCallIgnored
         storageFolder.mkdirs();
 
-        boolean is1_13 = getServer().getBukkitVersion().contains("1.13") || getServer().getBukkitVersion().contains("1.14");
+        boolean is1_13 = getServer().getBukkitVersion().contains("1.13")
+                      || getServer().getBukkitVersion().contains("1.14")
+                      || getServer().getBukkitVersion().contains("1.15");
         particles = is1_13 ? new Particles13() : new Particles8();
 
         // Load hooks
@@ -151,19 +153,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         String worldName = world.getName(),
                 regionName = getHookManager().getWorldGuard().getRegionName(l);
         Region region = new Region(world, regionName);
+        Category category = categoryManager.getCategory(p);
 
         if (regionName != null) defaultPerms(worldName + "." + regionName); // Register new regions dynamically
-
-        // TODO Cached category grabbing
-        Category category = null;
-        for (Category c : getCategoryManager().getCategories()) {
-            if (p.hasPermission("flightcontrol.category." + c.getName())) {
-                category = c;
-            }
-        }
-        if (category == null) {
-            category = getCategoryManager().getGlobal();
-        }
 
         boolean hasWorlds = category.getWorlds() != null,
                 hasRegions = category.getRegions() != null,
@@ -234,8 +226,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
 	    if (perm == null) {
 	        pm.addPermission(new Permission(permString, PermissionDefault.FALSE));
-        } else {
-	        perm.setDefault(PermissionDefault.FALSE);
         }
     }
 

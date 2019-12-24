@@ -47,8 +47,8 @@ lands:
 
 trail:
   enabled: false
-  # 1.8 List: https://spazzinq.org/particles/1.8.html
-  # 1.14 List: https://spazzinq.org/particles/1.14.html
+  # 1.8 Particle List: https://spazzinq.org/particles/1.8.html
+  # 1.15 Particle List: https://spazzinq.org/particles/1.15.html
   particle: "CLOUD"
   amount: 2
   # "rgb" is used with colored particles (format: "red,green,blue")
@@ -63,7 +63,7 @@ sounds:
   every_disable: false
   # Please use the sound names from the "Sound Event" column
   # 1.8 List: https://minecraft.gamepedia.com/Sounds.json/Java_Edition_values_before_1.9
-  # 1.14 List: https://minecraft.gamepedia.com/Sounds.json/Java_Edition_values
+  # 1.15 List: https://minecraft.gamepedia.com/Sounds.json/Java_Edition_values
   enable:
     sound: "NONE"
     pitch: 1
