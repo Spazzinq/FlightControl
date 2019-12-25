@@ -24,6 +24,7 @@
 
 package org.spazzinq.flightcontrol.manager;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -44,7 +45,8 @@ import static org.spazzinq.flightcontrol.FlightControl.msg;
 public final class UpdateManager {
     HashSet<UUID> notified = new HashSet<>();
 
-    private String version, newVersion;
+    @Getter private String newVersion;
+    private String version;
     private boolean downloaded;
 
     public UpdateManager(String version) {
@@ -63,9 +65,10 @@ public final class UpdateManager {
     private void dl() {
         if (exists()) {
             try {
-                URL website = new URL("https://github.com/Spazzinq/FlightControl/releases/download/" + newVersion + "/flightcontrol.jar");
+                URL website = new URL("https://github.com/Spazzinq/FlightControl/releases/download/" + newVersion + "/FlightControl.jar");
                 ReadableByteChannel rbc = Channels.newChannel(website.openStream());
-                FileOutputStream fos = new FileOutputStream(new File("plugins/flightcontrol.jar"));
+                FileOutputStream fos = new FileOutputStream(new File("plugins/FlightControl.jar"));
+
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
                 fos.close();
                 downloaded = true;
@@ -74,21 +77,17 @@ public final class UpdateManager {
         }
     }
 
-    public String newVer() {
-        return newVersion;
-    }
-
     public void install(CommandSender s, boolean silentCheck) {
         if (exists()) {
             if (!downloaded) {
                 dl();
                 if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
-                    msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the config has automatically updated too)! Welcome to flightcontrol " + newVer() + "!");
+                    msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the config has automatically updated too)! Welcome to flightcontrol " + getNewVersion() + "!");
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload flightcontrol");
                 } else
-                    msg(s, "&a&lFlightControl &7» &aVersion &f" + newVer() + " &aupdate downloaded. Restart (or reload) the server to apply the update.");
+                    msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate downloaded. Restart (or reload) the server to apply the update.");
             } else
-                msg(s, "&a&lFlightControl &7» &aVersion &f" + newVer() + " &aupdate has already been downloaded. Restart (or reload) the server to apply the update.");
+                msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate has already been downloaded. Restart (or reload) the server to apply the update.");
         } else if (!silentCheck) {
             msg(s, "&a&lFlightControl &7» &aNo updates found.");
         }
@@ -98,7 +97,7 @@ public final class UpdateManager {
         // exists()
         if (!notified.contains(p.getUniqueId())) {
             notified.add(p.getUniqueId());
-            FlightControl.msg(p, "&e&lFlightControl &7» &eWoot woot! Version &f" + newVer() + "&e is now available! " +
+            FlightControl.msg(p, "&e&lFlightControl &7» &eWoot woot! Version &f" + getNewVersion() + "&e is now available! " +
                                        "Update with \"/fc update\" and check out the new features: &fhttps://www.spigotmc.org/resources/flightcontrol.55168/");
         }
     }

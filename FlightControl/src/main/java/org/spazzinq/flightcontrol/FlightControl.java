@@ -111,7 +111,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         } else if (updateManager.exists()) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    getLogger().info("Yay! Version " + updateManager.newVer() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
+                    getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
                 }
             }.runTaskLater(this, 70);
         }
