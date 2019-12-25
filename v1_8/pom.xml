@@ -119,6 +119,7 @@
             <groupId>org.spazzinq</groupId>
             <artifactId>Multiversion</artifactId>
             <version>${revision}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

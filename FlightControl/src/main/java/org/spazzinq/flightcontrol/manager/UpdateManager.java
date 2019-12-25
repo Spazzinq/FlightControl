@@ -94,8 +94,7 @@ public final class UpdateManager {
     }
 
     public void notify(Player p) {
-        // exists()
-        if (!notified.contains(p.getUniqueId())) {
+        if (exists() && !notified.contains(p.getUniqueId())) {
             notified.add(p.getUniqueId());
             FlightControl.msg(p, "&e&lFlightControl &7» &eWoot woot! Version &f" + getNewVersion() + "&e is now available! " +
                                        "Update with \"/fc update\" and check out the new features: &fhttps://www.spigotmc.org/resources/flightcontrol.55168/");
