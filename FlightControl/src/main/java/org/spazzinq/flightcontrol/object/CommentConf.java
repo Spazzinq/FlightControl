@@ -88,7 +88,6 @@ public class CommentConf extends YamlConfiguration {
             FileUtil.copyFile(defaultConf, file);
         }
         String currentConf = FileUtil.readFile(file.toPath());
-
         defaultComments = parseComments(FileUtil.streamToString(defaultConf));
         HashMap<String, String> currentComments = parseComments(currentConf);
 
@@ -105,8 +104,6 @@ public class CommentConf extends YamlConfiguration {
                 }
             }
         }
-
-        defaultConf.close();
     }
 
     /**

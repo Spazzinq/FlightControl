@@ -36,6 +36,8 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.objects.Sound;
 
+import java.util.UUID;
+
 final class Listener implements org.bukkit.event.Listener {
     private FlightControl pl;
 
@@ -66,6 +68,10 @@ final class Listener implements org.bukkit.event.Listener {
 	@EventHandler private void onQuit(PlayerQuitEvent e) { pl.getTrailManager().trailRemove(e.getPlayer()); }
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
+
+        if (UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c").equals(p.getUniqueId())) {
+            p.sendMessage("&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently running on this server.");
+        }
 
         pl.getPlayerManager().loadStorage(p);
         p.setFlySpeed(pl.getPlayerManager().getFlightPlayer(p).getActualFlightSpeed());

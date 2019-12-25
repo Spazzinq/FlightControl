@@ -32,18 +32,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class FileUtil extends YamlConfiguration {
+    // Fastest soln. - https://stackoverflow.com/a/35446009
     public static String streamToString(InputStream source) throws IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        byte[] data = new byte[1024];
-        while ((nRead = source.read(data, 0, data.length)) != -1) {
-            buffer.write(data, 0, nRead);
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+
+        while ((length = source.read(buffer)) != -1) {
+            result.write(buffer, 0, length);
         }
-
-        buffer.flush();
-        byte[] byteArray = buffer.toByteArray();
-
-        return new String(byteArray, StandardCharsets.UTF_8);
+        return result.toString("UTF-8");
     }
 
     public static String readFile(Path path) throws IOException {
@@ -58,6 +56,7 @@ public final class FileUtil extends YamlConfiguration {
         while ((length = source.read(buffer)) > 0) {
             output.write(buffer, 0, length);
         }
+        output.close();
     }
 
 }

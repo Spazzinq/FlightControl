@@ -42,10 +42,7 @@ import org.spazzinq.flightcontrol.object.Region;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class CategoryManager {
     private FlightControl pl;
@@ -60,22 +57,22 @@ public class CategoryManager {
         this.pl = pl;
         pm = pl.getServer().getPluginManager();
         categoryFile = new File(pl.getDataFolder(), "categories.yml");
+    }
 
+    public void reloadCategories() {
         try {
             conf = new CommentConf(categoryFile, pl.getResource("categories.yml"));
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-    }
 
-    public void reloadCategories() {
         global = null;
         categories.clear();
 
         if (conf != null) {
             global = loadCategory("global", conf.getConfigurationSection("global"));
-
             ConfigurationSection categoriesSection = conf.getConfigurationSection("categories");
+
             for (String categoryName : categoriesSection.getKeys(false)) {
                 Category category = loadCategory(categoryName, categoriesSection.getConfigurationSection(categoryName));
                 categories.add(category);
@@ -180,7 +177,7 @@ public class CategoryManager {
 
     private void nonexistent(String category, String section, String type, String error) {
         // Ignore examples
-        if (!"WORLDNAME".contains(error)) {
+        if (!error.contains("WORLDNAME")) {
             pl.getLogger().warning("Category \"" + category + "\" in section \"" + section + "\" contains non-existent " + type + " \"" + error + "\"");
         }
     }

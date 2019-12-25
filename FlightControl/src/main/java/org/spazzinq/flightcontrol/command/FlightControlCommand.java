@@ -141,12 +141,12 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         break;
                     case "autoenable":
                         config.setAutoEnable(!config.isAutoEnable());
-                        config.set("settings.auto_enable", config.isAutoEnable());
+                        config.set("settings.auto_enable_flight", config.isAutoEnable());
                         msgToggle(s, config.isAutoEnable(), "Flight Auto-Enable");
                         break;
                     case "autoupdate":
                         config.setAutoUpdate(!config.isAutoUpdate());
-                        config.set("auto_update", config.isAutoUpdate());
+                        config.set("settings.auto_update", config.isAutoUpdate());
                         msgToggle(s, config.isAutoUpdate(), "Auto-Update");
                         break;
                     case "speed": case "flightspeed":
@@ -173,7 +173,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                 int range = Integer.parseInt(args[1]);
                                 if (range > -2) {
                                     if (config.getFacEnemyRange() != range) {
-                                        config.set("settings.disable_enemy_range", range);
+                                        config.set("factions.disable_enemy_range", range);
                                         config.setUseFacEnemyRange(range != -1);
                                         config.setFacEnemyRange(range);
 

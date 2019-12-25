@@ -34,9 +34,12 @@ import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public final class ConfigManager {
     private FlightControl pl;
+    private boolean ignoreReload;
 
     private File confFile;
     @Getter private CommentConf conf;
@@ -58,50 +61,67 @@ public final class ConfigManager {
         confFile = new File(pl.getDataFolder(), "config.yml");
     }
 
-    public void reloadConfig() {
-        try {
-            conf = new CommentConf(confFile, pl.getResource("config.yml"));
-        } catch (Exception e) {
-            e.printStackTrace();
+    public boolean reloadConfig() {
+        boolean reloaded = false;
+
+        if (!ignoreReload) {
+            ignoreReload = true;
+
+            try {
+                conf = new CommentConf(confFile, pl.getResource("config.yml"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (conf.isBoolean("auto_update")) {
+                migrateFromVersion3();
+            }
+
+            // booleans
+            autoUpdate = conf.getBoolean("settings.auto_update");
+            autoEnable = conf.getBoolean("settings.auto_enable_flight");
+            combatChecked = conf.getBoolean("settings.disable_flight_in_combat");
+            cancelFall = conf.getBoolean("settings.prevent_fall_damage");
+            vanishBypass = conf.getBoolean("settings.vanish_bypass");
+
+            byActionBar = conf.getBoolean("messages.actionbar");
+
+            ownTown = conf.getBoolean("towny.enable_own_town");
+            townyWar = conf.getBoolean("towny.negate_during_war");
+            ownLand = conf.getBoolean("lands.enable_own_land");
+
+            // ints
+            int range = conf.getInt("factions.disable_enemy_range");
+            if (useFacEnemyRange = (range != -1)) facEnemyRange = range;
+
+            // floats
+            defaultFlightSpeed = MathUtil.calcActualSpeed((float) conf.getDouble("settings.flight_speed"));
+
+            // Messages
+            dFlight = conf.getString("messages.flight.disable");
+            dFlight = conf.getString("messages.flight.disable");
+            eFlight = conf.getString("messages.flight.enable");
+            cFlight = conf.getString("messages.flight.can_enable");
+            nFlight = conf.getString("messages.flight.cannot_enable");
+            disableTrail = conf.getString("messages.trail.disable");
+            enableTrail = conf.getString("messages.trail.enable");
+            noPermission = conf.getString("messages.permission_denied");
+
+            // Load other stuff that have separate methods
+            loadSounds();
+            loadTrail();
+
+            // Prevent reloading for the next 100ms
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    ignoreReload = false;
+                }
+            }, 500);
+
+            reloaded = true;
         }
-
-        if (conf.isConfigurationSection("auto_update")) {
-            migrateFromVersion3();
-        }
-
-        // booleans
-        autoUpdate = conf.getBoolean("settings.auto_update");
-        autoEnable = conf.getBoolean("settings.auto_enable_flight");
-        combatChecked = conf.getBoolean("settings.disable_flight_in_combat");
-        cancelFall = conf.getBoolean("settings.prevent_fall_damage");
-        vanishBypass = conf.getBoolean("settings.vanish_bypass");
-
-        byActionBar = conf.getBoolean("messages.actionbar");
-
-        ownTown = conf.getBoolean("towny.enable_own_town");
-        townyWar = conf.getBoolean("towny.negate_during_war");
-        ownLand = conf.getBoolean("lands.enable_own_land");
-
-        // ints
-        int range = conf.getInt("factions.disable_enemy_range");
-        if (useFacEnemyRange = (range != -1)) facEnemyRange = range;
-
-        // floats
-        defaultFlightSpeed = MathUtil.calcActualSpeed((float) conf.getDouble("settings.flight_speed"));
-
-        // Messages
-        dFlight = conf.getString("messages.flight.disable");
-        dFlight = conf.getString("messages.flight.disable");
-        eFlight = conf.getString("messages.flight.enable");
-        cFlight = conf.getString("messages.flight.can_enable");
-        nFlight = conf.getString("messages.flight.cannot_enable");
-        disableTrail = conf.getString("messages.trail.disable");
-        enableTrail = conf.getString("messages.trail.enable");
-        noPermission = conf.getString("messages.permission_denied");
-
-        // Load other stuff that have separate methods
-        loadSounds();
-        loadTrail();
+        return reloaded;
     }
 
     // TODO Finish
@@ -154,8 +174,16 @@ public final class ConfigManager {
 
     // FILE CONFIG METHODS
     public void set(String path, Object value) {
+        ignoreReload = true;
         conf.set(path, value);
         conf.save();
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                ignoreReload = false;
+            }
+        }, 500);
     }
 
     private void migrateFromVersion3() {
@@ -166,5 +194,6 @@ public final class ConfigManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        pl.saveDefaultConfig();
     }
 }

@@ -49,6 +49,7 @@ import org.spazzinq.flightcontrol.object.Region;
 import org.spazzinq.flightcontrol.util.ActionbarUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private APIManager apiManager = APIManager.getInstance();
@@ -70,7 +71,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private TempFlyCommand tempFlyCommand;
 
     public void onEnable() {
-	    // Prepare storage folder
+        // Prepare storage folder
         //noinspection ResultOfMethodCallIgnored
         storageFolder.mkdirs();
 
@@ -121,6 +122,12 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         hookManager.load();
         reloadManagers();
 
+        try {
+            new FileManager(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         new Metrics(this); // bStats
     }
 
@@ -140,10 +147,16 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         playerManager.reloadPlayerData();
 	    tempflyManager.reloadTempflyData();
 
-	    trailManager.disableEnabledTrails();
+        checkPlayers();
+    }
+
+    public void checkPlayers() {
+        trailManager.disableEnabledTrails();
         for (Player p : Bukkit.getOnlinePlayers()) {
             flightManager.check(p);
-            trailManager.trailCheck(p);
+            if (p.isFlying()) {
+                trailManager.trailCheck(p);
+            }
         }
     }
 
@@ -203,14 +216,14 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             String finalMsg = msg;
 
             if (console) {
-                finalMsg = finalMsg.replaceAll("FlightControl &7» ", "[FlightControl] ").replaceAll("»", "-");
+                finalMsg = finalMsg.replaceAll("FlightControl &7» ", "").replaceAll("»", "-");
             }
             finalMsg = ChatColor.translateAlternateColorCodes('&', finalMsg);
 
             if (actionBar && s instanceof Player) {
                 ActionbarUtil.send((Player) s, finalMsg);
             } else {
-                s.sendMessage((console && !msg.contains("[FlightControl] ") ? "[FlightControl] " : "")
+                s.sendMessage((console ? "[FlightControl] " : "")
                         + finalMsg);
             }
         }
