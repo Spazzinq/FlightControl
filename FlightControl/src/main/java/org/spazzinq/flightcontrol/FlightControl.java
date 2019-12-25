@@ -64,10 +64,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private StatusManager statusManager;
     @Getter private TempFlyManager tempflyManager;
     @Getter private TrailManager trailManager;
+    @Getter private UpdateManager updateManager;
 
     @Getter private Particles particles;
 
-    @Getter private Updater updater;
     @Getter private TempFlyCommand tempFlyCommand;
 
     public void onEnable() {
@@ -94,10 +94,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         // Gets instance of FlightManager
         tempflyManager = new TempFlyManager(this);
         statusManager = new StatusManager(this);
+        updateManager = new UpdateManager(getDescription().getVersion());
 
-        new ActionbarUtil();
         new Listener(this);
-        updater = new Updater(getDescription().getVersion());
 
         // Load commands
         tempFlyCommand = new TempFlyCommand(this);
@@ -108,12 +107,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         getCommand("flyspeed").setExecutor(new FlySpeedCommand(this));
 
         if (configManager.isAutoUpdate()) {
-            updater.install(Bukkit.getConsoleSender(), true);
-        }
-        else if (updater.exists()) {
+            updateManager.install(Bukkit.getConsoleSender(), true);
+        } else if (updateManager.exists()) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    getLogger().info("FlightControl " + updater.newVer() + " is available for update. Perform \"/fc update\" to update and " + "visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
+                    getLogger().info("Yay! Version " + updateManager.newVer() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
                 }
             }.runTaskLater(this, 70);
         }

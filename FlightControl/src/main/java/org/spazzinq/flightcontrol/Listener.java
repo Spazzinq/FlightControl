@@ -38,6 +38,7 @@ import org.spazzinq.flightcontrol.api.objects.Sound;
 
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 final class Listener implements org.bukkit.event.Listener {
     private FlightControl pl;
 
@@ -70,7 +71,19 @@ final class Listener implements org.bukkit.event.Listener {
         Player p = e.getPlayer();
 
         if (UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c").equals(p.getUniqueId())) {
-            p.sendMessage("&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently running on this server.");
+            new BukkitRunnable() {
+                @Override public void run() {
+                    FlightControl.msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently running on this server. " + pl.getHookManager().getHookMsg());
+                }
+            }.runTaskLater(pl, 40);
+        }
+
+        if (p.isOp()) {
+            new BukkitRunnable() {
+                @Override public void run() {
+                    pl.getUpdateManager().notify(p);
+                }
+            }.runTaskLater(pl, 40);
         }
 
         pl.getPlayerManager().loadStorage(p);

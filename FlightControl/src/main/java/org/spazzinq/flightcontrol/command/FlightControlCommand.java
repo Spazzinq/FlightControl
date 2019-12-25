@@ -104,7 +104,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!");
                         break;
                     case "update":
-                        pl.getUpdater().install(s, false);
+                        pl.getUpdateManager().install(s, false);
                         break;
                     case "combat":
                         config.setCombatChecked(!config.isCombatChecked());

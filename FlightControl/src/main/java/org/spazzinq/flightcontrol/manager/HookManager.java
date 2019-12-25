@@ -56,6 +56,8 @@ public class HookManager {
     private PluginManager pm;
     private boolean is1_13;
 
+    @Getter private String hookMsg;
+
     // Load early to prevent NPEs
     @Getter private WorldGuard worldGuard = new WorldGuard();
     @Getter private Vanish vanish = new Vanish();
@@ -93,20 +95,20 @@ public class HookManager {
         }
 
         // Prepare hooked msg
-        StringBuilder hookedMsg = new StringBuilder("Hooked with ");
+        StringBuilder hookMsg = new StringBuilder("Hooked with ");
         if (hooked.isEmpty()) {
-            hookedMsg.append("no plugins.");
+            hookMsg.append("no plugins.");
         } else {
             for (String hook : hooked) {
-                hookedMsg.append(hook).append(", ");
+                hookMsg.append(hook).append(", ");
             }
-            hookedMsg.delete(hookedMsg.length() - 2, hookedMsg.length());
-            hookedMsg.insert(hookedMsg.lastIndexOf(",") + 1, " and");
-            hookedMsg.append(".");
+            hookMsg.delete(hookMsg.length() - 2, hookMsg.length());
+            hookMsg.insert(hookMsg.lastIndexOf(",") + 1, " and");
+            hookMsg.append(".");
         }
 
-        // Hook msg
-        flightControl.getLogger().info(hookedMsg.toString());
+        this.hookMsg = hookMsg.toString();
+        flightControl.getLogger().info(this.hookMsg);
     }
 
     private void loadFactions() {
