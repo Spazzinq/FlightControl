@@ -22,31 +22,35 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.multiversion.current;
 
-import lombok.Getter;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.spazzinq.flightcontrol.api.objects.Region;
-import org.spazzinq.flightcontrol.multiversion.FactionRelation;
+import org.spazzinq.flightcontrol.multiversion.WorldGuard;
 
-public class Category implements Comparable<Category> {
-    @Getter private String name;
-    @Getter private int priority;
+import java.util.Iterator;
+import java.util.Set;
 
-    @Getter private DualStore<World> worlds;
-    @Getter private DualStore<Region> regions;
-    @Getter private DualStore<FactionRelation> factions;
+@SuppressWarnings("ALL")
+public class WorldGuard7 extends WorldGuard {
+    public String getRegionName(Location l) {
+        Iterator<ProtectedRegion> iter = com.sk89q.worldguard.WorldGuard.getInstance()
+                .getPlatform().getRegionContainer().createQuery().getApplicableRegions(BukkitAdapter.adapt(l)).iterator();
 
-    public Category(String name, DualStore<World> worlds, DualStore<Region> regions, DualStore<FactionRelation> factions, int priority) {
-        this.name = name;
-        this.worlds = worlds;
-        this.regions = regions;
-        this.factions = factions;
-        this.priority = priority;
+        if (iter.hasNext()) {
+            return iter.next().getId();
+        }
+        return null;
     }
-
-    @Override
-    public int compareTo(Category o) {
-        return o.priority - priority;
+    public Set<String> getRegionNames(World w) {
+        return com.sk89q.worldguard.WorldGuard.getInstance()
+                .getPlatform().getRegionContainer().get(BukkitAdapter.adapt(w)).getRegions().keySet();
+    }
+    public boolean hasRegion(Region region) {
+        return com.sk89q.worldguard.WorldGuard.getInstance()
+                .getPlatform().getRegionContainer().get(BukkitAdapter.adapt(region.getWorld())).hasRegion(region.getRegionName());
     }
 }

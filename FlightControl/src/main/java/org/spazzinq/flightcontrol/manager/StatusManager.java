@@ -29,9 +29,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.Evaluation;
-import org.spazzinq.flightcontrol.object.Region;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class StatusManager {
         this.pl = pl;
     }
 
-    Evaluation checkFlight(Player p, Location l) {
+    Evaluation evalFlight(Player p, Location l) {
         World world = l.getWorld();
         String worldName = world.getName(),
                regionName = pl.getHookManager().getWorldGuard().getRegionName(l);
@@ -66,9 +66,9 @@ public class StatusManager {
                 // Plot check
                 pl.getHookManager().getPlot().flightAllowed(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ())
                 // Towny check
-                || (pl.getConfigManager().isOwnTown() || p.hasPermission("flightcontrol.owntown")) && pl.getHookManager().getTowny().ownTown(p) && !(pl.getConfigManager().isTownyWar() && pl.getHookManager().getTowny().wartime())
+                || (pl.getConfManager().isOwnTown() || p.hasPermission("flightcontrol.owntown")) && pl.getHookManager().getTowny().ownTown(p) && !(pl.getConfManager().isTownyWar() && pl.getHookManager().getTowny().wartime())
                 // Lands check
-                || (pl.getConfigManager().isOwnLand() || p.hasPermission("flightcontrol.ownland")) && pl.getHookManager().getLands().ownLand(p);
+                || (pl.getConfManager().isOwnLand() || p.hasPermission("flightcontrol.ownland")) && pl.getHookManager().getLands().ownLand(p);
         boolean enablePermissionCheck =
                 // Global perm check
                 p.hasPermission("flightcontrol.flyall")
@@ -103,10 +103,10 @@ public class StatusManager {
         boolean disable = false;
 
         // Prevent comparing 2 different worlds
-        if (pl.getConfigManager().isUseFacEnemyRange() && p.getWorld().equals(l.getWorld())) {
+        if (pl.getConfManager().isUseFacEnemyRange() && p.getWorld().equals(l.getWorld())) {
             List<Player> worldPlayers = l.getWorld().getPlayers();
             worldPlayers.remove(p);
-            List<Entity> nearbyEntities = p.getNearbyEntities(pl.getConfigManager().getFacEnemyRange(), pl.getConfigManager().getFacEnemyRange(), pl.getConfigManager().getFacEnemyRange());
+            List<Entity> nearbyEntities = p.getNearbyEntities(pl.getConfManager().getFacEnemyRange(), pl.getConfManager().getFacEnemyRange(), pl.getConfManager().getFacEnemyRange());
 
             if (nearbyEntities.size() <= worldPlayers.size()) {
                 for (Entity e : nearbyEntities)
@@ -114,14 +114,14 @@ public class StatusManager {
                         Player otherP = (Player) e;
                         // Distance is calculated a second time to match the shape of the other distance calculation
                         // (this would be a cube while the other would be a sphere otherwise)
-                        if (pl.getHookManager().getFactions().isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= pl.getConfigManager().getFacEnemyRange()) {
+                        if (pl.getHookManager().getFactions().isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRange()) {
                             if (otherP.isFlying()) pl.getFlightManager().check(otherP);
                             disable = true;
                         }
                     }
             } else {
                 for (Player otherP : worldPlayers)
-                    if (pl.getHookManager().getFactions().isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= pl.getConfigManager().getFacEnemyRange()) {
+                    if (pl.getHookManager().getFactions().isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRange()) {
                         if (otherP.isFlying()) pl.getFlightManager().check(otherP);
                         disable = true;
                     }

@@ -83,22 +83,6 @@ sounds:
     pitch: 1
     volume: 1
 
-# If you don't want a message to be sent, set it to ""
-messages:
-  # Use the actionbar (area above hotbar) instead of chat
-  actionbar: false
-  flight:
-    enable: "&aYour flight has been enabled."
-    disable: "&cYour flight has been disabled."
-    # "can_enable" and "cannot_enable" are used when "auto_enable" is false
-    # or if the player disables their own flight with /fly
-    can_enable: "&bYou can use /fly now."
-    cannot_enable: "&cYou cannot fly right now."
-  trail:
-    enable: "&aYou enabled the flight trail!"
-    disable: "&cYou disabled the flight trail!"
-  permission_denied: "&cYou do not have permission to use this command."
-
 #  ___               _       _
 # | _ \___ _ _ _ __ (_)_____(_)___ _ _  ___
 # |  _/ -_) '_| '  \| (_-<_-< / _ \ ' \(_-<

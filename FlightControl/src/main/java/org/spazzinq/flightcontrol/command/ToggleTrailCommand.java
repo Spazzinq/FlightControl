@@ -30,6 +30,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 
+import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+
 public class ToggleTrailCommand implements CommandExecutor {
     private FlightControl pl;
 
@@ -43,10 +45,10 @@ public class ToggleTrailCommand implements CommandExecutor {
 
             if (pl.getPlayerManager().getFlightPlayer(p).toggleTrail()) {
                 // No need to check for trail enable because of command listener
-                FlightControl.msg(s, pl.getConfigManager().getEnableTrail(), pl.getConfigManager().isByActionBar());
+                msg(s, pl.getLangManager().getPersonalTrailEnable(), pl.getConfManager().isByActionBar());
             } else {
                 pl.getTrailManager().trailRemove(p);
-                FlightControl.msg(s, pl.getConfigManager().getDisableTrail(), pl.getConfigManager().isByActionBar());
+                msg(s, pl.getLangManager().getPersonalTrailDisable(), pl.getConfManager().isByActionBar());
             }
         } else pl.getLogger().info("Only players can use this command (the console isn't a player!)");
         return true;

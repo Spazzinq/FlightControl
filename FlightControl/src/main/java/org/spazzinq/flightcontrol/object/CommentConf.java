@@ -42,20 +42,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import static org.spazzinq.flightcontrol.util.ConfigUtil.*;
+import static org.spazzinq.flightcontrol.util.ConfUtil.runTask;
 
 /**
- * Actually saves the comments left in the config and updates them dynamically.
+ * Saves the comments left in the config and updates them based on a resource InputStream.
  */
+@SuppressWarnings("unused")
 public class CommentConf extends YamlConfiguration {
     private final Yaml yaml;
     private File file;
 
-    private HashMap<String, String> defaultComments,
-                                    newNodes = new HashMap<>();
-    private HashMap<String, List<String>> newSubnodes = new HashMap<>(),
-                                          newIndentedSubnodes = new HashMap<>();
-    private Set<String> oldNodes = new HashSet<>();
+    private HashMap<String, Set<String>> defaultComments = new HashMap<>();
+    private HashMap<String, Set<String>> addNodes = new HashMap<>();
+    private HashMap<String, Set<String>> addSubnodes = new HashMap<>();
+    private HashMap<String, Set<String>> addIndentedSubnodes = new HashMap<>();
+    private Set<String> deleteNodes = new HashSet<>();
 
     private CommentConf() {
         // From saveToString in YamlConfiguration
@@ -71,13 +72,11 @@ public class CommentConf extends YamlConfiguration {
     }
 
     /**
-     *
+     * Saves stream to file, compares comments, and loads configuration.
      * @param file the location of the current modified config
-     * @param defaultConf the InputStream to the new config
-     * @throws IOException
-     * @throws InvalidConfigurationException
+     * @param defaultConfStream the InputStream to the new config
      */
-    public CommentConf(File file, InputStream defaultConf) throws IOException, InvalidConfigurationException {
+    public CommentConf(File file, InputStream defaultConfStream) throws IOException, InvalidConfigurationException {
         this();
         this.file = file;
         boolean fileExists = file.exists();
@@ -85,19 +84,23 @@ public class CommentConf extends YamlConfiguration {
         if (!fileExists) {
             //noinspection UnstableApiUsage
             Files.createParentDirs(file);
-            FileUtil.copyFile(defaultConf, file);
+            FileUtil.copyFile(defaultConfStream, file);
         }
-        String currentConf = FileUtil.readFile(file.toPath());
-        defaultComments = parseComments(FileUtil.streamToString(defaultConf));
-        HashMap<String, String> currentComments = parseComments(currentConf);
+        StringBuilder defaultConf = FileUtil.streamToBuilder(defaultConfStream);
+        StringBuilder currentConf = FileUtil.readFile(file.toPath());
+        HashMap<String, Set<String>> currentComments = new HashMap<>();
+
+        runTask(defaultConf, defaultComments, ConfTask.SAVE_COMMENTS);
+        runTask(currentConf, currentComments, ConfTask.SAVE_COMMENTS);
 
         // Load the config for YAMLConfiguration methods
-        loadFromString(currentConf);
+        loadFromString(currentConf.toString());
 
         if (fileExists) {
             // If comments from modified config do not match new ones, then save new version
             // Only matches ones from the MODIFIED config
-            for (Map.Entry<String, String> comment : currentComments.entrySet()) {
+            for (Map.Entry<String, Set<String>> comment : currentComments.entrySet()) {
+                // TODO Check if still works as Set
                 if (!comment.getValue().equals(defaultComments.get(comment.getKey()))) {
                     save(file);
                     break;
@@ -112,24 +115,24 @@ public class CommentConf extends YamlConfiguration {
      * @param relativeNode the already-existing node/subnode to reference when adding
      */
     public void addNode(String node, String relativeNode) {
-        newNodes.put(relativeNode, node);
+        addNodes.put(relativeNode, Collections.singleton(node));
     }
 
     /**
-     * Adds the subnode below the relative node.
-     * @param subnode the subnode to add
-     * @param relativeNode the already-existing node/subnode to reference when adding
+     * Removes a node. Works with both master nodes and subnodes.
+     * @param node the node to remove
      */
-    public void addSubnode(String subnode, String relativeNode) {
-        newSubnodes.put(relativeNode, Collections.singletonList(subnode));
+    public void deleteNode(String node) {
+        deleteNodes.add(node);
     }
 
-    public void addIndentedSubnode(String subnode, String relativeSubnode) {
-        newIndentedSubnodes.put(relativeSubnode, Collections.singletonList(subnode));
-    }
-
-    public void addIndentedSubnodes(List<String> subnode, String relativeSubnode) {
-        newIndentedSubnodes.put(relativeSubnode, subnode);
+    /**
+     * Adds the subnodes below the relative node and indents them.
+     * @param subnodes the subnodes to add
+     * @param relativeSubnode the already-existing node/subnode to reference when adding
+     */
+    public void addIndentedSubnodes(Set<String> subnodes, String relativeSubnode) {
+        addIndentedSubnodes.put(relativeSubnode, subnodes);
     }
 
     /**
@@ -137,16 +140,8 @@ public class CommentConf extends YamlConfiguration {
      * @param subnodes the subnodes to add
      * @param relativeNode the already-existing node/subnode to reference when adding
      */
-    public void addSubnodes(List<String> subnodes, String relativeNode) {
-        newSubnodes.put(relativeNode, subnodes);
-    }
-
-    /**
-     * Removes both master nodes and subnodes.
-     * @param node the node to remove
-     */
-    public void removeNode(String node) {
-        oldNodes.add(node);
+    public void addSubnodes(Set<String> subnodes, String relativeNode) {
+        addSubnodes.put(relativeNode, subnodes);
     }
 
     /**
@@ -166,7 +161,6 @@ public class CommentConf extends YamlConfiguration {
 
     /**
      * Saves the config to the file that was set on initialization.
-     * @throws IOException
      */
     public void save() {
         try {
@@ -211,11 +205,11 @@ public class CommentConf extends YamlConfiguration {
     private String finalizeConfig(String config) {
         StringBuilder configBuilder = new StringBuilder(config);
 
-        removeNodes(configBuilder, oldNodes);
-        insertNodes(configBuilder, newNodes);
-        insertSubnodes(configBuilder, newSubnodes, false);
-        insertSubnodes(configBuilder, newIndentedSubnodes, true);
-        insertComments(configBuilder, defaultComments);
+        runTask(configBuilder, addNodes, ConfTask.WRITE_NODES);
+        runTask(configBuilder, addSubnodes, ConfTask.WRITE_SUBNODES);
+        runTask(configBuilder, addIndentedSubnodes, ConfTask.WRITE_INDENTED_SUBNODES);
+        runTask(configBuilder, deleteNodes, ConfTask.DELETE_NODES);
+        runTask(configBuilder, defaultComments, ConfTask.WRITE_COMMENTS);
 
         return configBuilder.toString();
     }

@@ -40,6 +40,8 @@ import org.spazzinq.flightcontrol.object.Evaluation;
 
 import java.util.ArrayList;
 
+import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+
 public final class FlightManager {
     private FlightControl pl;
     // Msg when command enabled
@@ -55,14 +57,16 @@ public final class FlightManager {
     public void check(Player p) {
         check(p, p.getLocation(), false);
     }
+
     public void check(Player p, Location l) {
         check(p, l, false);
     }
+
     public void check(Player p, Location l, boolean usingCMD) {
         if (!p.hasPermission("flightcontrol.bypass")
                 && p.getGameMode() != GameMode.SPECTATOR
-                && !(pl.getConfigManager().isVanishBypass() && pl.getHookManager().getVanish().vanished(p))) {
-            Evaluation eval = pl.getStatusManager().checkFlight(p, l);
+                && !(pl.getConfManager().isVanishBypass() && pl.getHookManager().getVanish().vanished(p))) {
+            Evaluation eval = pl.getStatusManager().evalFlight(p, l);
             boolean enable = eval.enable(),
                     disable = eval.disable();
 
@@ -70,19 +74,17 @@ public final class FlightManager {
                 if (disable || !enable) {
                     disableFlight(p, false);
                 }
-            }
-            else if (enable && !disable) {
-                if (usingCMD || (pl.getConfigManager().isAutoEnable() && !disabledByPlayerList.contains(p))) {
+            } else if (enable && !disable) {
+                if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayerList.contains(p))) {
                     enableFlight(p, usingCMD);
                 } else {
                     canEnable(p);
                 }
-            }
-            else if (usingCMD || alreadyCanMsgList.contains(p)) {
+            } else if (usingCMD || alreadyCanMsgList.contains(p)) {
                 cannotEnable(p);
             }
         } else if (!p.getAllowFlight()) {
-            if (usingCMD || (pl.getConfigManager().isAutoEnable() && !disabledByPlayerList.contains(p))) {
+            if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayerList.contains(p))) {
                 enableFlight(p, usingCMD);
             } else {
                 canEnable(p);
@@ -93,32 +95,32 @@ public final class FlightManager {
     private void canEnable(Player p) {
         if (!alreadyCanMsgList.contains(p)) {
             alreadyCanMsgList.add(p);
-            FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), pl.getConfigManager().getCFlight(),
-                    pl.getConfigManager().getCSound(), pl.getConfigManager().isByActionBar());
+            FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), pl.getLangManager().getCanEnableFlight(),
+                    pl.getConfManager().getCSound(), pl.getConfManager().isByActionBar());
 
             pl.getApiManager().callEvent(e);
             if (!e.isCancelled()) {
                 Sound.play(p, e.getSound());
-                FlightControl.msg(p, e.getMessage(), e.isByActionbar());
+                msg(p, e.getMessage(), e.isByActionbar());
             }
         }
 
     }
     private void cannotEnable(Player p) {
-        FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), pl.getConfigManager().getNFlight(),
-                pl.getConfigManager().getNSound(), pl.getConfigManager().isByActionBar());
+        FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), pl.getLangManager().getCannotEnableFlight(),
+                pl.getConfManager().getNSound(), pl.getConfManager().isByActionBar());
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
             alreadyCanMsgList.remove(p);
-            Sound.play(p, pl.getConfigManager().getNSound());
-            FlightControl.msg(p, e.getMessage(), e.isByActionbar());
+            Sound.play(p, pl.getConfManager().getNSound());
+            msg(p, e.getMessage(), e.isByActionbar());
         }
     }
 
     private void enableFlight(Player p, boolean isCommand) {
-        FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), pl.getConfigManager().getEFlight(),
-                pl.getConfigManager().getESound(), pl.getConfigManager().isByActionBar(), isCommand);
+        FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), pl.getLangManager().getEnableFlight(),
+                pl.getConfManager().getESound(), pl.getConfManager().isByActionBar(), isCommand);
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
@@ -126,15 +128,15 @@ public final class FlightManager {
                 disabledByPlayerList.remove(p);
             }
             p.setAllowFlight(true);
-            if (!pl.getConfigManager().isEveryEnable()) {
-                Sound.play(p, pl.getConfigManager().getESound());
+            if (!pl.getConfManager().isEveryEnable()) {
+                Sound.play(p, pl.getConfManager().getESound());
             }
-            FlightControl.msg(p, e.getMessage(), e.isByActionbar());
+            msg(p, e.getMessage(), e.isByActionbar());
         }
     }
     public void disableFlight(Player p, boolean isCommand) {
-        FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), pl.getConfigManager().getDFlight(),
-                pl.getConfigManager().getDSound(), pl.getConfigManager().isByActionBar(), isCommand);
+        FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), pl.getLangManager().getDisableFlight(),
+                pl.getConfManager().getDSound(), pl.getConfManager().isByActionBar(), isCommand);
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
@@ -145,15 +147,15 @@ public final class FlightManager {
                 alreadyCanMsgList.remove(p);
             }
 
-            if (pl.getConfigManager().isCancelFall() && p.isFlying()) {
+            if (pl.getConfManager().isCancelFall() && p.isFlying()) {
                 cancelFallDmgList.add(p);
                 new BukkitRunnable() { public void run() { cancelFallDmgList.remove(p); } }.runTaskLater(pl, 300);
             }
             p.setAllowFlight(false);
             p.setFlying(false);
             pl.getTrailManager().trailRemove(p);
-            Sound.play(p, pl.getConfigManager().getDSound());
-            FlightControl.msg(p, e.getMessage(), e.isByActionbar());
+            Sound.play(p, pl.getConfManager().getDSound());
+            msg(p, e.getMessage(), e.isByActionbar());
         }
     }
 }

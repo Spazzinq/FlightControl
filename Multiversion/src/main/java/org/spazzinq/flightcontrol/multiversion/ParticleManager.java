@@ -22,31 +22,13 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.multiversion;
 
-import lombok.Getter;
-import org.bukkit.World;
-import org.spazzinq.flightcontrol.api.objects.Region;
-import org.spazzinq.flightcontrol.multiversion.FactionRelation;
+import org.bukkit.Location;
 
-public class Category implements Comparable<Category> {
-    @Getter private String name;
-    @Getter private int priority;
-
-    @Getter private DualStore<World> worlds;
-    @Getter private DualStore<Region> regions;
-    @Getter private DualStore<FactionRelation> factions;
-
-    public Category(String name, DualStore<World> worlds, DualStore<Region> regions, DualStore<FactionRelation> factions, int priority) {
-        this.name = name;
-        this.worlds = worlds;
-        this.regions = regions;
-        this.factions = factions;
-        this.priority = priority;
-    }
-
-    @Override
-    public int compareTo(Category o) {
-        return o.priority - priority;
-    }
+public interface ParticleManager {
+    void spawn(Location l);
+    void setParticle(String s);
+    void setAmount(int amount);
+    void setRBG(int r, int g, int b);
 }

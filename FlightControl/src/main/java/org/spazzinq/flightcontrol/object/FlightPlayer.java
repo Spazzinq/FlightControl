@@ -35,15 +35,13 @@ public class FlightPlayer {
     @Getter private float actualFlightSpeed;
     @Setter private boolean trail;
     @Getter private Long tempFlyEnd;
-    // Until next server restart
-    @Setter private boolean infiniteTempfly;
 
     public FlightPlayer(CommentConf data, Player player, float actualFlightSpeed, boolean trail, Long tempFlyEnd) {
         this.data = data;
         this.player = player;
-        this.actualFlightSpeed = actualFlightSpeed;
+        setActualFlightSpeed(actualFlightSpeed);
         this.trail = trail;
-        this.tempFlyEnd = tempFlyEnd != null && tempFlyEnd > System.currentTimeMillis() ? tempFlyEnd : null;
+        setTempFly(tempFlyEnd);
     }
 
     public boolean hasTrail() {
@@ -60,8 +58,10 @@ public class FlightPlayer {
     }
 
     public void setTempFly(Long tempFlyEnd) {
+        if (tempFlyEnd != null && tempFlyEnd <= System.currentTimeMillis()) {
+            tempFlyEnd = null;
+        }
         this.tempFlyEnd = tempFlyEnd;
-        infiniteTempfly = false;
 
         // Prevent NPE for data migration
         if (data != null) {
@@ -71,7 +71,11 @@ public class FlightPlayer {
     }
 
     public boolean hasTempFly() {
-        return (tempFlyEnd != null && tempFlyEnd > System.currentTimeMillis()) || infiniteTempfly;
+        if (tempFlyEnd != null && tempFlyEnd <= System.currentTimeMillis()) {
+            setTempFly(null);
+        }
+
+        return tempFlyEnd != null;
     }
 
     public void setActualFlightSpeed(float actualFlightSpeed) {

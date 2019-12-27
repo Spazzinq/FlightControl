@@ -27,11 +27,8 @@ package org.spazzinq.flightcontrol;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
@@ -39,94 +36,121 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.APIManager;
+import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
-import org.spazzinq.flightcontrol.multiversion.Particles;
-import org.spazzinq.flightcontrol.multiversion.current.Particles13;
-import org.spazzinq.flightcontrol.multiversion.old.Particles8;
+import org.spazzinq.flightcontrol.multiversion.ParticleManager;
+import org.spazzinq.flightcontrol.multiversion.current.ParticleManager13;
+import org.spazzinq.flightcontrol.multiversion.old.ParticleManager8;
 import org.spazzinq.flightcontrol.object.Category;
-import org.spazzinq.flightcontrol.object.Region;
-import org.spazzinq.flightcontrol.util.ActionbarUtil;
+import org.spazzinq.flightcontrol.object.VersionType;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
+
+import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private APIManager apiManager = APIManager.getInstance();
     private PluginManager pm = Bukkit.getPluginManager();
     @Getter private File storageFolder = new File(getDataFolder() + File.separator + "data");
 
+    // Storage management
     @Getter private CategoryManager categoryManager;
-    @Getter private ConfigManager configManager;
-    @Getter private FlightManager flightManager;
+    @Getter private ConfManager confManager;
+    @Getter private LangManager langManager;
+    @Getter private UpdateManager updateManager;
+    // Multi-version management
     @Getter private HookManager hookManager;
+    @Getter private ParticleManager particleManager;
+    // In-game management
+    @Getter private FlightManager flightManager;
     @Getter private PlayerManager playerManager;
     @Getter private StatusManager statusManager;
-    @Getter private TempFlyManager tempflyManager;
     @Getter private TrailManager trailManager;
-    @Getter private UpdateManager updateManager;
-
-    @Getter private Particles particles;
 
     @Getter private TempFlyCommand tempFlyCommand;
 
+    public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
+
     public void onEnable() {
-        // Prepare storage folder
+        // Create storage folder
         //noinspection ResultOfMethodCallIgnored
         storageFolder.mkdirs();
 
-        boolean is1_13 = getServer().getBukkitVersion().contains("1.13")
-                      || getServer().getBukkitVersion().contains("1.14")
-                      || getServer().getBukkitVersion().contains("1.15");
-        particles = is1_13 ? new Particles13() : new Particles8();
+        // TODO Can we just initialize on declare now?
+        registerManagers();
+        new Listener(this);
+        registerCommands();
 
-        // Load hooks
-        hookManager = new HookManager(this, is1_13);
-        /* Load classes */
-        // Load FlightManager before all because Config uses it & only needs to initialize pl
-        flightManager = new FlightManager(this);
+        // Ensure all hooks load before managers do
+        hookManager.load();
+        reloadManagers();
+
+        if (updateManager.getVersion().getVersionType() == VersionType.BETA) {
+            getLogger().warning(" \n  _       _       _       _       _       _\n" +
+                    " ( )     ( )     ( )     ( )     ( )     ( )\n" +
+                    "  X       X       X       X       X       X\n" +
+                    "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
+                    "      X       X       X       X       X       X\n" +
+                    "     (_)     (_)     (_)     (_)     (_)     (_)\n" +
+                    " \nVersion " + updateManager.getVersion() + " is currently unstable and should not be run on a production server.\n" +
+                    "Thanks for being a FlightControl beta tester!\n \n" +
+                    "  _       _       _       _       _       _\n" +
+                    " ( )     ( )     ( )     ( )     ( )     ( )\n" +
+                    "  X       X       X       X       X       X\n" +
+                    "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
+                    "      X       X       X       X       X       X\n" +
+                    "     (_)     (_)     (_)     (_)     (_)     (_)\n");
+        } else {
+            // Update check
+            if (confManager.isAutoUpdate()) {
+                updateManager.install(Bukkit.getConsoleSender(), true);
+            } else if (updateManager.exists()) {
+                new BukkitRunnable() {
+                    @Override public void run() {
+                        getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
+                    }
+                }.runTaskLater(this, 70);
+            }
+        }
+
+        // Start FileWatcher
+        try {
+            new FileWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        new Metrics(this); // bStats
+    }
+
+    private void registerManagers() {
         categoryManager = new CategoryManager(this);
-        configManager = new ConfigManager(this);
-        // Resources from Config
-        trailManager = new TrailManager(this);
-        // Gets instance of TempFlyManager
-        playerManager = new PlayerManager(this);
-        // Gets instance of FlightManager
-        tempflyManager = new TempFlyManager(this);
-        statusManager = new StatusManager(this);
+        confManager = new ConfManager(this);
+        langManager = new LangManager(this);
         updateManager = new UpdateManager(getDescription().getVersion());
 
-        new Listener(this);
+        boolean is1_13 = getServer().getBukkitVersion().contains("1.13")
+                || getServer().getBukkitVersion().contains("1.14")
+                || getServer().getBukkitVersion().contains("1.15");
+        hookManager = new HookManager(this, is1_13);
+        particleManager = is1_13 ? new ParticleManager13() : new ParticleManager8();
 
-        // Load commands
+        flightManager = new FlightManager(this);
+        playerManager = new PlayerManager(this);
+        statusManager = new StatusManager(this);
+        trailManager = new TrailManager(this);
+    }
+
+    private void registerCommands() {
         tempFlyCommand = new TempFlyCommand(this);
         getCommand("tempfly").setExecutor(tempFlyCommand);
         getCommand("fly").setExecutor(new FlyCommand(this));
         getCommand("flightcontrol").setExecutor(new FlightControlCommand(this));
         getCommand("toggletrail").setExecutor(new ToggleTrailCommand(this));
         getCommand("flyspeed").setExecutor(new FlySpeedCommand(this));
-
-        if (configManager.isAutoUpdate()) {
-            updateManager.install(Bukkit.getConsoleSender(), true);
-        } else if (updateManager.exists()) {
-            new BukkitRunnable() {
-                @Override public void run() {
-                    getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
-                }
-            }.runTaskLater(this, 70);
-        }
-
-        // Ensure all plugins load before hook does
-        hookManager.load();
-        reloadManagers();
-
-        try {
-            new FileManager(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        new Metrics(this); // bStats
     }
 
 	public void reloadManagers() {
@@ -140,10 +164,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
 
         categoryManager.reloadCategories();
-	    configManager.reloadConfig();
-        configManager.updateConfig();
+	    confManager.reloadConf();
+        confManager.updateConfig();
+        langManager.reloadLang();
+
         playerManager.reloadPlayerData();
-	    tempflyManager.reloadTempflyData();
 
         checkPlayers();
     }
@@ -172,6 +197,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 hasRegions = category.getRegions() != null,
                 hasFactions = category.getFactions() != null;
 
+        // TODO Make this cleaner?
         // config options (settings) and permissions that act upon the same function are listed as
         // setting boolean (space) permission boolean
         msg(p, "&a&lFlightControl &f" + getDescription().getVersion() +
@@ -181,7 +207,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 "\n&eWRLDs &7» &f" + category.getWorlds()  +
                 "\n&eRGs &7» &f" +  category.getRegions()  +
                 "\n \n&e&lEnable" +
-                "\n&fBypass &7» " + p.hasPermission("flightcontrol.bypass") + " " + (getConfigManager().isVanishBypass() && getHookManager().getVanish().vanished(p)) +
+                "\n&fBypass &7» " + p.hasPermission("flightcontrol.bypass") + " " + (getConfManager().isVanishBypass() && getHookManager().getVanish().vanished(p)) +
                 "\n&fTemp &7» " + playerManager.getFlightPlayer(p).hasTempFly() +
                 "\n&fAll &7» " + p.hasPermission("flightcontrol.flyall") +
                 (hookManager.getFactions().isHooked() && hasFactions ? "\n&fFC &7» " + getHookManager().getFactions().rel(p, category.getFactions().getEnabled()) : "") +
@@ -189,10 +215,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 (hasWorlds ? "\n&fWorld &7» " + category.getWorlds().getEnabled().contains(world) + " " + p.hasPermission("flightcontrol.fly." + worldName) : "") +
                 (hasRegions ? "\n&fRegion &7» " + category.getRegions().getEnabled().contains(region) + " " + (regionName != null && p.hasPermission("flightcontrol.fly." + worldName + "." + regionName)) : "") +
                 (hookManager.getTowny().isHooked() ? "\n&fTowny &7» "+
-                        (configManager.isOwnTown() && hookManager.getTowny().ownTown(p) && !(configManager.isTownyWar() && hookManager.getTowny().wartime())) + " " +
-                        (p.hasPermission("flightcontrol.owntown") && hookManager.getTowny().ownTown(p) && (!configManager.isTownyWar() || !hookManager.getTowny().wartime())) : "") +
+                        (confManager.isOwnTown() && hookManager.getTowny().ownTown(p) && !(confManager.isTownyWar() && hookManager.getTowny().wartime())) + " " +
+                        (p.hasPermission("flightcontrol.owntown") && hookManager.getTowny().ownTown(p) && (!confManager.isTownyWar() || !hookManager.getTowny().wartime())) : "") +
                 (hookManager.getLands().isHooked() ? "\n&fLands &7» " +
-                        (configManager.isOwnLand() && hookManager.getLands().ownLand(p)) + " " +
+                        (confManager.isOwnLand() && hookManager.getLands().ownLand(p)) + " " +
                         (p.hasPermission("flightcontrol.ownland") && hookManager.getLands().ownLand(p)) : "") +
                 "\n \n&e&lDisable" +
                 (hookManager.getFactions().isHooked() ? "\n&fFC &7» " + getHookManager().getFactions().rel(p, category.getFactions().getDisabled()) : "") +
@@ -203,28 +229,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
                             .replaceAll("false", "&cfalse")
                             .replaceAll("true", "&atrue"));
-    }
-
-    public static void msg(CommandSender s, String msg) {
-	    msg(s, msg, false);
-	}
-    public static void msg(CommandSender s, String msg, boolean actionBar) {
-        if (msg != null && !msg.isEmpty()) {
-            boolean console = s instanceof ConsoleCommandSender;
-            String finalMsg = msg;
-
-            if (console) {
-                finalMsg = finalMsg.replaceAll("FlightControl &7» ", "").replaceAll("»", "-");
-            }
-            finalMsg = ChatColor.translateAlternateColorCodes('&', finalMsg);
-
-            if (actionBar && s instanceof Player) {
-                ActionbarUtil.send((Player) s, finalMsg);
-            } else {
-                s.sendMessage((console ? "[FlightControl] " : "")
-                        + finalMsg);
-            }
-        }
     }
 
     public void defaultPerms(String suffix) {

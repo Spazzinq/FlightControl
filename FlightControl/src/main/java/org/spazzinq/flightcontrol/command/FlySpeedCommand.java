@@ -32,9 +32,11 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.PlayerManager;
+import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
-import static org.spazzinq.flightcontrol.FlightControl.msg;
+import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
 
 public class FlySpeedCommand implements CommandExecutor {
     private FlightControl pl;
@@ -56,25 +58,25 @@ public class FlySpeedCommand implements CommandExecutor {
                     setSpeed(s, (Player) s, args[0]);
                 }
             } else {
-                msg(s, pl.getConfigManager().getNoPermission());
+                msg(s, pl.getLangManager().getPermDenied());
             }
         } else if (args.length == 2) {
             if (s.hasPermission("flightcontrol.flyspeed.others") || console) {
                 Player argPlayer = Bukkit.getPlayer(args[1]);
 
                 if (argPlayer == null) {
-                    msg(s, "&c&lFlightControl &7» &cInvalid player! Use /flyspeed (speed) (player)!");
+                    msg(s, pl.getLangManager().getFlySpeedUsage());
                 } else {
                     setSpeed(s, argPlayer, args[0]);
                 }
             } else {
-                msg(s, pl.getConfigManager().getNoPermission());
+                msg(s, pl.getLangManager().getPermDenied());
             }
         } else {
             if (s.hasPermission("flightcontrol.flyspeed") || s.hasPermission("flightcontrol.flyspeed.others") || console) {
-                msg(s, "&c&lFlightControl &7» &cUse /flyspeed (speed) [player]!");
+                msg(s, pl.getLangManager().getFlySpeedUsage());
             } else {
-                msg(s, pl.getConfigManager().getNoPermission());
+                msg(s, pl.getLangManager().getPermDenied());
             }
         }
         return true;
@@ -84,11 +86,16 @@ public class FlySpeedCommand implements CommandExecutor {
         if (wrongSpeedStr.matches("\\d+|(\\d+)?.\\d+")) {
             float wrongSpeed = Float.parseFloat(wrongSpeedStr),
                   speed = MathUtil.calcActualSpeed(wrongSpeed);
+            FlightPlayer flightPlayer = playerManager.getFlightPlayer(p);
 
-            playerManager.getFlightPlayer(p).setActualFlightSpeed(speed);
-            msg(p, "&a&lFlightControl &7» &aSet your flight speed to &f" + wrongSpeed + "&a!");
+            if (flightPlayer.getActualFlightSpeed() == speed) {
+                msg(p, replaceVar(pl.getLangManager().getFlySpeedSame(), wrongSpeed + "", "speed"));
+            } else {
+                playerManager.getFlightPlayer(p).setActualFlightSpeed(speed);
+                msg(p, replaceVar(pl.getLangManager().getFlySpeedSet(), wrongSpeed + "", "speed"));
+            }
         } else {
-            msg(s, "&c&lFlightControl &7» &cInvalid number! Acceptable formats: 1, 1.1, .9");
+            msg(s, pl.getLangManager().getFlySpeedUsage());
         }
     }
 }

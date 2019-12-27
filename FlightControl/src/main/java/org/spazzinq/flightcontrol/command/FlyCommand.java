@@ -33,7 +33,8 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.FlightManager;
 
-import static org.spazzinq.flightcontrol.FlightControl.msg;
+import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
 
 public final class FlyCommand implements CommandExecutor {
     private FlightControl pl;
@@ -46,31 +47,30 @@ public final class FlyCommand implements CommandExecutor {
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
         if (args.length == 0) {
             if (s instanceof Player) {
-                if (s.hasPermission("flightcontrol.fly") || s.hasPermission("essentials.fly")) {
-                    Player p = (Player) s;
+                Player p = (Player) s;
 
-                    if (p.getAllowFlight()) {
-                        flightManager.disableFlight(p, true);
-                    }
-                    else {
-                        flightManager.check(p, p.getLocation(), true);
-                    }
-                } else msg(s, pl.getConfigManager().getNoPermission());
+                if (p.getAllowFlight()) {
+                    flightManager.disableFlight(p, true);
+                } else {
+                    flightManager.check(p, p.getLocation(), true);
+                }
             } else pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
         } else if (args.length == 1) {
             if (s instanceof ConsoleCommandSender || s.hasPermission("flightcontrol.admin")) {
                 Player p = Bukkit.getPlayer(args[0]);
                 // Allow admins to disable flight
                 if (p != null) {
-                    msg(s, "&e&lFlightControl &7» &e" + (p.getAllowFlight() ? "Disabled" : "Attempted to enable") + " &f" + p.getName() + "&e's flight!");
+                    msg(s, replaceVar(p.getAllowFlight() ? pl.getLangManager().getFlyCommandEnable()
+                                                         : pl.getLangManager().getFlyCommandDisable(), p.getName(), "player"));
+
                     if (p.getAllowFlight()) {
                         flightManager.disableFlight(p, true);
-                    }
-                    else {
+                    } else {
                         flightManager.check(p, p.getLocation(), true);
                     }
-                } else msg(s, "&e&lFlightControl &7» &ePlease provide a valid player!");
-            } else msg(s, pl.getConfigManager().getNoPermission());
+                    // TODO this aint working?
+                } else msg(s, pl.getLangManager().getFlyCommandUsage());
+            } else msg(s, pl.getLangManager().getPermDenied());
         }
         return true;
     }

@@ -30,19 +30,18 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.manager.TempFlyManager;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 
-import static org.spazzinq.flightcontrol.FlightControl.msg;
+import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
 
 public final class TempFlyCommand implements CommandExecutor {
     private FlightControl pl;
-    private TempFlyManager tempflyManager;
 
     public TempFlyCommand(FlightControl pl) {
         this.pl = pl;
-        tempflyManager = pl.getTempflyManager();
     }
 
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
@@ -56,10 +55,10 @@ public final class TempFlyCommand implements CommandExecutor {
                     FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(argPlayer);
 
                     if (flightPlayer.getTempFlyEnd() == null) {
-                        msg(s, "&e&lFlightControl &7» &e" + argPlayer.getName() + "'s temporary flight is already disabled!");
+                        msg(s, replaceVar(pl.getLangManager().getTempFlyDisabled(), argPlayer.getName(), "player"));
                     } else {
                         flightPlayer.setTempFly(null);
-                        msg(s, "&e&lFlightControl &7» &eDisabled " + argPlayer.getName() + "'s temporary flight!");
+                        msg(s, replaceVar(pl.getLangManager().getTempFlyDisable(), argPlayer.getName(), "player"));
                     }
                 } else {
                     if (console) {
@@ -71,74 +70,83 @@ public final class TempFlyCommand implements CommandExecutor {
 
 
             } else {
-                msg(s, pl.getConfigManager().getNoPermission());
+                msg(s, pl.getLangManager().getPermDenied());
             }
         } else if (args.length == 2) {
             if (s.hasPermission("flightcontrol.tempfly.others") || console) {
                 Player argPlayer = Bukkit.getPlayer(args[1]);
 
                 if (argPlayer == null) {
-                    msg(s, "&c&lFlightControl &7» &cInvalid player! Use /tempfly (length) (player)!");
+                    msg(s, pl.getLangManager().getTempFlyUsage());
                 } else {
                     setTempFly(s, argPlayer, args[0]);
                 }
             } else {
-                msg(s, pl.getConfigManager().getNoPermission());
+                msg(s, pl.getLangManager().getPermDenied());
             }
         } else {
             if (s.hasPermission("flightcontrol.tempfly") || s.hasPermission("flightcontrol.tempfly.others") || console) {
-                msg(s, "&c&lFlightControl &7» &cUse /tempfly (length) [player]!");
+                msg(s, pl.getLangManager().getTempFlyUsage());
             } else {
-                msg(s, pl.getConfigManager().getNoPermission());
+                msg(s, pl.getLangManager().getPermDenied());
             }
         }
         return true;
     }
 
     private void setTempFly(CommandSender s, Player p, String length) {
-        boolean self = p.equals(s);
+        if (length.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
+            char unit = findUnit(length);
+            int unitIndex = length.indexOf(unit);
+            // Just in case it's a really
+            long time = Long.parseLong(length.substring(0, unitIndex == -1 ? length.length() : unitIndex));
+            boolean notOne = time != 1;
+            StringBuilder lengthFormatted = new StringBuilder(time + " ");
+            time *= 1000;
 
-        if (pl.getPlayerManager().getFlightPlayer(p).hasTempFly()) {
-            tempflyManager.removeTempfly(p);
-            msg(s, "&e&lFlightControl &7» &eYou disabled &f" + (self ? "your own" : p.getName() + "&e's") + " &etemporary flight!");
-        } else {
-            if (length.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
-                char unit = findUnit(length);
-                int unitIndex = length.indexOf(unit);
-                // Just in case it's a really
-                long time = Long.parseLong(length.substring(0, unitIndex == -1 ? length.length() : unitIndex));
-                boolean notOne = time != 1;
-                StringBuilder lengthFormatted = new StringBuilder(time + " ");
-                time *= 1000;
+            switch (unit) {
+                case 'm':
+                    lengthFormatted.append("minute");
+                    time *= 60;
+                    break;
+                case 'h':
+                    lengthFormatted.append("hour");
+                    time *= 3600;
+                    break;
+                case 'd':
+                    lengthFormatted.append("day");
+                    time *= 86400;
+                    break;
+                default:
+                    lengthFormatted.append("second");
+                    break;
+            }
+            if (notOne) lengthFormatted.append("s");
 
-                switch (unit) {
-                    case 'm':
-                        lengthFormatted.append("minute");
-                        time *= 60;
-                        break;
-                    case 'h':
-                        lengthFormatted.append("hour");
-                        time *= 3600;
-                        break;
-                    case 'd':
-                        lengthFormatted.append("day");
-                        time *= 86400;
-                        break;
-                    default:
-                        lengthFormatted.append("second");
-                        break;
+            FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(p);
+            boolean alreadyHadTempFly = flightPlayer.hasTempFly();
+            // Add on if the player already has tempfly
+            long tempFlyEnd = time + (alreadyHadTempFly ? flightPlayer.getTempFlyEnd() : System.currentTimeMillis());
+
+            flightPlayer.setTempFly(tempFlyEnd);
+            // Listener after command will auto check
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    pl.getFlightManager().check(p); // Checks when tempfly is expected to expire
+
                 }
-                if (notOne) lengthFormatted.append("s");
+                // Convert to ticks then add 4 for good measure
+            }.runTaskLater(pl,time / 50 + 4);
 
-                time += System.currentTimeMillis();
-
-                pl.getPlayerManager().getFlightPlayer(p).setTempFly(time);
-                // Should always be above the current time, so no need to check
-                tempflyManager.checkTempfly(p);
-                msg(s, "&e&lFlightControl &7» &e" + (self ? "You" : p.getName()) + " now " + (self ? "have" : "has") + " temporary flight for " + lengthFormatted);
-            } else msg(s, "&c&lFlightControl &7» &cInvalid format! Please use &f/tempfly (player) (length)&e! Follow the length with " +
-                    "a unit of time. Example lengths: &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&e.");
-        }
+            // TODO make clearer
+            msg(s, replaceVar(
+                    replaceVar(alreadyHadTempFly ? pl.getLangManager().getTempFlyAdd()
+                                                 : pl.getLangManager().getTempFlyEnable(),
+                            p.getName(), "player"),
+                             lengthFormatted.toString(), "time"));
+        } else msg(s, pl.getLangManager().getTempFlyUsage());
     }
 
     private char findUnit(String input) {

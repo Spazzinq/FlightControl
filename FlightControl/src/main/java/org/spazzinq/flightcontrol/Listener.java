@@ -36,7 +36,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.objects.Sound;
 
-import java.util.UUID;
+import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 
 @SuppressWarnings("unused")
 final class Listener implements org.bukkit.event.Listener {
@@ -54,13 +54,13 @@ final class Listener implements org.bukkit.event.Listener {
         Player p = e.getPlayer();
         if (e.isFlying()) {
             pl.getTrailManager().trailCheck(p);
-            if (pl.getConfigManager().isEveryEnable()) {
-                Sound.play(p, pl.getConfigManager().getESound());
+            if (pl.getConfManager().isEveryEnable()) {
+                Sound.play(p, pl.getConfManager().getESound());
             }
         } else {
             pl.getTrailManager().trailRemove(p);
-            if (pl.getConfigManager().isEveryDisable()) {
-                Sound.play(p, pl.getConfigManager().getDSound());
+            if (pl.getConfManager().isEveryDisable()) {
+                Sound.play(p, pl.getConfManager().getDSound());
             }
         }
     }
@@ -70,10 +70,10 @@ final class Listener implements org.bukkit.event.Listener {
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
-        if (UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c").equals(p.getUniqueId())) {
+        if (FlightControl.spazzinqUUID.equals(p.getUniqueId())) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    FlightControl.msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently running on this server. " + pl.getHookManager().getHookMsg());
+                    msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently running on this server. " + pl.getHookManager().getHookMsg());
                 }
             }.runTaskLater(pl, 40);
         }
@@ -91,7 +91,6 @@ final class Listener implements org.bukkit.event.Listener {
 
         new BukkitRunnable() {
             public void run() {
-                pl.getTempflyManager().checkTempfly(p);
                 pl.getFlightManager().check(p);
                 if (p.isFlying()) {
                     pl.getTrailManager().trailCheck(p);
@@ -104,8 +103,8 @@ final class Listener implements org.bukkit.event.Listener {
         Player p = e.getPlayer();
 	    new BukkitRunnable() { public void run() {
             pl.getFlightManager().check(p);
-	        if (p.isFlying() && !pl.getTrailManager().getPartTasks().containsKey(p)) new BukkitRunnable() { public void run() { pl.getTrailManager().trailCheck(p); } }.runTask(pl);
-	        else if (!p.isFlying() && pl.getTrailManager().getPartTasks().containsKey(p)) pl.getTrailManager().trailRemove(p);
+	        if (p.isFlying() && !pl.getTrailManager().getParticleTasks().containsKey(p)) new BukkitRunnable() { public void run() { pl.getTrailManager().trailCheck(p); } }.runTask(pl);
+	        else if (!p.isFlying() && pl.getTrailManager().getParticleTasks().containsKey(p)) pl.getTrailManager().trailRemove(p);
 	    } }.runTask(pl);
 	}
 

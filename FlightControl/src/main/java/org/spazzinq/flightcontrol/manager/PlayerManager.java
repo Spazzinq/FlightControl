@@ -68,7 +68,7 @@ public class PlayerManager {
             if (dataConf != null) {
                 float speed = dataConf.isDouble("flight_speed")
                         ? (float) dataConf.getDouble("flight_speed")
-                        : pl.getConfigManager().getDefaultFlightSpeed();
+                        : pl.getConfManager().getDefaultFlightSpeed();
                 Long tempFlyLength = dataConf.isLong("temp_fly") ? dataConf.getLong("temp_fly") : null;
 
                 FlightPlayer flightPlayer = new FlightPlayer(dataConf, p, speed, dataConf.getBoolean("trail"), tempFlyLength);

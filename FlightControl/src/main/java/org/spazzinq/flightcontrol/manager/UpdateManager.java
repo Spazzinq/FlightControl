@@ -28,7 +28,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.object.Version;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,26 +40,27 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.HashSet;
 import java.util.UUID;
 
-import static org.spazzinq.flightcontrol.FlightControl.msg;
+import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 
 public final class UpdateManager {
-    HashSet<UUID> notified = new HashSet<>();
-
-    @Getter private String newVersion;
-    private String version;
+    @Getter private Version newVersion;
+    @Getter private Version version;
     private boolean downloaded;
 
-    public UpdateManager(String version) {
-        this.version = version;
+    private HashSet<UUID> notified = new HashSet<>();
+
+    public UpdateManager(String versionStr) {
+        version = new Version(versionStr);
     }
 
     public boolean exists() {
         try {
-            newVersion = new BufferedReader(new InputStreamReader(new URL("https://api.spigotmc.org/legacy/update.php?resource=55168").openConnection().getInputStream())).readLine();
+            newVersion = new Version(new BufferedReader(new InputStreamReader(new URL("https://api.spigotmc.org/legacy/update.php?resource=55168").openConnection().getInputStream())).readLine());
         } catch (Exception ignored) {
             return false;
         }
-        return version.matches("\\d+(\\.\\d+)?") && newVersion.matches("\\d+(\\.\\d+)?") ? Double.parseDouble(newVersion) > Double.parseDouble(version) : !version.equals(newVersion);
+        // TODO Test
+        return newVersion.isNewer(version);
     }
 
     private void dl() {
@@ -96,7 +97,7 @@ public final class UpdateManager {
     public void notify(Player p) {
         if (exists() && !notified.contains(p.getUniqueId())) {
             notified.add(p.getUniqueId());
-            FlightControl.msg(p, "&e&lFlightControl &7» &eWoot woot! Version &f" + getNewVersion() + "&e is now available! " +
+            msg(p, "&e&lFlightControl &7» &eWoot woot! Version &f" + getNewVersion() + "&e is now available! " +
                                        "Update with \"/fc update\" and check out the new features: &fhttps://www.spigotmc.org/resources/flightcontrol.55168/");
         }
     }

@@ -22,40 +22,37 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.util;
+package org.spazzinq.flightcontrol.api.objects;
 
-import org.bukkit.configuration.file.YamlConfiguration;
+import lombok.Getter;
+import org.bukkit.World;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Objects;
 
-public final class FileUtil extends YamlConfiguration {
-    public static StringBuilder streamToBuilder(InputStream source) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
+public class Region {
+    @Getter private World world;
+    @Getter private String regionName;
 
-        while ((length = source.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
-        }
-        return new StringBuilder(result.toString());
+    public Region(World world, String regionName) {
+        this.world = world;
+        this.regionName = regionName;
     }
 
-    public static StringBuilder readFile(Path path) throws IOException {
-        byte[] encoded = Files.readAllBytes(path);
-        return new StringBuilder(new String(encoded, StandardCharsets.UTF_8));
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Region)) return false;
+        Region region = (Region) o;
+        return world.equals(region.world) &&
+                regionName.equals(region.regionName);
     }
 
-    public static void copyFile(InputStream source, File destination) throws IOException {
-        OutputStream output = new FileOutputStream(destination);
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = source.read(buffer)) > 0) {
-            output.write(buffer, 0, length);
-        }
-        output.close();
+    @Override
+    public int hashCode() {
+        return Objects.hash(world, regionName);
     }
 
+    @Override public String toString() {
+        return world + "." + regionName;
+    }
 }

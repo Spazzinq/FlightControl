@@ -34,15 +34,18 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.DualStore;
-import org.spazzinq.flightcontrol.object.Region;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 public class CategoryManager {
     private FlightControl pl;
@@ -84,9 +87,6 @@ public class CategoryManager {
         // Prevent permission auto-granting from "*" permission
         if (pm.getPermission("flightcontrol.category." + name) == null)
             pm.addPermission(new Permission("flightcontrol.category." + name, PermissionDefault.FALSE));
-        // TODO Remove - legacy permission
-        if (pm.getPermission("flightcontrol.factions." + name) == null)
-            pm.addPermission(new Permission("flightcontrol.factions." + name, PermissionDefault.FALSE));
 
         DualStore<World> worlds = loadWorlds(name, category.getConfigurationSection("worlds"));
         DualStore<Region> regions = loadRegions(name, category.getConfigurationSection("regions"));
@@ -129,15 +129,14 @@ public class CategoryManager {
         // RegionID is formatted like WORLDNAME+REGIONNAME
         for (String regionID : regionsSection.getKeys(false)) {
             String[] regionData = regionID.split("\\+");
-            String worldName = regionData[0],
-                   regionName = regionData[1];
-            World world = Bukkit.getWorld(regionData[0]);
-            if (world == null) {
+            String worldName = regionData[0];
+            Region region = new Region(Bukkit.getWorld(worldName), regionData[1]);
+
+            if (region.getWorld() == null) {
                 nonexistent(categoryName, "regions", "world", worldName);
-            } else if (!pl.getHookManager().getWorldGuard().hasRegion(worldName, regionName)) {
-                nonexistent(categoryName, "regions", "region", regionName);
+            } else if (!pl.getHookManager().getWorldGuard().hasRegion(region)) {
+                nonexistent(categoryName, "regions", "region", region.getRegionName());
             } else {
-                Region region = new Region(world, regionName);
                 // If true, then enabled
                 //    false, then disabled
                 if (regionsSection.getBoolean(regionID)) {

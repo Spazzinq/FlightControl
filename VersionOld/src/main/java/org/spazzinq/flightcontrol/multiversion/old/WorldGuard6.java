@@ -22,40 +22,31 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.util;
+package org.spazzinq.flightcontrol.multiversion.old;
 
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.spazzinq.flightcontrol.api.objects.Region;
+import org.spazzinq.flightcontrol.multiversion.WorldGuard;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.Set;
 
-public final class FileUtil extends YamlConfiguration {
-    public static StringBuilder streamToBuilder(InputStream source) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
+public class WorldGuard6 extends WorldGuard {
+    public String getRegionName(Location l) {
+        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
 
-        while ((length = source.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
+        if (iter.hasNext()) {
+            return iter.next().getId();
         }
-        return new StringBuilder(result.toString());
+        return null;
     }
-
-    public static StringBuilder readFile(Path path) throws IOException {
-        byte[] encoded = Files.readAllBytes(path);
-        return new StringBuilder(new String(encoded, StandardCharsets.UTF_8));
+    public Set<String> getRegionNames(World w) {
+        return WGBukkit.getRegionManager(w).getRegions().keySet();
     }
-
-    public static void copyFile(InputStream source, File destination) throws IOException {
-        OutputStream output = new FileOutputStream(destination);
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = source.read(buffer)) > 0) {
-            output.write(buffer, 0, length);
-        }
-        output.close();
+    public boolean hasRegion(Region region) {
+        return WGBukkit.getRegionManager(region.getWorld()).hasRegion(region.getRegionName());
     }
-
 }

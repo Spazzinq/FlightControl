@@ -28,12 +28,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.manager.ConfigManager;
+import org.spazzinq.flightcontrol.manager.ConfManager;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.util.*;
 
-import static org.spazzinq.flightcontrol.FlightControl.msg;
+import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
 
 public final class FlightControlCommand implements CommandExecutor, TabCompleter {
     private Map<String, String> commands = new TreeMap<String, String>() {{
@@ -51,13 +52,13 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
     }};
 
     private FlightControl pl;
-    private ConfigManager config;
+    private ConfManager config;
     private String defaultHelp;
     private String buildHelp;
 
     public FlightControlCommand(FlightControl pl) {
         this.pl = pl;
-        config = pl.getConfigManager();
+        config = pl.getConfManager();
 
         buildHelp = "&a&lFlightControl &f" + pl.getDescription().getVersion()
                 + "\n&aBy &fSpazzinq\n \n"
@@ -101,7 +102,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                 switch (autoComplete.isEmpty() ? args[0] : (autoComplete.size() == 1 ? autoComplete.get(0) : "")) {
                     case "reload":
                         pl.reloadManagers();
-                        msg(s, "&a&lFlightControl &7» &aConfiguration successfully reloaded!");
+                        msg(s, pl.getLangManager().getPluginReloaded());
                         break;
                     case "update":
                         pl.getUpdateManager().install(s, false);
@@ -160,12 +161,12 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                         config.setDefaultFlightSpeed(actualSpeed);
 
                                         pl.getPlayerManager().reloadPlayerData();
-                                        msg(s, "&e&lFlightControl &7» &eSet the global flight speed to &f" + speed + "&e!");
-                                    } else msg(s, "&e&lFlightControl &7» &eGreat news! The global flight speed is already &f" + speed + "&e!");
-                                } else msg(s, "&e&lFlightControl &7» &ePlease provide a number between &f0 and 10 &e(inclusive)! The default speed is &f1&e!");
-                            } else msg(s, "&e&lFlightControl &7» &ePlease provide a &fvalid decimal&e! Example: /fc speed 1");
-                        } else if (args.length == 1) msg(s, "&e&lFlightControl &7» &ePlease provide a speed! Example: /fc speed 1");
-                        else msg(s, "&e&lFlightControl &7» &eIncorrect usage! Usage: /fc speed (0-10)");
+                                        msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSet(), speed + "", "speed"));
+                                    } else msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSame(), speed + "", "speed"));
+                                } else msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
+                            } else msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
+                        } else if (args.length == 1) msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
+                        else msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
                         break;
                     case "enemyrange":
                         if (args.length == 2) {
@@ -177,21 +178,22 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                         config.setUseFacEnemyRange(range != -1);
                                         config.setFacEnemyRange(range);
 
-                                        msg(s, "&e&lFlightControl &7» &eSet the disable enemy range to &f" + range + "&e!");
-                                    } else msg(s, "&e&lFlightControl &7» &eGreat news! The disable enemy range is already &f" + range + "&e!");
-                                } else msg(s, "&e&lFlightControl &7» &ePlease provide a number greater than &f0 (inclusive)! Enter &f-1 &eto disable the feature!");
-                            } else msg(s, "&e&lFlightControl &7» &ePlease provide a &fvalid integer&e! Example: /fc enemyrange 10");
-                        } else if (args.length == 1) msg(s, "&e&lFlightControl &7» &ePlease provide a range! Example: /fc enemyrange 10");
-                        else msg(s, "&e&lFlightControl &7» &eIncorrect usage! Usage: /fc enemyrange (range)");
+                                        msg(s, replaceVar(pl.getLangManager().getEnemyRangeSet(), range + "", "range"));
+                                    } else msg(s, replaceVar(pl.getLangManager().getEnemyRangeSame(), range + "", "range"));
+                                } else msg(s, pl.getLangManager().getEnemyRangeUsage());
+                            } else msg(s, pl.getLangManager().getEnemyRangeUsage());
+                        } else if (args.length == 1) msg(s, pl.getLangManager().getEnemyRangeUsage());
+                        else msg(s, pl.getLangManager().getEnemyRangeUsage());
                         break;
                     case "support":
                         config.setSupport(!config.isSupport());
                         msgToggle(s, config.isSupport(), "Live Support");
-                        Player spazzinq = pl.getServer().getPlayer(UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c"));
+                        Player dev = pl.getServer().getPlayer(FlightControl.spazzinqUUID);
+
                         if (config.isSupport()) {
-                            msg(s, "&e&lFlightControl &eWarning &7» &fLive support enables Spazzinq to check debug information on why flight is disabled. " + "You can disable support at any time by repeating the command, but by default the access only lasts until you restart flightcontrol/the server.");
-                            if (spazzinq != null && spazzinq.isOnline()) {
-                                msg(spazzinq, "&c&lFlightControl &7» &c" + s.getName() + " has requested support.");
+                            msg(s, "&e&lFlightControl &7» &fLive support enables Spazzinq to check debug information on why flight is disabled. " + "You can disable support at any time by repeating the command, but by default the access only lasts until you restart FlightControl/the server.");
+                            if (dev != null && dev.isOnline()) {
+                                msg(dev, "&c&lFlightControl &7» &f" + s.getName() + "&c has requested support.");
                             }
                         }
                         break;
@@ -207,12 +209,13 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
         } else if (args.length == 1 && args[0].equals("debug") && s instanceof Player && ((Player) s).getUniqueId().equals(UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c"))) {
             if (config.isSupport()) pl.debug((Player) s);
             else msg(s, "&c&lFlightControl &7» &cSorry bud, you don't have permission to view debug information :I");
-        } else msg(s, config.getNoPermission());
+        } else msg(s, pl.getLangManager().getPermDenied());
 
         return true;
     }
 
-    @Override public List<String> onTabComplete(CommandSender s, Command cmd, String label, String[] args) {
+    @Override
+    public List<String> onTabComplete(CommandSender s, Command cmd, String label, String[] args) {
         for (int i = 0; i < args.length; i++) {
             args[i] = args[i].toLowerCase();
         }
@@ -231,8 +234,8 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
         return Collections.emptyList();
     }
 
-    private  void msgToggle(CommandSender s, boolean toggle, String subPrefix) {
-        msg(s, ("Trail".equals(subPrefix) ? "&a&l" : "&a&lFlightControl &a") + subPrefix + " &7» "
+    private void msgToggle(CommandSender s, boolean toggle, String subPrefix) {
+        msg(s, pl.getLangManager().getPrefix() + subPrefix + " &7» "
                 + (toggle ? "&aEnabled" : "&cDisabled"));
     }
 

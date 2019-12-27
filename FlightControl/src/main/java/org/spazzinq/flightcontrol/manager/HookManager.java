@@ -52,7 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HookManager {
-    private FlightControl flightControl;
+    private FlightControl pl;
     private PluginManager pm;
     private boolean is1_13;
 
@@ -62,7 +62,6 @@ public class HookManager {
     @Getter private WorldGuard worldGuard = new WorldGuard();
     @Getter private Vanish vanish = new Vanish();
     @Getter private BaseTowny towny = new BaseTowny();
-    // TODO Config & check implementation
     @Getter private BaseLands lands = new BaseLands();
     @Getter private Combat combat = new Combat();
     @Getter private Factions factions = new Factions();
@@ -70,10 +69,10 @@ public class HookManager {
 
     private List<String> hooked = new ArrayList<>();
 
-    public HookManager(FlightControl flightControl, boolean is1_13) {
-        this.flightControl = flightControl;
+    public HookManager(FlightControl pl, boolean is1_13) {
+        this.pl = pl;
         this.is1_13 = is1_13;
-        pm = flightControl.getServer().getPluginManager();
+        pm = pl.getServer().getPluginManager();
     }
 
     public void load() {
@@ -91,7 +90,7 @@ public class HookManager {
             towny = new Towny();
         }
         if (plEnabled("Lands")) {
-            lands = new Lands(flightControl);
+            lands = new Lands(pl);
         }
 
         // Prepare hooked msg
@@ -108,7 +107,7 @@ public class HookManager {
         }
 
         this.hookMsg = hookMsg.toString();
-        flightControl.getLogger().info(this.hookMsg);
+        pl.getLogger().info(this.hookMsg);
     }
 
     private void loadFactions() {

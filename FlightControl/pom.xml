@@ -328,13 +328,13 @@
         </dependency>
         <dependency>
             <groupId>org.spazzinq</groupId>
-            <artifactId>v1_8</artifactId>
+            <artifactId>VersionOld</artifactId>
             <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.spazzinq</groupId>
-            <artifactId>v1_13</artifactId>
+            <artifactId>VersionCurrent</artifactId>
             <version>${revision}</version>
             <scope>compile</scope>
         </dependency>

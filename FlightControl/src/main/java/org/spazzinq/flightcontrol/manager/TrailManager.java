@@ -38,20 +38,20 @@ import java.util.HashMap;
 public final class TrailManager {
     private FlightControl pl;
 
-    @Getter private HashMap<Player, BukkitTask> partTasks = new HashMap<>();
+    @Getter private HashMap<Player, BukkitTask> particleTasks = new HashMap<>();
 
     public TrailManager(FlightControl pl) {
         this.pl = pl;
     }
 
     public void trailCheck(Player p) {
-        if (pl.getParticles() != null && pl.getConfigManager().isTrail() && pl.getPlayerManager().getFlightPlayer(p).hasTrail()) {
-            partTasks.put(p, new BukkitRunnable() {
+        if (pl.getParticleManager() != null && pl.getConfManager().isTrail() && pl.getPlayerManager().getFlightPlayer(p).hasTrail()) {
+            particleTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
                     if (!(p.getGameMode() == GameMode.SPECTATOR || pl.getHookManager().getVanish().vanished(p) || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
                         Location l = p.getLocation();
                         // For some terrible reason the locations are never in the correct spot so you have to time them later
-                        new BukkitRunnable() { @Override public void run() { pl.getParticles().spawn(l); } }.runTaskLater(pl, 2);
+                        new BukkitRunnable() { @Override public void run() { pl.getParticleManager().spawn(l); } }.runTaskLater(pl, 2);
                     }
                 }
             }.runTaskTimerAsynchronously(pl, 0, 4));
@@ -59,13 +59,13 @@ public final class TrailManager {
     }
 
     public void trailRemove(Player p) {
-        BukkitTask task = partTasks.remove(p); if (task != null) task.cancel();
+        BukkitTask task = particleTasks.remove(p); if (task != null) task.cancel();
     }
 
     public void disableEnabledTrails() {
-        for (BukkitTask tasks : partTasks.values()) {
+        for (BukkitTask tasks : particleTasks.values()) {
             tasks.cancel();
         }
-        partTasks.clear();
+        particleTasks.clear();
     }
 }

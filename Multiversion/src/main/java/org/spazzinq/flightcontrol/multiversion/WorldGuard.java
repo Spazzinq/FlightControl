@@ -26,6 +26,7 @@ package org.spazzinq.flightcontrol.multiversion;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.spazzinq.flightcontrol.api.objects.Region;
 
 import java.util.Collections;
 import java.util.Set;
@@ -34,5 +35,5 @@ import java.util.Set;
 public class WorldGuard {
     public String getRegionName(Location l) { return null; }
     public Set<String> getRegionNames(World w) { return Collections.emptySet(); }
-    public boolean hasRegion(String world, String region) { return false; }
+    public boolean hasRegion(Region region) { return false; }
 }
