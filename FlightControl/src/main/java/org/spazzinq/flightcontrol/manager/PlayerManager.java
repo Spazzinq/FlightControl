@@ -26,7 +26,6 @@ package org.spazzinq.flightcontrol.manager;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
@@ -34,7 +33,6 @@ import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -58,23 +56,16 @@ public class PlayerManager {
         if (!playerCache.containsKey(p.getUniqueId())) {
             File data = new File(folder, p.getUniqueId() + ".yml");
 
-            CommentConf dataConf = null;
-            try {
-                dataConf = new CommentConf(data, pl.getResource("default_data.yml"));
-            } catch (IOException | InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
+            CommentConf dataConf = new CommentConf(data, pl.getResource("default_data.yml"));
 
-            if (dataConf != null) {
-                float speed = dataConf.isDouble("flight_speed")
-                        ? (float) dataConf.getDouble("flight_speed")
-                        : pl.getConfManager().getDefaultFlightSpeed();
-                Long tempFlyLength = dataConf.isLong("temp_fly") ? dataConf.getLong("temp_fly") : null;
+            float speed = dataConf.isDouble("flight_speed")
+                    ? (float) dataConf.getDouble("flight_speed")
+                    : pl.getConfManager().getDefaultFlightSpeed();
+            Long tempFlyLength = dataConf.isLong("temp_fly") ? dataConf.getLong("temp_fly") : null;
 
-                FlightPlayer flightPlayer = new FlightPlayer(dataConf, p, speed, dataConf.getBoolean("trail"), tempFlyLength);
+            FlightPlayer flightPlayer = new FlightPlayer(dataConf, p, speed, dataConf.getBoolean("trail"), tempFlyLength);
 
-                playerCache.put(p.getUniqueId(), flightPlayer);
-            }
+            playerCache.put(p.getUniqueId(), flightPlayer);
         }
     }
 
@@ -89,7 +80,6 @@ public class PlayerManager {
         playerCache.clear();
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            loadStorage(p);
             FlightPlayer flightPlayer = getFlightPlayer(p);
 
             p.setFlySpeed(flightPlayer.getActualFlightSpeed());
@@ -123,24 +113,15 @@ public class PlayerManager {
         for (Map.Entry<String, FlightPlayer> migration : migrateStorage.entrySet()) {
             String uuid = migration.getKey();
             FlightPlayer tempData = migration.getValue();
-
             File data = new File(folder, uuid + ".yml");
+            CommentConf dataConf = new CommentConf(data, pl.getResource("default_data.yml"));
 
-            CommentConf dataConf = null;
-            try {
-                dataConf = new CommentConf(data, pl.getResource("default_data.yml"));
-            } catch (IOException | InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
+            dataConf.set("trail", tempData.hasTrail());
 
-            if (dataConf != null) {
-                dataConf.set("trail", tempData.hasTrail());
+            Long tempFlyLength = tempData.getTempFlyEnd();
+            dataConf.set("temp_fly", tempFlyLength);
 
-                Long tempFlyLength = tempData.getTempFlyEnd();
-                dataConf.set("temp_fly", tempFlyLength);
-
-                dataConf.save();
-            }
+            dataConf.save();
         }
     }
 }

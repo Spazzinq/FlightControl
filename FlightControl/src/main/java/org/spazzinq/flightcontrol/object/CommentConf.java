@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static org.spazzinq.flightcontrol.object.ConfTask.*;
 import static org.spazzinq.flightcontrol.util.ConfUtil.runTask;
 
 /**
@@ -76,25 +77,34 @@ public class CommentConf extends YamlConfiguration {
      * @param file the location of the current modified config
      * @param defaultConfStream the InputStream to the new config
      */
-    public CommentConf(File file, InputStream defaultConfStream) throws IOException, InvalidConfigurationException {
+    public CommentConf(File file, InputStream defaultConfStream) {
         this();
         this.file = file;
         boolean fileExists = file.exists();
 
         if (!fileExists) {
-            //noinspection UnstableApiUsage
-            Files.createParentDirs(file);
-            FileUtil.copyFile(defaultConfStream, file);
+            try {
+                //noinspection UnstableApiUsage
+                Files.createParentDirs(file);
+                FileUtil.copyFile(defaultConfStream, file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
         StringBuilder defaultConf = FileUtil.streamToBuilder(defaultConfStream);
         StringBuilder currentConf = FileUtil.readFile(file.toPath());
         HashMap<String, Set<String>> currentComments = new HashMap<>();
 
-        runTask(defaultConf, defaultComments, ConfTask.SAVE_COMMENTS);
-        runTask(currentConf, currentComments, ConfTask.SAVE_COMMENTS);
+        runTask(defaultConf, defaultComments, SAVE_COMMENTS);
+        runTask(currentConf, currentComments, SAVE_COMMENTS);
 
         // Load the config for YAMLConfiguration methods
-        loadFromString(currentConf.toString());
+        try {
+            loadFromString(currentConf.toString());
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
 
         if (fileExists) {
             // If comments from modified config do not match new ones, then save new version
@@ -102,7 +112,7 @@ public class CommentConf extends YamlConfiguration {
             for (Map.Entry<String, Set<String>> comment : currentComments.entrySet()) {
                 // TODO Check if still works as Set
                 if (!comment.getValue().equals(defaultComments.get(comment.getKey()))) {
-                    save(file);
+                    save();
                     break;
                 }
             }
@@ -123,7 +133,8 @@ public class CommentConf extends YamlConfiguration {
      * @param node the node to remove
      */
     public void deleteNode(String node) {
-        deleteNodes.add(node);
+        set(node, null);
+//        deleteNodes.add(node);
     }
 
     /**
@@ -205,11 +216,15 @@ public class CommentConf extends YamlConfiguration {
     private String finalizeConfig(String config) {
         StringBuilder configBuilder = new StringBuilder(config);
 
-        runTask(configBuilder, addNodes, ConfTask.WRITE_NODES);
-        runTask(configBuilder, addSubnodes, ConfTask.WRITE_SUBNODES);
-        runTask(configBuilder, addIndentedSubnodes, ConfTask.WRITE_INDENTED_SUBNODES);
-        runTask(configBuilder, deleteNodes, ConfTask.DELETE_NODES);
-        runTask(configBuilder, defaultComments, ConfTask.WRITE_COMMENTS);
+        runTask(configBuilder, addNodes, WRITE_NODES);
+        addNodes.clear();
+        runTask(configBuilder, addSubnodes, WRITE_SUBNODES);
+        addSubnodes.clear();
+        runTask(configBuilder, addIndentedSubnodes, WRITE_INDENTED_SUBNODES);
+        addIndentedSubnodes.clear();
+        runTask(configBuilder, deleteNodes, DELETE_NODES);
+        deleteNodes.clear();
+        runTask(configBuilder, defaultComments, WRITE_COMMENTS);
 
         return configBuilder.toString();
     }

@@ -46,7 +46,6 @@ import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.VersionType;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 
 import static org.spazzinq.flightcontrol.manager.LangManager.msg;
@@ -117,11 +116,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
 
         // Start FileWatcher
-        try {
-            new FileWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new FileWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
 
         new Metrics(this); // bStats
     }
@@ -156,17 +151,19 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 	public void reloadManagers() {
         // Prevent permission auto-granting from "*" permission
         for (World w : Bukkit.getWorlds()) {
-            String name = w.getName();
-            defaultPerms(name);
-            for (String rg : getHookManager().getWorldGuard().getRegionNames(w)) {
-                defaultPerms(name + "." + rg);
+            String worldName = w.getName();
+            defaultPerms(worldName);
+
+            for (String regionName : getHookManager().getWorldGuard().getRegionNames(w)) {
+                defaultPerms(worldName + "." + regionName);
             }
         }
 
         categoryManager.reloadCategories();
 	    confManager.reloadConf();
-        confManager.updateConfig();
         langManager.reloadLang();
+        // At end to allow for any necessary migration
+        confManager.updateConfig();
 
         playerManager.reloadPlayerData();
 

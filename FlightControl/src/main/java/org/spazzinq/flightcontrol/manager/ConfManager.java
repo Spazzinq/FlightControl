@@ -64,12 +64,7 @@ public final class ConfManager {
 
         if (!ignoreReload) {
             ignoreReload = true;
-
-            try {
-                conf = new CommentConf(confFile, pl.getResource("config.yml"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            conf = new CommentConf(confFile, pl.getResource("config.yml"));
 
             if (conf.isBoolean("auto_update")) {
                 migrateFromVersion3();
@@ -117,7 +112,8 @@ public final class ConfManager {
         boolean modified = false;
 
         // 4.1.0 - moved to lang.yml
-        if (!conf.isConfigurationSection("messages")) {
+        if (conf.isConfigurationSection("messages")) {
+            pl.getLogger().info("Removed the messages section from config.yml!");
             conf.deleteNode("messages");
             modified = true;
         }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.CommentConf;
@@ -54,10 +55,11 @@ public class LangManager {
     }
 
     public void reloadLang() {
-        try {
-            lang = new CommentConf(langFile, pl.getResource("lang.yml"));
-        } catch (Exception e) {
-            e.printStackTrace();
+        lang = new CommentConf(langFile, pl.getResource("lang.yml"));
+
+        // Migrates messages!
+        if (pl.getConfManager().getConf().isConfigurationSection("messages")) {
+            migrateFromVersion4();
         }
 
         disableFlight = lang.getString("player.flight.disabled");
@@ -110,19 +112,28 @@ public class LangManager {
         }
     }
 
-    public void log(CommandSender s, String msg) {
-        if (s instanceof ConsoleCommandSender) {
-            s.sendMessage("[FlightControl] " + cc(msg));
-        } else {
-            s.sendMessage(prefix + cc(msg));
-        }
-    }
-
     public static String replaceVar(String msg, String value, String varName) {
         return msg.replaceAll("%" + varName + "%", value);
     }
 
-    private static String cc(String msg) {
-        return ChatColor.translateAlternateColorCodes('&', msg);
+    private void migrateFromVersion4() {
+        CommentConf conf = pl.getConfManager().getConf();
+        ConfigurationSection msgs = conf.getConfigurationSection("messages");
+
+        lang.set("player.actionbar", msgs.getBoolean("actionbar"));
+
+        lang.set("player.flight.enabled", msgs.getString("flight.enable"));
+        lang.set("player.flight.disabled", msgs.getString("flight.disable"));
+        lang.set("player.flight.can_enable", msgs.getString("flight.can_enable"));
+        lang.set("player.flight.cannot_enable", msgs.getString("flight.cannot_enable"));
+
+        lang.set("player.trail.enabled", msgs.getString("trail.enable"));
+        lang.set("player.trail.disabled", msgs.getString("trail.disable"));
+
+        lang.set("player.permission_denied", msgs.getString("permission_denied"));
+
+        lang.save();
+
+        pl.getLogger().info("Successfully migrated the messages from config.yml to lang.yml!");
     }
 }

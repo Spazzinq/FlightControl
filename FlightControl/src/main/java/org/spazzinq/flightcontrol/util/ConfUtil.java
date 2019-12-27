@@ -33,17 +33,23 @@ import java.util.Set;
 import static org.spazzinq.flightcontrol.object.ConfTask.*;
 
 public final class ConfUtil {
+    /*
+    * //////////////////////////////////////////////////////////////////////////////
+    * YOU MUST USE \n TO SEPARATE LINES BECAUSE IT WILL NOT BE RECOGNIZED OTHERWISE
+    * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    * */
+    private static String NEW_LINE = "\n";
     @SuppressWarnings("unchecked")
     public static void runTask(StringBuilder config, Object list, ConfTask task) {
         // Split into lines
-        String[] lines = config.toString().split(System.lineSeparator());
+        String[] lines = config.toString().split(NEW_LINE);
         int previousIndentLength = 0;
         // Current actual node
         String node = "";
 
         // Position through config
         int pos = 0;
-        int separatorLength = System.lineSeparator().length();
+        int separatorLength = NEW_LINE.length();
         // Current comment if SAVE_COMMENTS
         StringBuilder currentComment = task == SAVE_COMMENTS ? new StringBuilder() : null;
         // Where to start if DELETE_NODES
@@ -63,7 +69,7 @@ public final class ConfUtil {
 
             if ((trimmedLine.startsWith("#") || trimmedLine.isEmpty()) && task == SAVE_COMMENTS) {
                 // Saves current line in comment
-                currentComment.append(line).append(System.lineSeparator());
+                currentComment.append(line).append(NEW_LINE);
 
                 if (endOfConfig) {
                     ((HashMap<String, Set<String>>) list).put("footer_ghost_node", Collections.singleton(currentComment.toString()));
@@ -112,7 +118,7 @@ public final class ConfUtil {
                                     // fall through
                                 case WRITE_NODES:
                                     // New line!
-                                    insert = System.lineSeparator() + insert;
+                                    insert = NEW_LINE + insert;
                                     // fall through
                                 default:
                                     break;
@@ -120,7 +126,7 @@ public final class ConfUtil {
                             // Couldn't really add this in the flow of the case-switch, so it's here
                             if (task == WRITE_NODES) {
                                 // Add new line for space since it's a new node
-                                insert += System.lineSeparator();
+                                insert += NEW_LINE;
                             }
 
                             // Insert before unless WRITE_INDENTED_SUBNODES or WRITE_SUBNODES (if those, then insert after)
@@ -149,12 +155,19 @@ public final class ConfUtil {
                     }
                 }
             }
-            // Include split character (System.lineSeparator())
+            // Include split character (newLine)
             pos += line.length() + separatorLength;
         }
+
         if (task == WRITE_COMMENTS) {
-            config.append(System.lineSeparator())
-                  .append(((HashMap<String, Set<String>>) list).get("footer_ghost_node").iterator().next());
+            Set<String> footerSet = ((HashMap<String, Set<String>>) list).get("footer_ghost_node");
+
+            if (footerSet != null) {
+                // Only should iterate once
+                for (String footer : footerSet) {
+                    config.append(footer.substring(0, footer.length() - separatorLength));
+                }
+            }
         }
     }
 

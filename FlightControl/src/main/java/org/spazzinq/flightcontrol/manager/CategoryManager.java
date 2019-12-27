@@ -28,7 +28,6 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -41,7 +40,6 @@ import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.DualStore;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -63,23 +61,17 @@ public class CategoryManager {
     }
 
     public void reloadCategories() {
-        try {
-            conf = new CommentConf(categoryFile, pl.getResource("categories.yml"));
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
+        conf = new CommentConf(categoryFile, pl.getResource("categories.yml"));
 
         global = null;
         categories.clear();
 
-        if (conf != null) {
-            global = loadCategory("global", conf.getConfigurationSection("global"));
-            ConfigurationSection categoriesSection = conf.getConfigurationSection("categories");
+        global = loadCategory("global", conf.getConfigurationSection("global"));
+        ConfigurationSection categoriesSection = conf.getConfigurationSection("categories");
 
-            for (String categoryName : categoriesSection.getKeys(false)) {
-                Category category = loadCategory(categoryName, categoriesSection.getConfigurationSection(categoryName));
-                categories.add(category);
-            }
+        for (String categoryName : categoriesSection.getKeys(false)) {
+            Category category = loadCategory(categoryName, categoriesSection.getConfigurationSection(categoryName));
+            categories.add(category);
         }
     }
 

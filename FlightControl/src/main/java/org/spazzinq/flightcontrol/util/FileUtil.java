@@ -32,19 +32,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class FileUtil extends YamlConfiguration {
-    public static StringBuilder streamToBuilder(InputStream source) throws IOException {
+    public static StringBuilder streamToBuilder(InputStream source) {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
 
-        while ((length = source.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
+        try {
+            while ((length = source.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         return new StringBuilder(result.toString());
     }
 
-    public static StringBuilder readFile(Path path) throws IOException {
-        byte[] encoded = Files.readAllBytes(path);
+    public static StringBuilder readFile(Path path) {
+        byte[] encoded = new byte[0];
+        try {
+            encoded = Files.readAllBytes(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return new StringBuilder(new String(encoded, StandardCharsets.UTF_8));
     }
 

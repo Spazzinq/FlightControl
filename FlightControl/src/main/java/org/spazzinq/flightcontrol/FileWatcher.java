@@ -15,12 +15,17 @@ class FileWatcher extends BukkitRunnable {
                                 CONFIG = "config.yml",
                                 LANG = "lang.yml";
 
-    FileWatcher(FlightControl pl, Path dataPath) throws IOException {
+    FileWatcher(FlightControl pl, Path dataPath)  {
         this.pl = pl;
-        watcher = FileSystems.getDefault().newWatchService();
 
-        // Only watch modifications and creations
-        dataPath.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
+        try {
+            watcher = FileSystems.getDefault().newWatchService();
+
+            // Only watch modifications and creations
+            dataPath.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -42,8 +47,6 @@ class FileWatcher extends BukkitRunnable {
                 String fileString = ev.context().toString();
                 boolean playerStateChanged = false;
 
-                pl.getLogger().warning(fileString);
-                // TODO Do I need to ignore now?
                 switch (fileString) {
                     case CATEGORIES:
                         logChanges(CATEGORIES);
