@@ -67,8 +67,6 @@ public final class TempFlyCommand implements CommandExecutor {
                         setTempFly(s, (Player) s, args[0]);
                     }
                 }
-
-
             } else {
                 msg(s, pl.getLangManager().getPermDenied());
             }
@@ -102,6 +100,7 @@ public final class TempFlyCommand implements CommandExecutor {
             long time = Long.parseLong(length.substring(0, unitIndex == -1 ? length.length() : unitIndex));
             boolean notOne = time != 1;
             StringBuilder lengthFormatted = new StringBuilder(time + " ");
+            // In milliseconds
             time *= 1000;
 
             switch (unit) {
@@ -135,7 +134,6 @@ public final class TempFlyCommand implements CommandExecutor {
                 @Override
                 public void run() {
                     pl.getFlightManager().check(p); // Checks when tempfly is expected to expire
-
                 }
                 // Convert to ticks then add 4 for good measure
             }.runTaskLater(pl,time / 50 + 4);
@@ -145,7 +143,7 @@ public final class TempFlyCommand implements CommandExecutor {
                     replaceVar(alreadyHadTempFly ? pl.getLangManager().getTempFlyAdd()
                                                  : pl.getLangManager().getTempFlyEnable(),
                             p.getName(), "player"),
-                             lengthFormatted.toString(), "time"));
+                             lengthFormatted.toString(), "duration"));
         } else msg(s, pl.getLangManager().getTempFlyUsage());
     }
 

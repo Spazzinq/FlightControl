@@ -88,7 +88,7 @@ public final class ConfManager {
             if (useFacEnemyRange = (range != -1)) facEnemyRange = range;
 
             // floats
-            defaultFlightSpeed = MathUtil.calcActualSpeed((float) conf.getDouble("settings.flight_speed"));
+            defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed"));
 
             // Load other stuff that have separate methods
             loadSounds();

@@ -26,10 +26,10 @@ package org.spazzinq.flightcontrol.multiversion;
 
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
+import java.util.Set;
 
 public class Factions extends Hook {
-    public boolean rel(Player p, HashSet<FactionRelation> relations) {
+    public boolean rel(Player p, Set<FactionRelation> relations) {
         return false;
     }
     public boolean isEnemy(Player p, Player otherP) {

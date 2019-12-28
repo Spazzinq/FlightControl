@@ -45,10 +45,12 @@ public class WorldGuard7 extends WorldGuard {
         }
         return null;
     }
+
     public Set<String> getRegionNames(World w) {
         return com.sk89q.worldguard.WorldGuard.getInstance()
                 .getPlatform().getRegionContainer().get(BukkitAdapter.adapt(w)).getRegions().keySet();
     }
+
     public boolean hasRegion(Region region) {
         return com.sk89q.worldguard.WorldGuard.getInstance()
                 .getPlatform().getRegionContainer().get(BukkitAdapter.adapt(region.getWorld())).hasRegion(region.getRegionName());

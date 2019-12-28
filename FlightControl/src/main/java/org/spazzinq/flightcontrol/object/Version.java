@@ -16,7 +16,7 @@ public class Version implements Comparable<Version> {
         versionStr = versionTypeSplit[0];
         String[] versionDataSplit = versionStr.split("\\.");
 
-        for (int i = 0; i < versionData.length; i++) {
+        for (int i = 0; i < versionDataSplit.length; i++) {
             versionData[i] = Integer.parseInt(versionDataSplit[i]);
         }
     }

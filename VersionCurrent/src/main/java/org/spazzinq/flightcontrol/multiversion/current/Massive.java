@@ -34,21 +34,22 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.multiversion.Factions;
 
-import java.util.HashSet;
+import java.util.Set;
 
 public final class Massive extends Factions {
-    @Override public boolean rel(Player p, HashSet<FactionRelation> relations) {
+    @Override public boolean rel(Player p, Set<FactionRelation> relations) {
         MPlayer mp = MPlayer.get(p);
         Faction f = BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));
         FactionColl fColl = FactionColl.get();
-        boolean own = false,
-                ally = false,
-                truce = false,
-                neutral = false,
-                enemy = false,
-                warzone = relations.contains(FactionRelation.WARZONE) && f == fColl.getWarzone(),
-                safezone = relations.contains(FactionRelation.SAFEZONE) && f == fColl.getSafezone(),
-                wilderness = relations.contains(FactionRelation.WILDERNESS) && f.isNone();
+        boolean own = false;
+        boolean ally = false;
+        boolean truce = false;
+        boolean neutral = false;
+        boolean enemy = false;
+        boolean warzone = relations.contains(FactionRelation.WARZONE) && f == fColl.getWarzone();
+        boolean safezone = relations.contains(FactionRelation.SAFEZONE) && f == fColl.getSafezone();
+        boolean wilderness = relations.contains(FactionRelation.WILDERNESS) && f.isNone();
+
         if (mp.hasFaction()) {
             Rel r = f.getRelationWish(mp.getFaction());
             if (relations.contains(FactionRelation.OWN)) own = mp.isInOwnTerritory();
@@ -60,6 +61,9 @@ public final class Massive extends Factions {
         return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
     }
 
-    @Override public boolean isEnemy(Player p, Player otherP) { return MPlayer.get(p).getRelationTo(MPlayer.get(otherP)) == Rel.ENEMY; }
+    @Override public boolean isEnemy(Player p, Player otherP) {
+        return MPlayer.get(p).getRelationTo(MPlayer.get(otherP)) == Rel.ENEMY;
+    }
+
     @Override public boolean isHooked() { return true; }
 }

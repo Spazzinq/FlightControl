@@ -30,25 +30,25 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.multiversion.Factions;
 
-import java.util.HashSet;
+import java.util.Set;
 
 public final class UUID extends Factions {
-    @Override public boolean rel(Player p, HashSet<FactionRelation> relations) {
+    @Override public boolean rel(Player p, Set<FactionRelation> relations) {
         Faction f = Board.getInstance().getFactionAt(new FLocation(p.getLocation()));
         FPlayer fP = getPlayer(p);
-        boolean own = false,
-                ally = false,
-                truce = false,
-                neutral = false,
-                enemy = false,
-                warzone = relations.contains(FactionRelation.WARZONE) && f.isWarZone(),
-                safezone = relations.contains(FactionRelation.SAFEZONE) && f.isSafeZone(),
-                wilderness = relations.contains(FactionRelation.SAFEZONE) && f.isWilderness();
+        boolean own = false;
+        boolean ally = false;
+        boolean truce = false;
+        boolean neutral = false;
+        boolean enemy = false;
+        boolean warzone = relations.contains(FactionRelation.WARZONE) && f.isWarZone();
+        boolean safezone = relations.contains(FactionRelation.SAFEZONE) && f.isSafeZone();
+        boolean wilderness = relations.contains(FactionRelation.SAFEZONE) && f.isWilderness();
+
         if (fP.hasFaction()) {
             if (relations.contains(FactionRelation.OWN)) own = fP.isInOwnTerritory();
             if (relations.contains(FactionRelation.ALLY)) ally = fP.isInAllyTerritory();
             // WARNING: Some versions of Factions don't have Relation.isInTruceTerritory()
-
             if (relations.contains(FactionRelation.TRUCE)) truce = fP.getRelationToLocation() == Relation.TRUCE;
             if (relations.contains(FactionRelation.NEUTRAL)) neutral = fP.isInNeutralTerritory();
             if (relations.contains(FactionRelation.ENEMY)) enemy = fP.isInEnemyTerritory();
@@ -61,13 +61,11 @@ public final class UUID extends Factions {
     }
 
     // WARNING: Some versions of Factions don't have Relation.isEnemy()
-    @Override
-    public boolean isEnemy(Player p, Player otherP) {
+    @Override public boolean isEnemy(Player p, Player otherP) {
         return getPlayer(p).getRelationTo(getPlayer(otherP)) == Relation.ENEMY;
     }
 
-    @Override
-    public boolean isHooked() {
+    @Override public boolean isHooked() {
         return true;
     }
 }

@@ -70,7 +70,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
             buildDefaultHelp.append("&a").append(c.getKey()).append(" &7» &f").append(c.getValue()).append("\n");
         }
         buildDefaultHelp.append(" \n&a/tt &7» &fPersonal trail toggle");
-        buildDefaultHelp.append("\n&a/tempfly (player) [duration] &7» &fActivate temporary flight");
+        buildDefaultHelp.append("\n&a/tempfly (duration) [player] &7» &fActivate temporary flight");
         defaultHelp = " \n" + buildDefaultHelp.toString();
     }
 
@@ -154,7 +154,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         if (args.length == 2) {
                             if (args[1].matches("\\.\\d+|\\d+(\\.\\d+)?")) {
                                 float speed = Float.parseFloat(args[1]);
-                                float actualSpeed = MathUtil.calcActualSpeed(speed);
+                                float actualSpeed = MathUtil.calcConvertedSpeed(speed);
                                 if (speed > -1 && speed < 11) {
                                     if (config.getDefaultFlightSpeed() != actualSpeed) {
                                         config.set("settings.flight_speed", speed);
@@ -223,8 +223,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
         if (args.length == 1) {
             List<String> autoComplete = autoComplete(args[0]);
             return autoComplete.isEmpty() ? new ArrayList<>(commands.keySet()) : autoComplete;
-        }
-        else if (args.length == 2) {
+        } else if (args.length == 2) {
             if (args[0].equals("speed")) {
                 return Collections.singletonList("1");
             } else if (args[0].equals("enemyrange")) {

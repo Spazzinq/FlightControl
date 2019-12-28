@@ -60,8 +60,8 @@ public final class FlyCommand implements CommandExecutor {
                 Player p = Bukkit.getPlayer(args[0]);
                 // Allow admins to disable flight
                 if (p != null) {
-                    msg(s, replaceVar(p.getAllowFlight() ? pl.getLangManager().getFlyCommandEnable()
-                                                         : pl.getLangManager().getFlyCommandDisable(), p.getName(), "player"));
+                    msg(s, replaceVar(p.getAllowFlight() ? pl.getLangManager().getFlyCommandDisable()
+                                                         : pl.getLangManager().getFlyCommandEnable(), p.getName(), "player"));
 
                     if (p.getAllowFlight()) {
                         flightManager.disableFlight(p, true);

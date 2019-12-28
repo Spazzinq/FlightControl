@@ -40,10 +40,10 @@ admin:
     same: "&a&lFlightControl &7» &aGreat news! Your flight speed is already &f%speed%&a!"
     usage: "&c&lFlightControl &7» &cIncorrect usage! Use /flyspeed (speed) [player]!"
   tempfly:
-    enable: "&e&lFlightControl &7» &f%player%&e now has temporary flight for &f%time%&e."
-    add: "&e&lFlightControl &7» &f%player%&e now has temporary flight for an extra &f%time%&e."
+    enable: "&e&lFlightControl &7» &f%player%&e now has temporary flight for &f%duration%&e."
+    add: "&e&lFlightControl &7» &f%player%&e now has temporary flight for an extra &f%duration%&e."
     disable: "&e&lFlightControl &7» &eDisabled %player%'s temporary flight!"
     disabled: "&c&lFlightControl &7» &f%player%&c's temporary flight is already disabled!"
-    usage: "&c&lFlightControl &7» &cInvalid format! Please use /tempfly (length) [player] and
-            follow the length with a unit of time. Example lengths:
+    usage: "&c&lFlightControl &7» &cInvalid format! Please use /tempfly (duration) [player] and
+            follow the duration with a unit of time. Example durations:
             &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c."

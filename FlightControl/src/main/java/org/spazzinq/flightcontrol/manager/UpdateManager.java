@@ -59,7 +59,7 @@ public final class UpdateManager {
         } catch (Exception ignored) {
             return false;
         }
-        // TODO Test
+
         return newVersion.isNewer(version);
     }
 
@@ -83,7 +83,7 @@ public final class UpdateManager {
             if (!downloaded) {
                 dl();
                 if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
-                    msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the config has automatically updated too)! Welcome to flightcontrol " + getNewVersion() + "!");
+                    msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the configs have automatically updated too)! Welcome to FlightControl " + getNewVersion() + "!");
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload flightcontrol");
                 } else
                     msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate downloaded. Restart (or reload) the server to apply the update.");

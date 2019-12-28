@@ -38,7 +38,7 @@ public final class ConfUtil {
     * YOU MUST USE \n TO SEPARATE LINES BECAUSE IT WILL NOT BE RECOGNIZED OTHERWISE
     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     * */
-    private static String NEW_LINE = "\n";
+    private static final String NEW_LINE = "\n";
     @SuppressWarnings("unchecked")
     public static void runTask(StringBuilder config, Object list, ConfTask task) {
         // Split into lines
@@ -92,48 +92,43 @@ public final class ConfUtil {
                 // Set previousIndentLength for next iteration
                 previousIndentLength = newIndentLength;
 
-                if (task == SAVE_COMMENTS) {
-                    // Once the node changes, then add the comment to HashMap and reinitialize
-                    if (currentComment.length() != 0) {
-                        ((HashMap<String, Set<String>>) list).put(node, Collections.singleton(currentComment.toString()));
-                        currentComment = new StringBuilder();
-                    }
+                // Once the node changes, then add the comment to HashMap and reinitialize
+                if (task == SAVE_COMMENTS && currentComment.length() != 0) {
+                    ((HashMap<String, Set<String>>) list).put(node, Collections.singleton(currentComment.toString()));
+                    currentComment = new StringBuilder();
                 }
 
                 // Any WRITE task
-                if (task.toString().contains("WRITE")) {
-                    // Get as HashMap String and Set for simplicity (even though comments can be String and String)
-                    if (((HashMap<String, Set<String>>) list).containsKey(node)) {
-                        Set<String> insertingList = ((HashMap<String, Set<String>>) list).get(node);
+                // Get as HashMap String and Set for simplicity (even though comments can be String and String)
+                if (task.toString().contains("WRITE") && ((HashMap<String, Set<String>>) list).containsKey(node)) {
+                    Set<String> insertingList = ((HashMap<String, Set<String>>) list).get(node);
 
-                        for (String insert : insertingList) {
-                            switch (task) {
-                                case WRITE_INDENTED_SUBNODES:
-                                    // Add new indent!
-                                    insert = "  " + insert;
-                                    // fall through
-                                case WRITE_SUBNODES:
-                                    // Add original indent!
-                                    insert = newIndent + insert;
-                                    // fall through
-                                case WRITE_NODES:
-                                    // New line!
-                                    insert = NEW_LINE + insert;
-                                    // fall through
-                                default:
-                                    break;
-                            }
-                            // Couldn't really add this in the flow of the case-switch, so it's here
-                            if (task == WRITE_NODES) {
-                                // Add new line for space since it's a new node
-                                insert += NEW_LINE;
-                            }
-
-                            // Insert before unless WRITE_INDENTED_SUBNODES or WRITE_SUBNODES (if those, then insert after)
-                            config.insert(pos + (task == WRITE_INDENTED_SUBNODES || task == WRITE_SUBNODES ? line.length() : 0), insert);
-                            // Account for insertion in pos
-                            pos += insert.length();
+                    for (String insert : insertingList) {
+                        switch (task) {
+                            case WRITE_INDENTED_SUBNODES:
+                                // Add new indent!
+                                insert = "  " + insert;
+                                // fall through
+                            case WRITE_SUBNODES:
+                                // Add original indent!
+                                insert = newIndent + insert;
+                                // fall through
+                            case WRITE_NODES:
+                                // New line!
+                                insert = NEW_LINE + insert;
+                                // fall through
+                            default:
                         }
+                        // Couldn't really add this in the flow of the case-switch, so it's here
+                        if (task == WRITE_NODES) {
+                            // Add new line for space since it's a new node
+                            insert += NEW_LINE;
+                        }
+
+                        // Insert before unless WRITE_INDENTED_SUBNODES or WRITE_SUBNODES (if those, then insert after)
+                        config.insert(pos + (task == WRITE_INDENTED_SUBNODES || task == WRITE_SUBNODES ? line.length() : 0), insert);
+                        // Account for insertion in pos
+                        pos += insert.length();
                     }
                 }
 

@@ -58,14 +58,16 @@ public class FlightPlayer {
     }
 
     public void setTempFly(Long tempFlyEnd) {
-        if (tempFlyEnd != null && tempFlyEnd <= System.currentTimeMillis()) {
-            tempFlyEnd = null;
+        Long finalTempFlyEnd = tempFlyEnd;
+
+        if (finalTempFlyEnd != null && finalTempFlyEnd <= System.currentTimeMillis()) {
+            finalTempFlyEnd = null;
         }
-        this.tempFlyEnd = tempFlyEnd;
+        this.tempFlyEnd = finalTempFlyEnd;
 
         // Prevent NPE for data migration
         if (data != null) {
-            data.set("temp_fly", tempFlyEnd);
+            data.set("temp_fly", finalTempFlyEnd);
             data.save();
         }
     }

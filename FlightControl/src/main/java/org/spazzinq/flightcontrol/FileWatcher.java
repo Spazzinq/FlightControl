@@ -11,9 +11,9 @@ class FileWatcher extends BukkitRunnable {
     private FlightControl pl;
     private WatchService watcher;
 
-    private static final String CATEGORIES = "categories.yml",
-                                CONFIG = "config.yml",
-                                LANG = "lang.yml";
+    private static final String CATEGORIES = "categories.yml";
+    private static final String CONFIG = "config.yml";
+    private static final String LANG = "lang.yml";
 
     FileWatcher(FlightControl pl, Path dataPath)  {
         this.pl = pl;

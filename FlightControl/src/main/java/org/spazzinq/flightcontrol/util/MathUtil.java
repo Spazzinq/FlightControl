@@ -25,16 +25,21 @@
 package org.spazzinq.flightcontrol.util;
 
 public class MathUtil {
-    public static float calcActualSpeed(float wrongSpeed) {
-        float actualSpeed,
-                defaultSpeed = 0.1f,
-                maxSpeed = 1f;
+    public static float calcConvertedSpeed(float unconvertedSpeed) {
+        float actualSpeed;
+        float defaultSpeed = 0.1f;
+        float maxSpeed = 1f;
+        float wrongSpeed = unconvertedSpeed;
 
-        if (wrongSpeed > 10f) wrongSpeed = 10f;
-        else if (wrongSpeed < 0.0001f) wrongSpeed = 0.0001f;
+        if (wrongSpeed > 10f) {
+            wrongSpeed = 10f;
+        } else if (wrongSpeed < 0.0001f) {
+            wrongSpeed = 0.0001f;
+        }
 
-        if (wrongSpeed < 1f) actualSpeed = defaultSpeed * wrongSpeed;
-        else {
+        if (wrongSpeed < 1f) {
+            actualSpeed = defaultSpeed * wrongSpeed;
+        } else {
             float ratio = ((wrongSpeed - 1) / 9) * (maxSpeed - defaultSpeed);
             actualSpeed = ratio + defaultSpeed;
         }

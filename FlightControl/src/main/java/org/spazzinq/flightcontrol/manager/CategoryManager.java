@@ -84,7 +84,7 @@ public class CategoryManager {
         DualStore<Region> regions = loadRegions(name, category.getConfigurationSection("regions"));
         DualStore<FactionRelation> factions = loadFactions(name, category.getConfigurationSection("factions"));
 
-        int priority = name.equals("global") ? -1 : category.getInt("priority");
+        int priority = "global".equals(name) ? -1 : category.getInt("priority");
 
         return new Category(name, worlds, regions, factions, priority);
     }
@@ -173,7 +173,7 @@ public class CategoryManager {
         }
     }
 
-    // TODO Cached category grabbing
+    // TODO Cached category grabbing - use FlightPlayer?
     public Category getCategory(Player p) {
         List<Category> categories = new ArrayList<>();
 

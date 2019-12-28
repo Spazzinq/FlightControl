@@ -110,7 +110,6 @@ public class CommentConf extends YamlConfiguration {
             // If comments from modified config do not match new ones, then save new version
             // Only matches ones from the MODIFIED config
             for (Map.Entry<String, Set<String>> comment : currentComments.entrySet()) {
-                // TODO Check if still works as Set
                 if (!comment.getValue().equals(defaultComments.get(comment.getKey()))) {
                     save();
                     break;

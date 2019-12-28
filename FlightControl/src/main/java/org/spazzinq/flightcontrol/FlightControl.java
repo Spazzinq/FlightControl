@@ -78,7 +78,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         //noinspection ResultOfMethodCallIgnored
         storageFolder.mkdirs();
 
-        // TODO Can we just initialize on declare now?
         registerManagers();
         new Listener(this);
         registerCommands();
@@ -102,17 +101,17 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                     "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
                     "      X       X       X       X       X       X\n" +
                     "     (_)     (_)     (_)     (_)     (_)     (_)\n");
-        } else {
-            // Update check
-            if (confManager.isAutoUpdate()) {
-                updateManager.install(Bukkit.getConsoleSender(), true);
-            } else if (updateManager.exists()) {
-                new BukkitRunnable() {
-                    @Override public void run() {
-                        getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/flightcontrol.55168/ to view the feature changes (the config automatically updates).");
-                    }
-                }.runTaskLater(this, 70);
-            }
+        }
+
+        // Update check
+        if (confManager.isAutoUpdate()) {
+            updateManager.install(Bukkit.getConsoleSender(), true);
+        } else if (updateManager.exists()) {
+            new BukkitRunnable() {
+                @Override public void run() {
+                    getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/55168/ to view the feature changes (the configs automatically update).");
+                }
+            }.runTaskLater(this, 70);
         }
 
         // Start FileWatcher
