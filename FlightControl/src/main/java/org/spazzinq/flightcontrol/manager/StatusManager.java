@@ -36,7 +36,7 @@ import org.spazzinq.flightcontrol.object.Evaluation;
 import java.util.List;
 
 public class StatusManager {
-    private FlightControl pl;
+    private final FlightControl pl;
 
     public StatusManager(FlightControl pl) {
         this.pl = pl;
@@ -45,11 +45,13 @@ public class StatusManager {
     Evaluation evalFlight(Player p, Location l) {
         World world = l.getWorld();
         String worldName = world.getName(),
-               regionName = pl.getHookManager().getWorldGuard().getRegionName(l);
+               regionName = pl.getHookManager().getWorldGuardHook().getRegionName(l);
         Region region = new Region(world, regionName);
         Category category = pl.getCategoryManager().getCategory(p);
 
-        if (regionName != null) pl.defaultPerms(worldName + "." + regionName); // Register new regions dynamically
+        if (regionName != null) {
+            pl.defaultPerms(worldName + "." + regionName); // Register new regions dynamically
+        }
 
         boolean hasWorlds = category.getWorlds() != null,
                 hasRegions = category.getRegions() != null,
@@ -61,14 +63,16 @@ public class StatusManager {
                 // Region check
                 || hasRegions && category.getRegions().getEnabled().contains(region)
                 // Factions check
-                || hasFactions && pl.getHookManager().getFactions().rel(p, category.getFactions().getEnabled());
+                || hasFactions && pl.getHookManager().getFactionsHook().rel(p, category.getFactions().getEnabled());
         boolean enableHookCheck =
+                // CrazyEnchantments check
+                pl.getHookManager().getEnchantmentsHook().canFly(p)
                 // Plot check
-                pl.getHookManager().getPlot().flightAllowed(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ())
+                || pl.getHookManager().getPlotHook().canFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ())
                 // Towny check
-                || (pl.getConfManager().isOwnTown() || p.hasPermission("flightcontrol.owntown")) && pl.getHookManager().getTowny().ownTown(p) && !(pl.getConfManager().isTownyWar() && pl.getHookManager().getTowny().wartime())
+                || (pl.getConfManager().isOwnTown() || p.hasPermission("flightcontrol.owntown")) && pl.getHookManager().getTownyHook().ownTown(p) && !(pl.getConfManager().isTownyWar() && pl.getHookManager().getTownyHook().wartime())
                 // Lands check
-                || (pl.getConfManager().isOwnLand() || p.hasPermission("flightcontrol.ownland")) && pl.getHookManager().getLands().ownLand(p);
+                || (pl.getConfManager().isOwnLand() || p.hasPermission("flightcontrol.ownland")) && pl.getHookManager().getLandsHook().ownLand(p);
         boolean enablePermissionCheck =
                 // Global perm check
                 p.hasPermission("flightcontrol.flyall")
@@ -84,10 +88,10 @@ public class StatusManager {
                 // Region check
                 || hasRegions && category.getRegions().getDisabled().contains(region)
                 // Factions check
-                || hasFactions && pl.getHookManager().getFactions().rel(p, category.getFactions().getDisabled());
+                || hasFactions && pl.getHookManager().getFactionsHook().rel(p, category.getFactions().getDisabled());
         boolean disableHookCheck =
-                pl.getHookManager().getCombat().tagged(p)
-                || pl.getHookManager().getPlot().flightDenied(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ());
+                pl.getHookManager().getCombatHook().tagged(p)
+                || pl.getHookManager().getPlotHook().cannotFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ());
         boolean disablePermissionCheck =
                 // World perm check
                 p.hasPermission("flightcontrol.nofly." + worldName)
@@ -114,14 +118,14 @@ public class StatusManager {
                         Player otherP = (Player) e;
                         // Distance is calculated a second time to match the shape of the other distance calculation
                         // (this would be a cube while the other would be a sphere otherwise)
-                        if (pl.getHookManager().getFactions().isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRange()) {
+                        if (pl.getHookManager().getFactionsHook().isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRange()) {
                             if (otherP.isFlying()) pl.getFlightManager().check(otherP);
                             disable = true;
                         }
                     }
             } else {
                 for (Player otherP : worldPlayers)
-                    if (pl.getHookManager().getFactions().isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRange()) {
+                    if (pl.getHookManager().getFactionsHook().isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRange()) {
                         if (otherP.isFlying()) pl.getFlightManager().check(otherP);
                         disable = true;
                     }

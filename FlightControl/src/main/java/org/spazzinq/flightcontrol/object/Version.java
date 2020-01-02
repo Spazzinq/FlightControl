@@ -1,19 +1,20 @@
 package org.spazzinq.flightcontrol.object;
 
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 public class Version implements Comparable<Version> {
-    int[] versionData = new int[3];
-    @Getter private VersionType versionType;
+    final int[] versionData = new int[3];
+    @Getter private final VersionType versionType;
 
-    public Version(String versionStr) {
-        String[] versionTypeSplit = versionStr.split("-");
+    public Version(String entireVersionStr) {
+        String[] versionTypeSplit = entireVersionStr.split("-");
         versionType = versionTypeSplit.length == 1 ? VersionType.RELEASE : VersionType.BETA;
 
-        versionStr = versionTypeSplit[0];
+        String versionStr = versionTypeSplit[0];
         String[] versionDataSplit = versionStr.split("\\.");
 
         for (int i = 0; i < versionDataSplit.length; i++) {
@@ -26,7 +27,7 @@ public class Version implements Comparable<Version> {
     }
 
     @Override
-    public int compareTo(Version o) {
+    public int compareTo(@NotNull Version o) {
         // Cycles through the MAJOR, MINOR, and PATCH version
         for (int i = 0; i < versionData.length; i++) {
             int typeDiff = versionData[i] - o.versionData[i];

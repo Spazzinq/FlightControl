@@ -29,8 +29,9 @@ import org.bukkit.entity.Player;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Sound {
-    @Getter private org.bukkit.Sound sound;
-    @Getter private float volume, pitch;
+    @Getter private final org.bukkit.Sound sound;
+    @Getter private final float volume;
+    @Getter private final float pitch;
 
     public Sound(org.bukkit.Sound sound) {
         this(sound, 1, 1);

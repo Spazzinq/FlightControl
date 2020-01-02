@@ -31,8 +31,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public abstract class FlightListener {
-    private List<HandlerMethod> handlers;
+    private final List<HandlerMethod> handlers;
     private Plugin pl;
 
     private FlightListener() {
@@ -42,7 +43,7 @@ public abstract class FlightListener {
         for (Method method : declaredMethods) {
             if (method.isAnnotationPresent(FlightEventHandler.class)) {
                 if (method.getParameterCount() == 1) {
-                    Class firstParameter = method.getParameterTypes()[0];
+                    Class<?> firstParameter = method.getParameterTypes()[0];
                     if (APIManager.getInstance().getEvents().contains(firstParameter)) {
                         handlers.add(new HandlerMethod(this, method));
                     } else new InstantiationException("Method " + method.getName() + " does not contain a specific Event parameter").printStackTrace();

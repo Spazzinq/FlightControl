@@ -30,8 +30,8 @@ import org.bukkit.World;
 import java.util.Objects;
 
 public class Region {
-    @Getter private World world;
-    @Getter private String regionName;
+    @Getter private final World world;
+    @Getter private final String regionName;
 
     public Region(World world, String regionName) {
         this.world = world;

@@ -32,12 +32,12 @@ import org.spazzinq.flightcontrol.api.events.interfaces.*;
 import org.spazzinq.flightcontrol.api.objects.Sound;
 
 public class FlightDisableEvent implements PlayerFlightEvent, LocationFlightEvent, MessageFlightEvent, SoundFlightEvent, CommandFlightEvent, Cancellable {
-    @Getter private Player player;
-    @Getter private Location location;
+    @Getter private final Player player;
+    @Getter private final Location location;
     @Getter @Setter private String message;
     @Getter @Setter private Sound sound;
     @Getter @Setter private boolean byActionbar;
-    @Getter private boolean byCommand;
+    @Getter private final boolean byCommand;
     @Getter @Setter private boolean cancelled;
 
     public FlightDisableEvent(Player player, Location location, String message, Sound sound, boolean byActionbar, boolean byCommand) {

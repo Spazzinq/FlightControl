@@ -29,8 +29,8 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 
 public class FlightPlayer {
-    @Getter private CommentConf data;
-    private Player player;
+    @Getter private final CommentConf data;
+    private final Player player;
 
     @Getter private float actualFlightSpeed;
     @Setter private boolean trail;
@@ -39,7 +39,8 @@ public class FlightPlayer {
     public FlightPlayer(CommentConf data, Player player, float actualFlightSpeed, boolean trail, Long tempFlyEnd) {
         this.data = data;
         this.player = player;
-        setActualFlightSpeed(actualFlightSpeed);
+        // Don't store speed in data conf if not personal for player
+        this.actualFlightSpeed = actualFlightSpeed;
         this.trail = trail;
         setTempFly(tempFlyEnd);
     }

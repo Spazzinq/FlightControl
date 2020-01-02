@@ -1,6 +1,7 @@
 package org.spazzinq.flightcontrol.manager;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -8,14 +9,19 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.CommentConf;
-import org.spazzinq.flightcontrol.util.ActionbarUtil;
+import org.spazzinq.flightcontrol.util.ActionBarUtil;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LangManager {
-    private FlightControl pl;
-    private CommentConf lang;
-    private File langFile;
+    private final FlightControl pl;
+    @Getter private CommentConf lang;
+    private final File langFile;
+    private boolean ignoreReload;
+
+    @Setter private boolean useActionBar;
 
     // Player messages
     @Getter private String disableFlight;
@@ -54,43 +60,63 @@ public class LangManager {
         langFile = new File(pl.getDataFolder(), "lang.yml");
     }
 
-    public void reloadLang() {
-        lang = new CommentConf(langFile, pl.getResource("lang.yml"));
+    public boolean reloadLang() {
+        boolean reloaded = false;
 
-        // Migrates messages!
-        if (pl.getConfManager().getConf().isConfigurationSection("messages")) {
-            migrateFromVersion4();
+        if (!ignoreReload) {
+            ignoreReload = true;
+            lang = new CommentConf(langFile, pl.getResource("lang.yml"));
+
+            // Migrates messages!
+            if (pl.getConfManager().getConf().isConfigurationSection("messages")) {
+                migrateFromVersion4();
+            }
+
+            // boolean
+            useActionBar = lang.getBoolean("player.actionbar");
+
+            // Strings
+            disableFlight = lang.getString("player.flight.disabled");
+            enableFlight = lang.getString("player.flight.enabled");
+            canEnableFlight = lang.getString("player.flight.can_enable");
+            cannotEnableFlight = lang.getString("player.flight.cannot_enable");
+            personalTrailDisable = lang.getString("player.trail.disabled");
+            personalTrailEnable = lang.getString("player.trail.enabled");
+            permDenied = lang.getString("player.permission_denied");
+
+            prefix = lang.getString("admin.prefix");
+            pluginReloaded = lang.getString("admin.reloaded");
+            // Config set
+            globalFlightSpeedSet = lang.getString("admin.global_flight_speed.set");
+            globalFlightSpeedSame = lang.getString("admin.global_flight_speed.same");
+            globalFlightSpeedUsage = lang.getString("admin.global_flight_speed.usage");
+            enemyRangeSet = lang.getString("admin.enemy_range.set");
+            enemyRangeSame = lang.getString("admin.enemy_range.same");
+            enemyRangeUsage = lang.getString("admin.enemy_range.usage");
+            // Commands
+            flyCommandEnable = lang.getString("admin.fly.enable");
+            flyCommandDisable = lang.getString("admin.fly.disable");
+            flyCommandUsage = lang.getString("admin.fly_command.usage");
+            flySpeedSet = lang.getString("admin.flyspeed.set");
+            flySpeedSame = lang.getString("admin.flyspeed.same");
+            flySpeedUsage = lang.getString("admin.flyspeed.usage");
+            tempFlyEnable = lang.getString("admin.tempfly.enable");
+            tempFlyAdd = lang.getString("admin.tempfly.add");
+            tempFlyDisable = lang.getString("admin.tempfly.disable");
+            tempFlyDisabled = lang.getString("admin.tempfly.disabled");
+            tempFlyUsage = lang.getString("admin.tempfly.usage");
+
+            // Prevent reloading for the next 250ms
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    ignoreReload = false;
+                }
+            }, 250);
+
+            reloaded = true;
         }
-
-        disableFlight = lang.getString("player.flight.disabled");
-        enableFlight = lang.getString("player.flight.enabled");
-        canEnableFlight = lang.getString("player.flight.can_enable");
-        cannotEnableFlight = lang.getString("player.flight.cannot_enable");
-        personalTrailDisable = lang.getString("player.trail.disabled");
-        personalTrailEnable = lang.getString("player.trail.enabled");
-        permDenied = lang.getString("player.permission_denied");
-
-        prefix = lang.getString("admin.prefix");
-        pluginReloaded = lang.getString("admin.reloaded");
-        // Config set
-        globalFlightSpeedSet = lang.getString("admin.global_flight_speed.set");
-        globalFlightSpeedSame = lang.getString("admin.global_flight_speed.same");
-        globalFlightSpeedUsage = lang.getString("admin.global_flight_speed.usage");
-        enemyRangeSet = lang.getString("admin.enemy_range.set");
-        enemyRangeSame = lang.getString("admin.enemy_range.same");
-        enemyRangeUsage = lang.getString("admin.enemy_range.usage");
-        // Commands
-        flyCommandEnable = lang.getString("admin.fly.enable");
-        flyCommandDisable = lang.getString("admin.fly.disable");
-        flyCommandUsage = lang.getString("admin.fly_command.usage");
-        flySpeedSet = lang.getString("admin.flyspeed.set");
-        flySpeedSame = lang.getString("admin.flyspeed.same");
-        flySpeedUsage = lang.getString("admin.flyspeed.usage");
-        tempFlyEnable = lang.getString("admin.tempfly.enable");
-        tempFlyAdd = lang.getString("admin.tempfly.add");
-        tempFlyDisable = lang.getString("admin.tempfly.disable");
-        tempFlyDisabled = lang.getString("admin.tempfly.disabled");
-        tempFlyUsage = lang.getString("admin.tempfly.usage");
+        return reloaded;
     }
 
     public static void msg(CommandSender s, String msg) {
@@ -104,7 +130,7 @@ public class LangManager {
             finalMsg = ChatColor.translateAlternateColorCodes('&', finalMsg);
 
             if (actionBar && s instanceof Player) {
-                ActionbarUtil.send((Player) s, finalMsg);
+                ActionBarUtil.send((Player) s, finalMsg);
             } else {
                 s.sendMessage((console ? "[FlightControl] " : "")
                         + finalMsg);
@@ -114,6 +140,19 @@ public class LangManager {
 
     public static String replaceVar(String msg, String value, String varName) {
         return msg.replaceAll("%" + varName + "%", value);
+    }
+
+    public void set(String path, Object value) {
+        ignoreReload = true;
+        lang.set(path, value);
+        lang.save();
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                ignoreReload = false;
+            }
+        }, 500);
     }
 
     private void migrateFromVersion4() {
@@ -135,5 +174,9 @@ public class LangManager {
         lang.save();
 
         pl.getLogger().info("Successfully migrated the messages from config.yml to lang.yml!");
+    }
+
+    public boolean useActionBar() {
+        return useActionBar;
     }
 }

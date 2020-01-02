@@ -30,12 +30,12 @@ import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 
 public class Category implements Comparable<Category> {
-    @Getter private String name;
-    @Getter private int priority;
+    @Getter private final String name;
+    @Getter private final int priority;
 
-    @Getter private DualStore<World> worlds;
-    @Getter private DualStore<Region> regions;
-    @Getter private DualStore<FactionRelation> factions;
+    @Getter private final DualStore<World> worlds;
+    @Getter private final DualStore<Region> regions;
+    @Getter private final DualStore<FactionRelation> factions;
 
     public Category(String name, DualStore<World> worlds, DualStore<Region> regions, DualStore<FactionRelation> factions, int priority) {
         this.name = name;

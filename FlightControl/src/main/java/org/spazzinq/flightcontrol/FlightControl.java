@@ -26,10 +26,10 @@ package org.spazzinq.flightcontrol;
 
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
+import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -51,9 +51,9 @@ import java.util.UUID;
 import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
-    @Getter private APIManager apiManager = APIManager.getInstance();
-    private PluginManager pm = Bukkit.getPluginManager();
-    @Getter private File storageFolder = new File(getDataFolder() + File.separator + "data");
+    @Getter private final APIManager apiManager = APIManager.getInstance();
+    private final PluginManager pm = Bukkit.getPluginManager();
+    @Getter private final File storageFolder = new File(getDataFolder() + File.separator + "data");
 
     // Storage management
     @Getter private CategoryManager categoryManager;
@@ -117,7 +117,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         // Start FileWatcher
         new FileWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
 
-        new Metrics(this); // bStats
+        new MetricsLite(this); // bStats
     }
 
     private void registerManagers() {
@@ -153,7 +153,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             String worldName = w.getName();
             defaultPerms(worldName);
 
-            for (String regionName : getHookManager().getWorldGuard().getRegionNames(w)) {
+            for (String regionName : getHookManager().getWorldGuardHook().getRegionNames(w)) {
                 defaultPerms(worldName + "." + regionName);
             }
         }
@@ -183,7 +183,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 	    Location l = p.getLocation();
         World world = l.getWorld();
         String worldName = world.getName(),
-                regionName = getHookManager().getWorldGuard().getRegionName(l);
+                regionName = getHookManager().getWorldGuardHook().getRegionName(l);
         Region region = new Region(world, regionName);
         Category category = categoryManager.getCategory(p);
 
@@ -199,27 +199,28 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         msg(p, "&a&lFlightControl &f" + getDescription().getVersion() +
                 "\n&eCategory &7» &f" + category.getName() +
                 "\n&eW.RG &7» &f" + worldName + "." + regionName +
-                ((hookManager.getFactions().isHooked() && hasFactions ? "\n&eFac &7» &f" + category.getFactions() : "") +
+                ((hookManager.getFactionsHook().isHooked() && hasFactions ? "\n&eFac &7» &f" + category.getFactions() : "") +
                 "\n&eWRLDs &7» &f" + category.getWorlds()  +
                 "\n&eRGs &7» &f" +  category.getRegions()  +
                 "\n \n&e&lEnable" +
-                "\n&fBypass &7» " + p.hasPermission("flightcontrol.bypass") + " " + (getConfManager().isVanishBypass() && getHookManager().getVanish().vanished(p)) +
+                "\n&fBypass &7» " + p.hasPermission("flightcontrol.bypass") + " " + (getConfManager().isVanishBypass() && getHookManager().getVanishHook().vanished(p)) +
                 "\n&fTemp &7» " + playerManager.getFlightPlayer(p).hasTempFly() +
                 "\n&fAll &7» " + p.hasPermission("flightcontrol.flyall") +
-                (hookManager.getFactions().isHooked() && hasFactions ? "\n&fFC &7» " + getHookManager().getFactions().rel(p, category.getFactions().getEnabled()) : "") +
-                (hookManager.getPlot().isHooked() ? "\n&fPlot &7» " + hookManager.getPlot().flightAllowed(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ()) : "") +
+                (hookManager.getFactionsHook().isHooked() && hasFactions ? "\n&fFC &7» " + getHookManager().getFactionsHook().rel(p, category.getFactions().getEnabled()) : "") +
+                (hookManager.getPlotHook().isHooked() ? "\n&fPlot &7» " + hookManager.getPlotHook().canFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ()) : "") +
                 (hasWorlds ? "\n&fWorld &7» " + category.getWorlds().getEnabled().contains(world) + " " + p.hasPermission("flightcontrol.fly." + worldName) : "") +
                 (hasRegions ? "\n&fRegion &7» " + category.getRegions().getEnabled().contains(region) + " " + (regionName != null && p.hasPermission("flightcontrol.fly." + worldName + "." + regionName)) : "") +
-                (hookManager.getTowny().isHooked() ? "\n&fTowny &7» "+
-                        (confManager.isOwnTown() && hookManager.getTowny().ownTown(p) && !(confManager.isTownyWar() && hookManager.getTowny().wartime())) + " " +
-                        (p.hasPermission("flightcontrol.owntown") && hookManager.getTowny().ownTown(p) && (!confManager.isTownyWar() || !hookManager.getTowny().wartime())) : "") +
-                (hookManager.getLands().isHooked() ? "\n&fLands &7» " +
-                        (confManager.isOwnLand() && hookManager.getLands().ownLand(p)) + " " +
-                        (p.hasPermission("flightcontrol.ownland") && hookManager.getLands().ownLand(p)) : "") +
+                (hookManager.getTownyHook().isHooked() ? "\n&fTowny &7» "+
+                        (confManager.isOwnTown() && hookManager.getTownyHook().ownTown(p) && !(confManager.isTownyWar() && hookManager.getTownyHook().wartime())) + " " +
+                        (p.hasPermission("flightcontrol.owntown") && hookManager.getTownyHook().ownTown(p) && (!confManager.isTownyWar() || !hookManager.getTownyHook().wartime())) : "") +
+                (hookManager.getLandsHook().isHooked() ? "\n&fLands &7» " +
+                        (confManager.isOwnLand() && hookManager.getLandsHook().ownLand(p)) + " " +
+                        (p.hasPermission("flightcontrol.ownland") && hookManager.getLandsHook().ownLand(p)) : "") +
+                (hookManager.getEnchantmentsHook().isHooked() ? "\n&fEnchants &7» " + hookManager.getEnchantmentsHook().canFly(p) : "") +
                 "\n \n&e&lDisable" +
-                (hookManager.getFactions().isHooked() ? "\n&fFC &7» " + getHookManager().getFactions().rel(p, category.getFactions().getDisabled()) : "") +
-                (hookManager.getCombat().isHooked() ? "\n&fCombat &7» " + hookManager.getCombat().tagged(p) : "") +
-                (hookManager.getPlot().isHooked() ? "\n&fPlot &7» " + hookManager.getPlot().flightDenied(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ()) : "") +
+                (hookManager.getFactionsHook().isHooked() ? "\n&fFC &7» " + getHookManager().getFactionsHook().rel(p, category.getFactions().getDisabled()) : "") +
+                (hookManager.getCombatHook().isHooked() ? "\n&fCombat &7» " + hookManager.getCombatHook().tagged(p) : "") +
+                (hookManager.getPlotHook().isHooked() ? "\n&fPlot &7» " + hookManager.getPlotHook().cannotFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ()) : "") +
                 (hasWorlds ? "\n&fWorld &7» " + category.getWorlds().getDisabled().contains(world) + " " + p.hasPermission("flightcontrol.nofly." + worldName) : "") +
                 (hasRegions ? "\n&fRegion &7» " + category.getRegions().getDisabled().contains(region) + " " + (regionName != null && p.hasPermission("flightcontrol.nofly." + worldName + "." + regionName)) : ""))
 
@@ -238,9 +239,5 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 	    if (perm == null) {
 	        pm.addPermission(new Permission(permString, PermissionDefault.FALSE));
         }
-    }
-
-    @Deprecated @Override public FileConfiguration getConfig() {
-        return super.getConfig();
     }
 }

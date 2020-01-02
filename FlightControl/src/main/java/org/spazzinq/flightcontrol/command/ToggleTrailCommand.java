@@ -33,7 +33,7 @@ import org.spazzinq.flightcontrol.FlightControl;
 import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 
 public class ToggleTrailCommand implements CommandExecutor {
-    private FlightControl pl;
+    private final FlightControl pl;
 
     public ToggleTrailCommand(FlightControl pl) {
         this.pl = pl;
@@ -45,10 +45,10 @@ public class ToggleTrailCommand implements CommandExecutor {
 
             if (pl.getPlayerManager().getFlightPlayer(p).toggleTrail()) {
                 // No need to check for trail enable because of command listener
-                msg(s, pl.getLangManager().getPersonalTrailEnable(), pl.getConfManager().isByActionBar());
+                msg(s, pl.getLangManager().getPersonalTrailEnable(), pl.getLangManager().useActionBar());
             } else {
                 pl.getTrailManager().trailRemove(p);
-                msg(s, pl.getLangManager().getPersonalTrailDisable(), pl.getConfManager().isByActionBar());
+                msg(s, pl.getLangManager().getPersonalTrailDisable(), pl.getLangManager().useActionBar());
             }
         } else pl.getLogger().info("Only players can use this command (the console isn't a player!)");
         return true;

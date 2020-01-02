@@ -40,7 +40,7 @@ import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 
 @SuppressWarnings("unused")
 final class Listener implements org.bukkit.event.Listener {
-    private FlightControl pl;
+    private final FlightControl pl;
 
 	Listener(FlightControl pl) { this.pl = pl; Bukkit.getPluginManager().registerEvents(this, pl); }
 
@@ -65,15 +65,21 @@ final class Listener implements org.bukkit.event.Listener {
         }
     }
     // Because onMove doesn't trigger right after a TP
-    @EventHandler private void onTP(PlayerTeleportEvent e) { pl.getFlightManager().check(e.getPlayer(), e.getTo()); }
-	@EventHandler private void onQuit(PlayerQuitEvent e) { pl.getTrailManager().trailRemove(e.getPlayer()); }
+    @EventHandler private void onTP(PlayerTeleportEvent e) {
+	    pl.getFlightManager().check(e.getPlayer(), e.getTo());
+	}
+
+	@EventHandler private void onQuit(PlayerQuitEvent e) {
+	    pl.getTrailManager().trailRemove(e.getPlayer());
+	}
+
 	@EventHandler private void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
         if (FlightControl.spazzinqUUID.equals(p.getUniqueId())) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently running on this server. " + pl.getHookManager().getHookMsg());
+                    msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently running on this server. " + pl.getHookManager().getHookedMsg());
                 }
             }.runTaskLater(pl, 40);
         }
@@ -119,7 +125,7 @@ final class Listener implements org.bukkit.event.Listener {
         String worldName = world.getName();
 
         pl.defaultPerms(worldName);
-        for (String regionName : pl.getHookManager().getWorldGuard().getRegionNames(world)) {
+        for (String regionName : pl.getHookManager().getWorldGuardHook().getRegionNames(world)) {
             pl.defaultPerms(worldName + "." + regionName);
         }
 

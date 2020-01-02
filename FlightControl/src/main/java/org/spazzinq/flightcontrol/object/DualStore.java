@@ -29,8 +29,8 @@ import lombok.Getter;
 import java.util.HashSet;
 
 public class DualStore<T> {
-    @Getter private HashSet<T> enabled;
-    @Getter private HashSet<T> disabled;
+    @Getter private final HashSet<T> enabled;
+    @Getter private final HashSet<T> disabled;
 
     public DualStore() {
         enabled = new HashSet<>();

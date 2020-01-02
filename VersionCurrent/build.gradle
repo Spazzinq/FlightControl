@@ -1,0 +1,10 @@
+dependencies {
+    implementation project(':API')
+    implementation project(':Multiversion')
+    compileOnly 'org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT'
+    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.1.0-SNAPSHOT'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.2-SNAPSHOT'
+    compileOnly 'com.massivecraft:SavageFactions:1.6.9.5-U0.2.1-RC-1.6.2-RC-2.5-RC-9'
+
+    compileOnly files('C:/Users/Spazzinq/Documents/GitHub/FlightControl/lib/MassiveCore-2.14.0.jar', 'C:/Users/Spazzinq/Documents/GitHub/FlightControl/lib/Factions-2.14.0.jar')
+}

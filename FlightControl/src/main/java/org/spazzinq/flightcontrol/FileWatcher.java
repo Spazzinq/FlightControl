@@ -8,7 +8,7 @@ import java.nio.file.*;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 class FileWatcher extends BukkitRunnable {
-    private FlightControl pl;
+    private final FlightControl pl;
     private WatchService watcher;
 
     private static final String CATEGORIES = "categories.yml";
@@ -62,8 +62,9 @@ class FileWatcher extends BukkitRunnable {
                         playerStateChanged = true;
                         break;
                     case LANG:
-                        logChanges(LANG);
-                        pl.getLangManager().reloadLang();
+                        if (pl.getLangManager().reloadLang()) {
+                            logChanges(LANG);
+                        }
                         break;
                     default:
                         break;

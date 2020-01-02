@@ -38,7 +38,7 @@ import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
 
 public final class TempFlyCommand implements CommandExecutor {
-    private FlightControl pl;
+    private final FlightControl pl;
 
     public TempFlyCommand(FlightControl pl) {
         this.pl = pl;

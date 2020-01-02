@@ -12,10 +12,10 @@ assignees: Spazzinq
 **Describe the bug** *(if not just an error)*
  ...
  
-**Error** *(if there's an error, use hastebin or gist)*
+**Error** *(if there's an error, use gist to paste it)*
  ...
  
-**Configuration** *(gist)*
+**Configuration** *(use gist to paste)*
  ...
  
 **FlightControl Permissions** *(given to player)* **& OP Status** *(does the player have OP?)*

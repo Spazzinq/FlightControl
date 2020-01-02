@@ -32,8 +32,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface FlightEventHandler {
+    @SuppressWarnings("unused")
     enum Priority implements Comparable<Priority> {
-        HIGH, NORMAL, LOW;
+        HIGH, NORMAL, LOW
     }
     Priority priority() default Priority.NORMAL;
 }

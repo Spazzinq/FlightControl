@@ -37,8 +37,8 @@ import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
 
 public final class FlyCommand implements CommandExecutor {
-    private FlightControl pl;
-    private FlightManager flightManager;
+    private final FlightControl pl;
+    private final FlightManager flightManager;
     public FlyCommand(FlightControl pl) {
         this.pl = pl;
         flightManager = pl.getFlightManager();

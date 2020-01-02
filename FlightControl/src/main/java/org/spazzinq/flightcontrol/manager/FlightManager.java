@@ -43,11 +43,11 @@ import java.util.ArrayList;
 import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 
 public final class FlightManager {
-    private FlightControl pl;
+    private final FlightControl pl;
     // Msg when command enabled
-    @Getter private ArrayList<Player> alreadyCanMsgList = new ArrayList<>(),
-                      disabledByPlayerList = new ArrayList<>();
-    @Getter private ArrayList<Entity> cancelFallDmgList = new ArrayList<>();
+    @Getter private final ArrayList<Player> alreadyCanMsgList = new ArrayList<>();
+    @Getter private final ArrayList<Player> disabledByPlayerList = new ArrayList<>();
+    @Getter private final ArrayList<Entity> cancelFallDmgList = new ArrayList<>();
 
     public FlightManager(FlightControl pl) {
         this.pl = pl;
@@ -65,7 +65,7 @@ public final class FlightManager {
     public void check(Player p, Location l, boolean usingCMD) {
         if (!p.hasPermission("flightcontrol.bypass")
                 && p.getGameMode() != GameMode.SPECTATOR
-                && !(pl.getConfManager().isVanishBypass() && pl.getHookManager().getVanish().vanished(p))) {
+                && !(pl.getConfManager().isVanishBypass() && pl.getHookManager().getVanishHook().vanished(p))) {
             Evaluation eval = pl.getStatusManager().evalFlight(p, l);
             boolean enable = eval.enable(),
                     disable = eval.disable();
@@ -96,7 +96,7 @@ public final class FlightManager {
         if (!alreadyCanMsgList.contains(p)) {
             alreadyCanMsgList.add(p);
             FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), pl.getLangManager().getCanEnableFlight(),
-                    pl.getConfManager().getCSound(), pl.getConfManager().isByActionBar());
+                    pl.getConfManager().getCSound(), pl.getLangManager().useActionBar());
 
             pl.getApiManager().callEvent(e);
             if (!e.isCancelled()) {
@@ -108,7 +108,7 @@ public final class FlightManager {
     }
     private void cannotEnable(Player p) {
         FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), pl.getLangManager().getCannotEnableFlight(),
-                pl.getConfManager().getNSound(), pl.getConfManager().isByActionBar());
+                pl.getConfManager().getNSound(), pl.getLangManager().useActionBar());
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
@@ -120,7 +120,7 @@ public final class FlightManager {
 
     private void enableFlight(Player p, boolean isCommand) {
         FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), pl.getLangManager().getEnableFlight(),
-                pl.getConfManager().getESound(), pl.getConfManager().isByActionBar(), isCommand);
+                pl.getConfManager().getESound(), pl.getLangManager().useActionBar(), isCommand);
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
@@ -136,7 +136,7 @@ public final class FlightManager {
     }
     public void disableFlight(Player p, boolean isCommand) {
         FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), pl.getLangManager().getDisableFlight(),
-                pl.getConfManager().getDSound(), pl.getConfManager().isByActionBar(), isCommand);
+                pl.getConfManager().getDSound(), pl.getLangManager().useActionBar(), isCommand);
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {

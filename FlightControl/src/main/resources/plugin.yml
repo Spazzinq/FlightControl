@@ -46,7 +46,7 @@ permissions:
       others: false
   flightcontrol.bypass:
     description: Bypasses all fly restrictions and always allows flight
-    default: false
+    default: op
   flightcontrol.admin:
     description: Ability to use FlightControl administrative commands (automatically given to OPs)
     default: op

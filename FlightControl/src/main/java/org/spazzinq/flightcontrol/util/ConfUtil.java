@@ -160,7 +160,7 @@ public final class ConfUtil {
             if (footerSet != null) {
                 // Only should iterate once
                 for (String footer : footerSet) {
-                    config.append(footer.substring(0, footer.length() - separatorLength));
+                    config.append(footer, 0, footer.length() - separatorLength);
                 }
             }
         }

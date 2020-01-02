@@ -46,12 +46,12 @@ import java.util.HashSet;
 import java.util.List;
 
 public class CategoryManager {
-    private FlightControl pl;
-    private PluginManager pm;
+    private final FlightControl pl;
+    private final PluginManager pm;
 
     @Getter private CommentConf conf;
-    @Getter private File categoryFile;
-    private HashSet<Category> categories = new HashSet<>();
+    @Getter private final File categoryFile;
+    private final HashSet<Category> categories = new HashSet<>();
     @Getter private Category global;
 
     public CategoryManager(FlightControl pl) {
@@ -126,7 +126,7 @@ public class CategoryManager {
 
             if (region.getWorld() == null) {
                 nonexistent(categoryName, "regions", "world", worldName);
-            } else if (!pl.getHookManager().getWorldGuard().hasRegion(region)) {
+            } else if (!pl.getHookManager().getWorldGuardHook().hasRegion(region)) {
                 nonexistent(categoryName, "regions", "region", region.getRegionName());
             } else {
                 // If true, then enabled

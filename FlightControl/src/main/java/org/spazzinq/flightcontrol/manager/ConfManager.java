@@ -38,18 +38,25 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public final class ConfManager {
-    private FlightControl pl;
+    private final FlightControl pl;
     private boolean ignoreReload;
 
-    private File confFile;
+    private final File confFile;
     @Getter private CommentConf conf;
 
-    @Getter @Setter
-    private boolean autoEnable, autoUpdate, support,
-                    combatChecked, ownTown, townyWar, ownLand,
-                    cancelFall, vanishBypass, trail,
-                    byActionBar, everyEnable, everyDisable,
-                    useFacEnemyRange;
+    @Getter @Setter private boolean autoEnable;
+    @Getter @Setter private boolean autoUpdate;
+    @Getter @Setter private boolean support;
+    @Getter @Setter private boolean combatChecked;
+    @Getter @Setter private boolean ownTown;
+    @Getter @Setter private boolean townyWar;
+    @Getter @Setter private boolean ownLand;
+    @Getter @Setter private boolean cancelFall;
+    @Getter @Setter private boolean vanishBypass;
+    @Getter @Setter private boolean trail;
+    @Getter @Setter private boolean everyEnable;
+    @Getter @Setter private boolean everyDisable;
+    @Getter @Setter private boolean useFacEnemyRange;
     @Getter @Setter private double facEnemyRange;
     @Getter @Setter private float defaultFlightSpeed;
     @Getter @Setter private Sound eSound, dSound, cSound, nSound;
@@ -77,8 +84,6 @@ public final class ConfManager {
             cancelFall = conf.getBoolean("settings.prevent_fall_damage");
             vanishBypass = conf.getBoolean("settings.vanish_bypass");
 
-            byActionBar = conf.getBoolean("messages.actionbar");
-
             ownTown = conf.getBoolean("towny.enable_own_town");
             townyWar = conf.getBoolean("towny.negate_during_war");
             ownLand = conf.getBoolean("lands.enable_own_land");
@@ -94,13 +99,13 @@ public final class ConfManager {
             loadSounds();
             loadTrail();
 
-            // Prevent reloading for the next 500ms
+            // Prevent reloading for the next 250ms
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
                     ignoreReload = false;
                 }
-            }, 500);
+            }, 250);
 
             reloaded = true;
         }

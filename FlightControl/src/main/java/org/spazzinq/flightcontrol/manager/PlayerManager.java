@@ -38,10 +38,10 @@ import java.util.Map;
 import java.util.UUID;
 
 public class PlayerManager {
-    private FlightControl pl;
+    private final FlightControl pl;
 
-    @Getter private File folder;
-    private HashMap<UUID, FlightPlayer> playerCache = new HashMap<>();
+    @Getter private final File folder;
+    private final HashMap<UUID, FlightPlayer> playerCache = new HashMap<>();
 
     public PlayerManager(FlightControl pl) {
         this.pl = pl;

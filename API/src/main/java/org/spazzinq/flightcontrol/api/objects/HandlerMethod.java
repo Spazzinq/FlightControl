@@ -31,9 +31,9 @@ import org.spazzinq.flightcontrol.api.APIManager;
 import java.lang.reflect.Method;
 
 public class HandlerMethod implements Comparable<HandlerMethod> {
-    @Getter private Class eventClass;
-    @Getter private FlightListener listener;
-    @Getter private Method method;
+    @Getter private Class<?> eventClass;
+    @Getter private final FlightListener listener;
+    @Getter private final Method method;
     @Getter private FlightEventHandler.Priority priority;
 
     HandlerMethod(FlightListener listener, Method method) {
@@ -43,7 +43,7 @@ public class HandlerMethod implements Comparable<HandlerMethod> {
 
         if (method.isAnnotationPresent(FlightEventHandler.class)) {
             if (method.getParameterCount() == 1) {
-                Class firstParameter = method.getParameterTypes()[0];
+                Class<?> firstParameter = method.getParameterTypes()[0];
                 if (APIManager.getInstance().getEvents().contains(firstParameter)) {
                     eventClass = firstParameter;
                 } else throw new IllegalArgumentException("Method does not contain a specific Event parameter");

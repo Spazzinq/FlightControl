@@ -53,11 +53,11 @@ public class CommentConf extends YamlConfiguration {
     private final Yaml yaml;
     private File file;
 
-    private HashMap<String, Set<String>> defaultComments = new HashMap<>();
-    private HashMap<String, Set<String>> addNodes = new HashMap<>();
-    private HashMap<String, Set<String>> addSubnodes = new HashMap<>();
-    private HashMap<String, Set<String>> addIndentedSubnodes = new HashMap<>();
-    private Set<String> deleteNodes = new HashSet<>();
+    private final HashMap<String, Set<String>> defaultComments = new HashMap<>();
+    private final HashMap<String, Set<String>> addNodes = new HashMap<>();
+    private final HashMap<String, Set<String>> addSubnodes = new HashMap<>();
+    private final HashMap<String, Set<String>> addIndentedSubnodes = new HashMap<>();
+    private final Set<String> deleteNodes = new HashSet<>();
 
     private CommentConf() {
         // From saveToString in YamlConfiguration
@@ -190,7 +190,7 @@ public class CommentConf extends YamlConfiguration {
 
         Map<?, ?> input;
         try {
-            input = (Map<?, ?>) yaml.load(data);
+            input = yaml.load(data);
         }
         catch (YAMLException e) {
             throw new InvalidConfigurationException(e);

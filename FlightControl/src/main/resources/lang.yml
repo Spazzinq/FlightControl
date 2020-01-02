@@ -21,7 +21,7 @@ admin:
   # Prefix applied to messages that cannot be modified (e.g. /fc actionbar)
   prefix: "&a&lFlightControl &a"
   # The prefixes are written out because the different colors have different meanings
-  reloaded: "&a&lFlightControl &7» &aConfiguration successfully reloaded!"
+  reloaded: "&a&lFlightControl &7» &aAll configurations were successfully reloaded!"
   global_flight_speed:
     set: "&e&lFlightControl &7» &eSet the global flight speed to &f%speed%&e!"
     same: "&e&lFlightControl &7» &eGreat news! The global flight speed is already &f%speed%&e!"

@@ -29,6 +29,7 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.ConfManager;
+import org.spazzinq.flightcontrol.manager.LangManager;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.util.*;
@@ -37,7 +38,7 @@ import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
 
 public final class FlightControlCommand implements CommandExecutor, TabCompleter {
-    private Map<String, String> commands = new TreeMap<String, String>() {{
+    private final Map<String, String> commands = new TreeMap<String, String>() {{
         put("actionbar", "Send notifications through the actionbar");
         put("autoenable", "Toggle automatic flight enabling");
         put("autoupdate", "Toggle automatic updates");
@@ -51,10 +52,10 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
         put("vanishbypass", "Toggle vanish bypass");
     }};
 
-    private FlightControl pl;
-    private ConfManager config;
-    private String defaultHelp;
-    private String buildHelp;
+    private final FlightControl pl;
+    private final ConfManager config;
+    private final String defaultHelp;
+    private final String buildHelp;
 
     public FlightControlCommand(FlightControl pl) {
         this.pl = pl;
@@ -136,9 +137,13 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         msgToggle(s, config.isVanishBypass(), "Vanish Bypass");
                         break;
                     case "actionbar":
-                        config.setByActionBar(!config.isByActionBar());
-                        config.set("messages.actionbar", config.isByActionBar());
-                        msgToggle(s, config.isByActionBar(), "Actionbar Notifications");
+                        LangManager langManager = pl.getLangManager();
+
+                        langManager.setUseActionBar(!langManager.useActionBar());
+                        langManager.set("player.actionbar", langManager.useActionBar());
+                        langManager.getLang().save();
+
+                        msgToggle(s, langManager.useActionBar(), "Actionbar Notifications");
                         break;
                     case "autoenable":
                         config.setAutoEnable(!config.isAutoEnable());

@@ -44,10 +44,10 @@ import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 
 public final class UpdateManager {
     @Getter private Version newVersion;
-    @Getter private Version version;
+    @Getter private final Version version;
     private boolean downloaded;
 
-    private HashSet<UUID> notified = new HashSet<>();
+    private final HashSet<UUID> notified = new HashSet<>();
 
     public UpdateManager(String versionStr) {
         version = new Version(versionStr);

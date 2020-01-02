@@ -39,8 +39,8 @@ import static org.spazzinq.flightcontrol.manager.LangManager.msg;
 import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
 
 public class FlySpeedCommand implements CommandExecutor {
-    private FlightControl pl;
-    private PlayerManager playerManager;
+    private final FlightControl pl;
+    private final PlayerManager playerManager;
 
     public FlySpeedCommand(FlightControl pl) {
         this.pl = pl;

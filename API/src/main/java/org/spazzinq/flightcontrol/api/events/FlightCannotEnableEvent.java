@@ -32,8 +32,8 @@ import org.spazzinq.flightcontrol.api.events.interfaces.*;
 import org.spazzinq.flightcontrol.api.objects.Sound;
 
 public class FlightCannotEnableEvent implements PlayerFlightEvent, LocationFlightEvent, MessageFlightEvent, SoundFlightEvent, Cancellable {
-    @Getter private Player player;
-    @Getter private Location location;
+    @Getter private final Player player;
+    @Getter private final Location location;
     @Getter @Setter private String message;
     @Getter @Setter private Sound sound;
     @Getter @Setter private boolean byActionbar;

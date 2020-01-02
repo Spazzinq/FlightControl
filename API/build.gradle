@@ -1,0 +1,7 @@
+plugins {
+    id 'io.freefair.lombok' version '4.1.6'
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT'
+}

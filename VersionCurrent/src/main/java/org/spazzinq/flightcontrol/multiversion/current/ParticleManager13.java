@@ -36,7 +36,9 @@ public class ParticleManager13 implements ParticleManager {
     private double extra, x, y, z;
 
     public void spawn(Location loc) {
-        loc.getWorld().spawnParticle(particle, particle == Particle.CLOUD ? loc.clone().subtract(0, .3, 0) : loc, amount, x, y, z, extra, o, true);
+        if (loc.getWorld() != null) {
+            loc.getWorld().spawnParticle(particle, particle == Particle.CLOUD ? loc.clone().subtract(0, .3, 0) : loc, amount, x, y, z, extra, o, true);
+        }
     }
     public void setParticle(String s) {
         try { particle = Particle.valueOf(s); } catch (Exception ignored) { }

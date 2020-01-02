@@ -36,9 +36,9 @@ import org.spazzinq.flightcontrol.FlightControl;
 import java.util.HashMap;
 
 public final class TrailManager {
-    private FlightControl pl;
+    private final FlightControl pl;
 
-    @Getter private HashMap<Player, BukkitTask> particleTasks = new HashMap<>();
+    @Getter private final HashMap<Player, BukkitTask> particleTasks = new HashMap<>();
 
     public TrailManager(FlightControl pl) {
         this.pl = pl;
@@ -48,7 +48,7 @@ public final class TrailManager {
         if (pl.getParticleManager() != null && pl.getConfManager().isTrail() && pl.getPlayerManager().getFlightPlayer(p).hasTrail()) {
             particleTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
-                    if (!(p.getGameMode() == GameMode.SPECTATOR || pl.getHookManager().getVanish().vanished(p) || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
+                    if (!(p.getGameMode() == GameMode.SPECTATOR || pl.getHookManager().getVanishHook().vanished(p) || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
                         Location l = p.getLocation();
                         // For some terrible reason the locations are never in the correct spot so you have to time them later
                         new BukkitRunnable() { @Override public void run() { pl.getParticleManager().spawn(l); } }.runTaskLater(pl, 2);
