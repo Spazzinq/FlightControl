@@ -10,7 +10,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Gradle
-      run: ./gradlew clean shadowJar
+      run: chmod +x ./gradlew clean shadowJar
     - uses: actions/upload-artifact@master
       with:
         name: FlightControl.jar
