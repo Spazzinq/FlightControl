@@ -14,4 +14,4 @@ jobs:
     - uses: actions/upload-artifact@master
       with:
         name: FlightControl.jar
-        path: build/libs/FlightControl.jar
+        path: FlightControl/build/libs/FlightControl.jar
