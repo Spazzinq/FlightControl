@@ -26,13 +26,15 @@ package org.spazzinq.flightcontrol.manager;
 
 import com.earth2me.essentials.Essentials;
 import lombok.Getter;
+import me.badbones69.crazyenchantments.api.CrazyEnchantments;
+import me.badbones69.crazyenchantments.api.managers.WingsManager;
 import net.minelink.ctplus.CombatTagPlus;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.hook.combat.*;
 import org.spazzinq.flightcontrol.hook.enchantment.CrazyEnchantmentsHook;
-import org.spazzinq.flightcontrol.hook.enchantment.CrazyHook;
+import org.spazzinq.flightcontrol.hook.enchantment.EnchantsHook;
 import org.spazzinq.flightcontrol.hook.lands.LandsBase;
 import org.spazzinq.flightcontrol.hook.lands.LandsHook;
 import org.spazzinq.flightcontrol.hook.plot.NewPlotSquaredHook;
@@ -65,7 +67,7 @@ public class HookManager {
     @Getter private TownyBase townyHook = new TownyBase();
     @Getter private LandsBase landsHook = new LandsBase();
     @Getter private CombatHook combatHook = new CombatHook();
-    @Getter private CrazyEnchantmentsHook enchantmentsHook = new CrazyEnchantmentsHook();
+    @Getter private EnchantsHook enchantmentsHook = new EnchantsHook();
     @Getter private FactionsHook factionsHook = new FactionsHook();
     @Getter private PlotHook plotHook = new PlotHook();
 
@@ -96,7 +98,7 @@ public class HookManager {
             landsHook = new LandsHook(pl);
         }
         if (pluginEnabled("CrazyEnchantments")) {
-            enchantmentsHook = new CrazyHook();
+            enchantmentsHook = new CrazyEnchantmentsHook();
         }
 
         loadHookMsg();

@@ -30,7 +30,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 
-import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
 public class ToggleTrailCommand implements CommandExecutor {
     private final FlightControl pl;

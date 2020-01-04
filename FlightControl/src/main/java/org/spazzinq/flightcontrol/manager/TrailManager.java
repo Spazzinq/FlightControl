@@ -62,7 +62,7 @@ public final class TrailManager {
         BukkitTask task = particleTasks.remove(p); if (task != null) task.cancel();
     }
 
-    public void disableEnabledTrails() {
+    public void removeEnabledTrails() {
         for (BukkitTask tasks : particleTasks.values()) {
             tasks.cancel();
         }

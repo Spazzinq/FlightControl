@@ -30,17 +30,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.object.Version;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashSet;
 import java.util.UUID;
 
-import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
 public final class UpdateManager {
     @Getter private Version newVersion;
@@ -53,9 +50,10 @@ public final class UpdateManager {
         version = new Version(versionStr);
     }
 
-    public boolean exists() {
+    public boolean updateExists() {
         try {
-            newVersion = new Version(new BufferedReader(new InputStreamReader(new URL("https://api.spigotmc.org/legacy/update.php?resource=55168").openConnection().getInputStream())).readLine());
+            URL spigot = new URL("https://api.spigotmc.org/legacy/update.php?resource=55168");
+            newVersion = new Version(new BufferedReader(new InputStreamReader(spigot.openConnection().getInputStream())).readLine());
         } catch (Exception ignored) {
             return false;
         }
@@ -63,25 +61,24 @@ public final class UpdateManager {
         return newVersion.isNewer(version);
     }
 
-    private void dl() {
-        if (exists()) {
-            try {
-                URL website = new URL("https://github.com/Spazzinq/FlightControl/releases/download/" + newVersion + "/FlightControl.jar");
-                ReadableByteChannel rbc = Channels.newChannel(website.openStream());
-                FileOutputStream fos = new FileOutputStream(new File("plugins/FlightControl.jar"));
+    private void downloadPlugin() {
+        if (updateExists()) {
+            try (FileOutputStream fos = new FileOutputStream(new File("plugins/FlightControl.jar"))) {
+                URL gitHub = new URL("https://github.com/Spazzinq/FlightControl/releases/download/" + newVersion + "/FlightControl.jar");
+                ReadableByteChannel channel = Channels.newChannel(gitHub.openStream());
 
-                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-                fos.close();
+                fos.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
                 downloaded = true;
-            } catch (Exception ignored) {
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
 
-    public void install(CommandSender s, boolean silentCheck) {
-        if (exists()) {
+    public void installUpdate(CommandSender s, boolean silentCheck) {
+        if (updateExists()) {
             if (!downloaded) {
-                dl();
+                downloadPlugin();
                 if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
                     msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the configs have automatically updated too)! Welcome to FlightControl " + getNewVersion() + "!");
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload flightcontrol");
@@ -94,8 +91,8 @@ public final class UpdateManager {
         }
     }
 
-    public void notify(Player p) {
-        if (exists() && !notified.contains(p.getUniqueId())) {
+    public void notifyUpdate(Player p) {
+        if (updateExists() && !notified.contains(p.getUniqueId())) {
             notified.add(p.getUniqueId());
             msg(p, "&e&lFlightControl &7» &eWoot woot! Version &f" + getNewVersion() + "&e is now available! " +
                                        "Update with \"/fc update\" and check out the new features: &fhttps://www.spigotmc.org/resources/flightcontrol.55168/");

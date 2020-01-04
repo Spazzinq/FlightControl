@@ -25,7 +25,6 @@
 package org.spazzinq.flightcontrol;
 
 import lombok.Getter;
-import org.bstats.bukkit.Metrics;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -48,14 +47,12 @@ import org.spazzinq.flightcontrol.object.VersionType;
 import java.io.File;
 import java.util.UUID;
 
-import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private final APIManager apiManager = APIManager.getInstance();
-    private final PluginManager pm = Bukkit.getPluginManager();
-    @Getter private final File storageFolder = new File(getDataFolder() + File.separator + "data");
-
     // Storage management
+    @Getter private final File storageFolder = new File(getDataFolder() + File.separator + "data");
     @Getter private CategoryManager categoryManager;
     @Getter private ConfManager confManager;
     @Getter private LangManager langManager;
@@ -69,8 +66,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private StatusManager statusManager;
     @Getter private TrailManager trailManager;
 
-    @Getter private TempFlyCommand tempFlyCommand;
-
+    private final PluginManager pm = Bukkit.getPluginManager();
     public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
 
     public void onEnable() {
@@ -105,8 +101,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
         // Update check
         if (confManager.isAutoUpdate()) {
-            updateManager.install(Bukkit.getConsoleSender(), true);
-        } else if (updateManager.exists()) {
+            updateManager.installUpdate(Bukkit.getConsoleSender(), true);
+        } else if (updateManager.updateExists()) {
             new BukkitRunnable() {
                 @Override public void run() {
                     getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/55168/ to view the feature changes (the configs automatically update).");
@@ -114,10 +110,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             }.runTaskLater(this, 70);
         }
 
-        // Start FileWatcher
+        // Start file watching service
         new FileWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
-
-        new MetricsLite(this); // bStats
+        // Start bStats
+        new MetricsLite(this);
     }
 
     private void registerManagers() {
@@ -139,8 +135,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     }
 
     private void registerCommands() {
-        tempFlyCommand = new TempFlyCommand(this);
-        getCommand("tempfly").setExecutor(tempFlyCommand);
+        getCommand("tempfly").setExecutor(new TempFlyCommand(this));
         getCommand("fly").setExecutor(new FlyCommand(this));
         getCommand("flightcontrol").setExecutor(new FlightControlCommand(this));
         getCommand("toggletrail").setExecutor(new ToggleTrailCommand(this));
@@ -159,18 +154,18 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
 
         categoryManager.reloadCategories();
-	    confManager.reloadConf();
-        langManager.reloadLang();
+	    confManager.loadConf();
+        langManager.loadLang();
         // At end to allow for any necessary migration
         confManager.updateConfig();
 
-        playerManager.reloadPlayerData();
+        playerManager.loadPlayerData();
 
         checkPlayers();
     }
 
     public void checkPlayers() {
-        trailManager.disableEnabledTrails();
+        trailManager.removeEnabledTrails();
         for (Player p : Bukkit.getOnlinePlayers()) {
             flightManager.check(p);
             if (p.isFlying()) {

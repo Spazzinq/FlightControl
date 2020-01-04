@@ -40,7 +40,7 @@ import org.spazzinq.flightcontrol.object.Evaluation;
 
 import java.util.ArrayList;
 
-import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
 public final class FlightManager {
     private final FlightControl pl;

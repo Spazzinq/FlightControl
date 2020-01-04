@@ -36,7 +36,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.objects.Sound;
 
-import static org.spazzinq.flightcontrol.manager.LangManager.msg;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
 @SuppressWarnings("unused")
 final class Listener implements org.bukkit.event.Listener {
@@ -87,7 +87,7 @@ final class Listener implements org.bukkit.event.Listener {
         if (p.isOp()) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    pl.getUpdateManager().notify(p);
+                    pl.getUpdateManager().notifyUpdate(p);
                 }
             }.runTaskLater(pl, 40);
         }

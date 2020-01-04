@@ -54,15 +54,15 @@ class FileWatcher extends BukkitRunnable {
                         playerStateChanged = true;
                         break;
                     case CONFIG:
-                        if (pl.getConfManager().reloadConf()) {
+                        if (pl.getConfManager().loadConf()) {
                             logChanges(CONFIG);
                             // If flight_speed is updated!
-                            pl.getPlayerManager().reloadPlayerData();
+                            pl.getPlayerManager().loadPlayerData();
                         }
                         playerStateChanged = true;
                         break;
                     case LANG:
-                        if (pl.getLangManager().reloadLang()) {
+                        if (pl.getLangManager().loadLang()) {
                             logChanges(LANG);
                         }
                         break;

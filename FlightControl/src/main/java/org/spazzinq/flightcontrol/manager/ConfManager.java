@@ -66,7 +66,7 @@ public final class ConfManager {
         confFile = new File(pl.getDataFolder(), "config.yml");
     }
 
-    public boolean reloadConf() {
+    public boolean loadConf() {
         boolean reloaded = false;
 
         if (!ignoreReload) {

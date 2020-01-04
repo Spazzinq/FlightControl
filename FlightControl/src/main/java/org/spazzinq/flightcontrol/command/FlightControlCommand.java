@@ -34,8 +34,8 @@ import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.util.*;
 
-import static org.spazzinq.flightcontrol.manager.LangManager.msg;
-import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
+import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
 
 public final class FlightControlCommand implements CommandExecutor, TabCompleter {
     private final Map<String, String> commands = new TreeMap<String, String>() {{
@@ -106,7 +106,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         msg(s, pl.getLangManager().getPluginReloaded());
                         break;
                     case "update":
-                        pl.getUpdateManager().install(s, false);
+                        pl.getUpdateManager().installUpdate(s, false);
                         break;
                     case "combat":
                         config.setCombatChecked(!config.isCombatChecked());
@@ -129,7 +129,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                 }
                             }
                         }
-                        else pl.getTrailManager().disableEnabledTrails();
+                        else pl.getTrailManager().removeEnabledTrails();
                         break;
                     case "vanishbypass":
                         config.setVanishBypass(!config.isVanishBypass());
@@ -165,7 +165,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                         config.set("settings.flight_speed", speed);
                                         config.setDefaultFlightSpeed(actualSpeed);
 
-                                        pl.getPlayerManager().reloadPlayerData();
+                                        pl.getPlayerManager().loadPlayerData();
                                         msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSet(), speed + "", "speed"));
                                     } else msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSame(), speed + "", "speed"));
                                 } else msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());

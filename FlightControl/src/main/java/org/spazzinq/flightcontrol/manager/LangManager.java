@@ -3,15 +3,13 @@ package org.spazzinq.flightcontrol.manager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.CommentConf;
-import org.spazzinq.flightcontrol.util.ActionBarUtil;
 
 import java.io.File;
+import java.io.InputStream;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,6 +18,11 @@ public class LangManager {
     @Getter private CommentConf lang;
     private final File langFile;
     private boolean ignoreReload;
+
+    // TODO Implement for all messages
+    public static final String PREFIX_POSITIVE = ChatColor.translateAlternateColorCodes('&', "&a&lFlightControl &7» &a");
+    public static final String PREFIX_ADMIN = ChatColor.translateAlternateColorCodes('&', "&e&lFlightControl &7» &e");
+    public static final String PREFIX_ERROR = ChatColor.translateAlternateColorCodes('&', "&c&lFlightControl &7» &c");
 
     @Setter private boolean useActionBar;
 
@@ -60,12 +63,22 @@ public class LangManager {
         langFile = new File(pl.getDataFolder(), "lang.yml");
     }
 
-    public boolean reloadLang() {
+    public boolean loadLang() {
         boolean reloaded = false;
 
         if (!ignoreReload) {
             ignoreReload = true;
-            lang = new CommentConf(langFile, pl.getResource("lang.yml"));
+
+            String javaLang = Locale.getDefault().getLanguage();
+            InputStream langResource = pl.getResource("lang_" + javaLang + ".yml");
+            boolean langResourceExists = langResource != null;
+
+            if (!langResourceExists) {
+                pl.getLogger().warning("No custom lang file for " + Locale.getDefault().getDisplayLanguage() + " could be found! Defaulting to English...");
+            }
+            lang = new CommentConf(langFile, langResourceExists ? langResource : pl.getResource("lang_en.yml"));
+
+
 
             // Migrates messages!
             if (pl.getConfManager().getConf().isConfigurationSection("messages")) {
@@ -117,29 +130,6 @@ public class LangManager {
             reloaded = true;
         }
         return reloaded;
-    }
-
-    public static void msg(CommandSender s, String msg) {
-        msg(s, msg, false);
-    }
-    public static void msg(CommandSender s, String msg, boolean actionBar) {
-        if (msg != null && !msg.isEmpty()) {
-            boolean console = s instanceof ConsoleCommandSender;
-            String finalMsg = msg;
-
-            finalMsg = ChatColor.translateAlternateColorCodes('&', finalMsg);
-
-            if (actionBar && s instanceof Player) {
-                ActionBarUtil.send((Player) s, finalMsg);
-            } else {
-                s.sendMessage((console ? "[FlightControl] " : "")
-                        + finalMsg);
-            }
-        }
-    }
-
-    public static String replaceVar(String msg, String value, String varName) {
-        return msg.replaceAll("%" + varName + "%", value);
     }
 
     public void set(String path, Object value) {

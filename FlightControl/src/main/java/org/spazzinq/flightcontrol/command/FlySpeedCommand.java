@@ -35,8 +35,8 @@ import org.spazzinq.flightcontrol.manager.PlayerManager;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
-import static org.spazzinq.flightcontrol.manager.LangManager.msg;
-import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
+import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
 
 public class FlySpeedCommand implements CommandExecutor {
     private final FlightControl pl;
@@ -92,6 +92,7 @@ public class FlySpeedCommand implements CommandExecutor {
                 msg(p, replaceVar(pl.getLangManager().getFlySpeedSame(), wrongSpeed + "", "speed"));
             } else {
                 playerManager.getFlightPlayer(p).setActualFlightSpeed(speed);
+                p.setFlySpeed(flightPlayer.getActualFlightSpeed());
                 msg(p, replaceVar(pl.getLangManager().getFlySpeedSet(), wrongSpeed + "", "speed"));
             }
         } else {

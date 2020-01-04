@@ -36,10 +36,11 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static org.spazzinq.flightcontrol.object.ConfTask.*;
@@ -163,8 +164,9 @@ public class CommentConf extends YamlConfiguration {
         if (file != null) {
             //noinspection UnstableApiUsage
             Files.createParentDirs(file);
-            try (FileWriter writer = new FileWriter(file)) {
-                writer.write(saveToString());
+
+            try (BufferedWriter out = java.nio.file.Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+                out.write(saveToString());
             }
         }
     }

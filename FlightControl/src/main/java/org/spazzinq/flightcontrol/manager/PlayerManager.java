@@ -76,7 +76,7 @@ public class PlayerManager {
         return playerCache.get(p.getUniqueId());
     }
 
-    public void reloadPlayerData() {
+    public void loadPlayerData() {
         playerCache.clear();
 
         for (Player p : Bukkit.getOnlinePlayers()) {

@@ -33,8 +33,8 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.FlightManager;
 
-import static org.spazzinq.flightcontrol.manager.LangManager.msg;
-import static org.spazzinq.flightcontrol.manager.LangManager.replaceVar;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
+import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
 
 public final class FlyCommand implements CommandExecutor {
     private final FlightControl pl;

@@ -1,3 +1,7 @@
+# Language
+# English (en), français (fr), 中文 (zh)
+locale: en
+
 # If you don't want a message to be sent, set it to ""
 player:
   # Use the actionbar (area above hotbar) instead of chat

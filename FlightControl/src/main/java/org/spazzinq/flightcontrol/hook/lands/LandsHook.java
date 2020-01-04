@@ -25,18 +25,21 @@
 package org.spazzinq.flightcontrol.hook.lands;
 
 import me.angeschossen.lands.api.integration.LandsIntegration;
+import me.angeschossen.lands.api.land.LandChunk;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 
 public class LandsHook extends LandsBase {
-    private final LandsIntegration landsAddon;
+    private final LandsIntegration landsIntegration;
 
     public LandsHook(FlightControl pl) {
-        landsAddon = new LandsIntegration(pl, false);
+        landsIntegration = new LandsIntegration(pl, false);
     }
 
     @Override public boolean ownLand(Player p) {
-        return p.getUniqueId() == landsAddon.getLandChunk(p.getLocation()).getOwnerUID();
+        LandChunk chunk = landsIntegration.getLandChunk(p.getLocation());
+
+        return chunk != null && p.getUniqueId() == chunk.getOwnerUID();
     }
 
     @Override public boolean isHooked() {
