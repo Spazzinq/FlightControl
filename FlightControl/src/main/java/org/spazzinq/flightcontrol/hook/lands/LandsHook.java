@@ -39,7 +39,15 @@ public class LandsHook extends LandsBase {
     @Override public boolean ownLand(Player p) {
         LandChunk chunk = landsIntegration.getLandChunk(p.getLocation());
 
-        return chunk != null && p.getUniqueId() == chunk.getOwnerUID();
+//        if (chunk == null || !p.getUniqueId().equals(chunk.getOwnerUID())) {
+//            if (chunk == null) {
+//                p.sendMessage("The LandChunk is null!");
+//            } else {
+//                p.sendMessage(p.getUniqueId() + " " + chunk.getOwnerUID() + " " + (p.getUniqueId().equals(chunk.getOwnerUID())));
+//            }
+//        }
+
+        return chunk != null && p.getUniqueId().equals(chunk.getOwnerUID());
     }
 
     @Override public boolean isHooked() {
