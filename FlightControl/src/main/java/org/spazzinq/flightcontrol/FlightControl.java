@@ -191,7 +191,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         if (hookManager.getLandsHook().isHooked()) {
             Player landsOwner = Bukkit.getPlayer(hookManager.getLandsHook().getOwnerUUID(l));
 
-            landsOwnerHasTrusted = hasPermission(landsOwner, LANDS_TRUSTED);
+            if (landsOwner != null) {
+                landsOwnerHasTrusted = hasPermission(landsOwner, LANDS_TRUSTED);
+            }
         }
 
         if (regionName != null) {

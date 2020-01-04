@@ -59,7 +59,9 @@ public class StatusManager {
         if (pl.getHookManager().getLandsHook().isHooked()) {
             Player landsOwner = Bukkit.getPlayer(pl.getHookManager().getLandsHook().getOwnerUUID(l));
 
-            landsOwnerHasTrusted = hasPermission(landsOwner, LANDS_TRUSTED);
+            if (landsOwner != null) {
+                landsOwnerHasTrusted = hasPermission(landsOwner, LANDS_TRUSTED);
+            }
         }
 
         if (regionName != null) {
