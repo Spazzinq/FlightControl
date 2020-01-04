@@ -31,6 +31,7 @@ public class TownyBase extends Hook {
     public boolean ownTown(Player p) {
         return false;
     }
+
     public boolean wartime() {
         return false;
     }

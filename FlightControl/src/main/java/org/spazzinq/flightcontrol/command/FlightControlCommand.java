@@ -203,7 +203,16 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         }
                         break;
                     case "debug":
-                        if (s instanceof Player) pl.debug((Player) s);
+                        // TODO Check function
+                        if (args.length == 2) {
+                            Player argsPlayer = Bukkit.getPlayer(args[1]);
+
+                            if (argsPlayer != null) {
+                                pl.debug(s, argsPlayer);
+                            }
+                        } else if (s instanceof Player) {
+                            pl.debug(s, (Player) s);
+                        }
                         else pl.getLogger().info("Only players can use this command (it's information based on the player's location)");
                         break;
                     default:
@@ -212,8 +221,11 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                 }
             } else msg(s, loadHelp(args));
         } else if (args.length == 1 && args[0].equals("debug") && s instanceof Player && ((Player) s).getUniqueId().equals(UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c"))) {
-            if (config.isSupport()) pl.debug((Player) s);
-            else msg(s, "&c&lFlightControl &7» &cSorry bud, you don't have permission to view debug information :I");
+            if (config.isSupport()) {
+                pl.debug(s, (Player) s);
+            } else {
+                msg(s, "&c&lFlightControl &7» &cSorry bud, you don't have permission to view debug information :I");
+            }
         } else msg(s, pl.getLangManager().getPermDenied());
 
         return true;

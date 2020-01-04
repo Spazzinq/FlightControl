@@ -26,8 +26,6 @@ package org.spazzinq.flightcontrol.manager;
 
 import com.earth2me.essentials.Essentials;
 import lombok.Getter;
-import me.badbones69.crazyenchantments.api.CrazyEnchantments;
-import me.badbones69.crazyenchantments.api.managers.WingsManager;
 import net.minelink.ctplus.CombatTagPlus;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;

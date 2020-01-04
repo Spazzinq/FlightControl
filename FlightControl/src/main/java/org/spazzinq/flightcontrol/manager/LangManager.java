@@ -14,6 +14,19 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class LangManager {
+    // TODO Add locale check!
+
+
+
+
+
+
+
+
+
+
+
+    
     private final FlightControl pl;
     @Getter private CommentConf lang;
     private final File langFile;

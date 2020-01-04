@@ -30,15 +30,28 @@ import com.palmergames.bukkit.towny.object.TownyUniverse;
 import org.bukkit.entity.Player;
 
 public final class TownyHook extends TownyBase {
-    @Override
-    public boolean ownTown(Player p) {
+    @Override public boolean ownTown(Player p) {
         Resident r;
-        try { r = TownyUniverse.getDataSource().getResident(p.getName()); } catch (NotRegisteredException e) { return false; }
-        if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock()))
-            try { if (r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) return true;
-            } catch (NotRegisteredException e) { e.printStackTrace(); }
+
+        try {
+            r = TownyUniverse.getDataSource().getResident(p.getName());
+
+            if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock())
+                    && r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) {
+                return true;
+            }
+        } catch (NotRegisteredException ignored) {
+            // will return false anyways, so ignored
+        }
+
         return false;
     }
-    @Override public boolean wartime() { return TownyUniverse.isWarTime(); }
-    @Override public boolean isHooked() { return true; }
+
+    @Override public boolean wartime() {
+        return TownyUniverse.isWarTime();
+    }
+
+    @Override public boolean isHooked() {
+        return true;
+    }
 }

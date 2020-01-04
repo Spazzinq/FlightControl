@@ -29,6 +29,7 @@ import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -174,7 +175,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
     }
 
-    public void debug(Player p) {
+    public void debug(CommandSender s, Player p) {
 	    Location l = p.getLocation();
         World world = l.getWorld();
         String worldName = world.getName(),
@@ -182,7 +183,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         Region region = new Region(world, regionName);
         Category category = categoryManager.getCategory(p);
 
-        if (regionName != null) defaultPerms(worldName + "." + regionName); // Register new regions dynamically
+        if (regionName != null) {
+            defaultPerms(worldName + "." + regionName); // Register new regions dynamically
+        }
 
         boolean hasWorlds = category.getWorlds() != null,
                 hasRegions = category.getRegions() != null,
@@ -191,7 +194,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         // TODO Make this cleaner?
         // config options (settings) and permissions that act upon the same function are listed as
         // setting boolean (space) permission boolean
-        msg(p, "&a&lFlightControl &f" + getDescription().getVersion() +
+        msg(s, "&a&lFlightControl &f" + getDescription().getVersion() +
+                "\n&eTarget &7» &f" + p.getName() +
                 "\n&eCategory &7» &f" + category.getName() +
                 "\n&eW.RG &7» &f" + worldName + "." + regionName +
                 ((hookManager.getFactionsHook().isHooked() && hasFactions ? "\n&eFac &7» &f" + category.getFactions() : "") +
