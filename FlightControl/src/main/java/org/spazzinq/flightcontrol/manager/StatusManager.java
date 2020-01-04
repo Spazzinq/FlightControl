@@ -36,7 +36,7 @@ import org.spazzinq.flightcontrol.object.Evaluation;
 
 import java.util.List;
 
-import static org.spazzinq.flightcontrol.manager.PermissionManager.*;
+import static org.spazzinq.flightcontrol.util.PermissionUtil.*;
 import static org.spazzinq.flightcontrol.object.FlyPermission.*;
 
 public class StatusManager {

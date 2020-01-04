@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.ConfManager;
 import org.spazzinq.flightcontrol.manager.LangManager;
-import org.spazzinq.flightcontrol.manager.PermissionManager;
+import org.spazzinq.flightcontrol.util.PermissionUtil;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
@@ -98,7 +98,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
             args[i] = args[i].toLowerCase();
         }
 
-        if (s instanceof ConsoleCommandSender || PermissionManager.hasPermission(s, FlyPermission.ADMIN)) {
+        if (s instanceof ConsoleCommandSender || PermissionUtil.hasPermission(s, FlyPermission.ADMIN)) {
             if (args.length > 0) {
                 List<String> autoComplete = autoComplete(args[0]);
 
@@ -205,7 +205,6 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         }
                         break;
                     case "debug":
-                        // TODO Check function
                         if (args.length == 2) {
                             Player argsPlayer = Bukkit.getPlayer(args[1]);
 

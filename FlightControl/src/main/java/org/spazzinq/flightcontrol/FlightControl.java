@@ -48,7 +48,7 @@ import org.spazzinq.flightcontrol.object.VersionType;
 import java.io.File;
 import java.util.UUID;
 
-import static org.spazzinq.flightcontrol.manager.PermissionManager.*;
+import static org.spazzinq.flightcontrol.util.PermissionUtil.*;
 import static org.spazzinq.flightcontrol.object.FlyPermission.*;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 

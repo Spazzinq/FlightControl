@@ -38,6 +38,7 @@ import org.spazzinq.flightcontrol.api.events.FlightEnableEvent;
 import org.spazzinq.flightcontrol.api.objects.Sound;
 import org.spazzinq.flightcontrol.object.Evaluation;
 import org.spazzinq.flightcontrol.object.FlyPermission;
+import org.spazzinq.flightcontrol.util.PermissionUtil;
 
 import java.util.ArrayList;
 
@@ -64,7 +65,7 @@ public final class FlightManager {
     }
 
     public void check(Player p, Location l, boolean usingCMD) {
-        if (!PermissionManager.hasPermission(p, FlyPermission.BYPASS)
+        if (!PermissionUtil.hasPermission(p, FlyPermission.BYPASS)
                 && p.getGameMode() != GameMode.SPECTATOR
                 && !(pl.getConfManager().isVanishBypass() && pl.getHookManager().getVanishHook().vanished(p))) {
             Evaluation eval = pl.getStatusManager().evalFlight(p, l);

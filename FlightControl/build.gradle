@@ -3,18 +3,12 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
-configurations {
-    // configuration that holds jars to include in the jar
-    includeInJar
-    implementation.extendsFrom(includeInJar)
-}
-
 dependencies {
-    includeInJar 'org.bstats:bstats-bukkit-lite:1.5'
-    includeInJar project(':API')
-    includeInJar project(':Multiversion')
-    includeInJar project(':VersionOld')
-    includeInJar project(':VersionCurrent')
+    implementation 'org.bstats:bstats-bukkit-lite:1.5'
+    implementation project(':API')
+    implementation project(':Multiversion')
+    implementation project(':VersionOld')
+    implementation project(':VersionCurrent')
 
     compileOnly 'org.jetbrains:annotations:13.0'
     compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {
@@ -52,5 +46,5 @@ tasks.withType(JavaCompile) {
 
 shadowJar {
     relocate 'org.bstats.bukkit', 'org.spazzinq.flightcontrol.metric'
-    archiveName 'FlightControl.jar'
+    archiveFileName = 'FlightControl.jar'
 }

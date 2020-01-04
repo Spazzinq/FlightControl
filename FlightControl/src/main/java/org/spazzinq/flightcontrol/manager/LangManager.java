@@ -4,29 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.CommentConf;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class LangManager {
-    // TODO Add locale check!
+    private Locale locale;
+    private final HashSet<String> officialLocales = new HashSet<>(Arrays.asList(Locale.getISOLanguages()));
 
-
-
-
-
-
-
-
-
-
-
-    
     private final FlightControl pl;
     @Getter private CommentConf lang;
     private final File langFile;
@@ -72,6 +61,7 @@ public class LangManager {
     @Getter private String tempFlyUsage;
 
     public LangManager(FlightControl pl) {
+        locale = Locale.getDefault();
         this.pl = pl;
         langFile = new File(pl.getDataFolder(), "lang.yml");
     }
@@ -82,18 +72,26 @@ public class LangManager {
         if (!ignoreReload) {
             ignoreReload = true;
 
-            String javaLang = Locale.getDefault().getLanguage();
-            InputStream langResource = pl.getResource("lang_" + javaLang + ".yml");
+            if (langFile.exists()) {
+                YamlConfiguration tempLocaleConf = YamlConfiguration.loadConfiguration(langFile);
+                String preferredLocale = tempLocaleConf.getString("locale");
+                if (preferredLocale != null && officialLocales.contains(preferredLocale)) {
+                    locale = Locale.forLanguageTag(preferredLocale);
+                } else {
+                    pl.getLogger().warning("Invalid locale provided in lang.yml! Defaulting to Java's language...");
+                }
+            }
+
+            InputStream langResource = pl.getResource("lang_" + locale + ".yml");
             boolean langResourceExists = langResource != null;
 
             if (!langResourceExists) {
                 pl.getLogger().warning("No custom lang file for " + Locale.getDefault().getDisplayLanguage() + " could be found! Defaulting to English...");
             }
+
             lang = new CommentConf(langFile, langResourceExists ? langResource : pl.getResource("lang_en.yml"));
 
-
-
-            // Migrates messages!
+            // Migrate config messages
             if (pl.getConfManager().getConf().isConfigurationSection("messages")) {
                 migrateFromVersion4();
             }

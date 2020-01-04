@@ -32,7 +32,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.manager.PermissionManager;
+import org.spazzinq.flightcontrol.util.PermissionUtil;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 
@@ -50,7 +50,7 @@ public final class TempFlyCommand implements CommandExecutor {
         boolean console = s instanceof ConsoleCommandSender;
 
         if (args.length == 1) {
-            if (PermissionManager.hasPermission(s, FlyPermission.TEMP_FLY) || console) {
+            if (PermissionUtil.hasPermission(s, FlyPermission.TEMP_FLY) || console) {
                 Player argPlayer = Bukkit.getPlayer(args[0]);
 
                 if (argPlayer != null) {
@@ -73,7 +73,7 @@ public final class TempFlyCommand implements CommandExecutor {
                 msg(s, pl.getLangManager().getPermDenied());
             }
         } else if (args.length == 2) {
-            if (PermissionManager.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS) || console) {
+            if (PermissionUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS) || console) {
                 Player argPlayer = Bukkit.getPlayer(args[1]);
 
                 if (argPlayer == null) {
@@ -85,7 +85,7 @@ public final class TempFlyCommand implements CommandExecutor {
                 msg(s, pl.getLangManager().getPermDenied());
             }
         } else {
-            if (PermissionManager.hasPermission(s, FlyPermission.TEMP_FLY) || PermissionManager.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS) || console) {
+            if (PermissionUtil.hasPermission(s, FlyPermission.TEMP_FLY) || PermissionUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS) || console) {
                 msg(s, pl.getLangManager().getTempFlyUsage());
             } else {
                 msg(s, pl.getLangManager().getPermDenied());

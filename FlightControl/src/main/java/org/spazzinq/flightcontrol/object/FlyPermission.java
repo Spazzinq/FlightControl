@@ -14,7 +14,6 @@ public enum FlyPermission {
     TOWNY_OLD("flightcontrol.owntown"),
 
     // TODO Do I need to check the parent permission too?
-    // TODO Implement added
     LANDS_OWN("flightcontrol.lands.own"),
     LANDS_TRUSTED("flightcontrol.lands.trusted"),
     LANDS_OLD("flightcontrol.ownland"),

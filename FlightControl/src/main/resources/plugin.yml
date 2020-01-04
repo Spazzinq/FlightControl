@@ -25,7 +25,6 @@ commands:
 
 
 permissions:
-  # TODO Finish
   flightcontrol.towny:
     description: Enables flight in player's own town
     default: false

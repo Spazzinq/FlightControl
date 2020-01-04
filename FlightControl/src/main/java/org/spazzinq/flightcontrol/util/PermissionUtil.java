@@ -1,15 +1,11 @@
-package org.spazzinq.flightcontrol.manager;
+package org.spazzinq.flightcontrol.util;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 
-public class PermissionManager {
-    PermissionManager() {
-
-    }
-
+public class PermissionUtil {
     public static boolean hasPermission(CommandSender p, FlyPermission flyPermission) {
         return p.hasPermission(flyPermission.toString());
     }
