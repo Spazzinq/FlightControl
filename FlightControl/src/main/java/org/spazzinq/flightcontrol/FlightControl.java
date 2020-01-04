@@ -48,6 +48,8 @@ import org.spazzinq.flightcontrol.object.VersionType;
 import java.io.File;
 import java.util.UUID;
 
+import static org.spazzinq.flightcontrol.manager.PermissionManager.*;
+import static org.spazzinq.flightcontrol.object.FlyPermission.*;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
@@ -175,6 +177,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
     }
 
+    // TODO Clean this up
     public void debug(CommandSender s, Player p) {
 	    Location l = p.getLocation();
         World world = l.getWorld();
@@ -182,6 +185,14 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 regionName = getHookManager().getWorldGuardHook().getRegionName(l);
         Region region = new Region(world, regionName);
         Category category = categoryManager.getCategory(p);
+
+        boolean landsOwnerHasTrusted = false;
+
+        if (hookManager.getLandsHook().isHooked()) {
+            Player landsOwner = Bukkit.getPlayer(hookManager.getLandsHook().getOwnerUUID(l));
+
+            landsOwnerHasTrusted = hasPermission(landsOwner, LANDS_TRUSTED);
+        }
 
         if (regionName != null) {
             defaultPerms(worldName + "." + regionName); // Register new regions dynamically
@@ -191,7 +202,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 hasRegions = category.getRegions() != null,
                 hasFactions = category.getFactions() != null;
 
-        // TODO Make this cleaner?
         // config options (settings) and permissions that act upon the same function are listed as
         // setting boolean (space) permission boolean
         msg(s, "&a&lFlightControl &f" + getDescription().getVersion() +
@@ -202,26 +212,29 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 "\n&eWRLDs &7» &f" + category.getWorlds()  +
                 "\n&eRGs &7» &f" +  category.getRegions()  +
                 "\n \n&e&lEnable" +
-                "\n&fBypass &7» " + p.hasPermission("flightcontrol.bypass") + " " + (getConfManager().isVanishBypass() && getHookManager().getVanishHook().vanished(p)) +
+                "\n&fBypass &7» " + hasPermission(p, BYPASS) + " " + (getConfManager().isVanishBypass() && getHookManager().getVanishHook().vanished(p)) +
                 "\n&fTemp &7» " + playerManager.getFlightPlayer(p).hasTempFly() +
-                "\n&fAll &7» " + p.hasPermission("flightcontrol.flyall") +
+                "\n&fAll &7» " + hasPermission(p, FLY_ALL) +
                 (hookManager.getFactionsHook().isHooked() && hasFactions ? "\n&fFC &7» " + getHookManager().getFactionsHook().rel(p, category.getFactions().getEnabled()) : "") +
                 (hookManager.getPlotHook().isHooked() ? "\n&fPlot &7» " + hookManager.getPlotHook().canFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ()) : "") +
-                (hasWorlds ? "\n&fWorld &7» " + category.getWorlds().getEnabled().contains(world) + " " + p.hasPermission("flightcontrol.fly." + worldName) : "") +
-                (hasRegions ? "\n&fRegion &7» " + category.getRegions().getEnabled().contains(region) + " " + (regionName != null && p.hasPermission("flightcontrol.fly." + worldName + "." + regionName)) : "") +
+                (hasWorlds ? "\n&fWorld &7» " + category.getWorlds().getEnabled().contains(world) + " " + hasPermissionFly(p, worldName) : "") +
+                (hasRegions ? "\n&fRegion &7» " + category.getRegions().getEnabled().contains(region) + " " + (regionName != null && hasPermissionFly(p, worldName + "." + regionName)) : "") +
                 (hookManager.getTownyHook().isHooked() ? "\n&fTowny &7» "+
-                        (confManager.isOwnTown() && hookManager.getTownyHook().ownTown(p) && !(confManager.isTownyWar() && hookManager.getTownyHook().wartime())) + " " +
-                        (p.hasPermission("flightcontrol.owntown") && hookManager.getTownyHook().ownTown(p) && (!confManager.isTownyWar() || !hookManager.getTownyHook().wartime())) : "") +
+                        (confManager.isTownyOwn() && hookManager.getTownyHook().townyOwn(p) && !(confManager.isTownyWarDisable() && hookManager.getTownyHook().wartime())) + " " +
+                        (hasPermission(p, TOWNY_OWN) && hookManager.getTownyHook().townyOwn(p) && (!confManager.isTownyWarDisable() || !hookManager.getTownyHook().wartime())) : "") +
                 (hookManager.getLandsHook().isHooked() ? "\n&fLands &7» " +
-                        (confManager.isOwnLand() && hookManager.getLandsHook().ownLand(p)) + " " +
-                        (p.hasPermission("flightcontrol.ownland") && hookManager.getLandsHook().ownLand(p)) : "") +
+                        (confManager.isLandsOwnEnable() && hookManager.getLandsHook().landsOwn(p)) + " " +
+                        (hasPermission(p, LANDS_OWN) && hookManager.getLandsHook().landsOwn(p)) + " " +
+                        ((confManager.isLandsOwnEnable() && confManager.isLandsTrusted() || landsOwnerHasTrusted) && hookManager.getLandsHook().landsTrusted(p)) + " " +
+                        ((hasPermission(p, LANDS_TRUSTED) || landsOwnerHasTrusted) && hookManager.getLandsHook().landsTrusted(p)) + " " +
+                        (landsOwnerHasTrusted) : "") +
                 (hookManager.getEnchantmentsHook().isHooked() ? "\n&fEnchants &7» " + hookManager.getEnchantmentsHook().canFly(p) : "") +
                 "\n \n&e&lDisable" +
                 (hookManager.getFactionsHook().isHooked() ? "\n&fFC &7» " + getHookManager().getFactionsHook().rel(p, category.getFactions().getDisabled()) : "") +
                 (hookManager.getCombatHook().isHooked() ? "\n&fCombat &7» " + hookManager.getCombatHook().tagged(p) : "") +
                 (hookManager.getPlotHook().isHooked() ? "\n&fPlot &7» " + hookManager.getPlotHook().cannotFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ()) : "") +
-                (hasWorlds ? "\n&fWorld &7» " + category.getWorlds().getDisabled().contains(world) + " " + p.hasPermission("flightcontrol.nofly." + worldName) : "") +
-                (hasRegions ? "\n&fRegion &7» " + category.getRegions().getDisabled().contains(region) + " " + (regionName != null && p.hasPermission("flightcontrol.nofly." + worldName + "." + regionName)) : ""))
+                (hasWorlds ? "\n&fWorld &7» " + category.getWorlds().getDisabled().contains(world) + " " + hasPermissionNoFly(p, worldName) : "") +
+                (hasRegions ? "\n&fRegion &7» " + category.getRegions().getDisabled().contains(region) + " " + (regionName != null && hasPermissionNoFly(p, worldName + "." + regionName)) : ""))
 
                             .replaceAll("false", "&cfalse")
                             .replaceAll("true", "&atrue"));

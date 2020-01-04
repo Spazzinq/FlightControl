@@ -25,12 +25,18 @@ commands:
 
 
 permissions:
-  flightcontrol.owntown:
+  # TODO Finish
+  flightcontrol.towny:
     description: Enables flight in player's own town
     default: false
-  flightcontrol.ownland:
-    description: Enables flight in player's own land
+    children:
+      own: true
+  flightcontrol.lands:
+    description: Enables flight in land
     default: false
+    children:
+      own: true
+      trusted: false
   flightcontrol.flyall:
     description: Ability to automatically fly in all regions that are not disabled
     default: false

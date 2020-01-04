@@ -30,7 +30,7 @@ import com.palmergames.bukkit.towny.object.TownyUniverse;
 import org.bukkit.entity.Player;
 
 public final class TownyHook extends TownyBase {
-    @Override public boolean ownTown(Player p) {
+    @Override public boolean townyOwn(Player p) {
         Resident r;
 
         try {

@@ -31,8 +31,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.manager.PermissionManager;
 import org.spazzinq.flightcontrol.manager.PlayerManager;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
+import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
@@ -51,7 +53,7 @@ public class FlySpeedCommand implements CommandExecutor {
         boolean console = s instanceof ConsoleCommandSender;
 
         if (args.length == 1) {
-            if (s.hasPermission("flightcontrol.flyspeed") || console) {
+            if (PermissionManager.hasPermission(s, FlyPermission.FLY_SPEED) || console) {
                 if (console) {
                     pl.getLogger().warning("You aren't a player! Try /flyspeed (speed) (player) instead!");
                 } else {
@@ -61,7 +63,7 @@ public class FlySpeedCommand implements CommandExecutor {
                 msg(s, pl.getLangManager().getPermDenied());
             }
         } else if (args.length == 2) {
-            if (s.hasPermission("flightcontrol.flyspeed.others") || console) {
+            if (PermissionManager.hasPermission(s, FlyPermission.FLY_SPEED_OTHERS) || console) {
                 Player argPlayer = Bukkit.getPlayer(args[1]);
 
                 if (argPlayer == null) {
@@ -73,7 +75,7 @@ public class FlySpeedCommand implements CommandExecutor {
                 msg(s, pl.getLangManager().getPermDenied());
             }
         } else {
-            if (s.hasPermission("flightcontrol.flyspeed") || s.hasPermission("flightcontrol.flyspeed.others") || console) {
+            if (PermissionManager.hasPermission(s, FlyPermission.FLY_SPEED) || PermissionManager.hasPermission(s, FlyPermission.FLY_SPEED_OTHERS) || console) {
                 msg(s, pl.getLangManager().getFlySpeedUsage());
             } else {
                 msg(s, pl.getLangManager().getPermDenied());

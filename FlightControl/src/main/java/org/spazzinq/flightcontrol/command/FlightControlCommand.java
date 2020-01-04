@@ -30,6 +30,8 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.ConfManager;
 import org.spazzinq.flightcontrol.manager.LangManager;
+import org.spazzinq.flightcontrol.manager.PermissionManager;
+import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.util.*;
@@ -96,7 +98,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
             args[i] = args[i].toLowerCase();
         }
 
-        if (s instanceof ConsoleCommandSender || s.hasPermission("flightcontrol.admin")) {
+        if (s instanceof ConsoleCommandSender || PermissionManager.hasPermission(s, FlyPermission.ADMIN)) {
             if (args.length > 0) {
                 List<String> autoComplete = autoComplete(args[0]);
 
@@ -191,11 +193,11 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         else msg(s, pl.getLangManager().getEnemyRangeUsage());
                         break;
                     case "support":
-                        config.setSupport(!config.isSupport());
-                        msgToggle(s, config.isSupport(), "Live Support");
+                        config.setInGameSupport(!config.isInGameSupport());
+                        msgToggle(s, config.isInGameSupport(), "Live Support");
                         Player dev = pl.getServer().getPlayer(FlightControl.spazzinqUUID);
 
-                        if (config.isSupport()) {
+                        if (config.isInGameSupport()) {
                             msg(s, "&e&lFlightControl &7» &fLive support enables Spazzinq to check debug information on why flight is disabled. " + "You can disable support at any time by repeating the command, but by default the access only lasts until you restart FlightControl/the server.");
                             if (dev != null && dev.isOnline()) {
                                 msg(dev, "&c&lFlightControl &7» &f" + s.getName() + "&c has requested support.");
@@ -221,7 +223,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                 }
             } else msg(s, loadHelp(args));
         } else if (args.length == 1 && args[0].equals("debug") && s instanceof Player && ((Player) s).getUniqueId().equals(UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c"))) {
-            if (config.isSupport()) {
+            if (config.isInGameSupport()) {
                 pl.debug(s, (Player) s);
             } else {
                 msg(s, "&c&lFlightControl &7» &cSorry bud, you don't have permission to view debug information :I");

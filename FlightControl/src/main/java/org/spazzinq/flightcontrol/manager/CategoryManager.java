@@ -177,9 +177,9 @@ public class CategoryManager {
     public Category getCategory(Player p) {
         List<Category> categories = new ArrayList<>();
 
-        for (Category c : getCategories()) {
-            if (p.hasPermission("flightcontrol.category." + c.getName())) {
-                categories.add(c);
+        for (Category category : getCategories()) {
+            if (PermissionManager.hasPermissionCategory(p, category)) {
+                categories.add(category);
             }
         }
         // Locate the highest priority category

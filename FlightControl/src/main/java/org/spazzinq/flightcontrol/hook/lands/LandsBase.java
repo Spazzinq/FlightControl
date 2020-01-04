@@ -24,11 +24,23 @@
 
 package org.spazzinq.flightcontrol.hook.lands;
 
+import me.angeschossen.lands.api.land.LandChunk;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.hook.Hook;
 
+import java.util.UUID;
+
 public class LandsBase extends Hook {
-    public boolean ownLand(Player p) {
+    public boolean landsOwn(Player p) {
         return false;
+    }
+
+    public boolean landsTrusted(Player p) {
+        return false;
+    }
+
+    public UUID getOwnerUUID(Location location) {
+        return null;
     }
 }

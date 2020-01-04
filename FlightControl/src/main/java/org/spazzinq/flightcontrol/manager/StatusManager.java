@@ -24,6 +24,7 @@
 
 package org.spazzinq.flightcontrol.manager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -34,6 +35,9 @@ import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.Evaluation;
 
 import java.util.List;
+
+import static org.spazzinq.flightcontrol.manager.PermissionManager.*;
+import static org.spazzinq.flightcontrol.object.FlyPermission.*;
 
 public class StatusManager {
     private final FlightControl pl;
@@ -48,6 +52,15 @@ public class StatusManager {
                regionName = pl.getHookManager().getWorldGuardHook().getRegionName(l);
         Region region = new Region(world, regionName);
         Category category = pl.getCategoryManager().getCategory(p);
+
+        // TODO Better system
+        boolean landsOwnerHasTrusted = false;
+
+        if (pl.getHookManager().getLandsHook().isHooked()) {
+            Player landsOwner = Bukkit.getPlayer(pl.getHookManager().getLandsHook().getOwnerUUID(l));
+
+            landsOwnerHasTrusted = hasPermission(landsOwner, LANDS_TRUSTED);
+        }
 
         if (regionName != null) {
             pl.defaultPerms(worldName + "." + regionName); // Register new regions dynamically
@@ -70,16 +83,21 @@ public class StatusManager {
                 // Plot check
                 || pl.getHookManager().getPlotHook().canFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ())
                 // Towny check
-                || (pl.getConfManager().isOwnTown() || p.hasPermission("flightcontrol.owntown")) && pl.getHookManager().getTownyHook().ownTown(p) && !(pl.getConfManager().isTownyWar() && pl.getHookManager().getTownyHook().wartime())
+                || (pl.getConfManager().isTownyOwn() || hasPermission(p, TOWNY_OWN))
+                        && pl.getHookManager().getTownyHook().townyOwn(p)
+                        && !(pl.getConfManager().isTownyWarDisable() && pl.getHookManager().getTownyHook().wartime())
                 // Lands check
-                || (pl.getConfManager().isOwnLand() || p.hasPermission("flightcontrol.ownland")) && pl.getHookManager().getLandsHook().ownLand(p);
+                || (pl.getConfManager().isLandsOwnEnable() || hasPermission(p, LANDS_OWN))
+                        && pl.getHookManager().getLandsHook().landsOwn(p)
+                || ((pl.getConfManager().isLandsOwnEnable() && pl.getConfManager().isLandsTrusted()) || hasPermission(p, LANDS_TRUSTED) || landsOwnerHasTrusted)
+                        && pl.getHookManager().getLandsHook().landsTrusted(p);
         boolean enablePermissionCheck =
                 // Global perm check
-                p.hasPermission("flightcontrol.flyall")
+                hasPermission(p, FLY_ALL)
                 // World perm check
-                || p.hasPermission("flightcontrol.fly." + worldName)
+                || hasPermissionFly(p, worldName)
                 // Region perm check
-                || regionName != null && p.hasPermission("flightcontrol.fly." + worldName + "." + regionName);
+                || regionName != null && hasPermissionFly(p, worldName + "." + regionName);
         boolean tempFly = pl.getPlayerManager().getFlightPlayer(p).hasTempFly();
 
         boolean disableCategoryCheck =
@@ -94,9 +112,9 @@ public class StatusManager {
                 || pl.getHookManager().getPlotHook().cannotFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ());
         boolean disablePermissionCheck =
                 // World perm check
-                p.hasPermission("flightcontrol.nofly." + worldName)
+                hasPermissionNoFly(p, worldName)
                 // Region perm check
-                || regionName != null && p.hasPermission("flightcontrol.nofly." + worldName + "." + regionName);
+                || regionName != null && hasPermissionNoFly(p, worldName + "." + regionName);
 
         return new Evaluation(disableCategoryCheck || disableHookCheck || disablePermissionCheck || enemyCheck(p, l),
                               enableCategoryCheck || enableHookCheck || enablePermissionCheck || tempFly);

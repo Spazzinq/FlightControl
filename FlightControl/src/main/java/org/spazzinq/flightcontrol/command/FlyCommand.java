@@ -32,6 +32,8 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.FlightManager;
+import org.spazzinq.flightcontrol.manager.PermissionManager;
+import org.spazzinq.flightcontrol.object.FlyPermission;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
@@ -56,7 +58,7 @@ public final class FlyCommand implements CommandExecutor {
                 }
             } else pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
         } else if (args.length == 1) {
-            if (s instanceof ConsoleCommandSender || s.hasPermission("flightcontrol.admin")) {
+            if (s instanceof ConsoleCommandSender || PermissionManager.hasPermission(s, FlyPermission.ADMIN)) {
                 Player p = Bukkit.getPlayer(args[0]);
                 // Allow admins to disable flight
                 if (p != null) {

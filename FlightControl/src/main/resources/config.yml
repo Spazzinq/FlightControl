@@ -44,6 +44,8 @@ towny:
 # "lands" requires Lands
 lands:
   enable_own_land: false
+  # Includes trusted people for "enable_own_land"
+  include_trusted: false
 
 trail:
   enabled: false
@@ -83,6 +85,7 @@ sounds:
     pitch: 1
     volume: 1
 
+# TODO make website & update documentation
 #  ___               _       _
 # | _ \___ _ _ _ __ (_)_____(_)___ _ _  ___
 # |  _/ -_) '_| '  \| (_-<_-< / _ \ ' \(_-<

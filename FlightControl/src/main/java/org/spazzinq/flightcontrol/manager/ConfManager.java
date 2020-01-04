@@ -34,6 +34,7 @@ import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,11 +47,12 @@ public final class ConfManager {
 
     @Getter @Setter private boolean autoEnable;
     @Getter @Setter private boolean autoUpdate;
-    @Getter @Setter private boolean support;
+    @Getter @Setter private boolean inGameSupport;
     @Getter @Setter private boolean combatChecked;
-    @Getter @Setter private boolean ownTown;
-    @Getter @Setter private boolean townyWar;
-    @Getter @Setter private boolean ownLand;
+    @Getter @Setter private boolean townyOwn;
+    @Getter @Setter private boolean townyWarDisable;
+    @Getter @Setter private boolean landsOwnEnable;
+    @Getter @Setter private boolean landsTrusted;
     @Getter @Setter private boolean cancelFall;
     @Getter @Setter private boolean vanishBypass;
     @Getter @Setter private boolean trail;
@@ -84,9 +86,11 @@ public final class ConfManager {
             cancelFall = conf.getBoolean("settings.prevent_fall_damage");
             vanishBypass = conf.getBoolean("settings.vanish_bypass");
 
-            ownTown = conf.getBoolean("towny.enable_own_town");
-            townyWar = conf.getBoolean("towny.negate_during_war");
-            ownLand = conf.getBoolean("lands.enable_own_land");
+            townyOwn = conf.getBoolean("towny.enable_own_town");
+            townyWarDisable = conf.getBoolean("towny.negate_during_war");
+
+            landsOwnEnable = conf.getBoolean("lands.enable_own_land");
+            landsTrusted = conf.getBoolean("lands.include_trusted");
 
             // ints
             int range = conf.getInt("factions.disable_enemy_range");
@@ -120,6 +124,13 @@ public final class ConfManager {
         if (conf.isConfigurationSection("messages")) {
             pl.getLogger().info("Removed the messages section from config.yml!");
             conf.deleteNode("messages");
+            modified = true;
+        }
+
+        // 4.2.0 - add include_trusted to lands
+        if (!conf.isBoolean("lands.include_trusted")) {
+            pl.getLogger().info("Added \"include_trusted\" to lands configuration section!");
+            conf.addSubnodes(Collections.singleton("include_trusted: false"), "lands.enable_own_land");
             modified = true;
         }
 
