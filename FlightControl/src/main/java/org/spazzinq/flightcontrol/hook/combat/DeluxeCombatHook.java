@@ -28,8 +28,7 @@ import nl.marido.deluxecombat.DeluxeCombat;
 import org.bukkit.entity.Player;
 
 public final class DeluxeCombatHook extends CombatHook {
-    @Override
-    public boolean tagged(Player p) {
+    @Override public boolean tagged(Player p) {
         return DeluxeCombat.getAPI().isInCombat(p);
     }
 

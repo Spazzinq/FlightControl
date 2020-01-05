@@ -66,7 +66,11 @@ final class Listener implements org.bukkit.event.Listener {
     }
     // Because onMove doesn't trigger right after a TP
     @EventHandler private void onTP(PlayerTeleportEvent e) {
-	    pl.getFlightManager().check(e.getPlayer(), e.getTo());
+	    // Prevent calling on login because another handler takes care of that
+        // and it also causes a NPE because DeluxeCombat hasn't loaded player data yet
+	    if (e.getCause() != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
+            pl.getFlightManager().check(e.getPlayer(), e.getTo());
+        }
 	}
 
 	@EventHandler private void onQuit(PlayerQuitEvent e) {
