@@ -24,7 +24,6 @@
 
 package org.spazzinq.flightcontrol.hook.lands;
 
-import me.angeschossen.lands.api.land.LandChunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.hook.Hook;

@@ -83,7 +83,7 @@ public class PlayerManager {
             FlightPlayer flightPlayer = getFlightPlayer(p);
 
             p.setFlySpeed(flightPlayer.getActualFlightSpeed());
-            if (!flightPlayer.hasTrail()) {
+            if (!flightPlayer.trailWanted()) {
                 pl.getTrailManager().trailRemove(p);
             }
         }
@@ -116,7 +116,7 @@ public class PlayerManager {
             File data = new File(folder, uuid + ".yml");
             CommentConf dataConf = new CommentConf(data, pl.getResource("default_data.yml"));
 
-            dataConf.set("trail", tempData.hasTrail());
+            dataConf.set("trail", tempData.trailWanted());
 
             Long tempFlyLength = tempData.getTempFlyEnd();
             dataConf.set("temp_fly", tempFlyLength);

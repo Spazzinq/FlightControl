@@ -45,7 +45,7 @@ public class FlightPlayer {
         setTempFly(tempFlyEnd);
     }
 
-    public boolean hasTrail() {
+    public boolean trailWanted() {
         return trail;
     }
 

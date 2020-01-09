@@ -46,16 +46,15 @@ import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
 public final class FlightManager {
     private final FlightControl pl;
-    // Msg when command enabled
-    @Getter private final ArrayList<Player> alreadyCanMsgList = new ArrayList<>();
-    @Getter private final ArrayList<Player> disabledByPlayerList = new ArrayList<>();
-    @Getter private final ArrayList<Entity> cancelFallDmgList = new ArrayList<>();
+
+    @Getter private final ArrayList<Player> alreadyCanMsg = new ArrayList<>();
+    @Getter private final ArrayList<Player> disabledByPlayer = new ArrayList<>();
+    @Getter private final ArrayList<Entity> noFallDmg = new ArrayList<>();
 
     public FlightManager(FlightControl pl) {
         this.pl = pl;
     }
 
-    // MANAGE FLIGHT
     public void check(Player p) {
         check(p, p.getLocation(), false);
     }
@@ -77,16 +76,16 @@ public final class FlightManager {
                     disableFlight(p, false);
                 }
             } else if (enable && !disable) {
-                if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayerList.contains(p))) {
+                if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
                     enableFlight(p, usingCMD);
                 } else {
                     canEnable(p);
                 }
-            } else if (usingCMD || alreadyCanMsgList.contains(p)) {
+            } else if (usingCMD || alreadyCanMsg.contains(p)) {
                 cannotEnable(p);
             }
         } else if (!p.getAllowFlight()) {
-            if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayerList.contains(p))) {
+            if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
                 enableFlight(p, usingCMD);
             } else {
                 canEnable(p);
@@ -95,8 +94,8 @@ public final class FlightManager {
     }
 
     private void canEnable(Player p) {
-        if (!alreadyCanMsgList.contains(p)) {
-            alreadyCanMsgList.add(p);
+        if (!alreadyCanMsg.contains(p)) {
+            alreadyCanMsg.add(p);
             FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), pl.getLangManager().getCanEnableFlight(),
                     pl.getConfManager().getCSound(), pl.getLangManager().useActionBar());
 
@@ -108,13 +107,14 @@ public final class FlightManager {
         }
 
     }
+
     private void cannotEnable(Player p) {
         FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), pl.getLangManager().getCannotEnableFlight(),
                 pl.getConfManager().getNSound(), pl.getLangManager().useActionBar());
 
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
-            alreadyCanMsgList.remove(p);
+            alreadyCanMsg.remove(p);
             Sound.play(p, pl.getConfManager().getNSound());
             msg(p, e.getMessage(), e.isByActionbar());
         }
@@ -127,7 +127,7 @@ public final class FlightManager {
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
             if (isCommand) {
-                disabledByPlayerList.remove(p);
+                disabledByPlayer.remove(p);
             }
             p.setAllowFlight(true);
             if (!pl.getConfManager().isEveryEnable()) {
@@ -136,6 +136,7 @@ public final class FlightManager {
             msg(p, e.getMessage(), e.isByActionbar());
         }
     }
+
     public void disableFlight(Player p, boolean isCommand) {
         FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), pl.getLangManager().getDisableFlight(),
                 pl.getConfManager().getDSound(), pl.getLangManager().useActionBar(), isCommand);
@@ -143,15 +144,15 @@ public final class FlightManager {
         pl.getApiManager().callEvent(e);
         if (!e.isCancelled()) {
             if (isCommand) {
-                disabledByPlayerList.add(p);
-                alreadyCanMsgList.add(p);
+                disabledByPlayer.add(p);
+                alreadyCanMsg.add(p);
             } else {
-                alreadyCanMsgList.remove(p);
+                alreadyCanMsg.remove(p);
             }
 
             if (pl.getConfManager().isCancelFall() && p.isFlying()) {
-                cancelFallDmgList.add(p);
-                new BukkitRunnable() { public void run() { cancelFallDmgList.remove(p); } }.runTaskLater(pl, 300);
+                noFallDmg.add(p);
+                new BukkitRunnable() { public void run() { noFallDmg.remove(p); } }.runTaskLater(pl, 300);
             }
             p.setAllowFlight(false);
             p.setFlying(false);

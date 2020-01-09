@@ -45,13 +45,20 @@ public final class TrailManager {
     }
 
     public void trailCheck(Player p) {
-        if (pl.getParticleManager() != null && pl.getConfManager().isTrail() && pl.getPlayerManager().getFlightPlayer(p).hasTrail()) {
+        if (pl.getParticleManager() != null && pl.getConfManager().isTrail()
+                && pl.getPlayerManager().getFlightPlayer(p).trailWanted() && !particleTasks.containsKey(p)) {
             particleTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
-                    if (!(p.getGameMode() == GameMode.SPECTATOR || pl.getHookManager().getVanishHook().vanished(p) || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
+                    if (!(p.getGameMode() == GameMode.SPECTATOR || pl.getHookManager().getVanishHook().vanished(p)
+                            || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
                         Location l = p.getLocation();
-                        // For some terrible reason the locations are never in the correct spot so you have to time them later
-                        new BukkitRunnable() { @Override public void run() { pl.getParticleManager().spawn(l); } }.runTaskLater(pl, 2);
+                        // For some terrible reason the locations are never
+                        // in the correct spot so you have to delay them
+                        new BukkitRunnable() {
+                            @Override public void run() {
+                                pl.getParticleManager().spawn(l);
+                            }
+                        }.runTaskLater(pl, 2);
                     }
                 }
             }.runTaskTimerAsynchronously(pl, 0, 4));
@@ -59,7 +66,11 @@ public final class TrailManager {
     }
 
     public void trailRemove(Player p) {
-        BukkitTask task = particleTasks.remove(p); if (task != null) task.cancel();
+        BukkitTask task = particleTasks.remove(p);
+
+        if (task != null) {
+            task.cancel();
+        }
     }
 
     public void removeEnabledTrails() {

@@ -30,9 +30,9 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.ConfManager;
 import org.spazzinq.flightcontrol.manager.LangManager;
-import org.spazzinq.flightcontrol.util.PermissionUtil;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.MathUtil;
+import org.spazzinq.flightcontrol.util.PermissionUtil;
 
 import java.util.*;
 

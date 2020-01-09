@@ -48,9 +48,9 @@ import org.spazzinq.flightcontrol.object.VersionType;
 import java.io.File;
 import java.util.UUID;
 
-import static org.spazzinq.flightcontrol.util.PermissionUtil.*;
 import static org.spazzinq.flightcontrol.object.FlyPermission.*;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
+import static org.spazzinq.flightcontrol.util.PermissionUtil.*;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private final APIManager apiManager = APIManager.getInstance();
@@ -161,6 +161,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         langManager.loadLang();
         // At end to allow for any necessary migration
         confManager.updateConfig();
+        langManager.updateLang();
 
         playerManager.loadPlayerData();
 

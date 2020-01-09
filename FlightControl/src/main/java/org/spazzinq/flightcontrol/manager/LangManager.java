@@ -143,6 +143,21 @@ public class LangManager {
         return reloaded;
     }
 
+    public void updateLang() {
+        boolean modified = false;
+
+        // 4.2.1
+        if (!lang.isString("locale")) {
+            pl.getLogger().info("Added \"locale\" option to lang.yml!");
+            lang.addNode("locale: en", "player");
+            modified = true;
+        }
+
+        if (modified) {
+            lang.save();
+        }
+    }
+
     public void set(String path, Object value) {
         ignoreReload = true;
         lang.set(path, value);

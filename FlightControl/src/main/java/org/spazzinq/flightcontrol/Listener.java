@@ -42,16 +42,21 @@ import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 final class Listener implements org.bukkit.event.Listener {
     private final FlightControl pl;
 
-	Listener(FlightControl pl) { this.pl = pl; Bukkit.getPluginManager().registerEvents(this, pl); }
+    Listener(FlightControl pl) {
+        this.pl = pl;
+        Bukkit.getPluginManager().registerEvents(this, pl);
+    }
 
     // Check fly status
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onMove(PlayerMoveEvent e) {
-	    pl.getFlightManager().check(e.getPlayer(), e.getTo());
-	}
+        pl.getFlightManager().check(e.getPlayer(), e.getTo());
+    }
+
     // Fly particles
     @EventHandler private void onToggleFly(PlayerToggleFlightEvent e) {
         Player p = e.getPlayer();
+
         if (e.isFlying()) {
             pl.getTrailManager().trailCheck(p);
             if (pl.getConfManager().isEveryEnable()) {
@@ -64,30 +69,40 @@ final class Listener implements org.bukkit.event.Listener {
             }
         }
     }
+
     // Because onMove doesn't trigger right after a TP
     @EventHandler private void onTP(PlayerTeleportEvent e) {
-	    // Prevent calling on login because another handler takes care of that
-        // and it also causes a NPE because DeluxeCombat hasn't loaded player data yet
-	    if (e.getCause() != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
-            pl.getFlightManager().check(e.getPlayer(), e.getTo());
+        // Prevent calling on login because another handler takes care of that
+        if (e.getCause() != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
+            Player p = e.getPlayer();
+
+            pl.getFlightManager().check(p, e.getTo());
+
+            // TODO Possibly fixes bug where particles remain
+            if (!p.getAllowFlight()) {
+                pl.getTrailManager().trailRemove(p);
+            }
         }
-	}
+    }
 
-	@EventHandler private void onQuit(PlayerQuitEvent e) {
-	    pl.getTrailManager().trailRemove(e.getPlayer());
-	}
+    @EventHandler private void onQuit(PlayerQuitEvent e) {
+        pl.getTrailManager().trailRemove(e.getPlayer());
+    }
 
-	@EventHandler private void onJoin(PlayerJoinEvent e) {
+    @EventHandler private void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
+        // Notify me of server version & hooks (debugging)
         if (FlightControl.spazzinqUUID.equals(p.getUniqueId())) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently running on this server. " + pl.getHookManager().getHookedMsg());
+                    msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently" +
+                            " running on this server. " + pl.getHookManager().getHookedMsg());
                 }
             }.runTaskLater(pl, 40);
         }
 
+        // Notify of updates
         if (p.isOp()) {
             new BukkitRunnable() {
                 @Override public void run() {
@@ -96,33 +111,52 @@ final class Listener implements org.bukkit.event.Listener {
             }.runTaskLater(pl, 40);
         }
 
+        // Load FlightPlayer data
         pl.getPlayerManager().loadStorage(p);
         p.setFlySpeed(pl.getPlayerManager().getFlightPlayer(p).getActualFlightSpeed());
 
+        // Check flight then trail, allowing time for other plugins to load data
         new BukkitRunnable() {
-            public void run() {
+            @Override public void run() {
                 pl.getFlightManager().check(p);
                 if (p.isFlying()) {
                     pl.getTrailManager().trailCheck(p);
                 }
             }
         }.runTaskLater(pl, 10);
-	}
-	// Because commands might affect permissions/fly
-	@EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
-        Player p = e.getPlayer();
-	    new BukkitRunnable() { public void run() {
-            pl.getFlightManager().check(p);
-	        if (p.isFlying() && !pl.getTrailManager().getParticleTasks().containsKey(p)) new BukkitRunnable() { public void run() { pl.getTrailManager().trailCheck(p); } }.runTask(pl);
-	        else if (!p.isFlying() && pl.getTrailManager().getParticleTasks().containsKey(p)) pl.getTrailManager().trailRemove(p);
-	    } }.runTask(pl);
-	}
-
-	// Fall damage prevention
-    @EventHandler private void onFallDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL &&
-            pl.getFlightManager().getCancelFallDmgList().remove(e.getEntity())) e.setCancelled(true);
     }
+
+    // Because commands might affect permissions/fly
+    @EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
+        Player p = e.getPlayer();
+
+        new BukkitRunnable() {
+            public void run() {
+                pl.getFlightManager().check(p);
+
+                if (p.isFlying()) {
+                    if (!pl.getTrailManager().getParticleTasks().containsKey(p)) {
+                        new BukkitRunnable() {
+                            @Override public void run() {
+                                pl.getTrailManager().trailCheck(p);
+                            }
+                        }.runTask(pl);
+                    }
+                } else {
+                    pl.getTrailManager().trailRemove(p);
+                }
+            }
+        }.runTask(pl);
+    }
+
+    // Fall damage prevention
+    @EventHandler private void onFallDamage(EntityDamageEvent e) {
+        if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL
+                && pl.getFlightManager().getNoFallDmg().remove(e.getEntity())) {
+            e.setCancelled(true);
+        }
+    }
+
     // On-the-fly permission management
     @EventHandler private void onWorldLoad(WorldLoadEvent e) {
         World world = e.getWorld();

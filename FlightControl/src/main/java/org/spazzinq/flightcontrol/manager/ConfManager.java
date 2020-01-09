@@ -79,6 +79,8 @@ public final class ConfManager {
                 migrateFromVersion3();
             }
 
+            updateConfig();
+
             // booleans
             autoUpdate = conf.getBoolean("settings.auto_update");
             autoEnable = conf.getBoolean("settings.auto_enable_flight");
@@ -134,7 +136,9 @@ public final class ConfManager {
             modified = true;
         }
 
-        if (modified) conf.save();
+        if (modified) {
+            conf.save();
+        }
     }
 
     private void loadTrail() {

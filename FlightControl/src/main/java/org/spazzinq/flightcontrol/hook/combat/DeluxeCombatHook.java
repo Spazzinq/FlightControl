@@ -29,7 +29,16 @@ import org.bukkit.entity.Player;
 
 public final class DeluxeCombatHook extends CombatHook {
     @Override public boolean tagged(Player p) {
-        return DeluxeCombat.getAPI().isInCombat(p);
+        boolean inCombat = false;
+
+        try {
+            inCombat = DeluxeCombat.getAPI().isInCombat(p);
+        } catch (NullPointerException e) {
+            // DeluxeCombat loads data too late sometimes, which is why this try-catch is necessary
+            // ignored
+        }
+
+        return inCombat;
     }
 
     @Override
