@@ -179,11 +179,12 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         if (args.length == 2) {
                             if (args[1].matches("\\d+|-1")) {
                                 int range = Integer.parseInt(args[1]);
+                                int rangeSquared = range * range;
                                 if (range > -2) {
-                                    if (config.getFacEnemyRange() != range) {
+                                    if (config.getFacEnemyRangeSquared() != rangeSquared) {
                                         config.set("factions.disable_enemy_range", range);
                                         config.setUseFacEnemyRange(range != -1);
-                                        config.setFacEnemyRange(range);
+                                        config.setFacEnemyRangeSquared(rangeSquared);
 
                                         msg(s, replaceVar(pl.getLangManager().getEnemyRangeSet(), range + "", "range"));
                                     } else msg(s, replaceVar(pl.getLangManager().getEnemyRangeSame(), range + "", "range"));

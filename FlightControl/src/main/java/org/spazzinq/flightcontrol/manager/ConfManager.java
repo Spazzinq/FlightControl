@@ -59,7 +59,7 @@ public final class ConfManager {
     @Getter @Setter private boolean everyEnable;
     @Getter @Setter private boolean everyDisable;
     @Getter @Setter private boolean useFacEnemyRange;
-    @Getter @Setter private double facEnemyRange;
+    @Getter @Setter private double facEnemyRangeSquared;
     @Getter @Setter private float defaultFlightSpeed;
     @Getter @Setter private Sound eSound, dSound, cSound, nSound;
 
@@ -96,7 +96,9 @@ public final class ConfManager {
 
             // ints
             int range = conf.getInt("factions.disable_enemy_range");
-            if (useFacEnemyRange = (range != -1)) facEnemyRange = range;
+            if (useFacEnemyRange = (range != -1)) {
+                facEnemyRangeSquared = range * range;
+            }
 
             // floats
             defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed"));

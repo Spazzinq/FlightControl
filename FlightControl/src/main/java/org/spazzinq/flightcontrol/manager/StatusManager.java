@@ -27,14 +27,14 @@ package org.spazzinq.flightcontrol.manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.Evaluation;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.spazzinq.flightcontrol.object.FlyPermission.*;
 import static org.spazzinq.flightcontrol.util.PermissionUtil.*;
@@ -122,33 +122,27 @@ public class StatusManager {
                               enableCategoryCheck || enableHookCheck || enablePermissionCheck || tempFly);
     }
 
-    // TODO Optimize?
+    // TODO Finish optimization with caching
     private boolean enemyCheck(Player p, Location l) {
+        World world = l.getWorld();
         boolean disable = false;
 
         // Prevent comparing 2 different worlds
         if (pl.getConfManager().isUseFacEnemyRange() && p.getWorld().equals(l.getWorld())) {
-            List<Player> worldPlayers = l.getWorld().getPlayers();
-            worldPlayers.remove(p);
-            List<Entity> nearbyEntities = p.getNearbyEntities(pl.getConfManager().getFacEnemyRange(), pl.getConfManager().getFacEnemyRange(), pl.getConfManager().getFacEnemyRange());
+            Set<Player> worldPlayers = new HashSet<>();
 
-            if (nearbyEntities.size() <= worldPlayers.size()) {
-                for (Entity e : nearbyEntities)
-                    if (e instanceof Player) {
-                        Player otherP = (Player) e;
-                        // Distance is calculated a second time to match the shape of the other distance calculation
-                        // (this would be a cube while the other would be a sphere otherwise)
-                        if (pl.getHookManager().getFactionsHook().isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRange()) {
-                            if (otherP.isFlying()) pl.getFlightManager().check(otherP);
-                            disable = true;
-                        }
-                    }
-            } else {
-                for (Player otherP : worldPlayers)
-                    if (pl.getHookManager().getFactionsHook().isEnemy(p, otherP) && l.distance(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRange()) {
-                        if (otherP.isFlying()) pl.getFlightManager().check(otherP);
-                        disable = true;
-                    }
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                if (world.equals(onlinePlayer.getWorld())) {
+                    worldPlayers.add(onlinePlayer);
+                }
+            }
+            worldPlayers.remove(p);
+
+            for (Player otherP : worldPlayers) {
+                if (pl.getHookManager().getFactionsHook().isEnemy(p, otherP) && l.distanceSquared(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRangeSquared()) {
+                    if (otherP.isFlying()) pl.getFlightManager().check(otherP);
+                    disable = true;
+                }
             }
         }
         return disable;
