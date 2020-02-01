@@ -25,7 +25,7 @@
 package org.spazzinq.flightcontrol.hook.lands;
 
 import me.angeschossen.lands.api.integration.LandsIntegration;
-import me.angeschossen.lands.api.land.LandChunk;
+import me.angeschossen.lands.api.land.Land;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
@@ -40,29 +40,29 @@ public class LandsHook extends LandsBase {
     }
 
     @Override public boolean landsOwn(Player p) {
-        LandChunk chunk = landsIntegration.getLandChunk(p.getLocation());
+        Land land = landsIntegration.getLand(p.getLocation());
 
-//        if (chunk == null || !p.getUniqueId().equals(chunk.getOwnerUID())) {
-//            if (chunk == null) {
+//        if (land == null || !p.getUniqueId().equals(land.getOwnerUID())) {
+//            if (land == null) {
 //                p.sendMessage("The LandChunk is null!");
 //            } else {
-//                p.sendMessage(p.getUniqueId() + " " + chunk.getOwnerUID() + " " + (p.getUniqueId().equals(chunk.getOwnerUID())));
+//                p.sendMessage(p.getUniqueId() + " " + land.getOwnerUID() + " " + (p.getUniqueId().equals(land.getOwnerUID())));
 //            }
 //        }
 
-        return chunk != null && p.getUniqueId().equals(chunk.getOwnerUID());
+        return land != null && p.getUniqueId().equals(land.getOwnerUID());
     }
 
     @Override public boolean landsTrusted(Player p) {
-        LandChunk chunk = landsIntegration.getLandChunk(p.getLocation());
+        Land land = landsIntegration.getLand(p.getLocation());
 
-        return chunk != null && chunk.getTrustedPlayers().contains(p.getUniqueId());
+        return land != null && land.getTrustedPlayers().contains(p.getUniqueId());
     }
 
     @Override public UUID getOwnerUUID(Location location) {
-        LandChunk chunk = landsIntegration.getLandChunk(location);
+        Land land = landsIntegration.getLand(location);
 
-        return chunk != null ? chunk.getOwnerUID() : null;
+        return land != null ? land.getOwnerUID() : null;
     }
 
     @Override public boolean isHooked() {
