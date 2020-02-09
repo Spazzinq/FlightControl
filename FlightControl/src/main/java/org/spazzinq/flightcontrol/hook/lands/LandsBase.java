@@ -31,11 +31,11 @@ import org.spazzinq.flightcontrol.hook.Hook;
 import java.util.UUID;
 
 public class LandsBase extends Hook {
-    public boolean landsOwn(Player p) {
+    public boolean landsIsOwn(Player p) {
         return false;
     }
 
-    public boolean landsTrusted(Player p) {
+    public boolean landsIsTrusted(Player p) {
         return false;
     }
 

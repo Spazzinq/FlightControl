@@ -39,7 +39,7 @@ public class LandsHook extends LandsBase {
         landsIntegration = new LandsIntegration(pl, false);
     }
 
-    @Override public boolean landsOwn(Player p) {
+    @Override public boolean landsIsOwn(Player p) {
         Land land = landsIntegration.getLand(p.getLocation());
 
 //        if (land == null || !p.getUniqueId().equals(land.getOwnerUID())) {
@@ -53,7 +53,7 @@ public class LandsHook extends LandsBase {
         return land != null && p.getUniqueId().equals(land.getOwnerUID());
     }
 
-    @Override public boolean landsTrusted(Player p) {
+    @Override public boolean landsIsTrusted(Player p) {
         Land land = landsIntegration.getLand(p.getLocation());
 
         return land != null && land.getTrustedPlayers().contains(p.getUniqueId());

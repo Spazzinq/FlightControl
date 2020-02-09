@@ -33,6 +33,8 @@ import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.hook.combat.*;
 import org.spazzinq.flightcontrol.hook.enchantment.CrazyEnchantmentsHook;
 import org.spazzinq.flightcontrol.hook.enchantment.EnchantsHook;
+import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionBase;
+import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHook;
 import org.spazzinq.flightcontrol.hook.lands.LandsBase;
 import org.spazzinq.flightcontrol.hook.lands.LandsHook;
 import org.spazzinq.flightcontrol.hook.plot.NewPlotSquaredHook;
@@ -68,6 +70,7 @@ public class HookManager {
     @Getter private EnchantsHook enchantmentsHook = new EnchantsHook();
     @Getter private FactionsHook factionsHook = new FactionsHook();
     @Getter private PlotHook plotHook = new PlotHook();
+    @Getter private GriefPreventionBase griefPreventionHook = new GriefPreventionBase();
 
     @Getter private String hookedMsg;
     private final Set<String> hooked = new HashSet<>();
@@ -97,6 +100,9 @@ public class HookManager {
         }
         if (pluginEnabled("CrazyEnchantments")) {
             enchantmentsHook = new CrazyEnchantmentsHook();
+        }
+        if (pluginEnabled("GriefPrevention")) {
+            griefPreventionHook = new GriefPreventionHook();
         }
 
         loadHookMsg();

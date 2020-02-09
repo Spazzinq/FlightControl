@@ -29,23 +29,33 @@ settings:
   # Prevents flight disabling while in vanish
   vanish_bypass: true
 
-# Officially Supports: Factions by MassiveCraft, FactionsUUID, SavageFactions
+# NOTE: this feature is resource intensive and may cause performance issues
+nearby_disable:
+  # Disables flight when a player is within a certain block range (set to -1 to disable)
+  range: -1
+  # Officially Supports: Factions by MassiveCraft, FactionsUUID, SavageFactions
+  # Makes the "range" setting only for faction enemies
+  factions_enemy: true
+
 factions:
   # Disables flight while a faction enemy is within a certain block range (set to -1 to disable)
   # NOTE: this feature may cause performance issues on larger servers
   disable_enemy_range: -1
 
-# "towny" requires Towny
-towny:
-  enable_own_town: false
-  # Ignores above setting if in a war
-  negate_during_war: false
-
-# "lands" requires Lands
-lands:
-  enable_own_land: false
-  # Includes trusted people for "enable_own_land"
-  include_trusted: false
+territory:
+  # Requires Towny plugin
+  towny:
+    enable_own_town: false
+    # Ignores above setting if in a war
+    negate_during_war: false
+  # Requires Lands plugin
+  lands:
+    enable_own_land: false
+    # Includes trusted people for "enable_own_land"
+    include_trusted: false
+  # Requires GriefPrevention plugin
+  griefprevention:
+    enable_own_claim: false
 
 trail:
   enabled: false
@@ -108,5 +118,6 @@ sounds:
 # flightcontrol.fly.WORLDNAME.REGIONNAME - Ability to fly in a certain region
 # flightcontrol.nofly.WORLDNAME - Denies flight in a certain world
 # flightcontrol.nofly.WORLDNAME.REGIONNAME - Denies flight in a certain region
-# flightcontrol.owntown - Ability to fly in player's own town
-# flightcontrol.ownland - Ability to fly in player's own land
+# flightcontrol.towny.own - Ability to fly in player's own town (Towny)
+# flightcontrol.lands.own - Ability to fly in player's own land (Lands)
+# flightcontrol.claim.own - Ability to fly in player's own claim (GriefPrevention)

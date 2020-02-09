@@ -90,9 +90,11 @@ public class StatusManager {
                         && !(pl.getConfManager().isTownyWarDisable() && pl.getHookManager().getTownyHook().wartime())
                 // Lands check
                 || (pl.getConfManager().isLandsOwnEnable() || hasPermission(p, LANDS_OWN))
-                        && pl.getHookManager().getLandsHook().landsOwn(p)
+                        && pl.getHookManager().getLandsHook().landsIsOwn(p)
                 || ((pl.getConfManager().isLandsOwnEnable() && pl.getConfManager().isLandsTrusted()) || hasPermission(p, LANDS_TRUSTED) || landsOwnerHasTrusted)
-                        && pl.getHookManager().getLandsHook().landsTrusted(p);
+                        && pl.getHookManager().getLandsHook().landsIsTrusted(p)
+                // GriefPrevention check
+                || (pl.getConfManager().isGpClaimOwn() || hasPermission(p, CLAIM_OWN)) && pl.getHookManager().getGriefPreventionHook().isHooked();
         boolean enablePermissionCheck =
                 // Global perm check
                 hasPermission(p, FLY_ALL)

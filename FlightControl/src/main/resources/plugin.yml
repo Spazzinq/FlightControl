@@ -5,7 +5,8 @@ api-version: 1.13
 author: Spazzinq
 description: "An elegant solution for controlling player flight"
 softdepend: [AntiCombatLogging, CombatLogPro, CombatLogX, CombatTagPlus, DeluxeCombat,
-             Essentials, Factions, PlotSquared, WorldGuard, SuperVanish, PremiumVanish, Towny, Lands, CrazyEnchantments]
+             Essentials, Factions, PlotSquared, WorldGuard, SuperVanish, PremiumVanish,
+             Towny, Lands, GriefPrevention, CrazyEnchantments]
 
 commands:
   flightcontrol:
@@ -32,11 +33,16 @@ permissions:
     children:
       own: true
   flightcontrol.lands:
-    description: Enables flight in land
+    description: Enables flight in player's own land
     default: false
     children:
       own: true
       trusted: false
+  flightcontrol.claim:
+    description: Enables flight in player's own claim
+    default: false
+    children:
+      own: true
   flightcontrol.flyall:
     description: Ability to automatically fly in all regions that are not disabled
     default: false

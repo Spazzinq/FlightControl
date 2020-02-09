@@ -36,7 +36,7 @@ public class HandlerMethod implements Comparable<HandlerMethod> {
     @Getter private final Method method;
     @Getter private FlightEventHandler.Priority priority;
 
-    HandlerMethod(FlightListener listener, Method method) {
+    public HandlerMethod(FlightListener listener, Method method) {
         method.setAccessible(true);
         this.listener = listener;
         this.method = method;

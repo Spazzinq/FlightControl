@@ -226,10 +226,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                         (confManager.isTownyOwn() && hookManager.getTownyHook().townyOwn(p) && !(confManager.isTownyWarDisable() && hookManager.getTownyHook().wartime())) + " " +
                         (hasPermission(p, TOWNY_OWN) && hookManager.getTownyHook().townyOwn(p) && (!confManager.isTownyWarDisable() || !hookManager.getTownyHook().wartime())) : "") +
                 (hookManager.getLandsHook().isHooked() ? "\n&fLands &7» " +
-                        (confManager.isLandsOwnEnable() && hookManager.getLandsHook().landsOwn(p)) + " " +
-                        (hasPermission(p, LANDS_OWN) && hookManager.getLandsHook().landsOwn(p)) + " " +
-                        ((confManager.isLandsOwnEnable() && confManager.isLandsTrusted() || landsOwnerHasTrusted) && hookManager.getLandsHook().landsTrusted(p)) + " " +
-                        ((hasPermission(p, LANDS_TRUSTED) || landsOwnerHasTrusted) && hookManager.getLandsHook().landsTrusted(p)) + " " +
+                        (confManager.isLandsOwnEnable() && hookManager.getLandsHook().landsIsOwn(p)) + " " +
+                        (hasPermission(p, LANDS_OWN) && hookManager.getLandsHook().landsIsOwn(p)) + " " +
+                        ((confManager.isLandsOwnEnable() && confManager.isLandsTrusted() || landsOwnerHasTrusted) && hookManager.getLandsHook().landsIsTrusted(p)) + " " +
+                        ((hasPermission(p, LANDS_TRUSTED) || landsOwnerHasTrusted) && hookManager.getLandsHook().landsIsTrusted(p)) + " " +
                         (landsOwnerHasTrusted) : "") +
                 (hookManager.getEnchantmentsHook().isHooked() ? "\n&fEnchants &7» " + hookManager.getEnchantmentsHook().canFly(p) : "") +
                 "\n \n&e&lDisable" +

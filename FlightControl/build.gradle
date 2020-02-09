@@ -21,6 +21,7 @@ dependencies {
     compileOnly 'com.plotsquared:plotsquared-api:19.12.10-b4c257b-788'
     compileOnly 'com.github.IntellectualSites.PlotSquared:Core:4.390'
     compileOnly 'com.github.Angeschossen:LandsAPI:4.5.0.7'
+    compileOnly 'com.github.TechFortress:GriefPrevention:16.13.0'
 
     compileOnly files('../lib/CombatLogX-9.9.2.1.jar')
     compileOnly files('../lib/DeluxeCombat_v.1.14.2.jar')

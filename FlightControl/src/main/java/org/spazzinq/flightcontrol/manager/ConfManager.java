@@ -34,9 +34,7 @@ import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public final class ConfManager {
     private final FlightControl pl;
@@ -48,20 +46,23 @@ public final class ConfManager {
     @Getter @Setter private boolean autoEnable;
     @Getter @Setter private boolean autoUpdate;
     @Getter @Setter private boolean inGameSupport;
+
+    @Getter @Setter private Sound eSound, dSound, cSound, nSound;
+    @Getter @Setter private float defaultFlightSpeed;
     @Getter @Setter private boolean combatChecked;
-    @Getter @Setter private boolean townyOwn;
-    @Getter @Setter private boolean townyWarDisable;
-    @Getter @Setter private boolean landsOwnEnable;
-    @Getter @Setter private boolean landsTrusted;
     @Getter @Setter private boolean cancelFall;
     @Getter @Setter private boolean vanishBypass;
     @Getter @Setter private boolean trail;
     @Getter @Setter private boolean everyEnable;
     @Getter @Setter private boolean everyDisable;
+
+    @Getter @Setter private boolean townyOwn;
+    @Getter @Setter private boolean townyWarDisable;
+    @Getter @Setter private boolean landsOwnEnable;
+    @Getter @Setter private boolean landsTrusted;
+    @Getter @Setter private boolean gpClaimOwn;
     @Getter @Setter private boolean useFacEnemyRange;
     @Getter @Setter private double facEnemyRangeSquared;
-    @Getter @Setter private float defaultFlightSpeed;
-    @Getter @Setter private Sound eSound, dSound, cSound, nSound;
 
     public ConfManager(FlightControl pl) {
         this.pl = pl;
@@ -88,11 +89,11 @@ public final class ConfManager {
             cancelFall = conf.getBoolean("settings.prevent_fall_damage");
             vanishBypass = conf.getBoolean("settings.vanish_bypass");
 
-            townyOwn = conf.getBoolean("towny.enable_own_town");
-            townyWarDisable = conf.getBoolean("towny.negate_during_war");
-
-            landsOwnEnable = conf.getBoolean("lands.enable_own_land");
-            landsTrusted = conf.getBoolean("lands.include_trusted");
+            townyOwn = conf.getBoolean("territory.towny.enable_own_town");
+            townyWarDisable = conf.getBoolean("territory.towny.negate_during_war");
+            landsOwnEnable = conf.getBoolean("territory.lands.enable_own_land");
+            landsTrusted = conf.getBoolean("territory.lands.include_trusted");
+            gpClaimOwn = conf.getBoolean("territory.griefprevention.enable_own_claim");
 
             // ints
             int range = conf.getInt("factions.disable_enemy_range");
@@ -136,6 +137,36 @@ public final class ConfManager {
             pl.getLogger().info("Added \"include_trusted\" to lands configuration section!");
             conf.addSubnodes(Collections.singleton("include_trusted: false"), "lands.enable_own_land");
             modified = true;
+        }
+
+        // 4.2.5 - relocate lands, towny; add griefprevention
+        if (conf.isConfigurationSection("towny")) {
+            pl.getLogger().info("Migrated the towny and lands section of the configuration!");
+
+            conf.addNode("territory:", "trail");
+            conf.addSubnodes(new HashSet<>(Arrays.asList("towny:", "lands:", "griefprevention:")), "territory");
+            conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
+                    "enable_own_town: " + conf.getBoolean("towny.enable_own_town"),
+                    "negate_during_war: " + conf.getBoolean("towny.negate_during_war"))), "territory.towny");
+            conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
+                    "enable_own_land: " + conf.getBoolean("lands.enable_own_land"),
+                    "include_trusted: " + conf.getBoolean("lands.include_trusted", false))), "territory.lands");
+            conf.addIndentedSubnodes(new HashSet<>(Collections.singletonList("enable_own_claim: false")), "territory.griefprevention");
+
+            conf.deleteNode("towny");
+            conf.deleteNode("lands");
+        }
+
+        // 4.2.5 - change function of factions_enemy_range
+        if (conf.isConfigurationSection("factions")) {
+            pl.getLogger().info("Migrated the factions disable enemy range section of the configuration!");
+
+            conf.addNode("nearby_disable:", "trail");
+            conf.addSubnodes(new HashSet<>(Arrays.asList(
+                    "range: " + conf.getInt("factions.disable_enemy_range"),
+                    "factions_enemy: " + (conf.getInt("factions.disable_enemy_range") != -1))), "nearby_disable");
+
+            conf.deleteNode("factions");
         }
 
         if (modified) {
