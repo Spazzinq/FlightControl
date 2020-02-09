@@ -37,11 +37,6 @@ nearby_disable:
   # Makes the "range" setting only for faction enemies
   factions_enemy: true
 
-factions:
-  # Disables flight while a faction enemy is within a certain block range (set to -1 to disable)
-  # NOTE: this feature may cause performance issues on larger servers
-  disable_enemy_range: -1
-
 territory:
   # Requires Towny plugin
   towny:
