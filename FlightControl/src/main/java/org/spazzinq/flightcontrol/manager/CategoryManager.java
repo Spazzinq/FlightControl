@@ -91,22 +91,21 @@ public class CategoryManager {
     }
 
     private DualStore<World> loadWorlds(String categoryName, ConfigurationSection worldsSection) {
-        if (worldsSection == null) {
-            return null;
-        }
         DualStore<World> worlds = new DualStore<>();
 
-        for (String worldName : worldsSection.getKeys(false)) {
-            World world = Bukkit.getWorld(worldName);
-            if (world == null) {
-                nonexistent(categoryName, "worlds", "world", worldName);
-            } else {
-                // If true, then enabled
-                //    false, then disabled
-                if (worldsSection.getBoolean(worldName)) {
-                    worlds.addEnabled(world);
+        if (worldsSection != null) {
+            for (String worldName : worldsSection.getKeys(false)) {
+                World world = Bukkit.getWorld(worldName);
+                if (world == null) {
+                    nonexistent(categoryName, "worlds", "world", worldName);
                 } else {
-                    worlds.addDisabled(world);
+                    // If true, then enabled
+                    //    false, then disabled
+                    if (worldsSection.getBoolean(worldName)) {
+                        worlds.addEnabled(world);
+                    } else {
+                        worlds.addDisabled(world);
+                    }
                 }
             }
         }
@@ -114,28 +113,27 @@ public class CategoryManager {
     }
 
     private DualStore<Region> loadRegions(String categoryName, ConfigurationSection regionsSection) {
-        if (regionsSection == null) {
-            return null;
-        }
         DualStore<Region> regions = new DualStore<>();
 
-        // RegionID is formatted like WORLDNAME+REGIONNAME
-        for (String regionID : regionsSection.getKeys(false)) {
-            String[] regionData = regionID.split("\\+");
-            String worldName = regionData[0];
-            Region region = new Region(Bukkit.getWorld(worldName), regionData[1]);
+        if (regionsSection != null) {
+            // RegionID is formatted like WORLDNAME+REGIONNAME
+            for (String regionID : regionsSection.getKeys(false)) {
+                String[] regionData = regionID.split("\\+");
+                String worldName = regionData[0];
+                Region region = new Region(Bukkit.getWorld(worldName), regionData[1]);
 
-            if (region.getWorld() == null) {
-                nonexistent(categoryName, "regions", "world", worldName);
-            } else if (!pl.getHookManager().getWorldGuardHook().hasRegion(region)) {
-                nonexistent(categoryName, "regions", "region", region.getRegionName());
-            } else {
-                // If true, then enabled
-                //    false, then disabled
-                if (regionsSection.getBoolean(regionID)) {
-                    regions.addEnabled(region);
+                if (region.getWorld() == null) {
+                    nonexistent(categoryName, "regions", "world", worldName);
+                } else if (!pl.getHookManager().getWorldGuardHook().hasRegion(region)) {
+                    nonexistent(categoryName, "regions", "region", region.getRegionName());
                 } else {
-                    regions.addDisabled(region);
+                    // If true, then enabled
+                    //    false, then disabled
+                    if (regionsSection.getBoolean(regionID)) {
+                        regions.addEnabled(region);
+                    } else {
+                        regions.addDisabled(region);
+                    }
                 }
             }
         }
@@ -143,25 +141,24 @@ public class CategoryManager {
     }
 
     private DualStore<FactionRelation> loadFactions(String categoryName, ConfigurationSection factionsSection) {
-        if (factionsSection == null) {
-            return null;
-        }
         DualStore<FactionRelation> factions = new DualStore<>();
 
-        for (String relationName : factionsSection.getStringList("enable")) {
-            FactionRelation relation = FactionRelation.getRelation(relationName);
-            if (relation == null) {
-                nonexistent(categoryName, "factions", "faction relation", relationName);
-            } else {
-                factions.addEnabled(relation);
+        if (factionsSection != null) {
+            for (String relationName : factionsSection.getStringList("enable")) {
+                FactionRelation relation = FactionRelation.getRelation(relationName);
+                if (relation == null) {
+                    nonexistent(categoryName, "factions", "faction relation", relationName);
+                } else {
+                    factions.addEnabled(relation);
+                }
             }
-        }
-        for (String relationName : factionsSection.getStringList("disable")) {
-            FactionRelation relation = FactionRelation.getRelation(relationName);
-            if (relation == null) {
-                nonexistent(categoryName, "factions", "faction relation", relationName);
-            } else {
-                factions.addDisabled(relation);
+            for (String relationName : factionsSection.getStringList("disable")) {
+                FactionRelation relation = FactionRelation.getRelation(relationName);
+                if (relation == null) {
+                    nonexistent(categoryName, "factions", "faction relation", relationName);
+                } else {
+                    factions.addDisabled(relation);
+                }
             }
         }
         return factions;

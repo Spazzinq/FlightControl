@@ -68,8 +68,8 @@ public final class FlightManager {
                 && p.getGameMode() != GameMode.SPECTATOR
                 && !(pl.getConfManager().isVanishBypass() && pl.getHookManager().getVanishHook().vanished(p))) {
             Evaluation eval = pl.getStatusManager().evalFlight(p, l);
-            boolean enable = eval.enable(),
-                    disable = eval.disable();
+            boolean enable = eval.enabled(),
+                    disable = eval.disabled();
 
             if (p.getAllowFlight()) {
                 if (disable || !enable) {

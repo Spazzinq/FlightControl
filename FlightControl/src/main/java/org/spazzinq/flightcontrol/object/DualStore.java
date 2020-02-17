@@ -45,6 +45,14 @@ public class DualStore<T> {
         disabled.add(type);
     }
 
+    public boolean enabledContains(T obj) {
+        return enabled.contains(obj);
+    }
+
+    public boolean disabledContains(T obj) {
+        return disabled.contains(obj);
+    }
+
     @Override public String toString() {
         return (enabled + "; " + disabled)
                 // Remove unnecessary data from World toString

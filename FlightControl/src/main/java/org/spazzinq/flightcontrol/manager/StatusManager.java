@@ -39,6 +39,7 @@ import java.util.Set;
 import static org.spazzinq.flightcontrol.object.FlyPermission.*;
 import static org.spazzinq.flightcontrol.util.PermissionUtil.*;
 
+// TODO Rewrite system for entire class... This is ugly...
 public class StatusManager {
     private final FlightControl pl;
 
@@ -68,17 +69,13 @@ public class StatusManager {
             pl.defaultPerms(worldName + "." + regionName); // Register new regions dynamically
         }
 
-        boolean hasWorlds = category.getWorlds() != null,
-                hasRegions = category.getRegions() != null,
-                hasFactions = category.getFactions() != null;
-
         boolean enableCategoryCheck =
                 // World check
-                hasWorlds && category.getWorlds().getEnabled().contains(world)
+                category.getWorlds().enabledContains(world)
                 // Region check
-                || hasRegions && category.getRegions().getEnabled().contains(region)
+                || category.getRegions().enabledContains(region)
                 // Factions check
-                || hasFactions && pl.getHookManager().getFactionsHook().rel(p, category.getFactions().getEnabled());
+                || pl.getHookManager().getFactionsHook().rel(p, category.getFactions().getEnabled());
         boolean enableHookCheck =
                 // CrazyEnchantments check
                 pl.getHookManager().getEnchantmentsHook().canFly(p)
@@ -106,11 +103,11 @@ public class StatusManager {
 
         boolean disableCategoryCheck =
                 // World check
-                hasWorlds && category.getWorlds().getDisabled().contains(world)
+                category.getWorlds().disabledContains(world)
                 // Region check
-                || hasRegions && category.getRegions().getDisabled().contains(region)
+                || category.getRegions().disabledContains(region)
                 // Factions check
-                || hasFactions && pl.getHookManager().getFactionsHook().rel(p, category.getFactions().getDisabled());
+                || pl.getHookManager().getFactionsHook().rel(p, category.getFactions().getDisabled());
         boolean disableHookCheck =
                 pl.getHookManager().getCombatHook().tagged(p)
                 || pl.getHookManager().getPlotHook().cannotFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ());

@@ -34,26 +34,29 @@ import java.util.Set;
 
 public final class FactionsUUIDHook extends FactionsHook {
     @Override public boolean rel(Player p, Set<FactionRelation> relations) {
-        Faction f = Board.getInstance().getFactionAt(new FLocation(p.getLocation()));
-        FPlayer fP = getPlayer(p);
-        boolean own = false;
-        boolean ally = false;
-        boolean truce = false;
-        boolean neutral = false;
-        boolean enemy = false;
-        boolean warzone = relations.contains(FactionRelation.WARZONE) && f.isWarZone();
-        boolean safezone = relations.contains(FactionRelation.SAFEZONE) && f.isSafeZone();
-        boolean wilderness = relations.contains(FactionRelation.SAFEZONE) && f.isWilderness();
+        if (!relations.isEmpty()) {
+            Faction f = Board.getInstance().getFactionAt(new FLocation(p.getLocation()));
+            FPlayer fP = getPlayer(p);
+            boolean own = false;
+            boolean ally = false;
+            boolean truce = false;
+            boolean neutral = false;
+            boolean enemy = false;
+            boolean warzone = relations.contains(FactionRelation.WARZONE) && f.isWarZone();
+            boolean safezone = relations.contains(FactionRelation.SAFEZONE) && f.isSafeZone();
+            boolean wilderness = relations.contains(FactionRelation.SAFEZONE) && f.isWilderness();
 
-        if (fP.hasFaction()) {
-            if (relations.contains(FactionRelation.OWN)) own = fP.isInOwnTerritory();
-            if (relations.contains(FactionRelation.ALLY)) ally = fP.isInAllyTerritory();
-            // WARNING: Some versions of Factions don't have Relation.isInTruceTerritory()
-            if (relations.contains(FactionRelation.TRUCE)) truce = fP.getRelationToLocation() == Relation.TRUCE;
-            if (relations.contains(FactionRelation.NEUTRAL)) neutral = fP.isInNeutralTerritory();
-            if (relations.contains(FactionRelation.ENEMY)) enemy = fP.isInEnemyTerritory();
+            if (fP.hasFaction()) {
+                if (relations.contains(FactionRelation.OWN)) own = fP.isInOwnTerritory();
+                if (relations.contains(FactionRelation.ALLY)) ally = fP.isInAllyTerritory();
+                // WARNING: Some versions of Factions don't have Relation.isInTruceTerritory()
+                if (relations.contains(FactionRelation.TRUCE)) truce = fP.getRelationToLocation() == Relation.TRUCE;
+                if (relations.contains(FactionRelation.NEUTRAL)) neutral = fP.isInNeutralTerritory();
+                if (relations.contains(FactionRelation.ENEMY)) enemy = fP.isInEnemyTerritory();
+            }
+            return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
         }
-        return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
+        return false;
     }
 
     private FPlayer getPlayer(Player p) {

@@ -25,18 +25,18 @@
 package org.spazzinq.flightcontrol.object;
 
 public final class Evaluation {
-    private final boolean disable;
-    private final boolean enable;
+    private final boolean disabled;
+    private final boolean enabled;
 
-    public Evaluation(boolean disable, boolean enable) {
-       this.disable = disable;
-       this.enable = enable;
+    public Evaluation(boolean disabled, boolean enabled) {
+       this.disabled = disabled;
+       this.enabled = enabled;
     }
 
-    public boolean enable() {
-        return enable;
+    public boolean enabled() {
+        return enabled;
     }
-    public boolean disable() {
-        return disable;
+    public boolean disabled() {
+        return disabled;
     }
 }

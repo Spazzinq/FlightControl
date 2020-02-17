@@ -38,27 +38,30 @@ import java.util.Set;
 
 public final class MassiveFactionsHook extends FactionsHook {
     @Override public boolean rel(Player p, Set<FactionRelation> relations) {
-        MPlayer mp = MPlayer.get(p);
-        Faction f = BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));
-        FactionColl fColl = FactionColl.get();
-        boolean own = false;
-        boolean ally = false;
-        boolean truce = false;
-        boolean neutral = false;
-        boolean enemy = false;
-        boolean warzone = relations.contains(FactionRelation.WARZONE) && f == fColl.getWarzone();
-        boolean safezone = relations.contains(FactionRelation.SAFEZONE) && f == fColl.getSafezone();
-        boolean wilderness = relations.contains(FactionRelation.WILDERNESS) && f.isNone();
+        if (!relations.isEmpty()) {
+            MPlayer mp = MPlayer.get(p);
+            Faction f = BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));
+            FactionColl fColl = FactionColl.get();
+            boolean own = false;
+            boolean ally = false;
+            boolean truce = false;
+            boolean neutral = false;
+            boolean enemy = false;
+            boolean warzone = relations.contains(FactionRelation.WARZONE) && f == fColl.getWarzone();
+            boolean safezone = relations.contains(FactionRelation.SAFEZONE) && f == fColl.getSafezone();
+            boolean wilderness = relations.contains(FactionRelation.WILDERNESS) && f.isNone();
 
-        if (mp.hasFaction()) {
-            Rel r = f.getRelationWish(mp.getFaction());
-            if (relations.contains(FactionRelation.OWN)) own = mp.isInOwnTerritory();
-            if (relations.contains(FactionRelation.ALLY)) ally = r == Rel.ALLY;
-            if (relations.contains(FactionRelation.TRUCE)) truce = r == Rel.TRUCE;
-            if (relations.contains(FactionRelation.NEUTRAL)) neutral = !f.isNone() && f != fColl.getWarzone() && f != fColl.getSafezone() && !mp.isInOwnTerritory() && r == Rel.NEUTRAL;
-            if (relations.contains(FactionRelation.ENEMY)) enemy = r == Rel.ENEMY;
+            if (mp.hasFaction()) {
+                Rel r = f.getRelationWish(mp.getFaction());
+                if (relations.contains(FactionRelation.OWN)) own = mp.isInOwnTerritory();
+                if (relations.contains(FactionRelation.ALLY)) ally = r == Rel.ALLY;
+                if (relations.contains(FactionRelation.TRUCE)) truce = r == Rel.TRUCE;
+                if (relations.contains(FactionRelation.NEUTRAL)) neutral = !f.isNone() && f != fColl.getWarzone() && f != fColl.getSafezone() && !mp.isInOwnTerritory() && r == Rel.NEUTRAL;
+                if (relations.contains(FactionRelation.ENEMY)) enemy = r == Rel.ENEMY;
+            }
+            return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
         }
-        return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
+        return false;
     }
 
     @Override public boolean isEnemy(Player p, Player otherP) {
