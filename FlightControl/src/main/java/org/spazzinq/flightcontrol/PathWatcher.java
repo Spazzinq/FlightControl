@@ -7,7 +7,7 @@ import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
-class FileWatcher extends BukkitRunnable {
+class PathWatcher extends BukkitRunnable {
     private final FlightControl pl;
     private WatchService watcher;
 
@@ -15,7 +15,7 @@ class FileWatcher extends BukkitRunnable {
     private static final String CONFIG = "config.yml";
     private static final String LANG = "lang.yml";
 
-    FileWatcher(FlightControl pl, Path dataPath)  {
+    PathWatcher(FlightControl pl, Path dataPath)  {
         this.pl = pl;
 
         try {

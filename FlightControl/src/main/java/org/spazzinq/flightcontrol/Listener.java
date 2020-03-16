@@ -78,7 +78,7 @@ final class Listener implements org.bukkit.event.Listener {
 
             pl.getFlightManager().check(p, e.getTo());
 
-            // TODO Possibly fixes bug where particles remain
+            // Fixes bug where particles remain when not supposed so
             if (!p.getAllowFlight()) {
                 pl.getTrailManager().trailRemove(p);
             }
@@ -166,7 +166,5 @@ final class Listener implements org.bukkit.event.Listener {
         for (String regionName : pl.getHookManager().getWorldGuardHook().getRegionNames(world)) {
             pl.defaultPerms(worldName + "." + regionName);
         }
-
-
     }
 }

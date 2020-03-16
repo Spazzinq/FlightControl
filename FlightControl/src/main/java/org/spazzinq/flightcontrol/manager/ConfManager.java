@@ -121,7 +121,7 @@ public final class ConfManager {
         return reloaded;
     }
 
-    // TODO Add
+    // TODO Continue to add!
     public void updateConfig() {
         boolean modified = false;
 
@@ -132,15 +132,8 @@ public final class ConfManager {
             modified = true;
         }
 
-        // 4.2.0 - add include_trusted to lands
-        if (!conf.isBoolean("lands.include_trusted")) {
-            pl.getLogger().info("Added \"include_trusted\" to lands configuration section!");
-            conf.addSubnodes(Collections.singleton("include_trusted: false"), "lands.enable_own_land");
-            modified = true;
-        }
-
         // 4.2.5 - relocate lands, towny; add griefprevention
-        if (conf.isConfigurationSection("towny")) {
+        if (conf.isConfigurationSection("towny") || conf.isConfigurationSection("lands")) {
             pl.getLogger().info("Migrated the towny and lands section of the configuration!");
 
             conf.addNode("territory:", "trail");

@@ -114,7 +114,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
 
         // Start file watching service
-        new FileWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
+        new PathWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
         // Start bStats
         new MetricsLite(this);
     }
