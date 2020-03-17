@@ -104,13 +104,19 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
         // Update check
         if (confManager.isAutoUpdate()) {
-            updateManager.installUpdate(Bukkit.getConsoleSender(), true);
-        } else if (updateManager.updateExists()) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/55168/ to view the feature changes (the configs automatically update).");
+                    updateManager.installUpdate(Bukkit.getConsoleSender(), true);
                 }
-            }.runTaskLater(this, 70);
+            }.runTaskAsynchronously(this);
+        } else {
+            new BukkitRunnable() {
+                @Override public void run() {
+                    if (updateManager.updateExists()) {
+                        getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/55168/ to view the feature changes (the configs automatically update).");
+                    }
+                }
+            }.runTaskLaterAsynchronously(this, 70);
         }
 
         // Start file watching service

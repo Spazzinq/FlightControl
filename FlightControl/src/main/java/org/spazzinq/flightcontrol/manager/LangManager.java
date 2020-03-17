@@ -10,11 +10,13 @@ import org.spazzinq.flightcontrol.object.CommentConf;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LangManager {
     private Locale locale;
-    private final HashSet<String> officialLocales = new HashSet<>(Arrays.asList(Locale.getISOLanguages()));
 
     private final FlightControl pl;
     @Getter private CommentConf lang;
@@ -75,18 +77,18 @@ public class LangManager {
             if (langFile.exists()) {
                 YamlConfiguration tempLocaleConf = YamlConfiguration.loadConfiguration(langFile);
                 String preferredLocale = tempLocaleConf.getString("locale");
-                if (preferredLocale != null && officialLocales.contains(preferredLocale)) {
+                if (preferredLocale != null && Arrays.asList(Locale.getISOLanguages()).contains(preferredLocale)) {
                     locale = Locale.forLanguageTag(preferredLocale);
                 } else {
                     pl.getLogger().warning("Invalid locale provided in lang.yml! Defaulting to Java's language...");
                 }
             }
 
-            InputStream langResource = pl.getResource("lang_" + locale + ".yml");
+            InputStream langResource = pl.getResource("lang_" + locale.getLanguage() + ".yml");
             boolean langResourceExists = langResource != null;
 
             if (!langResourceExists) {
-                pl.getLogger().warning("No custom lang file for " + Locale.getDefault().getDisplayLanguage() + " could be found! Defaulting to English...");
+                pl.getLogger().warning("No custom lang file for " + locale.getDisplayLanguage() + " could be found! Defaulting to English...");
             }
 
             lang = new CommentConf(langFile, langResourceExists ? langResource : pl.getResource("lang_en.yml"));
