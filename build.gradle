@@ -1,6 +1,6 @@
 allprojects {
     group = 'org.spazzinq'
-    version = '4.2.7-BETA'
+    version = '4.2.8-BETA'
 }
 
 subprojects {
@@ -14,7 +14,7 @@ subprojects {
         // Spigot
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
         // bStats, CombatLogX
-        maven { url = 'https://repo.codemc.org/repository/maven-public/' }
+        maven { url = 'https://repo.codemc.io/repository/maven-public/' }
         // WorldEdit, WorldGuard
         maven { url = 'https://maven.sk89q.com/repo/' }
         // Essentials, FactionsUUID
