@@ -89,6 +89,7 @@ public class LangManager {
     public LangManager(FlightControl pl) {
         this.pl = pl;
         langFile = new File(pl.getDataFolder(), "lang.yml");
+        locale = Locale.getDefault();
     }
 
     public boolean loadLang() {
@@ -112,23 +113,20 @@ public class LangManager {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
+                        pl.getLogger().info("Generated a new lang.yml!");
                     }
                 }
-            } else {
-                locale = Locale.getDefault();
             }
 
-            if (locale != null) {
-                InputStream langResource = pl.getResource("lang_" + locale.getLanguage() + ".yml");
-                boolean langResourceExists = langResource != null;
+            InputStream langResource = pl.getResource("lang_" + locale.getLanguage() + ".yml");
+            boolean langResourceExists = langResource != null;
 
-                if (!langResourceExists) {
-                    pl.getLogger().warning("No custom lang file for " + locale.getDisplayLanguage() + " could be found! Defaulting to English...");
-                }
-
-                lang = new CommentConf(langFile, langResourceExists ? langResource : pl.getResource("lang_en.yml"));
-                pl.getLogger().info("Generated a new lang.yml!");
+            if (!langResourceExists) {
+                pl.getLogger().warning("No custom lang file for " + locale.getDisplayLanguage() + " could be found! Defaulting to English...");
             }
+
+            lang = new CommentConf(langFile, langResourceExists ? langResource : pl.getResource("lang_en.yml"));
 
             // Migrate config messages
             if (pl.getConfManager().getConf().isConfigurationSection("messages")) {
