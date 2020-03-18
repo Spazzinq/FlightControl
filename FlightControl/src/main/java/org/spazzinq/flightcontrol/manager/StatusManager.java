@@ -32,6 +32,7 @@ import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.Evaluation;
+import org.spazzinq.flightcontrol.util.PermissionUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -123,27 +124,30 @@ public class StatusManager {
 
     // TODO Finish optimization with caching
     private boolean enemyCheck(Player p, Location l) {
-        World world = l.getWorld();
-        boolean disable = false;
+        if (!PermissionUtil.hasPermission(p, NEARBYPASS)) {
+            World world = l.getWorld();
+            boolean disable = false;
 
-        // Prevent comparing 2 different worlds
-        if (pl.getConfManager().isUseFacEnemyRange() && p.getWorld().equals(l.getWorld())) {
-            Set<Player> worldPlayers = new HashSet<>();
+            // Prevent comparing 2 different worlds
+            if (pl.getConfManager().isUseFacEnemyRange() && p.getWorld().equals(l.getWorld())) {
+                Set<Player> worldPlayers = new HashSet<>();
 
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                if (world.equals(onlinePlayer.getWorld())) {
-                    worldPlayers.add(onlinePlayer);
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    if (world.equals(onlinePlayer.getWorld())) {
+                        worldPlayers.add(onlinePlayer);
+                    }
+                }
+                worldPlayers.remove(p);
+
+                for (Player otherP : worldPlayers) {
+                    if (pl.getHookManager().getFactionsHook().isEnemy(p, otherP) && l.distanceSquared(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRangeSquared()) {
+                        if (otherP.isFlying()) pl.getFlightManager().check(otherP);
+                        disable = true;
+                    }
                 }
             }
-            worldPlayers.remove(p);
-
-            for (Player otherP : worldPlayers) {
-                if (pl.getHookManager().getFactionsHook().isEnemy(p, otherP) && l.distanceSquared(otherP.getLocation()) <= pl.getConfManager().getFacEnemyRangeSquared()) {
-                    if (otherP.isFlying()) pl.getFlightManager().check(otherP);
-                    disable = true;
-                }
-            }
+            return disable;
         }
-        return disable;
+        return false;
     }
 }

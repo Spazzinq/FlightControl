@@ -3,6 +3,7 @@ package org.spazzinq.flightcontrol.object;
 public enum FlyPermission {
     ADMIN("flightcontrol.admin"),
     BYPASS("flightcontrol.bypass"),
+    NEARBYPASS("flightcontrol.nearbypass"),
 
     FLY_ALL("flightcontrol.flyall"),
 
