@@ -32,7 +32,6 @@ import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.Evaluation;
-import org.spazzinq.flightcontrol.util.PermissionUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -124,7 +123,7 @@ public class StatusManager {
 
     // TODO Finish optimization with caching
     private boolean enemyCheck(Player p, Location l) {
-        if (!PermissionUtil.hasPermission(p, NEARBYPASS)) {
+        if (!hasPermission(p, NEARBYPASS)) {
             World world = l.getWorld();
             boolean disable = false;
 
