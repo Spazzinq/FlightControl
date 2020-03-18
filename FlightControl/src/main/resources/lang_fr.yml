@@ -15,7 +15,7 @@ player:
     cannot_enable: "&cVous ne pouvez pas utiliser /fly maintenant."
   trail:
     enabled: "&aVouz avez activé les particules de vol !"
-    disabled: "&cVouz avez désactivé les particules de vol !"
+    disabled: "&cVous avez désactivé les particules de vol !"
   permission_denied: "&cVous n''êtes pas autorisé(e) à utiliser cette commande."
 
 # %VARIABLENAME% est le bouche-trou pour l’information de message
@@ -25,7 +25,7 @@ admin:
   # Le préfixe appliqué aux messages qui ne peuvent pas être modifiés (par ex. /fc actionbar)
   prefix: "&a&lFlightControl &a"
   # Les préfixes sont écrits parce que les couleurs différentes des messages signifient les choses différentes
-  reloaded: "&a&lFlightControl &7» &aToutes les configs ont été rechargée avec succès !"
+  reloaded: "&a&lFlightControl &7» &aToutes les configs ont été rechargées avec succès !"
   global_flight_speed:
     set: "&e&lFlightControl &7» &eLa vitesse de vol globale est maintenant &f%speed%&e !"
     same: "&e&lFlightControl &7» &eRien ne s'est passé ! La vitesse de vol globale est déjà à &f%speed%&e !"
@@ -48,6 +48,6 @@ admin:
     add: "&e&lFlightControl &7» &f%player%&e a maintenant un vol temporaire pendant &f%duration%&e de plus."
     disable: "&e&lFlightControl &7» &eDésactivé le vol temporaire de &f%player%&e !"
     disabled: "&c&lFlightControl &7» Le vol temporaire de &f%player%&c est déjà désactivé !"
-    usage: "&c&lFlightControl &7» &cPas correct ! Usage correct : /tempfly (durée) [joueur]. Une unité de temps anglaise
+    usage: "&c&lFlightControl &7» &cUsage incorrect ! Usage : /tempfly (durée) [joueur]. Une unité de temps anglaise
               doit suivre la durée. Les exemples de durées :
               &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c."
