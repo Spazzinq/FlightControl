@@ -24,21 +24,23 @@
 
 package org.spazzinq.flightcontrol.hook.combat;
 
-import com.SirBlobman.combatlogx.api.ICombatLogX;
-import com.SirBlobman.combatlogx.api.utility.ICombatManager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public final class CombatLogXHook extends CombatHook {
-    private ICombatManager combatManager;
+    //    private ICombatManager combatManager;
+    //
+    //    @Override public boolean tagged(Player p) {
+    //        if (combatManager == null) {
+    //            combatManager = ((ICombatLogX) Bukkit.getPluginManager().getPlugin("CombatLogX")).getCombatManager();
+    //        }
+    //
+    //        return combatManager.isInCombat(p);
+    //    }
 
     @Override public boolean tagged(Player p) {
-        if (combatManager == null) {
-            combatManager = ((ICombatLogX) Bukkit.getPluginManager().getPlugin("CombatLogX")).getCombatManager();
-        }
-
-        return combatManager.isInCombat(p);
+        return com.SirBlobman.combatlogx.utility.CombatUtil.isInCombat(p);
     }
+
     @Override public boolean isHooked() {
         return true;
     }
