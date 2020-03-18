@@ -1,6 +1,6 @@
-# Langue
-# English (en), français (fr), 中文 (zh)
-locale: fr
+# Translations: français (fr), English (en), 中文 (zh)
+# Pour changer la langue, veuillez supprimer le # ci-dessous et mettre "langue" à son abréviation (en, fr, zh)
+#locale: fr
 
 # Si vous ne voulez pas de message, veuillez mettre ""
 player:

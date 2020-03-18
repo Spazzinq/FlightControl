@@ -39,6 +39,7 @@ public final class ConfUtil {
     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     * */
     private static final String NEW_LINE = "\n";
+
     @SuppressWarnings("unchecked")
     public static void runTask(StringBuilder config, Object list, ConfTask task) {
         // Split into lines

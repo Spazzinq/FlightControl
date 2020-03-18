@@ -1,6 +1,6 @@
-# Language
-# English (en), français (fr), 中文 (zh)
-locale: en
+# Translations: English (en), français (fr), 中文 (zh)
+# To change the language, remove the # below and set "locale" to its abbreviation (en, fr, zh)
+#locale: en
 
 # If you don't want a message to be sent, set it to ""
 player:

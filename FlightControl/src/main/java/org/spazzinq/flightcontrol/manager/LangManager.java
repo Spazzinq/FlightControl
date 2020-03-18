@@ -1,7 +1,9 @@
 package org.spazzinq.flightcontrol.manager;
 
+import com.google.common.io.Files;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,13 +11,12 @@ import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.CommentConf;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class LangManager {
+    private HashSet<String> languages = new HashSet<>(Arrays.asList("en", "fr", "zh"));
     private Locale locale;
 
     private final FlightControl pl;
@@ -63,7 +64,6 @@ public class LangManager {
     @Getter private String tempFlyUsage;
 
     public LangManager(FlightControl pl) {
-        locale = Locale.getDefault();
         this.pl = pl;
         langFile = new File(pl.getDataFolder(), "lang.yml");
     }
@@ -76,22 +76,36 @@ public class LangManager {
 
             if (langFile.exists()) {
                 YamlConfiguration tempLocaleConf = YamlConfiguration.loadConfiguration(langFile);
-                String preferredLocale = tempLocaleConf.getString("locale");
-                if (preferredLocale != null && Arrays.asList(Locale.getISOLanguages()).contains(preferredLocale)) {
-                    locale = Locale.forLanguageTag(preferredLocale);
-                } else {
-                    pl.getLogger().warning("Invalid locale provided in lang.yml! Defaulting to Java's language...");
+
+                if (tempLocaleConf.isString("locale")) {
+                    String preferredLocale = tempLocaleConf.getString("locale");
+
+                    if (languages.contains(preferredLocale)) {
+                        locale = Locale.forLanguageTag(preferredLocale);
+
+                        try {
+                            //noinspection UnstableApiUsage
+                            Files.move(langFile, new File(pl.getDataFolder(), "lang_old.yml"));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
+            } else {
+                locale = Locale.getDefault();
             }
 
-            InputStream langResource = pl.getResource("lang_" + locale.getLanguage() + ".yml");
-            boolean langResourceExists = langResource != null;
+            if (locale != null) {
+                InputStream langResource = pl.getResource("lang_" + locale.getLanguage() + ".yml");
+                boolean langResourceExists = langResource != null;
 
-            if (!langResourceExists) {
-                pl.getLogger().warning("No custom lang file for " + locale.getDisplayLanguage() + " could be found! Defaulting to English...");
+                if (!langResourceExists) {
+                    pl.getLogger().warning("No custom lang file for " + locale.getDisplayLanguage() + " could be found! Defaulting to English...");
+                }
+
+                lang = new CommentConf(langFile, langResourceExists ? langResource : pl.getResource("lang_en.yml"));
+                pl.getLogger().info("Generated a new lang.yml!");
             }
-
-            lang = new CommentConf(langFile, langResourceExists ? langResource : pl.getResource("lang_en.yml"));
 
             // Migrate config messages
             if (pl.getConfManager().getConf().isConfigurationSection("messages")) {
@@ -138,7 +152,7 @@ public class LangManager {
                 public void run() {
                     ignoreReload = false;
                 }
-            }, 250);
+            }, 500);
 
             reloaded = true;
         }
@@ -147,13 +161,6 @@ public class LangManager {
 
     public void updateLang() {
         boolean modified = false;
-
-        // 4.2.1
-        if (!lang.isString("locale")) {
-            pl.getLogger().info("Added \"locale\" option to lang.yml!");
-            lang.addNode("locale: en", "player");
-            modified = true;
-        }
 
         if (modified) {
             lang.save();

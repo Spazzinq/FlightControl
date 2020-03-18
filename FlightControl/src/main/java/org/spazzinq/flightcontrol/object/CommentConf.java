@@ -156,33 +156,6 @@ public class CommentConf extends YamlConfiguration {
     }
 
     /**
-     * Saves the config to a file.
-     * @param file the destination file
-     * @throws IOException if the plugin cannot create the parent directories or write to the file
-     */
-    public void save(File file) throws IOException {
-        if (file != null) {
-            //noinspection UnstableApiUsage
-            Files.createParentDirs(file);
-
-            try (BufferedWriter out = java.nio.file.Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
-                out.write(saveToString());
-            }
-        }
-    }
-
-    /**
-     * Saves the config to the file that was set on initialization.
-     */
-    public void save() {
-        try {
-            save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Loads the config from a String.
      * @param data the String from which to load the config
      * @throws InvalidConfigurationException if the config parsed with the String is invalid
@@ -230,8 +203,35 @@ public class CommentConf extends YamlConfiguration {
         return configBuilder.toString();
     }
 
+    /**
+     * Saves the config to a file.
+     * @param file the destination file
+     * @throws IOException if the plugin cannot create the parent directories or write to the file
+     */
+    public void save(File file) throws IOException {
+        if (file != null) {
+            //noinspection UnstableApiUsage
+            Files.createParentDirs(file);
+
+            try (BufferedWriter out = java.nio.file.Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+                out.write(saveToString());
+            }
+        }
+    }
+
     @Override
     public void save(String file) throws IOException {
         save(new File(file));
+    }
+
+    /**
+     * Saves the config to the file that was set on initialization.
+     */
+    public void save() {
+        try {
+            save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

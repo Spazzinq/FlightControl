@@ -1,6 +1,6 @@
-# 语言
-# English (en), français (fr), 中文 (zh)
-locale: zh
+# Translations: 中文 (zh), English (en), français (fr)
+# 要更改语言，删除下面的＃并将 “locale” 设置为其缩写
+#locale: zh
 
 player:
   actionbar: false

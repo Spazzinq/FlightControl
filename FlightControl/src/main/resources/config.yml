@@ -7,6 +7,7 @@
 # Discord: https://spazzinq.org/discord
 # Issue Tracker: https://github.com/Spazzinq/FlightControl/issues
 # Spigot Page: https://www.spigotmc.org/resources/flightcontrol.55168/
+# Permissions: https://spazzinq.org/flightcontrol/permissions.html
 
 # Before you leave a negative review:
 # ✓ Read through ALL the information in this configuration
@@ -89,10 +90,3 @@ sounds:
     sound: "NONE"
     pitch: 1
     volume: 1
-
-#  ___               _       _
-# | _ \___ _ _ _ __ (_)_____(_)___ _ _  ___
-# |  _/ -_) '_| '  \| (_-<_-< / _ \ ' \(_-<
-# |_| \___|_| |_|_|_|_/__/__/_\___/_||_/__/
-# All information found at the link below ↓
-# https://spazzinq.org/flightcontrol/permissions.html
