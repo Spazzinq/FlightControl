@@ -1,7 +1,7 @@
 /*
- * This file is part of FlightControl, which is licensed under the MIT License
+ * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2019 Spazzinq
+ * Copyright (c) 2020 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,7 @@ public class LandsHook extends LandsBase {
     @Override public boolean landsIsOwn(Player p) {
         Land land = landsIntegration.getLand(p.getLocation());
 
+// Debug
 //        if (land == null || !p.getUniqueId().equals(land.getOwnerUID())) {
 //            if (land == null) {
 //                p.sendMessage("The LandChunk is null!");
