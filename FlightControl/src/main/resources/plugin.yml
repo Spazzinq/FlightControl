@@ -6,7 +6,7 @@ author: Spazzinq
 description: "An elegant solution for controlling player flight"
 softdepend: [AntiCombatLogging, CombatLogPro, CombatLogX, CombatTagPlus, DeluxeCombat,
              Essentials, Factions, PlotSquared, WorldGuard, SuperVanish, PremiumVanish,
-             Towny, Lands, GriefPrevention, CrazyEnchantments]
+             Towny, Lands, GriefPrevention, CrazyEnchantments, Multiverse]
 
 commands:
   flightcontrol:
