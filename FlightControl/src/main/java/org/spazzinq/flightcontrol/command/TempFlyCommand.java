@@ -34,7 +34,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
-import org.spazzinq.flightcontrol.util.PermissionUtil;
+import org.spazzinq.flightcontrol.util.PlayerUtil;
+
+import java.util.UUID;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
@@ -50,7 +52,7 @@ public final class TempFlyCommand implements CommandExecutor {
         boolean console = s instanceof ConsoleCommandSender;
 
         if (args.length == 1) {
-            if (PermissionUtil.hasPermission(s, FlyPermission.TEMP_FLY) || console) {
+            if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY) || console) {
                 Player argPlayer = Bukkit.getPlayer(args[0]);
 
                 if (argPlayer != null) {
@@ -73,7 +75,7 @@ public final class TempFlyCommand implements CommandExecutor {
                 msg(s, pl.getLangManager().getPermDenied());
             }
         } else if (args.length == 2) {
-            if (PermissionUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS) || console) {
+            if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS) || console) {
                 Player argPlayer = Bukkit.getPlayer(args[1]);
 
                 if (argPlayer == null) {
@@ -85,7 +87,7 @@ public final class TempFlyCommand implements CommandExecutor {
                 msg(s, pl.getLangManager().getPermDenied());
             }
         } else {
-            if (PermissionUtil.hasPermission(s, FlyPermission.TEMP_FLY) || PermissionUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS) || console) {
+            if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY) || PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS) || console) {
                 msg(s, pl.getLangManager().getTempFlyUsage());
             } else {
                 msg(s, pl.getLangManager().getPermDenied());

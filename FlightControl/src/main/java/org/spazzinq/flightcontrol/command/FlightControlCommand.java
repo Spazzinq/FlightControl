@@ -32,7 +32,7 @@ import org.spazzinq.flightcontrol.manager.ConfManager;
 import org.spazzinq.flightcontrol.manager.LangManager;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.MathUtil;
-import org.spazzinq.flightcontrol.util.PermissionUtil;
+import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.util.*;
 
@@ -98,7 +98,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
             args[i] = args[i].toLowerCase();
         }
 
-        if (s instanceof ConsoleCommandSender || PermissionUtil.hasPermission(s, FlyPermission.ADMIN)) {
+        if (s instanceof ConsoleCommandSender || PlayerUtil.hasPermission(s, FlyPermission.ADMIN)) {
             if (args.length > 0) {
                 List<String> autoComplete = autoComplete(args[0]);
 

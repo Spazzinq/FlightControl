@@ -38,7 +38,7 @@ import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.DualStore;
-import org.spazzinq.flightcontrol.util.PermissionUtil;
+import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -176,7 +176,7 @@ public class CategoryManager {
         List<Category> categories = new ArrayList<>();
 
         for (Category category : getCategories()) {
-            if (PermissionUtil.hasPermissionCategory(p, category)) {
+            if (PlayerUtil.hasPermissionCategory(p, category)) {
                 categories.add(category);
             }
         }

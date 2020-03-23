@@ -29,7 +29,7 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 
-public class PermissionUtil {
+public class PlayerUtil {
     public static boolean hasPermission(CommandSender p, FlyPermission flyPermission) {
         return p.hasPermission(flyPermission.toString());
     }

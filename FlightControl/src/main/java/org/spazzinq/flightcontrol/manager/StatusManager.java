@@ -37,7 +37,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.spazzinq.flightcontrol.object.FlyPermission.*;
-import static org.spazzinq.flightcontrol.util.PermissionUtil.*;
+import static org.spazzinq.flightcontrol.util.PlayerUtil.*;
 
 // TODO Rewrite system for entire class... This is ugly...
 public class StatusManager {
@@ -91,7 +91,7 @@ public class StatusManager {
                 || ((pl.getConfManager().isLandsOwnEnable() && pl.getConfManager().isLandsTrusted()) || hasPermission(p, LANDS_TRUSTED) || landsOwnerHasTrusted)
                         && pl.getHookManager().getLandsHook().landsIsTrusted(p)
                 // GriefPrevention check
-                || (pl.getConfManager().isGpClaimOwn() || hasPermission(p, CLAIM_OWN)) && pl.getHookManager().getGriefPreventionHook().isHooked();
+                || (pl.getConfManager().isGpClaimOwn() || hasPermission(p, CLAIM_OWN)) && pl.getHookManager().getGriefPreventionHook().claimIsOwn(l, p);
         boolean enablePermissionCheck =
                 // Global perm check
                 hasPermission(p, FLY_ALL)
@@ -116,6 +116,9 @@ public class StatusManager {
                 hasPermissionNoFly(p, worldName)
                 // Region perm check
                 || regionName != null && hasPermissionNoFly(p, worldName + "." + regionName);
+
+//        p.sendMessage(disableCategoryCheck + " " + disableHookCheck + " " + disablePermissionCheck + " " + enemyCheck(p, l) + " "
+//                + enableCategoryCheck + " " +  enableHookCheck + " " +  enablePermissionCheck + " " + tempFly);
 
         return new Evaluation(disableCategoryCheck || disableHookCheck || disablePermissionCheck || enemyCheck(p, l),
                               enableCategoryCheck || enableHookCheck || enablePermissionCheck || tempFly);

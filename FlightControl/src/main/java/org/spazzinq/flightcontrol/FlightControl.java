@@ -50,7 +50,7 @@ import java.util.UUID;
 
 import static org.spazzinq.flightcontrol.object.FlyPermission.*;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
-import static org.spazzinq.flightcontrol.util.PermissionUtil.*;
+import static org.spazzinq.flightcontrol.util.PlayerUtil.*;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private final APIManager apiManager = APIManager.getInstance();
@@ -237,6 +237,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                         ((confManager.isLandsOwnEnable() && confManager.isLandsTrusted() || landsOwnerHasTrusted) && hookManager.getLandsHook().landsIsTrusted(p)) + " " +
                         ((hasPermission(p, LANDS_TRUSTED) || landsOwnerHasTrusted) && hookManager.getLandsHook().landsIsTrusted(p)) + " " +
                         (landsOwnerHasTrusted) : "") +
+                (hookManager.getGriefPreventionHook().isHooked() ? "\n&fGriefPrevention &7» " + ((confManager.isGpClaimOwn() || hasPermission(p, CLAIM_OWN)) && hookManager.getGriefPreventionHook().claimIsOwn(l, p)) : "") +
                 (hookManager.getEnchantmentsHook().isHooked() ? "\n&fEnchants &7» " + hookManager.getEnchantmentsHook().canFly(p) : "") +
                 "\n \n&e&lDisable" +
                 (hookManager.getFactionsHook().isHooked() ? "\n&fFC &7» " + getHookManager().getFactionsHook().rel(p, category.getFactions().getDisabled()) : "") +
