@@ -52,7 +52,8 @@ public class PlayerManager {
         }
     }
 
-    public void loadStorage(Player p) {
+    public FlightPlayer getFlightPlayer(Player p) {
+        // Cached loading
         if (!playerCache.containsKey(p.getUniqueId())) {
             File data = new File(folder, p.getUniqueId() + ".yml");
 
@@ -67,12 +68,7 @@ public class PlayerManager {
 
             playerCache.put(p.getUniqueId(), flightPlayer);
         }
-    }
 
-    public FlightPlayer getFlightPlayer(Player p) {
-        if (!playerCache.containsKey(p.getUniqueId())) {
-            loadStorage(p);
-        }
         return playerCache.get(p.getUniqueId());
     }
 

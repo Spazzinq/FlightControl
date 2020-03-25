@@ -112,7 +112,6 @@ final class Listener implements org.bukkit.event.Listener {
         }
 
         // Load FlightPlayer data
-        pl.getPlayerManager().loadStorage(p);
         p.setFlySpeed(pl.getPlayerManager().getFlightPlayer(p).getActualFlightSpeed());
 
         // Check flight then trail, allowing time for other plugins to load data
