@@ -27,6 +27,7 @@ package org.spazzinq.flightcontrol.manager;
 import com.earth2me.essentials.Essentials;
 import lombok.Getter;
 import net.minelink.ctplus.CombatTagPlus;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
@@ -140,7 +141,10 @@ public class HookManager {
 
     private void loadCombat() {
         if (pluginEnabled("CombatLogX")) {
-            combatHook = new CombatLogXHook();
+            String version = pm.getPlugin("CombatLogX").getDescription().getVersion();
+            boolean versionTen = version != null && version.startsWith("10.");
+
+            combatHook = versionTen ? new CombatLogX10Hook() : new CombatLogX9Hook();
         }
         else if (pluginEnabled("CombatTagPlus")) {
             combatHook = new CombatTagPlusHook(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());

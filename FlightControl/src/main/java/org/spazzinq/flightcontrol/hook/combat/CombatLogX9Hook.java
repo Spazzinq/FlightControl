@@ -22,35 +22,16 @@
  * SOFTWARE.
  */
 
-allprojects {
-    group = 'org.spazzinq'
-    version = '4.3.7-BETA'
-}
+package org.spazzinq.flightcontrol.hook.combat;
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
+import org.bukkit.entity.Player;
 
-    sourceCompatibility = '1.8'
+public final class CombatLogX9Hook extends CombatHook {
+    @Override public boolean tagged(Player p) {
+        return com.SirBlobman.combatlogx.utility.CombatUtil.isInCombat(p);
+    }
 
-    repositories {
-        mavenCentral()
-        // Spigot
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats, CombatLogX
-        maven { url = 'https://repo.codemc.io/repository/maven-public/' }
-        // WorldEdit, WorldGuard
-        maven { url = 'https://maven.sk89q.com/repo/' }
-        // Essentials, FactionsUUID
-        maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
-        // PlotSquared
-        maven { url = 'https://ci.athion.net/job/PlotSquared-Breaking/ws/mvn/' }
-        maven { url = 'https://ci.athion.net/job/PlotSquared-Legacy/ws/mvn/' }
-        // CrazyEnchantments
-        maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PlotSquared
-        maven { url = 'https://jitpack.io' }
-        // SavageFactions - not working
-//        maven { url = 'https://nexus.illyria.io/repository/maven-public/' }
+    @Override public boolean isHooked() {
+        return true;
     }
 }
