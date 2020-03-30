@@ -32,4 +32,8 @@ public class GriefPreventionBase extends Hook {
     public boolean claimIsOwn(Location location, Player player) {
         return false;
     }
+
+    public boolean claimIsTrusted(Location location, Player player) {
+        return false;
+    }
 }

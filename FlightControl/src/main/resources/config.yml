@@ -52,6 +52,8 @@ territory:
   # Requires GriefPrevention plugin
   griefprevention:
     enable_own_claim: false
+    # Includes trusted people for "enable_own_claim"
+    include_trusted: false
 
 trail:
   enabled: false

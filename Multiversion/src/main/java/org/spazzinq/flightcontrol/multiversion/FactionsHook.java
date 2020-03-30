@@ -26,12 +26,37 @@ package org.spazzinq.flightcontrol.multiversion;
 
 import org.bukkit.entity.Player;
 
-import java.util.Set;
-
 public class FactionsHook extends Hook {
-    public boolean rel(Player p, Set<FactionRelation> relations) {
+    public boolean hasFaction(Player p) {
         return false;
     }
+
+    public boolean inWarzone(Player p) {
+        return false;
+    }
+    public boolean inSafezone(Player p) {
+        return false;
+    }
+    public boolean inWilderness(Player p) {
+        return false;
+    }
+
+    public boolean inOwnTerritory(Player p) {
+        return false;
+    }
+    public boolean inAllyTerritory(Player p) {
+        return false;
+    }
+    public boolean inTruceTerritory(Player p) {
+        return false;
+    }
+    public boolean inNeutralTerritory(Player p) {
+        return false;
+    }
+    public boolean inEnemyTerritory(Player p) {
+        return false;
+    }
+
     public boolean isEnemy(Player p, Player otherP) {
         return false;
     }

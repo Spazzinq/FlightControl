@@ -44,6 +44,7 @@ public enum FlyPermission {
     LANDS_OLD("flightcontrol.ownland"),
 
     CLAIM_OWN("flightcontrol.claim.own"),
+    CLAIM_TRUSTED("flightcontrol.claim.trusted"),
 
     FLY_SPEED("flightcontrol.flyspeed"),
     FLY_SPEED_OTHERS("flightcontrol.flypseed.others"),

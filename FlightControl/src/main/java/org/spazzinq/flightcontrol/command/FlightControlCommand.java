@@ -181,10 +181,10 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                 int range = Integer.parseInt(args[1]);
                                 int rangeSquared = range * range;
                                 if (range > -2) {
-                                    if (config.getFacEnemyRangeSquared() != rangeSquared) {
+                                    if (config.getNearbyRangeSquared() != rangeSquared) {
                                         config.set("factions.disable_enemy_range", range);
-                                        config.setUseFacEnemyRange(range != -1);
-                                        config.setFacEnemyRangeSquared(rangeSquared);
+                                        config.setNearbyCheck(range != -1);
+                                        config.setNearbyRangeSquared(rangeSquared);
 
                                         msg(s, replaceVar(pl.getLangManager().getEnemyRangeSet(), range + "", "range"));
                                     } else msg(s, replaceVar(pl.getLangManager().getEnemyRangeSame(), range + "", "range"));

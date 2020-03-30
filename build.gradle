@@ -24,7 +24,7 @@
 
 allprojects {
     group = 'org.spazzinq'
-    version = '4.3.7-BETA'
+    version = '4.3.8-BETA'
 }
 
 subprojects {
@@ -50,7 +50,5 @@ subprojects {
         maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
         // Lands, PlotSquared
         maven { url = 'https://jitpack.io' }
-        // SavageFactions - not working
-//        maven { url = 'https://nexus.illyria.io/repository/maven-public/' }
     }
 }

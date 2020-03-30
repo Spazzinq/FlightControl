@@ -59,10 +59,12 @@ public final class ConfManager {
     @Getter @Setter private boolean townyOwn;
     @Getter @Setter private boolean townyWarDisable;
     @Getter @Setter private boolean landsOwnEnable;
-    @Getter @Setter private boolean landsTrusted;
-    @Getter @Setter private boolean gpClaimOwn;
-    @Getter @Setter private boolean useFacEnemyRange;
-    @Getter @Setter private double facEnemyRangeSquared;
+    @Getter @Setter private boolean landsIncludeTrusted;
+    @Getter @Setter private boolean gpClaimOwnEnable;
+    @Getter @Setter private boolean gpClaimIncludeTrusted;
+    @Getter @Setter private boolean nearbyCheck;
+    @Getter @Setter private boolean isNearbyCheckEnemies;
+    @Getter @Setter private double nearbyRangeSquared;
 
     public ConfManager(FlightControl pl) {
         this.pl = pl;
@@ -92,14 +94,18 @@ public final class ConfManager {
             townyOwn = conf.getBoolean("territory.towny.enable_own_town");
             townyWarDisable = conf.getBoolean("territory.towny.negate_during_war");
             landsOwnEnable = conf.getBoolean("territory.lands.enable_own_land");
-            landsTrusted = conf.getBoolean("territory.lands.include_trusted");
-            gpClaimOwn = conf.getBoolean("territory.griefprevention.enable_own_claim");
+            landsIncludeTrusted = conf.getBoolean("territory.lands.include_trusted");
+            gpClaimOwnEnable = conf.getBoolean("territory.griefprevention.enable_own_claim");
+            gpClaimIncludeTrusted = conf.getBoolean("territory.griefprevention.include_trusted");
 
             // ints
-            int range = conf.getInt("factions.disable_enemy_range");
-            if (useFacEnemyRange = (range != -1)) {
-                facEnemyRangeSquared = range * range;
+            int range = conf.getInt("nearby_disable.range");
+
+            if (nearbyCheck = (range != -1)) {
+                nearbyRangeSquared = range * range;
             }
+
+            isNearbyCheckEnemies = conf.getBoolean("nearby_disable.factions_enemy");
 
             // floats
             defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed"));
@@ -148,6 +154,8 @@ public final class ConfManager {
 
             conf.deleteNode("towny");
             conf.deleteNode("lands");
+
+            modified = true;
         }
 
         // 4.2.5 - change function of factions_enemy_range
@@ -160,6 +168,17 @@ public final class ConfManager {
                     "factions_enemy: " + (conf.getInt("factions.disable_enemy_range") != -1))), "nearby_disable");
 
             conf.deleteNode("factions");
+
+            modified = true;
+        }
+
+        // 4.3.8 - add trusted to GriefPrevention section
+        if (conf.isBoolean("territory.griefprevention.include_trusted")) {
+            pl.getLogger().info("Added \"include_trusted\" to the GriefPrevention section of the config!");
+
+            conf.addSubnodes(new HashSet<>(Collections.singleton("include_trusted: false")), "territory.griefprevention.enable_own_claim");
+
+            modified = true;
         }
 
         if (modified) {

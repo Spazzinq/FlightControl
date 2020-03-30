@@ -36,6 +36,12 @@ public class GriefPreventionHook extends GriefPreventionBase {
         return claim != null && player.getUniqueId().equals(claim.ownerID);
     }
 
+    @Override public boolean claimIsTrusted(Location location, Player player) {
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
+
+        return claim != null && claim.allowAccess(player) == null;
+    }
+
     @Override public boolean isHooked() {
         return true;
     }

@@ -27,7 +27,6 @@ package org.spazzinq.flightcontrol.manager;
 import com.earth2me.essentials.Essentials;
 import lombok.Getter;
 import net.minelink.ctplus.CombatTagPlus;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;

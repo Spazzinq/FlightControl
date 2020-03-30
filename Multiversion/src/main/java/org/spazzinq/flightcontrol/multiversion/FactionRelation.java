@@ -25,7 +25,7 @@
 package org.spazzinq.flightcontrol.multiversion;
 
 public enum FactionRelation {
-    OWN, ALLY, TRUCE, NEUTRAL, ENEMY, WARZONE, SAFEZONE, WILDERNESS;
+    DEFAULT, OWN, ALLY, TRUCE, NEUTRAL, ENEMY, WARZONE, SAFEZONE, WILDERNESS;
 
     public static FactionRelation getRelation(String relationName) {
         try {

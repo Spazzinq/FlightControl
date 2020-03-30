@@ -45,6 +45,26 @@ public class Category implements Comparable<Category> {
         this.priority = priority;
     }
 
+    public boolean enabledContains(World world) {
+        return worlds.getEnabled().contains(world);
+    }
+    public boolean enabledContains(Region region) {
+        return regions.getEnabled().contains(region);
+    }
+    public boolean enabledContains(FactionRelation relation) {
+        return factions.getEnabled().contains(relation);
+    }
+
+    public boolean disabledContains(World world) {
+        return worlds.getDisabled().contains(world);
+    }
+    public boolean disabledContains(Region region) {
+        return regions.getDisabled().contains(region);
+    }
+    public boolean disabledContains(FactionRelation relation) {
+        return factions.getDisabled().contains(relation);
+    }
+
     @Override
     public int compareTo(Category o) {
         return o.priority - priority;

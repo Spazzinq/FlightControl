@@ -43,8 +43,6 @@ import org.spazzinq.flightcontrol.util.PlayerUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 
 public class CategoryManager {
     private final FlightControl pl;
@@ -52,7 +50,7 @@ public class CategoryManager {
 
     @Getter private CommentConf conf;
     @Getter private final File categoryFile;
-    private final HashSet<Category> categories = new HashSet<>();
+    private final ArrayList<Category> categories = new ArrayList<>();
     @Getter private Category global;
 
     public CategoryManager(FlightControl pl) {
@@ -74,6 +72,8 @@ public class CategoryManager {
             Category category = loadCategory(categoryName, categoriesSection.getConfigurationSection(categoryName));
             categories.add(category);
         }
+
+        Collections.sort(categories);
     }
 
     private Category loadCategory(String name, ConfigurationSection category) {
@@ -173,20 +173,16 @@ public class CategoryManager {
 
     // TODO Cached category grabbing - use FlightPlayer?
     public Category getCategory(Player p) {
-        List<Category> categories = new ArrayList<>();
-
         for (Category category : getCategories()) {
             if (PlayerUtil.hasPermissionCategory(p, category)) {
-                categories.add(category);
+                return category;
             }
         }
-        // Locate the highest priority category
-        Collections.sort(categories);
-        return categories.isEmpty() ? pl.getCategoryManager().getGlobal()
-                : categories.get(0);
+
+        return pl.getCategoryManager().getGlobal();
     }
 
-    public HashSet<Category> getCategories() {
+    public ArrayList<Category> getCategories() {
         return categories;
     }
 }

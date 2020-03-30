@@ -50,7 +50,12 @@ final class Listener implements org.bukkit.event.Listener {
     // Check fly status
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onMove(PlayerMoveEvent e) {
-        pl.getFlightManager().check(e.getPlayer(), e.getTo());
+        // Save performance
+        if (e.getFrom().getBlockX() != e.getTo().getBlockX()
+                || e.getFrom().getBlockY() != e.getTo().getBlockY()
+                || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
+            pl.getFlightManager().check(e.getPlayer(), e.getTo());
+        }
     }
 
     // Fly particles
@@ -161,9 +166,9 @@ final class Listener implements org.bukkit.event.Listener {
         World world = e.getWorld();
         String worldName = world.getName();
 
-        pl.defaultPerms(worldName);
+        pl.registerDefaultPerms(worldName);
         for (String regionName : pl.getHookManager().getWorldGuardHook().getRegionNames(world)) {
-            pl.defaultPerms(worldName + "." + regionName);
+            pl.registerDefaultPerms(worldName + "." + regionName);
         }
     }
 }

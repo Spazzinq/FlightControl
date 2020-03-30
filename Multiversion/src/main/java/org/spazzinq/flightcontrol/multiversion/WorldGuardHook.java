@@ -32,8 +32,20 @@ import java.util.Collections;
 import java.util.Set;
 
 @SuppressWarnings("unused")
-public class WorldGuardHook {
-    public String getRegionName(Location l) { return null; }
-    public Set<String> getRegionNames(World w) { return Collections.emptySet(); }
-    public boolean hasRegion(Region region) { return false; }
+public class WorldGuardHook extends Hook {
+    public String getRegionName(Location l) {
+        return null;
+    }
+
+    public Set<String> getRegionNames(World w) {
+        return Collections.emptySet();
+    }
+
+    public boolean hasRegion(Region region) {
+        return false;
+    }
+
+    public boolean isHooked() {
+        return true;
+    }
 }

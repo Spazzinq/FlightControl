@@ -27,45 +27,50 @@ package org.spazzinq.flightcontrol.multiversion.current;
 import com.massivecraft.factions.*;
 import com.massivecraft.factions.struct.Relation;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.multiversion.FactionsHook;
 
-import java.util.Set;
-
 public final class SavageFactionsHook extends FactionsHook {
-    @Override public boolean rel(Player p, Set<FactionRelation> relations) {
-        if (!relations.isEmpty()) {
-            Faction f = Board.getInstance().getFactionAt(new FLocation(p.getLocation()));
-            FPlayer fP = getPlayer(p);
-            boolean own = false;
-            boolean ally = false;
-            boolean truce = false;
-            boolean neutral = false;
-            boolean enemy = false;
-            boolean warzone = relations.contains(FactionRelation.WARZONE) && f.isWarZone();
-            boolean safezone = relations.contains(FactionRelation.SAFEZONE) && f.isSafeZone();
-            boolean wilderness = relations.contains(FactionRelation.SAFEZONE) && f.isWilderness();
-
-            if (fP.hasFaction()) {
-                if (relations.contains(FactionRelation.OWN)) own = fP.isInOwnTerritory();
-                if (relations.contains(FactionRelation.ALLY)) ally = fP.isInAllyTerritory();
-                // WARNING: Some versions of Factions don't have Relation.isInTruceTerritory()
-                if (relations.contains(FactionRelation.TRUCE)) truce = fP.getRelationToLocation() == Relation.TRUCE;
-                if (relations.contains(FactionRelation.NEUTRAL)) neutral = fP.isInNeutralTerritory();
-                if (relations.contains(FactionRelation.ENEMY)) enemy = fP.isInEnemyTerritory();
-            }
-            return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
-        }
-        return false;
+    @Override public boolean hasFaction(Player p) {
+        return getFPlayer(p).hasFaction();
     }
 
-    private FPlayer getPlayer(Player p) {
+    @Override public boolean inWarzone(Player p) {
+        return getFactionAtLocation(p).isWarZone();
+    }
+    @Override public boolean inSafezone(Player p) {
+        return getFactionAtLocation(p).isSafeZone();
+    }
+    @Override public boolean inWilderness(Player p) {
+        return getFactionAtLocation(p).isWilderness();
+    }
+
+    @Override public boolean inOwnTerritory(Player p) {
+        return getFPlayer(p).isInOwnTerritory();
+    }
+    @Override public boolean inAllyTerritory(Player p) {
+        return getFPlayer(p).isInAllyTerritory();
+    }
+    @Override public boolean inTruceTerritory(Player p) {
+        return getFPlayer(p).getRelationToLocation() == Relation.TRUCE;
+    }
+    @Override public boolean inNeutralTerritory(Player p) {
+        return getFPlayer(p).isInNeutralTerritory();
+    }
+    @Override public boolean inEnemyTerritory(Player p) {
+        return getFPlayer(p).isInEnemyTerritory();
+    }
+
+    private Faction getFactionAtLocation(Player p) {
+        return Board.getInstance().getFactionAt(new FLocation(p.getLocation()));
+    }
+
+    private FPlayer getFPlayer(Player p) {
         return FPlayers.getInstance().getByPlayer(p);
     }
 
     // WARNING: Some versions of Factions don't have Relation.isEnemy()
     @Override public boolean isEnemy(Player p, Player otherP) {
-        return getPlayer(p).getRelationTo(getPlayer(otherP)) == Relation.ENEMY;
+        return getFPlayer(p).getRelationTo(getFPlayer(otherP)) == Relation.ENEMY;
     }
 
     @Override public boolean isHooked() { return true; }

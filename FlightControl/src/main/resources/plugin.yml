@@ -43,6 +43,7 @@ permissions:
     default: false
     children:
       own: true
+      trusted: false
   flightcontrol.flyall:
     description: Ability to automatically fly in all regions that are not disabled
     default: false

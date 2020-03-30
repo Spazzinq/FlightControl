@@ -31,41 +31,49 @@ import com.massivecraft.factions.entity.FactionColl;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.multiversion.FactionsHook;
 
-import java.util.Set;
-
 public final class MassiveFactionsHook extends FactionsHook {
-    @Override public boolean rel(Player p, Set<FactionRelation> relations) {
-        if (!relations.isEmpty()) {
-            MPlayer mp = MPlayer.get(p);
-            Faction f = BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));
-            FactionColl fColl = FactionColl.get();
-            boolean own = false;
-            boolean ally = false;
-            boolean truce = false;
-            boolean neutral = false;
-            boolean enemy = false;
-            boolean warzone = relations.contains(FactionRelation.WARZONE) && f == fColl.getWarzone();
-            boolean safezone = relations.contains(FactionRelation.SAFEZONE) && f == fColl.getSafezone();
-            boolean wilderness = relations.contains(FactionRelation.WILDERNESS) && f.isNone();
+    @Override public boolean hasFaction(Player p) {
+        return MPlayer.get(p).hasFaction();
+    }
 
-            if (mp.hasFaction()) {
-                Rel r = f.getRelationWish(mp.getFaction());
-                if (relations.contains(FactionRelation.OWN)) own = mp.isInOwnTerritory();
-                if (relations.contains(FactionRelation.ALLY)) ally = r == Rel.ALLY;
-                if (relations.contains(FactionRelation.TRUCE)) truce = r == Rel.TRUCE;
-                if (relations.contains(FactionRelation.NEUTRAL)) neutral = !f.isNone() && f != fColl.getWarzone() && f != fColl.getSafezone() && !mp.isInOwnTerritory() && r == Rel.NEUTRAL;
-                if (relations.contains(FactionRelation.ENEMY)) enemy = r == Rel.ENEMY;
-            }
-            return own || ally || truce || neutral || enemy || warzone || safezone || wilderness;
-        }
-        return false;
+    @Override public boolean inWarzone(Player p) {
+        return getFactionAtLocation(p) == FactionColl.get().getWarzone();
+    }
+    @Override public boolean inSafezone(Player p) {
+        return getFactionAtLocation(p) == FactionColl.get().getSafezone();
+    }
+    @Override public boolean inWilderness(Player p) {
+        return getFactionAtLocation(p).isNone();
+    }
+
+    @Override public boolean inOwnTerritory(Player p) {
+        return MPlayer.get(p).isInOwnTerritory();
+    }
+    @Override public boolean inAllyTerritory(Player p) {
+        return getRelToLocation(p) == Rel.ALLY;
+    }
+    @Override public boolean inTruceTerritory(Player p) {
+        return  getRelToLocation(p) == Rel.TRUCE;
+    }
+    @Override public boolean inNeutralTerritory(Player p) {
+        return  getRelToLocation(p) == Rel.NEUTRAL;
+    }
+    @Override public boolean inEnemyTerritory(Player p) {
+        return MPlayer.get(p).isInEnemyTerritory();
     }
 
     @Override public boolean isEnemy(Player p, Player otherP) {
         return MPlayer.get(p).getRelationTo(MPlayer.get(otherP)) == Rel.ENEMY;
+    }
+
+    private Faction getFactionAtLocation(Player p) {
+        return BoardColl.get().getFactionAt(PS.valueOf(p.getLocation()));
+    }
+
+    private Rel getRelToLocation(Player p) {
+        return getFactionAtLocation(p).getRelationWish(MPlayer.get(p).getFaction());
     }
 
     @Override public boolean isHooked() { return true; }
