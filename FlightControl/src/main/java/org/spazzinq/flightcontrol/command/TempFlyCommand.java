@@ -66,7 +66,7 @@ public final class TempFlyCommand implements CommandExecutor {
                     if (console) {
                         pl.getLogger().warning("Invalid player! Use /tempfly (player) to disable a player's temporary flight; otherwise, use /tempfly (length) (player) to enable flight.");
                     } else {
-                        setTempFly(s, (Player) s, args[0]);
+                        setTempFly(s, (Player) s, args[0], false);
                     }
                 }
             } else {
@@ -79,22 +79,22 @@ public final class TempFlyCommand implements CommandExecutor {
                 if (argPlayer == null) {
                     msg(s, pl.getLangManager().getTempFlyUsage());
                 } else {
-                    setTempFly(s, argPlayer, args[0]);
+                    setTempFly(s, argPlayer, args[0], label.toLowerCase().equals("silenttempfly"));
                 }
             } else {
                 msg(s, pl.getLangManager().getPermDenied());
             }
+        } else if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY)
+                || PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS)
+                || console) {
+            msg(s, pl.getLangManager().getTempFlyUsage());
         } else {
-            if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY) || PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS) || console) {
-                msg(s, pl.getLangManager().getTempFlyUsage());
-            } else {
-                msg(s, pl.getLangManager().getPermDenied());
-            }
+            msg(s, pl.getLangManager().getPermDenied());
         }
         return true;
     }
 
-    private void setTempFly(CommandSender s, Player p, String length) {
+    private void setTempFly(CommandSender s, Player p, String length, boolean silent) {
         if (length.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
             char unit = findUnit(length);
             int unitIndex = length.indexOf(unit);
@@ -140,12 +140,14 @@ public final class TempFlyCommand implements CommandExecutor {
                 // Convert to ticks then add 4 for good measure
             }.runTaskLater(pl,time / 50 + 4);
 
-            // TODO make clearer
-            msg(s, replaceVar(
-                    replaceVar(alreadyHadTempFly ? pl.getLangManager().getTempFlyAdd()
-                                                 : pl.getLangManager().getTempFlyEnable(),
-                            p.getName(), "player"),
-                             lengthFormatted.toString(), "duration"));
+            if (!silent) {
+                // TODO make clearer
+                msg(s, replaceVar(
+                        replaceVar(alreadyHadTempFly ? pl.getLangManager().getTempFlyAdd()
+                                        : pl.getLangManager().getTempFlyEnable(),
+                                p.getName(), "player"),
+                        lengthFormatted.toString(), "duration"));
+            }
         } else msg(s, pl.getLangManager().getTempFlyUsage());
     }
 
