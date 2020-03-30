@@ -173,7 +173,7 @@ public final class ConfManager {
         }
 
         // 4.3.8 - add trusted to GriefPrevention section
-        if (conf.isBoolean("territory.griefprevention.include_trusted")) {
+        if (!conf.isBoolean("territory.griefprevention.include_trusted")) {
             pl.getLogger().info("Added \"include_trusted\" to the GriefPrevention section of the config!");
 
             conf.addSubnodes(new HashSet<>(Collections.singleton("include_trusted: false")), "territory.griefprevention.enable_own_claim");

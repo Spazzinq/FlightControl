@@ -38,7 +38,7 @@ dependencies {
     compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {
         exclude group: 'net.md-5', module: 'bungeecord-chat'
     }
-    compileOnly 'me.badbones69:crazyenchantments-plugin:1.8-Dev-Build-v7.1'
+    compileOnly 'me.badbones69:crazyenchantments-plugin:1.8-Dev-Build-v8.1'
     compileOnly 'net.ess3:EssentialsX:2.17.1'
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:6.1.3-SNAPSHOT'
     compileOnly 'com.sk89q.worldguard:worldguard-legacy:6.1.3-SNAPSHOT'
