@@ -139,7 +139,7 @@ public class StatusManager {
                 /* Category checks */
                 category.disabledContains(world),
                 category.disabledContains(region),
-                category.enabledContains(relation),
+                category.disabledContains(relation),
 
                 /* Hook checks */
                 // In combat

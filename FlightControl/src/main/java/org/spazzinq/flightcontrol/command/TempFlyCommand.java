@@ -79,7 +79,7 @@ public final class TempFlyCommand implements CommandExecutor {
                 if (argPlayer == null) {
                     msg(s, pl.getLangManager().getTempFlyUsage());
                 } else {
-                    setTempFly(s, argPlayer, args[0], label.toLowerCase().equals("silenttempfly"));
+                    setTempFly(s, argPlayer, args[0], "silenttempfly".equals(label.toLowerCase()));
                 }
             } else {
                 msg(s, pl.getLangManager().getPermDenied());
