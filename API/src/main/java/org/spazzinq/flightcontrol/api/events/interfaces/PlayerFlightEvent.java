@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 public interface PlayerFlightEvent extends FlightEvent {
     /**
      * Returns the player that caused the event's calling.
+     *
      * @return the player that caused the event's calling
      */
     @SuppressWarnings("unused") Player getPlayer();

@@ -29,13 +29,14 @@ public final class Evaluation {
     private final boolean enabled;
 
     public Evaluation(boolean disabled, boolean enabled) {
-       this.disabled = disabled;
-       this.enabled = enabled;
+        this.disabled = disabled;
+        this.enabled = enabled;
     }
 
     public boolean enabled() {
         return enabled;
     }
+
     public boolean disabled() {
         return disabled;
     }

@@ -75,7 +75,8 @@ public class CommentConf extends YamlConfiguration {
 
     /**
      * Saves stream to file, compares comments, and loads configuration.
-     * @param file the location of the current modified config
+     *
+     * @param file              the location of the current modified config
      * @param defaultConfStream the InputStream to the new config
      */
     public CommentConf(File file, InputStream defaultConfStream) {
@@ -121,7 +122,8 @@ public class CommentConf extends YamlConfiguration {
 
     /**
      * Adds the node above the relative node.
-     * @param node the node to add
+     *
+     * @param node         the node to add
      * @param relativeNode the already-existing node/subnode to reference when adding
      */
     public void addNode(String node, String relativeNode) {
@@ -130,16 +132,18 @@ public class CommentConf extends YamlConfiguration {
 
     /**
      * Removes a node. Works with both master nodes and subnodes.
+     *
      * @param node the node to remove
      */
     public void deleteNode(String node) {
         set(node, null);
-//        deleteNodes.add(node);
+        //        deleteNodes.add(node);
     }
 
     /**
      * Adds the subnodes below the relative node and indents them.
-     * @param subnodes the subnodes to add
+     *
+     * @param subnodes        the subnodes to add
      * @param relativeSubnode the already-existing node/subnode to reference when adding
      */
     public void addIndentedSubnodes(Set<String> subnodes, String relativeSubnode) {
@@ -148,7 +152,8 @@ public class CommentConf extends YamlConfiguration {
 
     /**
      * Adds the subnodes below the relative node.
-     * @param subnodes the subnodes to add
+     *
+     * @param subnodes     the subnodes to add
      * @param relativeNode the already-existing node/subnode to reference when adding
      */
     public void addSubnodes(Set<String> subnodes, String relativeNode) {
@@ -157,6 +162,7 @@ public class CommentConf extends YamlConfiguration {
 
     /**
      * Loads the config from a String.
+     *
      * @param data the String from which to load the config
      * @throws InvalidConfigurationException if the config parsed with the String is invalid
      */
@@ -166,11 +172,9 @@ public class CommentConf extends YamlConfiguration {
         Map<?, ?> input;
         try {
             input = yaml.load(data);
-        }
-        catch (YAMLException e) {
+        } catch (YAMLException e) {
             throw new InvalidConfigurationException(e);
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new InvalidConfigurationException("Top level is not a Map.");
         }
 
@@ -205,6 +209,7 @@ public class CommentConf extends YamlConfiguration {
 
     /**
      * Saves the config to a file.
+     *
      * @param file the destination file
      * @throws IOException if the plugin cannot create the parent directories or write to the file
      */

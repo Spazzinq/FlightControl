@@ -36,14 +36,17 @@ public final class Sound {
     public Sound(org.bukkit.Sound sound) {
         this(sound, 1, 1);
     }
+
     public Sound(String name) {
         this(name, 1, 1);
     }
+
     public Sound(org.bukkit.Sound sound, float volume, float pitch) {
         this.sound = sound;
         this.volume = volume;
         this.pitch = pitch;
     }
+
     public Sound(String name, float volume, float pitch) {
         this(org.bukkit.Sound.valueOf(name), volume, pitch);
     }
@@ -56,7 +59,8 @@ public final class Sound {
 
     public static boolean is(String s) {
         try {
-            org.bukkit.Sound.valueOf(s); return true;
+            org.bukkit.Sound.valueOf(s);
+            return true;
         } catch (Exception e) {
             return false;
         }

@@ -71,7 +71,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private FactionsManager factionsManager;
     @Getter private TrailManager trailManager;
 
-    private HashSet<String> permissionSuffixCache = new HashSet<>();
+    private final HashSet<String> permissionSuffixCache = new HashSet<>();
 
     private final PluginManager pm = Bukkit.getPluginManager();
     public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
@@ -96,7 +96,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                     "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
                     "      X       X       X       X       X       X\n" +
                     "     (_)     (_)     (_)     (_)     (_)     (_)\n" +
-                    " \nVersion " + updateManager.getVersion() + " is currently unstable and should not be run on a production server.\n" +
+                    " \nVersion " + updateManager.getVersion() + " is currently unstable and should not be run on a " +
+                    "production server.\n" +
                     "Thanks for being a FlightControl beta tester!\n \n" +
                     "  _       _       _       _       _       _\n" +
                     " ( )     ( )     ( )     ( )     ( )     ( )\n" +
@@ -117,7 +118,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             new BukkitRunnable() {
                 @Override public void run() {
                     if (updateManager.updateExists()) {
-                        getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update. Perform \"/fc update\" to update and visit https://www.spigotmc.org/resources/55168/ to view the feature changes (the configs automatically update).");
+                        getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update." +
+                                " Perform \"/fc update\" to update and visit https://www.spigotmc" +
+                                ".org/resources/55168/ to view the feature changes (the configs automatically update)" +
+                                ".");
                     }
                 }
             }.runTaskLaterAsynchronously(this, 70);
@@ -156,7 +160,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         getCommand("flyspeed").setExecutor(new FlySpeedCommand(this));
     }
 
-	public void reloadManagers() {
+    public void reloadManagers() {
         // Prevent permission auto-granting from "*" permission
         for (World w : Bukkit.getWorlds()) {
             String worldName = w.getName();
@@ -168,7 +172,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
 
         categoryManager.reloadCategories();
-	    confManager.loadConf();
+        confManager.loadConf();
         langManager.loadLang();
         // At end to allow for any necessary migration
         confManager.updateConfig();
@@ -191,7 +195,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
     // TODO Clean this up
     public void debug(CommandSender s, Player p) {
-	    Location l = p.getLocation();
+        Location l = p.getLocation();
         World world = l.getWorld();
         String worldName = world.getName(),
                 regionName = getHookManager().getWorldGuardHook().getRegionName(l);
@@ -204,11 +208,12 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 "\n&eCategory &7» &f" + category.getName() +
                 (hookManager.getWorldGuardHook().isHooked() ? "\n&eW.RG &7» &f" + worldName + "." + regionName : "") +
                 (hookManager.getFactionsHook().isHooked() ? "\n&eFac &7» &f" + category.getFactions() : "") +
-                "\n&eWRLDs &7» &f" + category.getWorlds()  +
-                (hookManager.getWorldGuardHook().isHooked() ? "\n&eRGs &7» &f" +  category.getRegions() : "") +
+                "\n&eWRLDs &7» &f" + category.getWorlds() +
+                (hookManager.getWorldGuardHook().isHooked() ? "\n&eRGs &7» &f" + category.getRegions() : "") +
                 ("\n&eBypass &7» &f" + (PlayerUtil.hasPermission(p, FlyPermission.BYPASS)
                         || p.getGameMode() == GameMode.SPECTATOR
-                        || confManager.isVanishBypass() && hookManager.getVanishHook().vanished(p))).replaceAll("true", "&atrue"));
+                        || confManager.isVanishBypass() && hookManager.getVanishHook().vanished(p))).replaceAll("true"
+                        , "&atrue"));
 
         statusManager.evalFlight(p, l, true, s);
     }
@@ -223,10 +228,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     }
 
     private void registerPerm(String permString) {
-	    Permission perm = pm.getPermission(permString);
+        Permission perm = pm.getPermission(permString);
 
-	    if (perm == null) {
-	        pm.addPermission(new Permission(permString, PermissionDefault.FALSE));
+        if (perm == null) {
+            pm.addPermission(new Permission(permString, PermissionDefault.FALSE));
         }
     }
 }

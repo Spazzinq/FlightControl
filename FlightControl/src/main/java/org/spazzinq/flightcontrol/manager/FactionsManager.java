@@ -30,7 +30,7 @@ import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.multiversion.FactionsHook;
 
 public class FactionsManager {
-    private FlightControl pl;
+    private final FlightControl pl;
     private FactionsHook factions;
 
     public FactionsManager(FlightControl pl) {
@@ -44,16 +44,24 @@ public class FactionsManager {
 
         FactionRelation relation = FactionRelation.DEFAULT;
 
-        if (factions.inWarzone(p)) relation = FactionRelation.WARZONE;
-        else if (factions.inSafezone(p)) relation = FactionRelation.SAFEZONE;
-        else if (factions.inWilderness(p)) relation = FactionRelation.WILDERNESS;
-
-        else if (factions.hasFaction(p)) {
-            if (factions.inOwnTerritory(p)) relation = FactionRelation.OWN;
-            else if (factions.inAllyTerritory(p)) relation = FactionRelation.ALLY;
-            else if (factions.inTruceTerritory(p)) relation = FactionRelation.TRUCE;
-            else if (factions.inNeutralTerritory(p)) relation = FactionRelation.NEUTRAL;
-            else if (factions.inEnemyTerritory(p)) relation = FactionRelation.ENEMY;
+        if (factions.inWarzone(p)) {
+            relation = FactionRelation.WARZONE;
+        } else if (factions.inSafezone(p)) {
+            relation = FactionRelation.SAFEZONE;
+        } else if (factions.inWilderness(p)) {
+            relation = FactionRelation.WILDERNESS;
+        } else if (factions.hasFaction(p)) {
+            if (factions.inOwnTerritory(p)) {
+                relation = FactionRelation.OWN;
+            } else if (factions.inAllyTerritory(p)) {
+                relation = FactionRelation.ALLY;
+            } else if (factions.inTruceTerritory(p)) {
+                relation = FactionRelation.TRUCE;
+            } else if (factions.inNeutralTerritory(p)) {
+                relation = FactionRelation.NEUTRAL;
+            } else if (factions.inEnemyTerritory(p)) {
+                relation = FactionRelation.ENEMY;
+            }
         }
 
         return relation;

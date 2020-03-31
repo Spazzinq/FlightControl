@@ -40,8 +40,12 @@ public class Region {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Region)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Region)) {
+            return false;
+        }
         Region region = (Region) o;
         return world.equals(region.world) &&
                 regionName.equals(region.regionName);

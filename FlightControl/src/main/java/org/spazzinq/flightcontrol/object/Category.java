@@ -37,7 +37,8 @@ public class Category implements Comparable<Category> {
     @Getter private final DualStore<Region> regions;
     @Getter private final DualStore<FactionRelation> factions;
 
-    public Category(String name, DualStore<World> worlds, DualStore<Region> regions, DualStore<FactionRelation> factions, int priority) {
+    public Category(String name, DualStore<World> worlds, DualStore<Region> regions,
+                    DualStore<FactionRelation> factions, int priority) {
         this.name = name;
         this.worlds = worlds;
         this.regions = regions;
@@ -48,9 +49,11 @@ public class Category implements Comparable<Category> {
     public boolean enabledContains(World world) {
         return worlds.getEnabled().contains(world);
     }
+
     public boolean enabledContains(Region region) {
         return regions.getEnabled().contains(region);
     }
+
     public boolean enabledContains(FactionRelation relation) {
         return factions.getEnabled().contains(relation);
     }
@@ -58,9 +61,11 @@ public class Category implements Comparable<Category> {
     public boolean disabledContains(World world) {
         return worlds.getDisabled().contains(world);
     }
+
     public boolean disabledContains(Region region) {
         return regions.getDisabled().contains(region);
     }
+
     public boolean disabledContains(FactionRelation relation) {
         return factions.getDisabled().contains(relation);
     }

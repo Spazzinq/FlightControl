@@ -31,7 +31,8 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.api.events.interfaces.*;
 import org.spazzinq.flightcontrol.api.objects.Sound;
 
-public class FlightDisableEvent implements PlayerFlightEvent, LocationFlightEvent, MessageFlightEvent, SoundFlightEvent, CommandFlightEvent, Cancellable {
+public class FlightDisableEvent implements PlayerFlightEvent, LocationFlightEvent, MessageFlightEvent,
+        SoundFlightEvent, CommandFlightEvent, Cancellable {
     @Getter private final Player player;
     @Getter private final Location location;
     @Getter @Setter private String message;
@@ -40,7 +41,8 @@ public class FlightDisableEvent implements PlayerFlightEvent, LocationFlightEven
     @Getter private final boolean byCommand;
     @Getter @Setter private boolean cancelled;
 
-    public FlightDisableEvent(Player player, Location location, String message, Sound sound, boolean byActionbar, boolean byCommand) {
+    public FlightDisableEvent(Player player, Location location, String message, Sound sound, boolean byActionbar,
+                              boolean byCommand) {
         this.player = player;
         this.location = location;
         this.message = message;

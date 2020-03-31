@@ -78,8 +78,9 @@ public class CategoryManager {
 
     private Category loadCategory(String name, ConfigurationSection category) {
         // Prevent permission auto-granting from "*" permission
-        if (pm.getPermission("flightcontrol.category." + name) == null)
+        if (pm.getPermission("flightcontrol.category." + name) == null) {
             pm.addPermission(new Permission("flightcontrol.category." + name, PermissionDefault.FALSE));
+        }
 
         DualStore<World> worlds = loadWorlds(name, category.getConfigurationSection("worlds"));
         DualStore<Region> regions = loadRegions(name, category.getConfigurationSection("regions"));
@@ -167,7 +168,8 @@ public class CategoryManager {
     private void nonexistent(String category, String section, String type, String error) {
         // Ignore examples
         if (!error.contains("WORLDNAME")) {
-            pl.getLogger().warning("Category \"" + category + "\" in section \"" + section + "\" contains non-existent " + type + " \"" + error + "\"");
+            pl.getLogger().warning("Category \"" + category + "\" in section \"" + section + "\" contains " +
+                    "non-existent " + type + " \"" + error + "\"");
         }
     }
 

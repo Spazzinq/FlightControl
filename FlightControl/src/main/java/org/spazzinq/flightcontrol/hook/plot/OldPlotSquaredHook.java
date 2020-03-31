@@ -29,12 +29,16 @@ import com.intellectualcrafters.plot.object.Location;
 
 public final class OldPlotSquaredHook extends PlotHook {
     @Override public boolean canFly(String world, int x, int y, int z) {
-        com.intellectualcrafters.plot.object.Plot p = com.intellectualcrafters.plot.object.Plot.getPlot(new Location(world, x, y, z));
+        com.intellectualcrafters.plot.object.Plot p =
+                com.intellectualcrafters.plot.object.Plot.getPlot(new Location(world, x, y, z));
         return p != null && p.getFlag(Flags.FLY, false);
     }
+
     @Override public boolean cannotFly(String world, int x, int y, int z) {
-        com.intellectualcrafters.plot.object.Plot p = com.intellectualcrafters.plot.object.Plot.getPlot(new Location(world, x, y, z));
+        com.intellectualcrafters.plot.object.Plot p =
+                com.intellectualcrafters.plot.object.Plot.getPlot(new Location(world, x, y, z));
         return p != null && !p.getFlag(Flags.FLY, true);
     }
+
     @Override public boolean isHooked() { return true; }
 }

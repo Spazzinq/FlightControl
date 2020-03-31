@@ -34,10 +34,10 @@ import static org.spazzinq.flightcontrol.object.ConfTask.*;
 
 public final class ConfUtil {
     /*
-    * //////////////////////////////////////////////////////////////////////////////
-    * YOU MUST USE \n TO SEPARATE LINES BECAUSE IT WILL NOT BE RECOGNIZED OTHERWISE
-    * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    * */
+     * //////////////////////////////////////////////////////////////////////////////
+     * YOU MUST USE \n TO SEPARATE LINES BECAUSE IT WILL NOT BE RECOGNIZED OTHERWISE
+     * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+     * */
     private static final String NEW_LINE = "\n";
 
     @SuppressWarnings("unchecked")
@@ -73,7 +73,8 @@ public final class ConfUtil {
                 currentComment.append(line).append(NEW_LINE);
 
                 if (endOfConfig) {
-                    ((HashMap<String, Set<String>>) list).put("footer_ghost_node", Collections.singleton(currentComment.toString()));
+                    ((HashMap<String, Set<String>>) list).put("footer_ghost_node",
+                            Collections.singleton(currentComment.toString()));
                 }
             } else if (trimmedLine.contains(":")) {
                 // Substring off : to get simpleNode
@@ -127,7 +128,8 @@ public final class ConfUtil {
                         }
 
                         // Insert before unless WRITE_INDENTED_SUBNODES or WRITE_SUBNODES (if those, then insert after)
-                        config.insert(pos + (task == WRITE_INDENTED_SUBNODES || task == WRITE_SUBNODES ? line.length() : 0), insert);
+                        config.insert(pos + (task == WRITE_INDENTED_SUBNODES || task == WRITE_SUBNODES ?
+                                line.length() : 0), insert);
                         // Account for insertion in pos
                         pos += insert.length();
                     }
@@ -145,7 +147,8 @@ public final class ConfUtil {
                         config.delete(deleteStart, deleteEnd);
                     }
                     if (((Set<String>) list).contains(node)) {
-                        // Set deletingNode and delete start (on next iteration, the code will first check if deletingNode exists)
+                        // Set deletingNode and delete start (on next iteration, the code will first check if
+                        // deletingNode exists)
                         deletingNode = node;
                         deleteStart = pos;
                     }

@@ -30,16 +30,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class CombatLogX10Hook extends CombatHook {
-        private ICombatManager combatManager;
+    private ICombatManager combatManager;
 
-        @Override public boolean tagged(Player p) {
-            if (combatManager == null) {
-                combatManager = ((ICombatLogX
-                        ) Bukkit.getPluginManager().getPlugin("CombatLogX")).getCombatManager();
-            }
-
-            return combatManager.isInCombat(p);
+    @Override public boolean tagged(Player p) {
+        if (combatManager == null) {
+            combatManager = ((ICombatLogX
+                    ) Bukkit.getPluginManager().getPlugin("CombatLogX")).getCombatManager();
         }
+
+        return combatManager.isInCombat(p);
+    }
 
     @Override public boolean isHooked() {
         return true;

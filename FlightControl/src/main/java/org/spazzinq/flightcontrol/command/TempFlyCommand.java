@@ -64,7 +64,8 @@ public final class TempFlyCommand implements CommandExecutor {
                     }
                 } else {
                     if (console) {
-                        pl.getLogger().warning("Invalid player! Use /tempfly (player) to disable a player's temporary flight; otherwise, use /tempfly (length) (player) to enable flight.");
+                        pl.getLogger().warning("Invalid player! Use /tempfly (player) to disable a player's temporary" +
+                                " flight; otherwise, use /tempfly (length) (player) to enable flight.");
                     } else {
                         setTempFly(s, (Player) s, args[0], false);
                     }
@@ -122,7 +123,9 @@ public final class TempFlyCommand implements CommandExecutor {
                     lengthFormatted.append("second");
                     break;
             }
-            if (notOne) lengthFormatted.append("s");
+            if (notOne) {
+                lengthFormatted.append("s");
+            }
 
             FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(p);
             boolean alreadyHadTempFly = flightPlayer.hasTempFly();
@@ -138,7 +141,7 @@ public final class TempFlyCommand implements CommandExecutor {
                     pl.getFlightManager().check(p); // Checks when tempfly is expected to expire
                 }
                 // Convert to ticks then add 4 for good measure
-            }.runTaskLater(pl,time / 50 + 4);
+            }.runTaskLater(pl, time / 50 + 4);
 
             if (!silent) {
                 // TODO make clearer
@@ -148,12 +151,16 @@ public final class TempFlyCommand implements CommandExecutor {
                                 p.getName(), "player"),
                         lengthFormatted.toString(), "duration"));
             }
-        } else msg(s, pl.getLangManager().getTempFlyUsage());
+        } else {
+            msg(s, pl.getLangManager().getTempFlyUsage());
+        }
     }
 
     private char findUnit(String input) {
         for (int i = 0; i < input.length(); i++) {
-            if (input.substring(i, i+1).matches("[smhd]")) return input.charAt(i);
+            if (input.substring(i, i + 1).matches("[smhd]")) {
+                return input.charAt(i);
+            }
         }
         return 's';
     }

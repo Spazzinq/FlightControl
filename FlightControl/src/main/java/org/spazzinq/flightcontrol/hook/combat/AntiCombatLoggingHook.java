@@ -29,5 +29,6 @@ import org.bukkit.entity.Player;
 
 public final class AntiCombatLoggingHook extends CombatHook {
     @Override public boolean tagged(Player p) { return AntiCombatLoggingAPI.isInCombat(p); }
+
     @Override public boolean isHooked() { return true; }
 }

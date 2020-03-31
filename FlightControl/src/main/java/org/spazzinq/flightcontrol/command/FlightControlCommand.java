@@ -87,10 +87,14 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                 }
             }
 
-            if (help.length() == buildHelp.length() + args[0].length()) return defaultHelp;
+            if (help.length() == buildHelp.length() + args[0].length()) {
+                return defaultHelp;
+            }
 
             return help.toString();
-        } else return defaultHelp;
+        } else {
+            return defaultHelp;
+        }
     }
 
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
@@ -130,8 +134,9 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                     pl.getTrailManager().trailCheck(p);
                                 }
                             }
+                        } else {
+                            pl.getTrailManager().removeEnabledTrails();
                         }
-                        else pl.getTrailManager().removeEnabledTrails();
                         break;
                     case "vanishbypass":
                         config.setVanishBypass(!config.isVanishBypass());
@@ -157,7 +162,8 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         config.set("settings.auto_update", config.isAutoUpdate());
                         msgToggle(s, config.isAutoUpdate(), "Auto-Update");
                         break;
-                    case "speed": case "flightspeed":
+                    case "speed":
+                    case "flightspeed":
                         if (args.length == 2) {
                             if (args[1].matches("\\.\\d+|\\d+(\\.\\d+)?")) {
                                 float speed = Float.parseFloat(args[1]);
@@ -168,12 +174,23 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                         config.setDefaultFlightSpeed(actualSpeed);
 
                                         pl.getPlayerManager().loadPlayerData();
-                                        msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSet(), speed + "", "speed"));
-                                    } else msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSame(), speed + "", "speed"));
-                                } else msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
-                            } else msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
-                        } else if (args.length == 1) msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
-                        else msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
+                                        msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSet(), speed + "",
+                                                "speed"));
+                                    } else {
+                                        msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSame(), speed + "",
+                                                "speed"));
+                                    }
+                                } else {
+                                    msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
+                                }
+                            } else {
+                                msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
+                            }
+                        } else if (args.length == 1) {
+                            msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
+                        } else {
+                            msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
+                        }
                         break;
                     case "enemyrange":
                         if (args.length == 2) {
@@ -187,11 +204,21 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                         config.setNearbyRangeSquared(rangeSquared);
 
                                         msg(s, replaceVar(pl.getLangManager().getEnemyRangeSet(), range + "", "range"));
-                                    } else msg(s, replaceVar(pl.getLangManager().getEnemyRangeSame(), range + "", "range"));
-                                } else msg(s, pl.getLangManager().getEnemyRangeUsage());
-                            } else msg(s, pl.getLangManager().getEnemyRangeUsage());
-                        } else if (args.length == 1) msg(s, pl.getLangManager().getEnemyRangeUsage());
-                        else msg(s, pl.getLangManager().getEnemyRangeUsage());
+                                    } else {
+                                        msg(s, replaceVar(pl.getLangManager().getEnemyRangeSame(), range + "", "range"
+                                        ));
+                                    }
+                                } else {
+                                    msg(s, pl.getLangManager().getEnemyRangeUsage());
+                                }
+                            } else {
+                                msg(s, pl.getLangManager().getEnemyRangeUsage());
+                            }
+                        } else if (args.length == 1) {
+                            msg(s, pl.getLangManager().getEnemyRangeUsage());
+                        } else {
+                            msg(s, pl.getLangManager().getEnemyRangeUsage());
+                        }
                         break;
                     case "support":
                         config.setInGameSupport(!config.isInGameSupport());
@@ -199,7 +226,10 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         Player dev = pl.getServer().getPlayer(FlightControl.spazzinqUUID);
 
                         if (config.isInGameSupport()) {
-                            msg(s, "&e&lFlightControl &7» &fLive support enables Spazzinq to check debug information on why flight is disabled. " + "You can disable support at any time by repeating the command, but by default the access only lasts until you restart FlightControl/the server.");
+                            msg(s, "&e&lFlightControl &7» &fLive support enables Spazzinq to check debug information " +
+                                    "on why flight is disabled. " + "You can disable support at any time by repeating" +
+                                    " the command, but by default the access only lasts until you restart " +
+                                    "FlightControl/the server.");
                             if (dev != null && dev.isOnline()) {
                                 msg(dev, "&c&lFlightControl &7» &f" + s.getName() + "&c has requested support.");
                             }
@@ -214,21 +244,27 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                             }
                         } else if (s instanceof Player) {
                             pl.debug(s, (Player) s);
+                        } else {
+                            pl.getLogger().info("Only players can use this command (it's information based on the " +
+                                    "player's location)");
                         }
-                        else pl.getLogger().info("Only players can use this command (it's information based on the player's location)");
                         break;
                     default:
                         msg(s, loadHelp(args));
                         break;
                 }
-            } else msg(s, loadHelp(args));
+            } else {
+                msg(s, loadHelp(args));
+            }
         } else if (args.length == 1 && args[0].equals("debug") && s instanceof Player && ((Player) s).getUniqueId().equals(UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c"))) {
             if (config.isInGameSupport()) {
                 pl.debug(s, (Player) s);
             } else {
                 msg(s, "&c&lFlightControl &7» &cSorry bud, you don't have permission to view debug information :I");
             }
-        } else msg(s, pl.getLangManager().getPermDenied());
+        } else {
+            msg(s, pl.getLangManager().getPermDenied());
+        }
 
         return true;
     }

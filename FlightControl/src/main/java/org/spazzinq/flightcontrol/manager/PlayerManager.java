@@ -64,7 +64,8 @@ public class PlayerManager {
                     : pl.getConfManager().getDefaultFlightSpeed();
             Long tempFlyLength = dataConf.isLong("temp_fly") ? dataConf.getLong("temp_fly") : null;
 
-            FlightPlayer flightPlayer = new FlightPlayer(dataConf, p, speed, dataConf.getBoolean("trail"), tempFlyLength);
+            FlightPlayer flightPlayer = new FlightPlayer(dataConf, p, speed, dataConf.getBoolean("trail"),
+                    tempFlyLength);
 
             playerCache.put(p.getUniqueId(), flightPlayer);
         }
@@ -101,7 +102,7 @@ public class PlayerManager {
         YamlConfiguration tempflyConf = YamlConfiguration.loadConfiguration(tempfly);
 
         for (String uuid : tempflyConf.getKeys(false)) {
-            FlightPlayer flightPlayer = migrateStorage.getOrDefault(uuid, new FlightPlayer(null, null,  -1, true, null));
+            FlightPlayer flightPlayer = migrateStorage.getOrDefault(uuid, new FlightPlayer(null, null, -1, true, null));
             flightPlayer.setTempFly(tempflyConf.getLong(uuid));
         }
         tempfly.delete();

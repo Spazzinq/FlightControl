@@ -46,14 +46,20 @@ public abstract class FlightListener {
                     Class<?> firstParameter = method.getParameterTypes()[0];
                     if (APIManager.getInstance().getEvents().contains(firstParameter)) {
                         handlers.add(new HandlerMethod(this, method));
-                    } else new InstantiationException("Method " + method.getName() + " does not contain a specific Event parameter").printStackTrace();
-                } else new InstantiationException("Method " + method.getName() + " contains more than one parameter").printStackTrace();
+                    } else {
+                        new InstantiationException("Method " + method.getName() + " does not contain a specific Event" +
+                                " parameter").printStackTrace();
+                    }
+                } else {
+                    new InstantiationException("Method " + method.getName() + " contains more than one parameter").printStackTrace();
+                }
             }
         }
     }
 
     /**
      * Initializes a new FlightListener.
+     *
      * @param plugin the listener's plugin owner
      */
     public FlightListener(Plugin plugin) {
@@ -63,6 +69,7 @@ public abstract class FlightListener {
 
     /**
      * Returns the listener's plugin owner.
+     *
      * @return the listener's plugin owner
      */
     public Plugin getPlugin() {
@@ -71,6 +78,7 @@ public abstract class FlightListener {
 
     /**
      * Returns the list of HandlerMethods.
+     *
      * @return The FlightListener's HandlerMethods
      */
     public List<HandlerMethod> getHandlers() {

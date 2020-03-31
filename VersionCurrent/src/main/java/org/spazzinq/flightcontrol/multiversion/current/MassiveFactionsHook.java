@@ -41,9 +41,11 @@ public final class MassiveFactionsHook extends FactionsHook {
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p) == FactionColl.get().getWarzone();
     }
+
     @Override public boolean inSafezone(Player p) {
         return getFactionAtLocation(p) == FactionColl.get().getSafezone();
     }
+
     @Override public boolean inWilderness(Player p) {
         return getFactionAtLocation(p).isNone();
     }
@@ -51,15 +53,19 @@ public final class MassiveFactionsHook extends FactionsHook {
     @Override public boolean inOwnTerritory(Player p) {
         return MPlayer.get(p).isInOwnTerritory();
     }
+
     @Override public boolean inAllyTerritory(Player p) {
         return getRelToLocation(p) == Rel.ALLY;
     }
+
     @Override public boolean inTruceTerritory(Player p) {
-        return  getRelToLocation(p) == Rel.TRUCE;
+        return getRelToLocation(p) == Rel.TRUCE;
     }
+
     @Override public boolean inNeutralTerritory(Player p) {
-        return  getRelToLocation(p) == Rel.NEUTRAL;
+        return getRelToLocation(p) == Rel.NEUTRAL;
     }
+
     @Override public boolean inEnemyTerritory(Player p) {
         return MPlayer.get(p).isInEnemyTerritory();
     }

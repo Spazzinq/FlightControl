@@ -37,24 +37,52 @@ public class ParticleManager13 implements ParticleManager {
 
     public void spawn(Location loc) {
         if (loc.getWorld() != null) {
-            loc.getWorld().spawnParticle(particle, particle == Particle.CLOUD ? loc.clone().subtract(0, .3, 0) : loc, amount, x, y, z, extra, o, true);
+            loc.getWorld().spawnParticle(particle, particle == Particle.CLOUD ? loc.clone().subtract(0, .3, 0) : loc,
+                    amount, x, y, z, extra, o, true);
         }
     }
+
     public void setParticle(String s) {
-        try { particle = Particle.valueOf(s); } catch (Exception ignored) { }
+        try {
+            particle = Particle.valueOf(s);
+        } catch (Exception ignored) {
+        }
         switch (particle) {
-            case REDSTONE: case SPELL_MOB: case SPELL_MOB_AMBIENT: case NOTE: extra = 1; break;
-            default: extra = 0; break;
+            case REDSTONE:
+            case SPELL_MOB:
+            case SPELL_MOB_AMBIENT:
+            case NOTE:
+                extra = 1;
+                break;
+            default:
+                extra = 0;
+                break;
         }
     }
+
     public void setAmount(int amount) { this.amount = amount; }
+
     public void setRBG(int r, int g, int b) {
-        x = 0; y = 0; z = 0; o = null;
+        x = 0;
+        y = 0;
+        z = 0;
+        o = null;
         switch (particle) {
-            case REDSTONE: o = new Particle.DustOptions(Color.fromRGB(r,g,b), amount); break;
-            case SPELL_MOB: case SPELL_MOB_AMBIENT: { x = r / 255d; y = g / 255d; z = b / 255d; break; }
-            case NOTE: x = r / 24.0; break;
-            default: break;
+            case REDSTONE:
+                o = new Particle.DustOptions(Color.fromRGB(r, g, b), amount);
+                break;
+            case SPELL_MOB:
+            case SPELL_MOB_AMBIENT: {
+                x = r / 255d;
+                y = g / 255d;
+                z = b / 255d;
+                break;
+            }
+            case NOTE:
+                x = r / 24.0;
+                break;
+            default:
+                break;
         }
     }
 }

@@ -30,6 +30,7 @@ import org.bukkit.Location;
 public interface LocationFlightEvent extends FlightEvent {
     /**
      * Returns the event's Location.
+     *
      * @return the event's location
      */
     Location getLocation();

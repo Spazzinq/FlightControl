@@ -109,7 +109,8 @@ public class HookManager {
         pl.getLogger().info(hookedMsg);
 
         if (!factionsEnabled) {
-            pl.getLogger().warning("Factions not detected. FlightControl will attempt to hook again in a few seconds...");
+            pl.getLogger().warning("Factions not detected. FlightControl will attempt to hook again in a few seconds." +
+                    "..");
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -119,7 +120,7 @@ public class HookManager {
                     }
                     pl.getLogger().info(factionsEnabled ? "Hooked with Factions!" : "Still did not detect Factions.");
                 }
-            }.runTaskLater(pl,  40);
+            }.runTaskLater(pl, 40);
         }
     }
 
@@ -144,17 +145,13 @@ public class HookManager {
             boolean versionTen = version != null && version.startsWith("10.");
 
             combatHook = versionTen ? new CombatLogX10Hook() : new CombatLogX9Hook();
-        }
-        else if (pluginEnabled("CombatTagPlus")) {
+        } else if (pluginEnabled("CombatTagPlus")) {
             combatHook = new CombatTagPlusHook(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
-        }
-        else if (pluginEnabled("AntiCombatLogging")) {
+        } else if (pluginEnabled("AntiCombatLogging")) {
             combatHook = new AntiCombatLoggingHook();
-        }
-        else if (pluginEnabled("CombatLogPro")) {
+        } else if (pluginEnabled("CombatLogPro")) {
             combatHook = new CombatLogProHook(pm.getPlugin("CombatLogPro"));
-        }
-        else if (pluginEnabled("DeluxeCombat")) {
+        } else if (pluginEnabled("DeluxeCombat")) {
             combatHook = new DeluxeCombatHook();
         }
     }
@@ -162,8 +159,7 @@ public class HookManager {
     private void loadVanish() {
         if (pluginEnabled("PremiumVanish") || pluginEnabled("SuperVanish")) {
             vanishHook = new PremiumSuperVanishHook();
-        }
-        else if (pluginEnabled("Essentials")) {
+        } else if (pluginEnabled("Essentials")) {
             vanishHook = new EssentialsVanishHook((Essentials) pm.getPlugin("Essentials"));
         }
     }

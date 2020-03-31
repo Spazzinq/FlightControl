@@ -46,15 +46,22 @@ public class HandlerMethod implements Comparable<HandlerMethod> {
                 Class<?> firstParameter = method.getParameterTypes()[0];
                 if (APIManager.getInstance().getEvents().contains(firstParameter)) {
                     eventClass = firstParameter;
-                } else throw new IllegalArgumentException("Method does not contain a specific Event parameter");
-            } else throw new IllegalArgumentException("Method does not have only one parameter");
+                } else {
+                    throw new IllegalArgumentException("Method does not contain a specific Event parameter");
+                }
+            } else {
+                throw new IllegalArgumentException("Method does not have only one parameter");
+            }
 
             priority = method.getAnnotation(FlightEventHandler.class).priority();
-        } else throw new IllegalArgumentException("EventHandler annotation is not present");
+        } else {
+            throw new IllegalArgumentException("EventHandler annotation is not present");
+        }
     }
 
     /**
      * Returns the method's plugin owner.
+     *
      * @return the method's plugin owner
      */
     public Plugin getPlugin() { return getListener().getPlugin(); }

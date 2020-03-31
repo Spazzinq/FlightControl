@@ -150,7 +150,8 @@ public final class ConfManager {
             conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
                     "enable_own_land: " + conf.getBoolean("lands.enable_own_land"),
                     "include_trusted: " + conf.getBoolean("lands.include_trusted", false))), "territory.lands");
-            conf.addIndentedSubnodes(new HashSet<>(Collections.singletonList("enable_own_claim: false")), "territory.griefprevention");
+            conf.addIndentedSubnodes(new HashSet<>(Collections.singletonList("enable_own_claim: false")), "territory" +
+                    ".griefprevention");
 
             conf.deleteNode("towny");
             conf.deleteNode("lands");
@@ -176,7 +177,8 @@ public final class ConfManager {
         if (!conf.isBoolean("territory.griefprevention.include_trusted")) {
             pl.getLogger().info("Added \"include_trusted\" to the GriefPrevention section of the config!");
 
-            conf.addSubnodes(new HashSet<>(Collections.singleton("include_trusted: false")), "territory.griefprevention.enable_own_claim");
+            conf.addSubnodes(new HashSet<>(Collections.singleton("include_trusted: false")), "territory" +
+                    ".griefprevention.enable_own_claim");
 
             modified = true;
         }

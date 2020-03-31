@@ -75,7 +75,8 @@ public class FlySpeedCommand implements CommandExecutor {
                 msg(s, pl.getLangManager().getPermDenied());
             }
         } else {
-            if (PlayerUtil.hasPermission(s, FlyPermission.FLY_SPEED) || PlayerUtil.hasPermission(s, FlyPermission.FLY_SPEED_OTHERS) || console) {
+            if (PlayerUtil.hasPermission(s, FlyPermission.FLY_SPEED) || PlayerUtil.hasPermission(s,
+                    FlyPermission.FLY_SPEED_OTHERS) || console) {
                 msg(s, pl.getLangManager().getFlySpeedUsage());
             } else {
                 msg(s, pl.getLangManager().getPermDenied());
@@ -86,8 +87,8 @@ public class FlySpeedCommand implements CommandExecutor {
 
     private void setSpeed(CommandSender s, Player p, String wrongSpeedStr) {
         if (wrongSpeedStr.matches("\\d+|(\\d+)?.\\d+")) {
-            float wrongSpeed = Math.min(Float.parseFloat(wrongSpeedStr), 10),
-                  speed = MathUtil.calcConvertedSpeed(wrongSpeed);
+            float wrongSpeed = Math.min(Float.parseFloat(wrongSpeedStr), 10);
+            float speed = MathUtil.calcConvertedSpeed(wrongSpeed);
             FlightPlayer flightPlayer = playerManager.getFlightPlayer(p);
 
             if (flightPlayer.getActualFlightSpeed() == speed) {

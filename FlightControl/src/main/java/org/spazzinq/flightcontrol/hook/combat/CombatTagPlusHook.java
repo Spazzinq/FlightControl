@@ -29,10 +29,12 @@ import org.bukkit.entity.Player;
 
 public final class CombatTagPlusHook extends CombatHook {
     private final TagManager m;
+
     public CombatTagPlusHook(TagManager m) {
         this.m = m;
     }
 
     @Override public boolean tagged(Player p) { return m.isTagged(p.getUniqueId()); }
+
     @Override public boolean isHooked() { return true; }
 }

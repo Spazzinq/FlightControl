@@ -28,7 +28,10 @@ import org.bukkit.Location;
 
 public interface ParticleManager {
     void spawn(Location l);
+
     void setParticle(String s);
+
     void setAmount(int amount);
+
     void setRBG(int r, int g, int b);
 }

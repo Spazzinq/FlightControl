@@ -96,7 +96,8 @@ public final class FlightManager {
     private void canEnable(Player p) {
         if (!alreadyCanMsg.contains(p)) {
             alreadyCanMsg.add(p);
-            FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), pl.getLangManager().getCanEnableFlight(),
+            FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(),
+                    pl.getLangManager().getCanEnableFlight(),
                     pl.getConfManager().getCSound(), pl.getLangManager().useActionBar());
 
             pl.getApiManager().callEvent(e);
@@ -109,7 +110,8 @@ public final class FlightManager {
     }
 
     private void cannotEnable(Player p) {
-        FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), pl.getLangManager().getCannotEnableFlight(),
+        FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(),
+                pl.getLangManager().getCannotEnableFlight(),
                 pl.getConfManager().getNSound(), pl.getLangManager().useActionBar());
 
         pl.getApiManager().callEvent(e);
@@ -152,7 +154,9 @@ public final class FlightManager {
 
             if (pl.getConfManager().isCancelFall() && p.isFlying()) {
                 noFallDmg.add(p);
-                new BukkitRunnable() { public void run() { noFallDmg.remove(p); } }.runTaskLater(pl, 300);
+                new BukkitRunnable() {
+                    public void run() { noFallDmg.remove(p); }
+                }.runTaskLater(pl, 300);
             }
             p.setAllowFlight(false);
             p.setFlying(false);

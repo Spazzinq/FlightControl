@@ -45,7 +45,7 @@ public class APIManager {
 
     private APIManager() {
         Set<Class> events = new HashSet<>(Arrays.asList(FlightCanEnableEvent.class, FlightCannotEnableEvent.class,
-                                                        FlightDisableEvent.class, FlightEnableEvent.class));
+                FlightDisableEvent.class, FlightEnableEvent.class));
 
         for (Class event : events) {
             handlers.put(event, new ArrayList<>());
@@ -54,6 +54,7 @@ public class APIManager {
 
     /**
      * Adds a listener to the APIManager.
+     *
      * @param listener the FlightListener to add
      */
     public void addListener(FlightListener listener) {
@@ -68,6 +69,7 @@ public class APIManager {
 
     /**
      * Removes a listener from the APIManager and unregisters its HandlerMethods.
+     *
      * @param listener the FlightListener to unregister
      */
     public void removeListener(FlightListener listener) {
@@ -80,6 +82,7 @@ public class APIManager {
 
     /**
      * Returns if the APIManager contains the listener.
+     *
      * @param listener the FlightListener to search for
      * @return true if the APIManager contains the listener, false otherwise
      */
@@ -89,6 +92,7 @@ public class APIManager {
 
     /**
      * Returns the list of all registered listeners.
+     *
      * @return The list of all registered listeners
      */
     public List<FlightListener> getListeners() {
@@ -97,6 +101,7 @@ public class APIManager {
 
     /**
      * Calls an event.
+     *
      * @param event the FlightEvent to call
      */
     public void callEvent(FlightEvent event) {
@@ -109,20 +114,21 @@ public class APIManager {
 
     /**
      * Calls the HandlerMethods associated with the event type.
+     *
      * @param event the FlightEvent instance
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    private void callMethods(FlightEvent e) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+    private void callMethods(FlightEvent e) throws InvocationTargetException, IllegalAccessException,
+            InstantiationException {
         // Prevent CME by cloning List
         List<HandlerMethod> handlersCopy = new ArrayList<>(handlers.get(e.getClass()));
 
         for (HandlerMethod m : handlersCopy) {
             if (m.getPlugin().isEnabled()) {
                 m.getMethod().invoke(m.getListener(), e);
-            }
-            else if (containsListener(m.getListener())) {
+            } else if (containsListener(m.getListener())) {
                 removeListener(m.getListener());
             }
         }
@@ -130,6 +136,7 @@ public class APIManager {
 
     /**
      * Registers the event if it is not already registered.
+     *
      * @param event the FlightEvent to add
      */
     public void registerEvent(FlightEvent event) {
@@ -140,6 +147,7 @@ public class APIManager {
 
     /**
      * Unregisters an event.
+     *
      * @param event the FlightEvent to remove
      */
     public void unregisterEvent(FlightEvent event) {
@@ -148,6 +156,7 @@ public class APIManager {
 
     /**
      * Returns true if the APIManager contains the event.
+     *
      * @param event the FlightEvent to search for
      * @return true if the APIManager contains the event
      */
@@ -157,6 +166,7 @@ public class APIManager {
 
     /**
      * Returns all registered events.
+     *
      * @return All registered events
      */
     public Set<Class> getEvents() {
@@ -178,20 +188,20 @@ public class APIManager {
 
         if (i != methods.size()) {
             methods.add(i, insert);
-        }
-        else {
+        } else {
             methods.add(insert);
         }
 
-//        StringBuilder sb = new StringBuilder();
-//        for (HandlerMethod m : methods) {
-//            sb.append(m.getPriority() + "(" + m.getMethod().getName() + "), ");
-//        }
-//        Bukkit.getLogger().severe(sb.toString());
+        //        StringBuilder sb = new StringBuilder();
+        //        for (HandlerMethod m : methods) {
+        //            sb.append(m.getPriority() + "(" + m.getMethod().getName() + "), ");
+        //        }
+        //        Bukkit.getLogger().severe(sb.toString());
     }
 
     /**
      * Returns the APIManager instance.
+     *
      * @return The APIManager instance
      */
     public static APIManager getInstance() {

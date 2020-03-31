@@ -31,8 +31,10 @@ import org.spazzinq.flightcontrol.api.objects.Sound;
 public interface SoundFlightEvent {
     /**
      * Returns the Sound that will be played on the event's execution.
+     *
      * @return the Sound that will be played on the event's execution
      */
     Sound getSound();
+
     void setSound(Sound sound);
 }

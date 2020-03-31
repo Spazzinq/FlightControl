@@ -39,7 +39,7 @@ import java.io.InputStream;
 import java.util.*;
 
 public class LangManager {
-    private HashSet<String> languages = new HashSet<>(Arrays.asList("en", "fr", "zh"));
+    private final HashSet<String> languages = new HashSet<>(Arrays.asList("en", "fr", "zh"));
     private Locale locale;
 
     private final FlightControl pl;
@@ -48,7 +48,8 @@ public class LangManager {
     private boolean ignoreReload;
 
     // TODO Implement for all messages
-    public static final String PREFIX_POSITIVE = ChatColor.translateAlternateColorCodes('&', "&a&lFlightControl &7» &a");
+    public static final String PREFIX_POSITIVE = ChatColor.translateAlternateColorCodes('&', "&a&lFlightControl &7» " +
+            "&a");
     public static final String PREFIX_ADMIN = ChatColor.translateAlternateColorCodes('&', "&e&lFlightControl &7» &e");
     public static final String PREFIX_ERROR = ChatColor.translateAlternateColorCodes('&', "&c&lFlightControl &7» &c");
 
@@ -123,7 +124,8 @@ public class LangManager {
             boolean langResourceExists = langResource != null;
 
             if (!langResourceExists) {
-                pl.getLogger().warning("No custom lang file for " + locale.getDisplayLanguage() + " could be found! Defaulting to English...");
+                pl.getLogger().warning("No custom lang file for " + locale.getDisplayLanguage() + " could be found! " +
+                        "Defaulting to English...");
             }
 
             lang = new CommentConf(langFile, langResourceExists ? langResource : pl.getResource("lang_en.yml"));
@@ -183,6 +185,7 @@ public class LangManager {
     public void updateLang() {
         boolean modified = false;
 
+        //noinspection ConstantConditions
         if (modified) {
             lang.save();
         }

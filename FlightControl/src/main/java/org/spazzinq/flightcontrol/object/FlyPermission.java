@@ -36,12 +36,9 @@ public enum FlyPermission {
     NO_FLY_STUB("flightcontrol.nofly."),
 
     TOWNY_OWN("flightcontrol.towny.own"),
-    TOWNY_OLD("flightcontrol.owntown"),
 
-    // TODO Do I need to check the parent permission too?
     LANDS_OWN("flightcontrol.lands.own"),
     LANDS_TRUSTED("flightcontrol.lands.trusted"),
-    LANDS_OLD("flightcontrol.ownland"),
 
     CLAIM_OWN("flightcontrol.claim.own"),
     CLAIM_TRUSTED("flightcontrol.claim.trusted"),
@@ -52,7 +49,7 @@ public enum FlyPermission {
     TEMP_FLY("flightcontrol.tempfly"),
     TEMP_FLY_OTHERS("flightcontrol.tempfly.others");
 
-    private String stringPermission;
+    private final String stringPermission;
 
     FlyPermission(String stringPermission) {
         this.stringPermission = stringPermission;

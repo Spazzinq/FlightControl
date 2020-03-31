@@ -56,7 +56,7 @@ public class Version implements Comparable<Version> {
         for (int i = 0; i < versionData.length; i++) {
             int typeDiff = versionData[i] - o.versionData[i];
 
-            if (typeDiff !=  0) {
+            if (typeDiff != 0) {
                 return typeDiff;
             }
         }
@@ -71,8 +71,12 @@ public class Version implements Comparable<Version> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Version)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Version)) {
+            return false;
+        }
         Version version = (Version) o;
         return Arrays.equals(versionData, version.versionData) &&
                 versionType == version.versionType;

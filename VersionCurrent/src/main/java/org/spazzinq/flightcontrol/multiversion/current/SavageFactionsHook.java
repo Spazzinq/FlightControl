@@ -37,9 +37,11 @@ public final class SavageFactionsHook extends FactionsHook {
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p).isWarZone();
     }
+
     @Override public boolean inSafezone(Player p) {
         return getFactionAtLocation(p).isSafeZone();
     }
+
     @Override public boolean inWilderness(Player p) {
         return getFactionAtLocation(p).isWilderness();
     }
@@ -47,15 +49,19 @@ public final class SavageFactionsHook extends FactionsHook {
     @Override public boolean inOwnTerritory(Player p) {
         return getFPlayer(p).isInOwnTerritory();
     }
+
     @Override public boolean inAllyTerritory(Player p) {
         return getFPlayer(p).isInAllyTerritory();
     }
+
     @Override public boolean inTruceTerritory(Player p) {
         return getFPlayer(p).getRelationToLocation() == Relation.TRUCE;
     }
+
     @Override public boolean inNeutralTerritory(Player p) {
         return getFPlayer(p).isInNeutralTerritory();
     }
+
     @Override public boolean inEnemyTerritory(Player p) {
         return getFPlayer(p).isInEnemyTerritory();
     }

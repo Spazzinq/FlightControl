@@ -39,7 +39,7 @@ class PathWatcher extends BukkitRunnable {
     private static final String CONFIG = "config.yml";
     private static final String LANG = "lang.yml";
 
-    PathWatcher(FlightControl pl, Path dataPath)  {
+    PathWatcher(FlightControl pl, Path dataPath) {
         this.pl = pl;
 
         try {
@@ -57,7 +57,7 @@ class PathWatcher extends BukkitRunnable {
         WatchKey key = watcher.poll();
 
         if (key != null) {
-            for (WatchEvent<?> event: key.pollEvents()) {
+            for (WatchEvent<?> event : key.pollEvents()) {
                 WatchEvent.Kind<?> kind = event.kind();
 
                 // Can still occur even though listening for ENTRY_CREATE and ENTRY_MODIFY

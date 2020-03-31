@@ -30,6 +30,7 @@ import org.bukkit.plugin.Plugin;
 
 public final class CombatLogProHook extends CombatHook {
     private final CombatLogProCore core;
+
     public CombatLogProHook(Plugin pl) {
         core = (CombatLogProCore) pl;
     }
@@ -37,5 +38,6 @@ public final class CombatLogProHook extends CombatHook {
     @Override public boolean tagged(Player p) {
         return core.requestPlayer(p).isInCombat();
     }
+
     @Override public boolean isHooked() { return true; }
 }

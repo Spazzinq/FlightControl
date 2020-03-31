@@ -50,7 +50,9 @@ public class ToggleTrailCommand implements CommandExecutor {
                 pl.getTrailManager().trailRemove(p);
                 msg(s, pl.getLangManager().getPersonalTrailDisable(), pl.getLangManager().useActionBar());
             }
-        } else pl.getLogger().info("Only players can use this command (the console isn't a player!)");
+        } else {
+            pl.getLogger().info("Only players can use this command (the console isn't a player!)");
+        }
         return true;
     }
 }

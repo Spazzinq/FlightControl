@@ -36,5 +36,6 @@ public @interface FlightEventHandler {
     enum Priority implements Comparable<Priority> {
         HIGH, NORMAL, LOW
     }
+
     Priority priority() default Priority.NORMAL;
 }

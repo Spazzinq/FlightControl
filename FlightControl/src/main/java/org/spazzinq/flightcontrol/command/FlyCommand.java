@@ -41,6 +41,7 @@ import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
 public final class FlyCommand implements CommandExecutor {
     private final FlightControl pl;
     private final FlightManager flightManager;
+
     public FlyCommand(FlightControl pl) {
         this.pl = pl;
         flightManager = pl.getFlightManager();
@@ -56,14 +57,16 @@ public final class FlyCommand implements CommandExecutor {
                 } else {
                     flightManager.check(p, p.getLocation(), true);
                 }
-            } else pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
+            } else {
+                pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
+            }
         } else if (args.length == 1) {
             if (s instanceof ConsoleCommandSender || PlayerUtil.hasPermission(s, FlyPermission.ADMIN)) {
                 Player p = Bukkit.getPlayer(args[0]);
                 // Allow admins to disable flight
                 if (p != null) {
                     msg(s, replaceVar(p.getAllowFlight() ? pl.getLangManager().getFlyCommandDisable()
-                                                         : pl.getLangManager().getFlyCommandEnable(), p.getName(), "player"));
+                            : pl.getLangManager().getFlyCommandEnable(), p.getName(), "player"));
 
                     if (p.getAllowFlight()) {
                         flightManager.disableFlight(p, true);
@@ -71,8 +74,12 @@ public final class FlyCommand implements CommandExecutor {
                         flightManager.check(p, p.getLocation(), true);
                     }
                     // TODO this ain't working?
-                } else msg(s, pl.getLangManager().getFlyCommandUsage());
-            } else msg(s, pl.getLangManager().getPermDenied());
+                } else {
+                    msg(s, pl.getLangManager().getFlyCommandUsage());
+                }
+            } else {
+                msg(s, pl.getLangManager().getPermDenied());
+            }
         }
         return true;
     }

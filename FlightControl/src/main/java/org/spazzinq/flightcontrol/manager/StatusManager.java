@@ -83,7 +83,7 @@ public class StatusManager {
     public Evaluation evalFlight(Player p, Location l, boolean debug, CommandSender debugRecipient) {
         World world = l.getWorld();
         String worldName = world.getName(),
-               regionName = pl.getHookManager().getWorldGuardHook().getRegionName(l);
+                regionName = pl.getHookManager().getWorldGuardHook().getRegionName(l);
         Region region = new Region(world, regionName);
         Category category = pl.getCategoryManager().getCategory(p);
         FactionRelation relation = pl.getFactionsManager().getRelationToLocation(p);

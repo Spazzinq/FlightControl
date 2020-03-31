@@ -42,14 +42,15 @@ public class LandsHook extends LandsBase {
     @Override public boolean landsIsOwn(Player p) {
         Land land = landsIntegration.getLand(p.getLocation());
 
-// Debug
-//        if (land == null || !p.getUniqueId().equals(land.getOwnerUID())) {
-//            if (land == null) {
-//                p.sendMessage("The LandChunk is null!");
-//            } else {
-//                p.sendMessage(p.getUniqueId() + " " + land.getOwnerUID() + " " + (p.getUniqueId().equals(land.getOwnerUID())));
-//            }
-//        }
+        // Debug
+        //        if (land == null || !p.getUniqueId().equals(land.getOwnerUID())) {
+        //            if (land == null) {
+        //                p.sendMessage("The LandChunk is null!");
+        //            } else {
+        //                p.sendMessage(p.getUniqueId() + " " + land.getOwnerUID() + " " + (p.getUniqueId().equals
+        //                (land.getOwnerUID())));
+        //            }
+        //        }
 
         return land != null && p.getUniqueId().equals(land.getOwnerUID());
     }

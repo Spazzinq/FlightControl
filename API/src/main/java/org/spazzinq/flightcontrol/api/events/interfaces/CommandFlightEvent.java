@@ -28,6 +28,7 @@ package org.spazzinq.flightcontrol.api.events.interfaces;
 public interface CommandFlightEvent {
     /**
      * Returns true if the event was triggered manually by player executing a command
+     *
      * @return true if the event was triggered manually by player executing a command
      */
     boolean isByCommand();
