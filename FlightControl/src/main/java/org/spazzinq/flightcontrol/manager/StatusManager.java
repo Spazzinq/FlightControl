@@ -88,7 +88,8 @@ public class StatusManager {
         Category category = pl.getCategoryManager().getCategory(p);
         FactionRelation relation = pl.getFactionsManager().getRelationToLocation(p);
 
-        if (regionName != null) { // Register new regions dynamically
+        if (regionName != null) { // Register new worlds/regions dynamically
+            pl.registerDefaultPerms(worldName);
             pl.registerDefaultPerms(worldName + "." + regionName);
         }
 
