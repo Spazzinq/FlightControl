@@ -232,6 +232,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
         if (perm == null) {
             pm.addPermission(new Permission(permString, PermissionDefault.FALSE));
+        } else if (perm.getDefault() != PermissionDefault.FALSE) {
+            perm.setDefault(PermissionDefault.FALSE);
         }
     }
 }
