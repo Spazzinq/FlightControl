@@ -29,7 +29,7 @@ import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
 import org.bukkit.entity.Player;
 
-public final class TownyHook extends TownyBase {
+public final class TownyHook extends TownyHookBase {
     @Override public boolean townyOwn(Player p) {
         Resident r;
 
@@ -49,9 +49,5 @@ public final class TownyHook extends TownyBase {
 
     @Override public boolean wartime() {
         return TownyUniverse.isWarTime();
-    }
-
-    @Override public boolean isHooked() {
-        return true;
     }
 }

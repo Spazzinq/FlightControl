@@ -27,7 +27,7 @@ package org.spazzinq.flightcontrol.hook.towny;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.hook.Hook;
 
-public class TownyBase extends Hook {
+public class TownyHookBase extends Hook {
     public boolean townyOwn(Player p) {
         return false;
     }

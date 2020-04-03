@@ -27,7 +27,7 @@ package org.spazzinq.flightcontrol.hook.plot;
 import com.github.intellectualsites.plotsquared.plot.flag.Flags;
 import com.github.intellectualsites.plotsquared.plot.object.Location;
 
-public final class NewPlotSquaredHook extends PlotHook {
+public final class NewPlotSquaredHook extends PlotHookBase {
     @Override public boolean canFly(String world, int x, int y, int z) {
         com.github.intellectualsites.plotsquared.plot.object.Plot p =
                 com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
@@ -39,6 +39,4 @@ public final class NewPlotSquaredHook extends PlotHook {
                 com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
         return p != null && !p.getFlag(Flags.FLY, true);
     }
-
-    @Override public boolean isHooked() { return true; }
 }

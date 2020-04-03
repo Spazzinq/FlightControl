@@ -22,16 +22,24 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.plot;
+package org.spazzinq.flightcontrol.hook.lands;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.hook.Hook;
 
-public class PlotHook extends Hook {
-    public boolean canFly(String world, int x, int y, int z) {
+import java.util.UUID;
+
+public class LandsHookBase extends Hook {
+    public boolean landsIsOwn(Player p) {
         return false;
     }
 
-    public boolean cannotFly(String world, int x, int y, int z) {
+    public boolean landsIsTrusted(Player p) {
         return false;
+    }
+
+    public UUID getOwnerUUID(Location location) {
+        return null;
     }
 }

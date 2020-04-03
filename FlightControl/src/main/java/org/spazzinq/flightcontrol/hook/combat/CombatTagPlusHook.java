@@ -27,14 +27,14 @@ package org.spazzinq.flightcontrol.hook.combat;
 import net.minelink.ctplus.TagManager;
 import org.bukkit.entity.Player;
 
-public final class CombatTagPlusHook extends CombatHook {
+public final class CombatTagPlusHook extends CombatHookBase {
     private final TagManager m;
 
     public CombatTagPlusHook(TagManager m) {
         this.m = m;
     }
 
-    @Override public boolean tagged(Player p) { return m.isTagged(p.getUniqueId()); }
-
-    @Override public boolean isHooked() { return true; }
+    @Override public boolean tagged(Player p) {
+        return m.isTagged(p.getUniqueId());
+    }
 }

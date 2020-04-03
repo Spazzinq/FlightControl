@@ -22,24 +22,12 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.lands;
+package org.spazzinq.flightcontrol.hook.vanish;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.hook.Hook;
 
-import java.util.UUID;
-
-public class LandsBase extends Hook {
-    public boolean landsIsOwn(Player p) {
+public class VanishHookBase {
+    public boolean vanished(Player p) {
         return false;
-    }
-
-    public boolean landsIsTrusted(Player p) {
-        return false;
-    }
-
-    public UUID getOwnerUUID(Location location) {
-        return null;
     }
 }

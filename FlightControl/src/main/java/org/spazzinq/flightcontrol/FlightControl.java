@@ -193,7 +193,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
     }
 
-    // TODO Clean this up
     public void debug(CommandSender s, Player p) {
         Location l = p.getLocation();
         World world = l.getWorld();

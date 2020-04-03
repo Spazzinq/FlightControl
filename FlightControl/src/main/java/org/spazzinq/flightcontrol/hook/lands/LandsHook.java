@@ -32,7 +32,7 @@ import org.spazzinq.flightcontrol.FlightControl;
 
 import java.util.UUID;
 
-public class LandsHook extends LandsBase {
+public class LandsHook extends LandsHookBase {
     private final LandsIntegration landsIntegration;
 
     public LandsHook(FlightControl pl) {
@@ -65,9 +65,5 @@ public class LandsHook extends LandsBase {
         Land land = landsIntegration.getLand(location);
 
         return land != null ? land.getOwnerUID() : null;
-    }
-
-    @Override public boolean isHooked() {
-        return true;
     }
 }

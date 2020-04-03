@@ -26,12 +26,8 @@ package org.spazzinq.flightcontrol.hook.combat;
 
 import org.bukkit.entity.Player;
 
-public final class CombatLogX9Hook extends CombatHook {
+public final class CombatLogX9Hook extends CombatHookBase {
     @Override public boolean tagged(Player p) {
         return com.SirBlobman.combatlogx.utility.CombatUtil.isInCombat(p);
-    }
-
-    @Override public boolean isHooked() {
-        return true;
     }
 }

@@ -27,7 +27,7 @@ package org.spazzinq.flightcontrol.hook.vanish;
 import com.earth2me.essentials.Essentials;
 import org.bukkit.entity.Player;
 
-public final class EssentialsVanishHook extends VanishHook {
+public final class EssentialsVanishHook extends VanishHookBase {
     private final Essentials e;
 
     public EssentialsVanishHook(Essentials e) {

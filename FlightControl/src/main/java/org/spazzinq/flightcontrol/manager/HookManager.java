@@ -32,19 +32,19 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.hook.combat.*;
 import org.spazzinq.flightcontrol.hook.enchantment.CrazyEnchantmentsHook;
-import org.spazzinq.flightcontrol.hook.enchantment.EnchantsHook;
-import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionBase;
+import org.spazzinq.flightcontrol.hook.enchantment.EnchantsHookBase;
+import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHookBase;
 import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHook;
-import org.spazzinq.flightcontrol.hook.lands.LandsBase;
+import org.spazzinq.flightcontrol.hook.lands.LandsHookBase;
 import org.spazzinq.flightcontrol.hook.lands.LandsHook;
 import org.spazzinq.flightcontrol.hook.plot.NewPlotSquaredHook;
 import org.spazzinq.flightcontrol.hook.plot.OldPlotSquaredHook;
-import org.spazzinq.flightcontrol.hook.plot.PlotHook;
-import org.spazzinq.flightcontrol.hook.towny.TownyBase;
+import org.spazzinq.flightcontrol.hook.plot.PlotHookBase;
+import org.spazzinq.flightcontrol.hook.towny.TownyHookBase;
 import org.spazzinq.flightcontrol.hook.towny.TownyHook;
 import org.spazzinq.flightcontrol.hook.vanish.EssentialsVanishHook;
 import org.spazzinq.flightcontrol.hook.vanish.PremiumSuperVanishHook;
-import org.spazzinq.flightcontrol.hook.vanish.VanishHook;
+import org.spazzinq.flightcontrol.hook.vanish.VanishHookBase;
 import org.spazzinq.flightcontrol.multiversion.FactionsHook;
 import org.spazzinq.flightcontrol.multiversion.WorldGuardHook;
 import org.spazzinq.flightcontrol.multiversion.current.MassiveFactionsHook;
@@ -63,14 +63,14 @@ public class HookManager {
 
     // Load early to prevent NPEs
     @Getter private WorldGuardHook worldGuardHook = new WorldGuardHook();
-    @Getter private VanishHook vanishHook = new VanishHook();
-    @Getter private TownyBase townyHook = new TownyBase();
-    @Getter private LandsBase landsHook = new LandsBase();
-    @Getter private CombatHook combatHook = new CombatHook();
-    @Getter private EnchantsHook enchantmentsHook = new EnchantsHook();
+    @Getter private VanishHookBase vanishHook = new VanishHookBase();
+    @Getter private TownyHookBase townyHook = new TownyHookBase();
+    @Getter private LandsHookBase landsHook = new LandsHookBase();
+    @Getter private CombatHookBase combatHook = new CombatHookBase();
+    @Getter private EnchantsHookBase enchantmentsHook = new EnchantsHookBase();
     @Getter private FactionsHook factionsHook = new FactionsHook();
-    @Getter private PlotHook plotHook = new PlotHook();
-    @Getter private GriefPreventionBase griefPreventionHook = new GriefPreventionBase();
+    @Getter private PlotHookBase plotHook = new PlotHookBase();
+    @Getter private GriefPreventionHookBase griefPreventionHook = new GriefPreventionHookBase();
 
     @Getter private String hookedMsg;
     private final Set<String> hooked = new HashSet<>();
@@ -98,7 +98,7 @@ public class HookManager {
         if (pluginEnabled("Lands")) {
             landsHook = new LandsHook(pl);
         }
-        if (pluginEnabled("CrazyEnchantments")) {
+        if (pluginEnabled("CrazyEnchantments") && pm.getPlugin("CrazyEnchantments").getDescription().getVersion().startsWith("1.8")) {
             enchantmentsHook = new CrazyEnchantmentsHook();
         }
         if (pluginEnabled("GriefPrevention")) {

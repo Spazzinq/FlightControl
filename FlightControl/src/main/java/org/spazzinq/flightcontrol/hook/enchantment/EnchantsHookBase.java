@@ -22,12 +22,13 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.vanish;
+package org.spazzinq.flightcontrol.hook.enchantment;
 
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.hook.Hook;
 
-public class VanishHook {
-    public boolean vanished(Player p) {
+public class EnchantsHookBase extends Hook {
+    public boolean canFly(Player p) {
         return false;
     }
 }
