@@ -57,14 +57,12 @@ territory:
 
 trail:
   enabled: false
-  # 1.8 Particle List: https://spazzinq.org/particles/1.8.html
-  # 1.15 Particle List: https://spazzinq.org/particles/1.15.html
+  # 1.8 Particle Info: https://spazzinq.org/flightcontrol/particles/1.8.html
+  # 1.15 Particle Info: https://spazzinq.org/flightcontrol/particles/1.15.html
   particle: "CLOUD"
   amount: 2
-  # "rgb" is used with colored particles (format: "red,green,blue")
-  # Color picker: https://www.google.com/search?q=color+picker
-  # For one specific color, you MUST set the amount to 0 if you use
-  # COLOURED_DUST on 1.8, SPELL_MOB on 1.14, SPELL_MOB_AMBIENT on 1.14, or NOTE on 1.14.
+  # Please look at the particle info links above to know which particles can change color
+  # Color picker (RBG): https://www.google.com/search?q=color+picker
   rgb: "0,0,0"
 
 sounds:
