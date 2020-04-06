@@ -22,33 +22,50 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion.old;
+package org.spazzinq.flightcontrol.hook.placeholder;
 
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.spazzinq.flightcontrol.api.objects.Region;
-import org.spazzinq.flightcontrol.multiversion.WorldGuardHook;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.FlightControl;
 
-import java.util.Iterator;
-import java.util.Set;
+public class FlightControlExpansion extends PlaceholderExpansion {
+    private FlightControl pl;
 
-public class WorldGuardHook6 extends WorldGuardHook {
-    public String getRegionName(Location l) {
-        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
+    public FlightControlExpansion(FlightControl pl) {
+        this.pl = pl;
+    }
 
-        if (iter.hasNext()) {
-            return iter.next().getId();
+    @Override public String getIdentifier() {
+        return "flightcontrol";
+    }
+
+    @Override public String getVersion(){
+        return pl.getDescription().getVersion();
+    }
+
+    @Override public String onPlaceholderRequest(Player player, String identifier){
+        if(player == null){
+            return "";
         }
-        return "none";
+
+        // %flightcontrol_<identifier>%
+        if (identifier.equals("tempfly_time")) {
+
+        }
+
+        // If invalid placeholder (f.e. %someplugin_placeholder3%)
+        return null;
     }
 
-    public Set<String> getRegionNames(World world) {
-        return WGBukkit.getRegionManager(world).getRegions().keySet();
+    @Override public boolean canRegister(){
+        return true;
     }
 
-    public boolean hasRegion(Region region) {
-        return WGBukkit.getRegionManager(region.getWorld()).hasRegion(region.getRegionName());
+    @Override public String getAuthor(){
+        return pl.getDescription().getAuthors().toString();
+    }
+
+    @Override public boolean persist() {
+        return true;
     }
 }

@@ -36,7 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public final class ConfManager {
+public class ConfManager {
     private final FlightControl pl;
     private boolean ignoreReload;
 

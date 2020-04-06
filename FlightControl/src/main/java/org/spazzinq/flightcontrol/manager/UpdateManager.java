@@ -39,7 +39,7 @@ import java.util.UUID;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
-public final class UpdateManager {
+public class UpdateManager {
     @Getter private Version newVersion;
     @Getter private final Version version;
     private boolean downloaded;

@@ -28,7 +28,7 @@ import me.badbones69.crazyenchantments.api.CrazyEnchantments;
 import me.badbones69.crazyenchantments.api.enums.CEnchantments;
 import org.bukkit.entity.Player;
 
-public class CrazyEnchantmentsHook extends EnchantsHookBase {
+public final class CrazyEnchantmentsHook extends EnchantsHookBase {
     @Override public boolean canFly(Player p) {
         return CrazyEnchantments.getInstance().hasEnchantment(p.getEquipment().getBoots(), CEnchantments.WINGS);
     }

@@ -32,7 +32,7 @@ import org.spazzinq.flightcontrol.FlightControl;
 
 import java.util.UUID;
 
-public class LandsHook extends LandsHookBase {
+public final class LandsHook extends LandsHookBase {
     private final LandsIntegration landsIntegration;
 
     public LandsHook(FlightControl pl) {

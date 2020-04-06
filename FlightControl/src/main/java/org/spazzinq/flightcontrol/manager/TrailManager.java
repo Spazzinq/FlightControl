@@ -35,7 +35,7 @@ import org.spazzinq.flightcontrol.FlightControl;
 
 import java.util.HashMap;
 
-public final class TrailManager {
+public class TrailManager {
     private final FlightControl pl;
 
     @Getter private final HashMap<Player, BukkitTask> particleTasks = new HashMap<>();

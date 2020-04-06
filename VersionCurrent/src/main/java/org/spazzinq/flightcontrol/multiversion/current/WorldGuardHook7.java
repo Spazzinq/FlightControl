@@ -43,7 +43,7 @@ public class WorldGuardHook7 extends WorldGuardHook {
         if (iter.hasNext()) {
             return iter.next().getId();
         }
-        return null;
+        return "none";
     }
 
     public Set<String> getRegionNames(World w) {

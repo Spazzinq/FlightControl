@@ -24,7 +24,7 @@
 
 allprojects {
     group = 'org.spazzinq'
-    version = '4.3.13-BETA'
+    version = '4.3.14-BETA'
 }
 
 subprojects {
@@ -50,5 +50,7 @@ subprojects {
         maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
         // Lands, PlotSquared
         maven { url = 'https://jitpack.io' }
+        // PlaceholderAPI
+        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     }
 }

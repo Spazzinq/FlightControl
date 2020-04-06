@@ -37,6 +37,7 @@ import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHookBase;
 import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHook;
 import org.spazzinq.flightcontrol.hook.lands.LandsHookBase;
 import org.spazzinq.flightcontrol.hook.lands.LandsHook;
+import org.spazzinq.flightcontrol.hook.placeholder.FlightControlExpansion;
 import org.spazzinq.flightcontrol.hook.plot.NewPlotSquaredHook;
 import org.spazzinq.flightcontrol.hook.plot.OldPlotSquaredHook;
 import org.spazzinq.flightcontrol.hook.plot.PlotHookBase;
@@ -103,6 +104,9 @@ public class HookManager {
         }
         if (pluginEnabled("GriefPrevention")) {
             griefPreventionHook = new GriefPreventionHook();
+        }
+        if (pluginEnabled("PlaceholderAPI")) {
+            new FlightControlExpansion(pl);
         }
 
         loadHookMsg();

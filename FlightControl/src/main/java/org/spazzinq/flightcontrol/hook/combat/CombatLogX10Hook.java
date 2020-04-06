@@ -29,7 +29,7 @@ import com.SirBlobman.combatlogx.api.utility.ICombatManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class CombatLogX10Hook extends CombatHookBase {
+public final class CombatLogX10Hook extends CombatHookBase {
     private ICombatManager combatManager;
 
     @Override public boolean tagged(Player p) {
