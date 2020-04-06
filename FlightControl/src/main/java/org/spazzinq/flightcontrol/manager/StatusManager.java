@@ -24,6 +24,7 @@
 
 package org.spazzinq.flightcontrol.manager;
 
+import com.sk89q.worldguard.bukkit.WGBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

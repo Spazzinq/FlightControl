@@ -54,6 +54,7 @@ import org.spazzinq.flightcontrol.multiversion.current.WorldGuardHook7;
 import org.spazzinq.flightcontrol.multiversion.old.FactionsUUIDHook;
 import org.spazzinq.flightcontrol.multiversion.old.WorldGuardHook6;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -74,7 +75,7 @@ public class HookManager {
     @Getter private GriefPreventionHookBase griefPreventionHook = new GriefPreventionHookBase();
 
     @Getter private String hookedMsg;
-    private final Set<String> hooked = new HashSet<>();
+    private final ArrayList<String> hooked = new ArrayList<>();
 
     public HookManager(FlightControl pl, boolean is1_13) {
         this.pl = pl;
@@ -174,11 +175,15 @@ public class HookManager {
         if (hooked.isEmpty()) {
             hookMsg.append("no plugins.");
         } else {
-            for (String hook : hooked) {
-                hookMsg.append(hook).append(", ");
+            for (int i = 0; i < hooked.size(); i++) {
+                if (i != 0) {
+                    hookMsg.append(", ");
+                }
+                if (i == hooked.size() - 1) {
+                    hookMsg.append("and ");
+                }
+                hookMsg.append(hooked.get(i));
             }
-            hookMsg.delete(hookMsg.length() - 2, hookMsg.length());
-            hookMsg.insert(hookMsg.lastIndexOf(",") + 1, " and");
             hookMsg.append(".");
         }
 
@@ -186,7 +191,8 @@ public class HookManager {
     }
 
     private boolean pluginEnabled(String pluginName) {
-        boolean enabled = pm.isPluginEnabled(pluginName);
+        // FIXME Was this being problematic as isPluginEnabled?
+        boolean enabled = pm.getPlugin(pluginName) != null;
 
         if (enabled) {
             hooked.add(pluginName);
