@@ -33,16 +33,16 @@ import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.hook.combat.*;
 import org.spazzinq.flightcontrol.hook.enchantment.CrazyEnchantmentsHook;
 import org.spazzinq.flightcontrol.hook.enchantment.EnchantsHookBase;
-import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHookBase;
 import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHook;
-import org.spazzinq.flightcontrol.hook.lands.LandsHookBase;
+import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHookBase;
 import org.spazzinq.flightcontrol.hook.lands.LandsHook;
+import org.spazzinq.flightcontrol.hook.lands.LandsHookBase;
 import org.spazzinq.flightcontrol.hook.placeholder.FlightControlExpansion;
 import org.spazzinq.flightcontrol.hook.plot.NewPlotSquaredHook;
 import org.spazzinq.flightcontrol.hook.plot.OldPlotSquaredHook;
 import org.spazzinq.flightcontrol.hook.plot.PlotHookBase;
-import org.spazzinq.flightcontrol.hook.towny.TownyHookBase;
 import org.spazzinq.flightcontrol.hook.towny.TownyHook;
+import org.spazzinq.flightcontrol.hook.towny.TownyHookBase;
 import org.spazzinq.flightcontrol.hook.vanish.EssentialsVanishHook;
 import org.spazzinq.flightcontrol.hook.vanish.PremiumSuperVanishHook;
 import org.spazzinq.flightcontrol.hook.vanish.VanishHookBase;
@@ -55,8 +55,6 @@ import org.spazzinq.flightcontrol.multiversion.old.FactionsUUIDHook;
 import org.spazzinq.flightcontrol.multiversion.old.WorldGuardHook6;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class HookManager {
     private final FlightControl pl;
@@ -191,12 +189,13 @@ public class HookManager {
     }
 
     private boolean pluginEnabled(String pluginName) {
-        // FIXME Was this being problematic as isPluginEnabled?
+        // Problematic as isPluginEnabled
         boolean enabled = pm.getPlugin(pluginName) != null;
 
         if (enabled) {
             hooked.add(pluginName);
         }
+
         return enabled;
     }
 }
