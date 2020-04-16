@@ -28,7 +28,6 @@ import com.earth2me.essentials.Essentials;
 import lombok.Getter;
 import net.minelink.ctplus.CombatTagPlus;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.hook.combat.*;
 import org.spazzinq.flightcontrol.hook.enchantment.CrazyEnchantmentsHook;
@@ -82,55 +81,38 @@ public class HookManager {
     }
 
     public void load() {
-        boolean factionsEnabled = loadFactions();
+        loadFactions();
         loadCombat();
         loadVanish();
 
-        if (pluginEnabled("PlotSquared")) {
+        if (pluginLoading("PlotSquared")) {
             plotHook = is1_13 ? new PlotSquaredHook() : new LegacyPlotSquaredHook();
         }
-        if (pluginEnabled("WorldGuard")) {
+        if (pluginLoading("WorldGuard")) {
             worldGuardHook = is1_13 ? new WorldGuardHook7() : new WorldGuardHook6();
         }
-        if (pluginEnabled("Towny")) {
+        if (pluginLoading("Towny")) {
             townyHook = new TownyHook();
         }
-        if (pluginEnabled("Lands")) {
+        if (pluginLoading("Lands")) {
             landsHook = new LandsHook(pl);
         }
-        if (pluginEnabled("CrazyEnchantments") && pm.getPlugin("CrazyEnchantments").getDescription().getVersion().startsWith("1.8")) {
+        if (pluginLoading("CrazyEnchantments") && pm.getPlugin("CrazyEnchantments").getDescription().getVersion().startsWith("1.8")) {
             enchantmentsHook = new CrazyEnchantmentsHook();
         }
-        if (pluginEnabled("GriefPrevention")) {
+        if (pluginLoading("GriefPrevention")) {
             griefPreventionHook = new GriefPreventionHook();
         }
-        if (pluginEnabled("PlaceholderAPI")) {
+        if (pluginLoading("PlaceholderAPI")) {
             new FlightControlExpansion(pl);
         }
 
         loadHookMsg();
         pl.getLogger().info(hookedMsg);
-
-        if (!factionsEnabled) {
-            pl.getLogger().warning("Factions not detected. FlightControl will attempt to hook again in a few seconds." +
-                    "..");
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    boolean factionsEnabled = loadFactions();
-                    if (factionsEnabled) {
-                        loadHookMsg();
-                    }
-                    pl.getLogger().info(factionsEnabled ? "Hooked with Factions!" : "Still did not detect Factions.");
-                }
-            }.runTaskLater(pl, 40);
-        }
     }
 
-    private boolean loadFactions() {
-        boolean factionsEnabled = pluginEnabled("Factions");
-
-        if (factionsEnabled) {
+    private void loadFactions() {
+        if (pluginLoading("Factions")) {
             if (pm.isPluginEnabled("MassiveCore")) {
                 factionsHook = new MassiveFactionsHook();
             } else if (pm.getPlugin("Factions").getDescription().getAuthors().contains("ProSavage")) {
@@ -139,30 +121,29 @@ public class HookManager {
                 factionsHook = new FactionsUUIDHook();
             }
         }
-        return factionsEnabled;
     }
 
     private void loadCombat() {
-        if (pluginEnabled("CombatLogX")) {
+        if (pluginLoading("CombatLogX")) {
             String version = pm.getPlugin("CombatLogX").getDescription().getVersion();
             boolean versionTen = version != null && version.startsWith("10.");
 
             combatHook = versionTen ? new CombatLogX10Hook() : new CombatLogX9Hook();
-        } else if (pluginEnabled("CombatTagPlus")) {
+        } else if (pluginLoading("CombatTagPlus")) {
             combatHook = new CombatTagPlusHook(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
-        } else if (pluginEnabled("AntiCombatLogging")) {
+        } else if (pluginLoading("AntiCombatLogging")) {
             combatHook = new AntiCombatLoggingHook();
-        } else if (pluginEnabled("CombatLogPro")) {
+        } else if (pluginLoading("CombatLogPro")) {
             combatHook = new CombatLogProHook(pm.getPlugin("CombatLogPro"));
-        } else if (pluginEnabled("DeluxeCombat")) {
+        } else if (pluginLoading("DeluxeCombat")) {
             combatHook = new DeluxeCombatHook();
         }
     }
 
     private void loadVanish() {
-        if (pluginEnabled("PremiumVanish") || pluginEnabled("SuperVanish")) {
+        if (pluginLoading("PremiumVanish") || pluginLoading("SuperVanish")) {
             vanishHook = new PremiumSuperVanishHook();
-        } else if (pluginEnabled("Essentials")) {
+        } else if (pluginLoading("Essentials")) {
             vanishHook = new EssentialsVanishHook((Essentials) pm.getPlugin("Essentials"));
         }
     }
@@ -188,7 +169,7 @@ public class HookManager {
         hookedMsg = hookMsg.toString();
     }
 
-    private boolean pluginEnabled(String pluginName) {
+    private boolean pluginLoading(String pluginName) {
         // Problematic as isPluginEnabled
         boolean enabled = pm.getPlugin(pluginName) != null;
 

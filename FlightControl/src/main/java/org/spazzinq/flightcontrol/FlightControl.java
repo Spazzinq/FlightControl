@@ -82,7 +82,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         storageFolder.mkdirs();
 
         registerManagers();
-        new Listener(this);
+        new EventListener(this);
         registerCommands();
 
         // Ensure all hooks load before managers do

@@ -4,9 +4,10 @@ version: ${revision}
 api-version: 1.13
 author: Spazzinq
 description: "An elegant solution for controlling player flight"
+load: POSTWORLD
 softdepend: [AntiCombatLogging, CombatLogPro, CombatLogX, CombatTagPlus, DeluxeCombat,
              Essentials, Factions, PlotSquared, WorldGuard, SuperVanish, PremiumVanish,
-             Towny, Lands, GriefPrevention, CrazyEnchantments, AdvancedEnchantments, Multiverse-Core, PlaceholderAPI]
+             Towny, Lands, GriefPrevention, CrazyEnchantments, Multiverse-Core, PlaceholderAPI]
 
 commands:
   flightcontrol:
