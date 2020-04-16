@@ -42,7 +42,6 @@ dependencies {
     compileOnly 'net.ess3:EssentialsX:2.17.1'
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:6.1.3-SNAPSHOT'
     compileOnly 'com.sk89q.worldguard:worldguard-legacy:6.1.3-SNAPSHOT'
-    compileOnly 'com.plotsquared:plotsquared-api:19.12.10-b4c257b-788'
     compileOnly 'com.github.IntellectualSites.PlotSquared:Core:4.390'
     compileOnly 'com.github.Angeschossen:LandsAPI:4.5.0.7'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.13.0'
