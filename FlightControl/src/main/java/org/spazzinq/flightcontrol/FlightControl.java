@@ -166,9 +166,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             String worldName = w.getName();
             registerDefaultPerms(worldName);
 
-            for (String regionName : getHookManager().getWorldGuardHook().getRegionNames(w)) {
-                registerDefaultPerms(worldName + "." + regionName);
-            }
+            // FIXME Prevent error
+//            for (String regionName : getHookManager().getWorldGuardHook().getRegionNames(w)) {
+//                registerDefaultPerms(worldName + "." + regionName);
+//            }
         }
 
         categoryManager.reloadCategories();

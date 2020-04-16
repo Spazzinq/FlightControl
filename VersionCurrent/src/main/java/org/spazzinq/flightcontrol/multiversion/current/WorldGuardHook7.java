@@ -25,6 +25,7 @@
 package org.spazzinq.flightcontrol.multiversion.current;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -37,8 +38,8 @@ import java.util.Set;
 @SuppressWarnings("ALL")
 public class WorldGuardHook7 extends WorldGuardHook {
     public String getRegionName(Location l) {
-        Iterator<ProtectedRegion> iter = com.sk89q.worldguard.WorldGuard.getInstance()
-                .getPlatform().getRegionContainer().createQuery().getApplicableRegions(BukkitAdapter.adapt(l)).iterator();
+        Iterator<ProtectedRegion> iter = WorldGuard.getInstance().getPlatform()
+                .getRegionContainer().createQuery().getApplicableRegions(BukkitAdapter.adapt(l)).iterator();
 
         if (iter.hasNext()) {
             return iter.next().getId();
@@ -47,12 +48,12 @@ public class WorldGuardHook7 extends WorldGuardHook {
     }
 
     public Set<String> getRegionNames(World w) {
-        return com.sk89q.worldguard.WorldGuard.getInstance()
-                .getPlatform().getRegionContainer().get(BukkitAdapter.adapt(w)).getRegions().keySet();
+        return WorldGuard.getInstance().getPlatform()
+                .getRegionContainer().get(BukkitAdapter.adapt(w)).getRegions().keySet();
     }
 
     public boolean hasRegion(Region region) {
-        return com.sk89q.worldguard.WorldGuard.getInstance()
-                .getPlatform().getRegionContainer().get(BukkitAdapter.adapt(region.getWorld())).hasRegion(region.getRegionName());
+        return WorldGuard.getInstance().getPlatform()
+                .getRegionContainer().get(BukkitAdapter.adapt(region.getWorld())).hasRegion(region.getRegionName());
     }
 }

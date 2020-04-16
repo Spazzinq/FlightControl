@@ -22,34 +22,20 @@
  * SOFTWARE.
  */
 
-allprojects {
-    group = 'org.spazzinq'
-    version = '4.4.0-BETA'
-}
+package org.spazzinq.flightcontrol.hook.plot;
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
+import com.intellectualcrafters.plot.flag.Flags;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
 
-    sourceCompatibility = '1.8'
+public final class LegacyPlotSquaredHook extends PlotHookBase {
+    @Override public boolean canFly(String world, int x, int y, int z) {
+        Plot p = Plot.getPlot(new Location(world, x, y, z));
+        return p != null && p.getFlag(Flags.FLY, false);
+    }
 
-    repositories {
-        mavenCentral()
-        // Spigot
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats, CombatLogX
-        maven { url = 'https://repo.codemc.io/repository/maven-public/' }
-        // WorldEdit, WorldGuard
-        maven { url = 'https://maven.sk89q.com/repo/' }
-        // Essentials, FactionsUUID
-        maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
-        // PlotSquared
-        maven { url = 'https://plotsquared.com/mvn/' }
-        // CrazyEnchantments
-        maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PlotSquared
-        maven { url = 'https://jitpack.io' }
-        // PlaceholderAPI
-        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    @Override public boolean cannotFly(String world, int x, int y, int z) {
+        Plot p = Plot.getPlot(new Location(world, x, y, z));
+        return p != null && !p.getFlag(Flags.FLY, true);
     }
 }

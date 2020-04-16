@@ -38,7 +38,8 @@ import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHookBase;
 import org.spazzinq.flightcontrol.hook.lands.LandsHook;
 import org.spazzinq.flightcontrol.hook.lands.LandsHookBase;
 import org.spazzinq.flightcontrol.hook.placeholder.FlightControlExpansion;
-import org.spazzinq.flightcontrol.hook.plot.NewPlotSquaredHook;
+import org.spazzinq.flightcontrol.hook.plot.LegacyPlotSquaredHook;
+import org.spazzinq.flightcontrol.hook.plot.PlotSquaredHook;
 import org.spazzinq.flightcontrol.hook.plot.PlotHookBase;
 import org.spazzinq.flightcontrol.hook.towny.TownyHook;
 import org.spazzinq.flightcontrol.hook.towny.TownyHookBase;
@@ -86,9 +87,7 @@ public class HookManager {
         loadVanish();
 
         if (pluginEnabled("PlotSquared")) {
-            // TODO Find old jar
-            // plotHook = is1_13 ? new NewPlotSquaredHook() : new OldPlotSquaredHook();
-            plotHook = new NewPlotSquaredHook();
+            plotHook = is1_13 ? new PlotSquaredHook() : new LegacyPlotSquaredHook();
         }
         if (pluginEnabled("WorldGuard")) {
             worldGuardHook = is1_13 ? new WorldGuardHook7() : new WorldGuardHook6();
