@@ -26,20 +26,23 @@ package org.spazzinq.flightcontrol.multiversion.current;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.spazzinq.flightcontrol.api.objects.Region;
-import org.spazzinq.flightcontrol.multiversion.WorldGuardHook;
+import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 
 import java.util.Iterator;
 import java.util.Set;
 
 @SuppressWarnings("ALL")
-public class WorldGuardHook7 extends WorldGuardHook {
+public class WorldGuardHook7 extends WorldGuardHookBase {
+    private WorldGuardPlatform platform;
+
     public String getRegionName(Location l) {
-        Iterator<ProtectedRegion> iter = WorldGuard.getInstance().getPlatform()
-                .getRegionContainer().createQuery().getApplicableRegions(BukkitAdapter.adapt(l)).iterator();
+        Iterator<ProtectedRegion> iter = getRegionContainer().createQuery()
+                .getApplicableRegions(BukkitAdapter.adapt(l)).iterator();
 
         if (iter.hasNext()) {
             return iter.next().getId();
@@ -48,12 +51,16 @@ public class WorldGuardHook7 extends WorldGuardHook {
     }
 
     public Set<String> getRegionNames(World w) {
-        return WorldGuard.getInstance().getPlatform()
-                .getRegionContainer().get(BukkitAdapter.adapt(w)).getRegions().keySet();
+        return getRegionContainer().get(BukkitAdapter.adapt(w)).getRegions().keySet();
     }
 
-    public boolean hasRegion(Region region) {
-        return WorldGuard.getInstance().getPlatform()
-                .getRegionContainer().get(BukkitAdapter.adapt(region.getWorld())).hasRegion(region.getRegionName());
+    private RegionContainer getRegionContainer() {
+        if (platform == null) {
+            try {
+                platform = WorldGuard.getInstance().getPlatform();
+            } catch (NullPointerException ignored) {}
+        }
+
+        return platform.getRegionContainer();
     }
 }
