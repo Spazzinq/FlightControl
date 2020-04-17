@@ -29,7 +29,12 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 
+import static org.spazzinq.flightcontrol.util.MathUtil.timeArray;
+
 public class PlayerUtil {
+    private static final String[] longUnits = {"day", "hour", "minute", "second"};
+    private static final String[] shortUnits = {"d", "h", "m", "s"};
+
     public static boolean hasPermission(CommandSender p, FlyPermission flyPermission) {
         return p.hasPermission(flyPermission.toString());
     }
@@ -44,5 +49,39 @@ public class PlayerUtil {
 
     public static boolean hasPermissionCategory(Player p, Category category) {
         return p.hasPermission(FlyPermission.CATEGORY_STUB + category.getName());
+    }
+
+    public static String shortPlaceholder(long length) {
+        StringBuilder builder = new StringBuilder();
+        int[] amounts = timeArray(length);
+
+        for (int n = 0; n < amounts.length; n++) {
+            if (amounts[n] != 0) {
+                builder.append(amounts[n]).append(shortUnits[n]);
+                if (n != amounts.length - 1) {
+                    builder.append(" ");
+                }
+            }
+        }
+
+        return builder.toString();
+    }
+
+    public static String longPlaceholder(long length) {
+        StringBuilder builder = new StringBuilder();
+        int[] amounts = timeArray(length);
+
+        for (int n = 0; n < amounts.length; n++) {
+            if (amounts[n] != 0) {
+                builder.append(amounts[n]).append(" ").append(longUnits[n]);
+                if (amounts[n] > 1) {
+                    builder.append("s");
+                }
+                builder.append(", ");
+            }
+        }
+        builder.delete(builder.length() - 2, builder.length());
+
+        return builder.toString();
     }
 }

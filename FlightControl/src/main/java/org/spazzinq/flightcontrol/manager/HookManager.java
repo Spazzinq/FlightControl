@@ -36,8 +36,8 @@ import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHook;
 import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHookBase;
 import org.spazzinq.flightcontrol.hook.lands.LandsHook;
 import org.spazzinq.flightcontrol.hook.lands.LandsHookBase;
-//import org.spazzinq.flightcontrol.hook.placeholder.ClipPlaceholder;
-//import org.spazzinq.flightcontrol.hook.placeholder.MVdWPlaceholder;
+import org.spazzinq.flightcontrol.hook.placeholder.ClipPlaceholder;
+import org.spazzinq.flightcontrol.hook.placeholder.MVdWPlaceholder;
 import org.spazzinq.flightcontrol.hook.plot.LegacyPlotSquaredHook;
 import org.spazzinq.flightcontrol.hook.plot.PlotHookBase;
 import org.spazzinq.flightcontrol.hook.plot.PlotSquaredHook;
@@ -85,7 +85,7 @@ public class HookManager {
         loadFactions();
         loadCombat();
         loadVanish();
-//        loadPlaceholders();
+        loadPlaceholders();
 
         if (pluginLoading("PlotSquared")) {
             plotHook = is1_13 ? new PlotSquaredHook() : new LegacyPlotSquaredHook();
@@ -147,14 +147,14 @@ public class HookManager {
         }
     }
 
-//    private void loadPlaceholders() {
-//        if (pluginLoading("PlaceholderAPI")) {
-//            new ClipPlaceholder(pl);
-//        }
-//        if (pluginLoading("MVdWPlaceholderAPI")) {
-//            new MVdWPlaceholder(pl);
-//        }
-//    }
+    private void loadPlaceholders() {
+        if (pluginLoading("PlaceholderAPI")) {
+            new ClipPlaceholder(pl);
+        }
+        if (pluginLoading("MVdWPlaceholderAPI")) {
+            new MVdWPlaceholder(pl);
+        }
+    }
 
     private void loadHookMsg() {
         // Prepare hooked msg

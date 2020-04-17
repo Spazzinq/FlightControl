@@ -24,7 +24,7 @@
 
 allprojects {
     group = 'org.spazzinq'
-    version = '4.4.1-BETA'
+    version = '4.4.2-BETA'
 }
 
 subprojects {
@@ -51,5 +51,7 @@ subprojects {
         maven { url = 'https://jitpack.io' }
         // PlaceholderAPI
         maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+        // MVdWPlaceholderAPI
+        maven { url = 'http://repo.mvdw-software.be/content/groups/public/' }
     }
 }
