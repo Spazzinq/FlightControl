@@ -192,12 +192,12 @@ public class ConfManager {
         trail = conf.getBoolean("trail.enabled");
 
         if (trail) {
-            pl.getParticleManager().setParticle(conf.getString("trail.particle"));
-            pl.getParticleManager().setAmount(conf.getInt("trail.amount"));
+            pl.getParticle().setParticle(conf.getString("trail.particle"));
+            pl.getParticle().setAmount(conf.getInt("trail.amount"));
             String offset = conf.getString("trail.rgb");
             if (offset != null && (offset = offset.replaceAll("\\s+", "")).split(",").length == 3) {
                 String[] xyz = offset.split(",");
-                pl.getParticleManager().setRBG(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[0]) : 0,
+                pl.getParticle().setRBG(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[0]) : 0,
                         xyz[1].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[1]) : 0,
                         xyz[2].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[2]) : 0);
             }

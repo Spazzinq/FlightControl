@@ -81,6 +81,7 @@ public class UpdateManager {
         if (updateExists()) {
             if (!downloaded) {
                 downloadPlugin();
+
                 if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
                     msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the configs have automatically " +
                             "updated too)! Welcome to FlightControl " + getNewVersion() + "!");

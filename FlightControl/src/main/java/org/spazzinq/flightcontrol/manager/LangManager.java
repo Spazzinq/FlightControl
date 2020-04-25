@@ -47,12 +47,7 @@ public class LangManager {
     private final File langFile;
     private boolean ignoreReload;
 
-    // TODO Implement for all messages
-    public static final String PREFIX_POSITIVE = ChatColor.translateAlternateColorCodes('&', "&a&lFlightControl &7» " +
-            "&a");
-    public static final String PREFIX_ADMIN = ChatColor.translateAlternateColorCodes('&', "&e&lFlightControl &7» &e");
-    public static final String PREFIX_ERROR = ChatColor.translateAlternateColorCodes('&', "&c&lFlightControl &7» &c");
-
+    // Bool
     @Setter private boolean useActionBar;
 
     // Player messages

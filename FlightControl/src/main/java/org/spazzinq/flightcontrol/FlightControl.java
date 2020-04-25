@@ -39,9 +39,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.APIManager;
 import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
-import org.spazzinq.flightcontrol.multiversion.ParticleManager;
-import org.spazzinq.flightcontrol.multiversion.current.ParticleManager13;
-import org.spazzinq.flightcontrol.multiversion.old.ParticleManager8;
+import org.spazzinq.flightcontrol.multiversion.Particle;
+import org.spazzinq.flightcontrol.multiversion.current.Particle13;
+import org.spazzinq.flightcontrol.multiversion.old.Particle8;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.object.VersionType;
@@ -63,7 +63,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private UpdateManager updateManager;
     // Multi-version management
     @Getter private HookManager hookManager;
-    @Getter private ParticleManager particleManager;
+    @Getter private Particle particle;
     // In-game management
     @Getter private FlightManager flightManager;
     @Getter private PlayerManager playerManager;
@@ -71,10 +71,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private FactionsManager factionsManager;
     @Getter private TrailManager trailManager;
 
-    private final HashSet<String> permissionSuffixCache = new HashSet<>();
-
     private final PluginManager pm = Bukkit.getPluginManager();
     public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
+    private final HashSet<String> permissionSuffixCache = new HashSet<>();
 
     public void onEnable() {
         // Create storage folder
@@ -88,6 +87,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         // Ensure all hooks load before managers do
         hookManager.load();
         reloadManagers();
+        checkPlayers();
 
         if (updateManager.getVersion().getVersionType() == VersionType.BETA) {
             getLogger().warning(" \n  _       _       _       _       _       _\n" +
@@ -96,9 +96,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                     "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
                     "      X       X       X       X       X       X\n" +
                     "     (_)     (_)     (_)     (_)     (_)     (_)\n" +
-                    " \nVersion " + updateManager.getVersion() + " is currently unstable and should not be run on a " +
-                    "production server.\n" +
-                    "Thanks for being a FlightControl beta tester!\n \n" +
+                    " \nFlightControl version " + updateManager.getVersion() + " is unstable and should not be run on a " +
+                    "production server.\n \n" +
                     "  _       _       _       _       _       _\n" +
                     " ( )     ( )     ( )     ( )     ( )     ( )\n" +
                     "  X       X       X       X       X       X\n" +
@@ -133,17 +132,26 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         new MetricsLite(this);
     }
 
+    // Just in case the task isn't cancelled
+    @Override public void onDisable() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            trailManager.trailRemove(p);
+        }
+    }
+
     private void registerManagers() {
         categoryManager = new CategoryManager(this);
         confManager = new ConfManager(this);
         langManager = new LangManager(this);
         updateManager = new UpdateManager(getDescription().getVersion());
 
+        // TODO Make future versions compatible
         boolean is1_13 = getServer().getBukkitVersion().contains("1.13")
                 || getServer().getBukkitVersion().contains("1.14")
                 || getServer().getBukkitVersion().contains("1.15");
+
         hookManager = new HookManager(this, is1_13);
-        particleManager = is1_13 ? new ParticleManager13() : new ParticleManager8();
+        particle = is1_13 ? new Particle13() : new Particle8();
 
         flightManager = new FlightManager(this);
         playerManager = new PlayerManager(this);
@@ -180,8 +188,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         langManager.updateLang();
 
         playerManager.loadPlayerData();
-
-        checkPlayers();
     }
 
     public void checkPlayers() {

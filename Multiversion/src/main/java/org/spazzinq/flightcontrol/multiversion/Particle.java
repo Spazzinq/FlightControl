@@ -26,7 +26,7 @@ package org.spazzinq.flightcontrol.multiversion;
 
 import org.bukkit.Location;
 
-public interface ParticleManager {
+public interface Particle {
     void spawn(Location l);
 
     void setParticle(String s);
