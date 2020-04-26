@@ -145,10 +145,16 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         langManager = new LangManager(this);
         updateManager = new UpdateManager(getDescription().getVersion());
 
-        // TODO Make future versions compatible
-        boolean is1_13 = getServer().getBukkitVersion().contains("1.13")
-                || getServer().getBukkitVersion().contains("1.14")
-                || getServer().getBukkitVersion().contains("1.15");
+        getServer().broadcastMessage(getServer().getBukkitVersion());
+
+        boolean is1_13 = false;
+
+        for (int i = 13; i < 18; i++) {
+            if (getServer().getBukkitVersion().contains("1." + i)) {
+                is1_13 = true;
+                break;
+            }
+        }
 
         hookManager = new HookManager(this, is1_13);
         particle = is1_13 ? new Particle13() : new Particle8();
@@ -173,11 +179,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         for (World w : Bukkit.getWorlds()) {
             String worldName = w.getName();
             registerDefaultPerms(worldName);
-
-            // FIXME Prevent error
-//            for (String regionName : getHookManager().getWorldGuardHook().getRegionNames(w)) {
-//                registerDefaultPerms(worldName + "." + regionName);
-//            }
         }
 
         categoryManager.reloadCategories();

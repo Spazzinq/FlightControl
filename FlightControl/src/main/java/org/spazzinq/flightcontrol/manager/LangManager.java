@@ -80,6 +80,7 @@ public class LangManager {
     @Getter private String tempFlyAdd;
     @Getter private String tempFlyDisable;
     @Getter private String tempFlyDisabled;
+    @Getter private String tempFlyCheck;
     @Getter private String tempFlyUsage;
 
     public LangManager(FlightControl pl) {
@@ -162,6 +163,7 @@ public class LangManager {
             tempFlyAdd = lang.getString("admin.tempfly.add");
             tempFlyDisable = lang.getString("admin.tempfly.disable");
             tempFlyDisabled = lang.getString("admin.tempfly.disabled");
+            tempFlyCheck = lang.getString("admin.tempfly.check");
             tempFlyUsage = lang.getString("admin.tempfly.usage");
 
             // Prevent reloading for the next 250ms
@@ -179,6 +181,13 @@ public class LangManager {
 
     public void updateLang() {
         boolean modified = false;
+
+        if (!lang.isString("admin.tempfly.check")) {
+            lang.addSubnodes(Collections.singleton("check: \"&e&lFlightControl &7» &f%player%&e has &f%duration%&e of" +
+                    " flight remaining.\""), "admin.tempfly.disabled");
+
+            modified = true;
+        }
 
         //noinspection ConstantConditions
         if (modified) {

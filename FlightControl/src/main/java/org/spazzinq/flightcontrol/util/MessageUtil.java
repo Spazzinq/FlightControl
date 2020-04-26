@@ -12,6 +12,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public final class MessageUtil {
     private static String nms;
     private static boolean oldMethod;
@@ -46,8 +49,16 @@ public final class MessageUtil {
         }
     }
 
-    public static String replaceVar(String msg, String value, String varName) {
-        return msg.replaceAll("%" + varName + "%", value);
+    public static void msgVar(CommandSender s, String msg, boolean actionBar, HashMap<String, String> toReplace) {
+        for (Map.Entry<String, String> entry : toReplace.entrySet()) {
+            msg = msg.replaceAll("%" + entry.getKey() + "%", entry.getValue());
+        }
+
+        msg(s, msg, actionBar);
+    }
+
+    public static void msgVar(CommandSender s, String msg, boolean actionBar, String var, String value) {
+        msg(s, msg.replace("%" + var + "%", value), actionBar);
     }
 
     public static void sendActionBar(Player p, String msg) {

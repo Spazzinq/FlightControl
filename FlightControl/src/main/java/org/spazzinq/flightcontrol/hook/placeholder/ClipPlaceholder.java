@@ -27,6 +27,7 @@ package org.spazzinq.flightcontrol.hook.placeholder;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import static org.spazzinq.flightcontrol.util.MathUtil.*;
@@ -53,11 +54,12 @@ public class ClipPlaceholder extends PlaceholderExpansion {
             return String.valueOf(player.isFlying());
         }
 
-        long time = pl.getPlayerManager().getFlightPlayer(player).getTempflyTime();
+        FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(player);
+        long time = PlayerUtil.formatLength(flightPlayer.getTempflyTime());
 
         switch (identifier) {
-            case "tempfly_short": return PlayerUtil.shortPlaceholder(time);
-            case "tempfly_long": return PlayerUtil.longPlaceholder(time);
+            case "tempfly_short": return PlayerUtil.shortPlaceholder(flightPlayer);
+            case "tempfly_long": return PlayerUtil.longPlaceholder(flightPlayer);
             case "tempfly_s": return String.valueOf(seconds(time));
             case "tempfly_m": return String.valueOf(minutes(time));
             case "tempfly_h": return String.valueOf(hours(time));

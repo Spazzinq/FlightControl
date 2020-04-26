@@ -27,6 +27,7 @@ package org.spazzinq.flightcontrol.util;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.object.Category;
+import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 
 import static org.spazzinq.flightcontrol.util.MathUtil.timeArray;
@@ -51,37 +52,53 @@ public class PlayerUtil {
         return p.hasPermission(FlyPermission.CATEGORY_STUB + category.getName());
     }
 
-    public static String shortPlaceholder(long length) {
-        StringBuilder builder = new StringBuilder();
-        int[] amounts = timeArray(length);
+    public static String shortPlaceholder(FlightPlayer flightPlayer) {
+        long length = formatLength(flightPlayer.getTempFlyEnd());
 
-        for (int n = 0; n < amounts.length; n++) {
-            if (amounts[n] != 0) {
-                builder.append(amounts[n]).append(shortUnits[n]);
-                if (n != amounts.length - 1) {
-                    builder.append(" ");
+        if (length > 0) {
+            StringBuilder builder = new StringBuilder();
+            int[] amounts = timeArray(length);
+
+            for (int n = 0; n < amounts.length; n++) {
+                if (amounts[n] != 0) {
+                    builder.append(amounts[n]).append(shortUnits[n]);
+                    if (n != amounts.length - 1) {
+                        builder.append(" ");
+                    }
                 }
             }
-        }
 
-        return builder.toString();
+            return builder.toString();
+        } else {
+            return "0s";
+        }
     }
 
-    public static String longPlaceholder(long length) {
-        StringBuilder builder = new StringBuilder();
-        int[] amounts = timeArray(length);
+    public static String longPlaceholder(FlightPlayer flightPlayer) {
+        long length = formatLength(flightPlayer.getTempFlyEnd());
 
-        for (int n = 0; n < amounts.length; n++) {
-            if (amounts[n] != 0) {
-                builder.append(amounts[n]).append(" ").append(longUnits[n]);
-                if (amounts[n] > 1) {
-                    builder.append("s");
+        if (length > 0) {
+            StringBuilder builder = new StringBuilder();
+            int[] amounts = timeArray(length);
+
+            for (int n = 0; n < amounts.length; n++) {
+                if (amounts[n] != 0) {
+                    builder.append(amounts[n]).append(" ").append(longUnits[n]);
+                    if (amounts[n] > 1) {
+                        builder.append("s");
+                    }
+                    builder.append(", ");
                 }
-                builder.append(", ");
             }
-        }
-        builder.delete(builder.length() - 2, builder.length());
+            builder.delete(builder.length() - 2, builder.length());
 
-        return builder.toString();
+            return builder.toString();
+        } else {
+            return "0 seconds";
+        }
+    }
+
+    public static long formatLength(long length) {
+        return (length - System.currentTimeMillis()) / 1000;
     }
 }
