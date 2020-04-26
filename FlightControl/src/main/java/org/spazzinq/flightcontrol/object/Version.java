@@ -66,7 +66,7 @@ public class Version implements Comparable<Version> {
 
     @Override
     public String toString() {
-        return versionData[0] + "." + versionData[1] + "." + versionData[2] + "-" + versionType;
+        return versionData[0] + "." + versionData[1] + "." + versionData[2];
     }
 
     @Override

@@ -28,7 +28,9 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.Version;
+import org.spazzinq.flightcontrol.object.VersionType;
 
 import java.io.*;
 import java.net.URL;
@@ -46,8 +48,26 @@ public class UpdateManager {
 
     private final HashSet<UUID> notified = new HashSet<>();
 
-    public UpdateManager(String versionStr) {
+    public UpdateManager(FlightControl pl, String versionStr) {
         version = new Version(versionStr);
+
+        if (version.getVersionType() == VersionType.BETA) {
+            pl.getLogger().warning(
+                    " \n  _       _       _       _       _       _\n" +
+                    " ( )     ( )     ( )     ( )     ( )     ( )\n" +
+                    "  X       X       X       X       X       X\n" +
+                    "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
+                    "      X       X       X       X       X       X\n" +
+                    "     (_)     (_)     (_)     (_)     (_)     (_)\n" +
+                    " \nFlightControl version " + version + "-BETA is unstable\nand should not be run on a " +
+                    "production server.\n \n" +
+                    "  _       _       _       _       _       _\n" +
+                    " ( )     ( )     ( )     ( )     ( )     ( )\n" +
+                    "  X       X       X       X       X       X\n" +
+                    "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
+                    "      X       X       X       X       X       X\n" +
+                    "     (_)     (_)     (_)     (_)     (_)     (_)\n");
+        }
     }
 
     public boolean updateExists() {

@@ -89,23 +89,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         reloadManagers();
         checkPlayers();
 
-        if (updateManager.getVersion().getVersionType() == VersionType.BETA) {
-            getLogger().warning(" \n  _       _       _       _       _       _\n" +
-                    " ( )     ( )     ( )     ( )     ( )     ( )\n" +
-                    "  X       X       X       X       X       X\n" +
-                    "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
-                    "      X       X       X       X       X       X\n" +
-                    "     (_)     (_)     (_)     (_)     (_)     (_)\n" +
-                    " \nFlightControl version " + updateManager.getVersion() + " is unstable and should not be run on a " +
-                    "production server.\n \n" +
-                    "  _       _       _       _       _       _\n" +
-                    " ( )     ( )     ( )     ( )     ( )     ( )\n" +
-                    "  X       X       X       X       X       X\n" +
-                    "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
-                    "      X       X       X       X       X       X\n" +
-                    "     (_)     (_)     (_)     (_)     (_)     (_)\n");
-        }
-
         // Update check
         if (confManager.isAutoUpdate()) {
             new BukkitRunnable() {
@@ -143,7 +126,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         categoryManager = new CategoryManager(this);
         confManager = new ConfManager(this);
         langManager = new LangManager(this);
-        updateManager = new UpdateManager(getDescription().getVersion());
+        updateManager = new UpdateManager(this, getDescription().getVersion());
 
         boolean is1_13 = false;
 
