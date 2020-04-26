@@ -145,8 +145,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         langManager = new LangManager(this);
         updateManager = new UpdateManager(getDescription().getVersion());
 
-        getServer().broadcastMessage(getServer().getBukkitVersion());
-
         boolean is1_13 = false;
 
         for (int i = 13; i < 18; i++) {
