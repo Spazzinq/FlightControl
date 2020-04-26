@@ -149,7 +149,7 @@ public class HookManager {
 
     private void loadPlaceholders() {
         if (pluginLoading("PlaceholderAPI")) {
-            new ClipPlaceholder(pl);
+            new ClipPlaceholder(pl).register();
         }
         if (pluginLoading("MVdWPlaceholderAPI")) {
             new MVdWPlaceholder(pl);

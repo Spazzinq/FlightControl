@@ -104,7 +104,7 @@ public class UpdateManager {
 
                 if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
                     msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the configs have automatically " +
-                            "updated too)! Welcome to FlightControl " + getNewVersion() + "!");
+                            "updated too)! Welcome to FlightControl &f" + getNewVersion() + "&a!");
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload flightcontrol");
                 } else {
                     msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate downloaded. Restart " +
@@ -124,7 +124,7 @@ public class UpdateManager {
             notified.add(p.getUniqueId());
             msg(p, "&e&lFlightControl &7» &eWoot woot! Version &f" + getNewVersion() + "&e is now available! " +
                     "Update with \"/fc update\" and check out the new features: &fhttps://www.spigotmc" +
-                    ".org/resources/flightcontrol.55168/");
+                    ".org/resources/55168/");
         }
     }
 }

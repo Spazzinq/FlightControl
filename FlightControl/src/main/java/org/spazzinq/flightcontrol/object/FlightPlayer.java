@@ -89,8 +89,4 @@ public class FlightPlayer {
 
         player.setFlySpeed(actualFlightSpeed);
     }
-
-    public long getTempflyTime() {
-        return tempFlyEnd == null ? 0 : System.currentTimeMillis() - tempFlyEnd;
-    }
 }

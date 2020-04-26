@@ -98,7 +98,7 @@ public class PlayerUtil {
         }
     }
 
-    public static long formatLength(long length) {
-        return (length - System.currentTimeMillis()) / 1000;
+    public static long formatLength(Long length) {
+        return length == null ? 0 : (length - System.currentTimeMillis()) / 1000;
     }
 }

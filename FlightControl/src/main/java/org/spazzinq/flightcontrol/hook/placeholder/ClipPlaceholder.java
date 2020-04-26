@@ -55,7 +55,7 @@ public class ClipPlaceholder extends PlaceholderExpansion {
         }
 
         FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(player);
-        long time = PlayerUtil.formatLength(flightPlayer.getTempflyTime());
+        long time = PlayerUtil.formatLength(flightPlayer.getTempFlyEnd());
 
         switch (identifier) {
             case "tempfly_short": return PlayerUtil.shortPlaceholder(flightPlayer);
