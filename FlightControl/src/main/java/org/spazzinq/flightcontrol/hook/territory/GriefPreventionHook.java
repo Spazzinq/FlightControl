@@ -22,24 +22,22 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.lands;
+package org.spazzinq.flightcontrol.hook.territory;
 
-import org.bukkit.Location;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.hook.Hook;
 
-import java.util.UUID;
+public final class GriefPreventionHook extends TerritoryHookBase {
+    @Override public boolean isOwnTerritory(Player p) {
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
 
-public class LandsHookBase extends Hook {
-    public boolean landsIsOwn(Player p) {
-        return false;
+        return claim != null && p.getUniqueId().equals(claim.ownerID);
     }
 
-    public boolean landsIsTrusted(Player p) {
-        return false;
-    }
+    @Override public boolean isTrustedTerritory(Player p) {
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
 
-    public UUID getOwnerUUID(Location location) {
-        return null;
+        return claim != null && claim.allowAccess(p) == null;
     }
 }

@@ -41,10 +41,9 @@ import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
 import org.spazzinq.flightcontrol.multiversion.Particle;
 import org.spazzinq.flightcontrol.multiversion.current.Particle13;
-import org.spazzinq.flightcontrol.multiversion.old.Particle8;
+import org.spazzinq.flightcontrol.multiversion.legacy.Particle8;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.FlyPermission;
-import org.spazzinq.flightcontrol.object.VersionType;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.io.File;
@@ -85,7 +84,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         registerCommands();
 
         // Ensure all hooks load before managers do
-        hookManager.load();
+        hookManager.loadHooks();
         reloadManagers();
         checkPlayers();
 

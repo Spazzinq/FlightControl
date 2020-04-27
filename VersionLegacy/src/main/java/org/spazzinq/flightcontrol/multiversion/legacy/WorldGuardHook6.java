@@ -22,32 +22,28 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.towny;
+package org.spazzinq.flightcontrol.multiversion.legacy;
 
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
-import org.bukkit.entity.Player;
+import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 
-public final class TownyHook extends TownyHookBase {
-    @Override public boolean townyOwn(Player p) {
-        Resident r;
+import java.util.Iterator;
+import java.util.Set;
 
-        try {
-            r = TownyUniverse.getDataSource().getResident(p.getName());
+public class WorldGuardHook6 extends WorldGuardHookBase {
+    public String getRegionName(Location l) {
+        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
 
-            if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock())
-                    && r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) {
-                return true;
-            }
-        } catch (NotRegisteredException ignored) {
-            // will return false anyways, so ignored
+        if (iter.hasNext()) {
+            return iter.next().getId();
         }
-
-        return false;
+        return "none";
     }
 
-    @Override public boolean wartime() {
-        return TownyUniverse.isWarTime();
+    public Set<String> getRegionNames(World world) {
+        return WGBukkit.getRegionManager(world).getRegions().keySet();
     }
 }

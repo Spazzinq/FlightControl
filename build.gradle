@@ -53,5 +53,7 @@ subprojects {
         maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
         // MVdWPlaceholderAPI
         maven { url = 'http://repo.mvdw-software.be/content/groups/public/' }
+        // RedProtect
+        maven { url = 'https://raw.githubusercontent.com/FabioZumbi12/RedProtect/mvn-repo/' }
     }
 }

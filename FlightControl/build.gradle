@@ -53,6 +53,7 @@ dependencies {
         exclude group: 'org.spigotmc', module: 'spigot'
     }
 
+    compileOnly files('../lib/RedProtect-7.6.6-b307-Universal.jar')
     compileOnly files('../lib/CombatLogX-9.9.3.1.jar')
     compileOnly files('../lib/DeluxeCombat_v.1.14.2.jar')
     compileOnly files('../lib/DummyCombatTagPlus.jar')
