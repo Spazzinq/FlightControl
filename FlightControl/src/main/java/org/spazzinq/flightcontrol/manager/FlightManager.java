@@ -56,18 +56,14 @@ public class FlightManager {
     }
 
     public void check(Player p) {
-        check(p, p.getLocation(), false);
+        check(p, false);
     }
 
-    public void check(Player p, Location l) {
-        check(p, l, false);
-    }
-
-    public void check(Player p, Location l, boolean usingCMD) {
+    public void check(Player p, boolean usingCMD) {
         if (!PlayerUtil.hasPermission(p, FlyPermission.BYPASS)
                 && p.getGameMode() != GameMode.SPECTATOR
                 && !(pl.getConfManager().isVanishBypass() && pl.getHookManager().getVanishHook().vanished(p))) {
-            Evaluation eval = pl.getStatusManager().evalFlight(p, l);
+            Evaluation eval = pl.getStatusManager().evalFlight(p);
             boolean enable = eval.enabled(),
                     disable = eval.disabled();
 

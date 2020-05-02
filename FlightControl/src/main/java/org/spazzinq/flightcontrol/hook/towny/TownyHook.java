@@ -47,7 +47,15 @@ public final class TownyHook extends TownyHookBase {
         return false;
     }
 
+    @Override public boolean isTrustedTerritory(Player p) {
+        return isOwnTerritory(p);
+    }
+
     @Override public boolean wartime() {
         return TownyUniverse.isWarTime();
+    }
+
+    @Override public String toString() {
+        return "Towny";
     }
 }

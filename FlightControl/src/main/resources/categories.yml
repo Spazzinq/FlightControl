@@ -4,8 +4,13 @@
 # |_|\_\___/\__\___/__/
 # true = enable flight
 # false = disable flight
-# Disabling HAS GREATER PRIORITY than enabling, so be careful!
-# If neither enabling nor disabling is set for an area, FLIGHT WILL STILL DISABLE!!
+#
+# Players can only fly in regions that they are granted flight, so there is
+# no need to disable flight unless you want to override an area that you have enabled.
+#
+# In other words,
+# - disabling HAS GREATER PRIORITY than enabling
+# - if neither enabling nor disabling is set for an area, FLIGHT WILL STILL DISABLE!!
 
 #   ___ _     _          _
 # / __| |___| |__  __ _| |
@@ -31,6 +36,27 @@ global:
       - ALLY
     disable:
       - ENEMY
+<<<<<<< Updated upstream
+=======
+  # Disable/enable flight in certain plugin territories
+  # Supports: GRIEFPREVENTION, LANDS, PLOTSQUARED, TOWNY, REDPROTECT
+  territory:
+    # Enable/Disable in player's own territory
+    own:
+      enable:
+        - GRIEFPREVENTION
+        - LANDS
+        - PLOTSQUARED
+        - TOWNY
+        - REDPROTECT
+      disable: []
+    # Enable/Disable in territory that player is a member of
+    trusted:
+      enable:
+        - GRIEFPREVENTION
+      disable: []
+
+>>>>>>> Stashed changes
 
 #    ___      _                    _
 #  / __|__ _| |_ ___ __ _ ___ _ _(_)___ ___
@@ -54,6 +80,15 @@ categories:
         - WILDERNESS
       disable:
         - OWN
+    territory:
+      own:
+        enable:
+          - PLOTSQUARED
+        disable: []
+      trusted:
+        enable:
+          - GRIEFPREVENTION
+        disable: []
   # "example2" is another category. Its permission is "flightcontrol.category.example2"
   example2:
     priority: 0

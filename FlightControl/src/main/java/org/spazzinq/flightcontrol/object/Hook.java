@@ -22,13 +22,10 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.enchantment;
+package org.spazzinq.flightcontrol.object;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.object.Hook;
-
-public class EnchantsHookBase extends Hook {
-    public boolean canFly(Player p) {
-        return false;
+public class Hook {
+    public final boolean isHooked() {
+        return !getClass().getName().endsWith("Base");
     }
 }

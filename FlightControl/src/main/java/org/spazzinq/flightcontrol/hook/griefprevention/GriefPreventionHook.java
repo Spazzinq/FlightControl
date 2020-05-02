@@ -28,6 +28,7 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.object.Check;
 
 public final class GriefPreventionHook extends GriefPreventionHookBase {
     @Override public boolean claimIsOwn(Location location, Player player) {
@@ -40,5 +41,9 @@ public final class GriefPreventionHook extends GriefPreventionHookBase {
         Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
 
         return claim != null && claim.allowAccess(player) == null;
+    }
+
+    @Override public String toString() {
+        return "GriefPrevention";
     }
 }

@@ -34,6 +34,7 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.objects.Region;
+import org.spazzinq.flightcontrol.hook.territory.TerritoryHookBase;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CommentConf;
@@ -85,6 +86,7 @@ public class CategoryManager {
         DualStore<World> worlds = loadWorlds(name, category.getConfigurationSection("worlds"));
         DualStore<Region> regions = loadRegions(name, category.getConfigurationSection("regions"));
         DualStore<FactionRelation> factions = loadFactions(name, category.getConfigurationSection("factions"));
+        DualStore<TerritoryHookBase> territoryHooks = loadTerritoryHooks(name, category.getConfigurationSection("territory"));
 
         int priority = "global".equals(name) ? -1 : category.getInt("priority");
 

@@ -49,12 +49,14 @@ public class StatusManager {
             "Region",
             "Factions",
             "CrazyEnchants",
+
             "PlotSquared",
             "Towny: Own",
             "Lands: Own",
             "Lands: Trusted",
             "GriefPrevention: Own",
             "GriefPrevention: Trusted",
+
             "Permission: ALL",
             "Permission: World",
             "Permission: Region",
@@ -66,7 +68,9 @@ public class StatusManager {
             "Region",
             "Factions",
             "Combat",
+
             "PlotSquared",
+
             "Nearby",
             "Permission: World",
             "Permission: Region"
@@ -76,11 +80,12 @@ public class StatusManager {
         this.pl = pl;
     }
 
-    public Evaluation evalFlight(Player p, Location l) {
-        return evalFlight(p, l, false, null);
+    public Evaluation evalFlight(Player p) {
+        return evalFlight(p, false, null);
     }
 
-    public Evaluation evalFlight(Player p, Location l, boolean debug, CommandSender debugRecipient) {
+    public Evaluation evalFlight(Player p, boolean debug, CommandSender debugRecipient) {
+        Location l = p.getLocation();
         World world = l.getWorld();
         String worldName = world.getName(),
                 regionName = pl.getHookManager().getWorldGuardHook().getRegionName(l);

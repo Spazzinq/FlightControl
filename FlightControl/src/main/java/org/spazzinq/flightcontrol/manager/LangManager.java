@@ -60,6 +60,7 @@ public class LangManager {
     @Getter private String enableFlight;
     @Getter private String canEnableFlight;
     @Getter private String cannotEnableFlight;
+    @Getter private String heightDenied;
     @Getter private String personalTrailDisable;
     @Getter private String personalTrailEnable;
     @Getter private String permDenied;
@@ -143,6 +144,7 @@ public class LangManager {
             enableFlight = lang.getString("player.flight.enabled");
             canEnableFlight = lang.getString("player.flight.can_enable");
             cannotEnableFlight = lang.getString("player.flight.cannot_enable");
+            heightDenied = lang.getString("player.flight.height_denied");
             personalTrailDisable = lang.getString("player.trail.disabled");
             personalTrailEnable = lang.getString("player.trail.enabled");
             permDenied = lang.getString("player.permission_denied");

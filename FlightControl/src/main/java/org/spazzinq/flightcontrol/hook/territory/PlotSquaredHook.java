@@ -22,31 +22,45 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.towny;
+package org.spazzinq.flightcontrol.hook.territory;
 
+import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
+import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.object.Check;
-import org.spazzinq.flightcontrol.object.Hook;
 
-public class TerritoryHookBase extends Hook implements Check {
-    public boolean enable(Player p) {
-        return isOwnTerritory(p) || isTrustedTerritory(p);
+public final class PlotSquaredHook extends TerritoryHookBase {
+    @Override public boolean isOwnTerritory(Player p) {
+        Plot plot = getPlot(p);
+
+        return plot != null && plot.hasOwner() && plot.getOwners().contains(p.getUniqueId());
     }
 
-   public boolean disable(Player p) {
-        return false;
+    @Override public boolean isTrustedTerritory(Player p) {
+        Plot plot = getPlot(p);
+
+        return plot != null && plot.getTrusted().contains(p.getUniqueId());
     }
 
-<<<<<<< Updated upstream:FlightControl/src/main/java/org/spazzinq/flightcontrol/hook/towny/TownyHookBase.java
-public class TownyHookBase extends Hook {
-    public boolean townyOwn(Player p) {
-=======
-    public boolean isOwnTerritory(Player p) {
->>>>>>> Stashed changes:FlightControl/src/main/java/org/spazzinq/flightcontrol/hook/territory/TerritoryHookBase.java
-        return false;
+    @Override public boolean canFly(Player p) {
+        Plot plot = getPlot(p);
+
+        return plot != null && plot.getFlag(Flags.FLY, false);
     }
 
-    public boolean wartime() {
-        return false;
+    @Override public boolean cannotFly(Player p) {
+        Plot plot = getPlot(p);
+
+        return plot != null && !plot.getFlag(Flags.FLY, true);
+    }
+
+    private Plot getPlot(Player p) {
+        org.bukkit.Location l = p.getLocation();
+
+        return Plot.getPlot(new Location(l.getWorld().getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ()));
+    }
+
+    @Override public String toString() {
+        return "PlotSquared";
     }
 }

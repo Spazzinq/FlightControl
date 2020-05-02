@@ -22,10 +22,26 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook;
+package org.spazzinq.flightcontrol.hook.territory;
 
-public class Hook {
-    public final boolean isHooked() {
-        return !getClass().getName().endsWith("Base");
+import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
+import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
+import org.bukkit.entity.Player;
+
+public class RedProtectHook extends TerritoryHookBase {
+    @Override public boolean isOwnTerritory(Player p) {
+        Region rg = getRegion(p);
+
+        return rg != null && rg.isLeader(p);
+    }
+
+    @Override public boolean isTrustedTerritory(Player p) {
+        Region rg = getRegion(p);
+
+        return rg != null && rg.isMember(p);
+    }
+
+    public Region getRegion(Player p) {
+        return RedProtect.get().getAPI().getRegion(p.getLocation());
     }
 }

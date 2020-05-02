@@ -61,9 +61,7 @@ public final class LandsHook extends LandsHookBase {
         return land != null && land.getTrustedPlayers().contains(p.getUniqueId());
     }
 
-    @Override public UUID getOwnerUUID(Location location) {
-        Land land = landsIntegration.getLand(location);
-
-        return land != null ? land.getOwnerUID() : null;
+    @Override public String toString() {
+        return "Lands";
     }
 }

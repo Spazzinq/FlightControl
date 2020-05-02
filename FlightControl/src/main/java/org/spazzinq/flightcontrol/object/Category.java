@@ -27,6 +27,7 @@ package org.spazzinq.flightcontrol.object;
 import lombok.Getter;
 import org.bukkit.World;
 import org.spazzinq.flightcontrol.api.objects.Region;
+import org.spazzinq.flightcontrol.hook.territory.TerritoryHookBase;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 
 public class Category implements Comparable<Category> {
@@ -36,13 +37,15 @@ public class Category implements Comparable<Category> {
     @Getter private final DualStore<World> worlds;
     @Getter private final DualStore<Region> regions;
     @Getter private final DualStore<FactionRelation> factions;
+    @Getter private final DualStore<TerritoryHookBase> territoryHooks;
 
     public Category(String name, DualStore<World> worlds, DualStore<Region> regions,
-                    DualStore<FactionRelation> factions, int priority) {
+                    DualStore<FactionRelation> factions, DualStore<TerritoryHookBase> territoryHooks, int priority) {
         this.name = name;
         this.worlds = worlds;
         this.regions = regions;
         this.factions = factions;
+        this.territoryHooks = territoryHooks;
         this.priority = priority;
     }
 

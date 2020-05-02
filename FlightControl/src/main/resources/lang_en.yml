@@ -13,6 +13,7 @@ player:
     # or if the player disables their own flight with /fly
     can_enable: "&bYou can use /fly now."
     cannot_enable: "&cYou cannot fly right now."
+    height_denied: "&cYou cannot fly this high!"
   trail:
     enabled: "&aYou enabled the flight trail!"
     disabled: "&cYou disabled the flight trail!"

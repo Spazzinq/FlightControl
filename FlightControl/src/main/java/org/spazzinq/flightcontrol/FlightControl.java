@@ -214,7 +214,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                         || confManager.isVanishBypass() && hookManager.getVanishHook().vanished(p))).replaceAll("true"
                         , "&atrue"));
 
-        statusManager.evalFlight(p, l, true, s);
+        statusManager.evalFlight(p,true, s);
     }
 
     public void registerDefaultPerms(String suffix) {
