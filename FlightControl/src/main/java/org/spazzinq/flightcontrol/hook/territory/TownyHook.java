@@ -22,31 +22,40 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.towny;
+package org.spazzinq.flightcontrol.hook.territory;
 
+import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.object.Check;
-import org.spazzinq.flightcontrol.object.Hook;
 
-public class TerritoryHookBase extends Hook implements Check {
-    public boolean enable(Player p) {
-        return isOwnTerritory(p) || isTrustedTerritory(p);
-    }
+public final class TownyHook extends TerritoryHookBase {
+    @Override public boolean isOwnTerritory(Player p) {
+        Resident r;
 
-   public boolean disable(Player p) {
+        try {
+            r = TownyUniverse.getDataSource().getResident(p.getName());
+
+            if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock())
+                    && r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) {
+                return true;
+            }
+        } catch (NotRegisteredException ignored) {
+            // Will return false anyways, so ignored
+        }
+
         return false;
     }
 
-<<<<<<< Updated upstream:FlightControl/src/main/java/org/spazzinq/flightcontrol/hook/towny/TownyHookBase.java
-public class TownyHookBase extends Hook {
-    public boolean townyOwn(Player p) {
-=======
-    public boolean isOwnTerritory(Player p) {
->>>>>>> Stashed changes:FlightControl/src/main/java/org/spazzinq/flightcontrol/hook/territory/TerritoryHookBase.java
-        return false;
+    @Override public boolean isTrustedTerritory(Player p) {
+        return isOwnTerritory(p);
     }
 
-    public boolean wartime() {
-        return false;
+    @Override public boolean wartime() {
+        return TownyUniverse.isWarTime();
+    }
+
+    @Override public String toString() {
+        return "Towny";
     }
 }

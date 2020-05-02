@@ -22,18 +22,16 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.griefprevention;
+package org.spazzinq.flightcontrol.multiversion;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.hook.Hook;
 
-public class GriefPreventionHookBase extends Hook {
-    public boolean claimIsOwn(Location location, Player player) {
-        return false;
-    }
+public interface Particle {
+    void spawn(Location l);
 
-    public boolean claimIsTrusted(Location location, Player player) {
-        return false;
-    }
+    void setParticle(String s);
+
+    void setAmount(int amount);
+
+    void setRBG(int r, int g, int b);
 }

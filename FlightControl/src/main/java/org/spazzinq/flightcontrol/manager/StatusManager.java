@@ -168,7 +168,6 @@ public class StatusManager {
         return new Evaluation(disable, enable);
     }
 
-    // TODO Finish optimization with caching
     private boolean nearbyCheck(Player p, Location l) {
         if (!hasPermission(p, NEARBYPASS)) {
             World world = l.getWorld();

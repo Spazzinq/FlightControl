@@ -7,7 +7,7 @@
 # Discord: https://spazzinq.org/discord
 # Issue Tracker: https://github.com/Spazzinq/FlightControl/issues
 # Spigot Page: https://www.spigotmc.org/resources/flightcontrol.55168/
-# Permissions: https://spazzinq.org/flightcontrol/permissions.html
+# Permissions: https://spazzinq.org/flightcontrol/permissions
 
 # Before you leave a negative review:
 # ✓ Read through ALL the information in this configuration
@@ -57,8 +57,8 @@ territory:
 
 trail:
   enabled: false
-  # 1.8 Particle Info: https://spazzinq.org/flightcontrol/particles/1.8.html
-  # 1.15 Particle Info: https://spazzinq.org/flightcontrol/particles/1.15.html
+  # 1.8 Particle Info: https://spazzinq.org/flightcontrol/particles/1
+  # 1.15 Particle Info: https://spazzinq.org/flightcontrol/particles/2
   particle: "CLOUD"
   amount: 2
   # Please look at the particle info links above to know which particles can change color

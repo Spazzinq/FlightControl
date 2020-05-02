@@ -22,21 +22,26 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.plot;
+package org.spazzinq.flightcontrol.hook.territory;
 
-import com.intellectualcrafters.plot.flag.Flags;
-import com.intellectualcrafters.plot.object.Location;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.object.Check;
+import org.spazzinq.flightcontrol.object.Hook;
 
-public final class OldPlotSquaredHook extends PlotHookBase {
-    @Override public boolean canFly(String world, int x, int y, int z) {
-        com.intellectualcrafters.plot.object.Plot p =
-                com.intellectualcrafters.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && p.getFlag(Flags.FLY, false);
+public class TerritoryHookBase extends Hook implements Check {
+    public boolean enable(Player p) {
+        return isOwnTerritory(p) || isTrustedTerritory(p);
     }
 
-    @Override public boolean cannotFly(String world, int x, int y, int z) {
-        com.intellectualcrafters.plot.object.Plot p =
-                com.intellectualcrafters.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && !p.getFlag(Flags.FLY, true);
+   public boolean disable(Player p) {
+        return false;
+    }
+
+    public boolean isOwnTerritory(Player p) {
+        return false;
+    }
+
+    public boolean isTrustedTerritory(Player p) {
+        return false;
     }
 }

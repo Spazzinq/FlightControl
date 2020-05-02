@@ -27,11 +27,15 @@ package org.spazzinq.flightcontrol.hook.placeholder;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.object.FlightPlayer;
+import org.spazzinq.flightcontrol.util.PlayerUtil;
 
-public class FlightControlExpansion extends PlaceholderExpansion {
-    private FlightControl pl;
+import static org.spazzinq.flightcontrol.util.MathUtil.*;
 
-    public FlightControlExpansion(FlightControl pl) {
+public class ClipPlaceholder extends PlaceholderExpansion {
+    private final FlightControl pl;
+
+    public ClipPlaceholder(FlightControl pl) {
         this.pl = pl;
     }
 
@@ -39,21 +43,30 @@ public class FlightControlExpansion extends PlaceholderExpansion {
         return "flightcontrol";
     }
 
-    @Override public String getVersion(){
-        return pl.getDescription().getVersion();
-    }
-
     @Override public String onPlaceholderRequest(Player player, String identifier){
-        if(player == null){
+        if (player == null) {
             return "";
         }
 
         // %flightcontrol_<identifier>%
-        if (identifier.equals("tempfly_time")) {
 
+        if (identifier.equals("flying")) {
+            return String.valueOf(player.isFlying());
         }
 
-        // If invalid placeholder (f.e. %someplugin_placeholder3%)
+        FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(player);
+        long time = PlayerUtil.formatLength(flightPlayer.getTempFlyEnd());
+
+        switch (identifier) {
+            case "tempfly_short": return PlayerUtil.shortPlaceholder(flightPlayer);
+            case "tempfly_long": return PlayerUtil.longPlaceholder(flightPlayer);
+            case "tempfly_s": return String.valueOf(seconds(time));
+            case "tempfly_m": return String.valueOf(minutes(time));
+            case "tempfly_h": return String.valueOf(hours(time));
+            case "tempfly_d": return String.valueOf(days(time));
+        }
+
+        // If invalid placeholder
         return null;
     }
 
@@ -63,6 +76,10 @@ public class FlightControlExpansion extends PlaceholderExpansion {
 
     @Override public String getAuthor(){
         return pl.getDescription().getAuthors().toString();
+    }
+
+    @Override public String getVersion(){
+        return pl.getDescription().getVersion();
     }
 
     @Override public boolean persist() {

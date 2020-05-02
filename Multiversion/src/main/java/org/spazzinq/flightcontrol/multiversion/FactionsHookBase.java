@@ -24,28 +24,46 @@
 
 package org.spazzinq.flightcontrol.multiversion;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.spazzinq.flightcontrol.api.objects.Region;
+import org.bukkit.entity.Player;
 
-import java.util.Collections;
-import java.util.Set;
-
-@SuppressWarnings("unused")
-public class WorldGuardHook extends Hook {
-    public String getRegionName(Location l) {
-        return null;
-    }
-
-    public Set<String> getRegionNames(World w) {
-        return Collections.emptySet();
-    }
-
-    public boolean hasRegion(Region region) {
+public class FactionsHookBase extends Hook {
+    public boolean hasFaction(Player p) {
         return false;
     }
 
-    public boolean isHooked() {
-        return true;
+    public boolean inWarzone(Player p) {
+        return false;
+    }
+
+    public boolean inSafezone(Player p) {
+        return false;
+    }
+
+    public boolean inWilderness(Player p) {
+        return false;
+    }
+
+    public boolean inOwnTerritory(Player p) {
+        return false;
+    }
+
+    public boolean inAllyTerritory(Player p) {
+        return false;
+    }
+
+    public boolean inTruceTerritory(Player p) {
+        return false;
+    }
+
+    public boolean inNeutralTerritory(Player p) {
+        return false;
+    }
+
+    public boolean inEnemyTerritory(Player p) {
+        return false;
+    }
+
+    public boolean isEnemy(Player p, Player otherP) {
+        return false;
     }
 }

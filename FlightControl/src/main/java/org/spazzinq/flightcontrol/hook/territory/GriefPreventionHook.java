@@ -22,33 +22,27 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion.old;
+package org.spazzinq.flightcontrol.hook.territory;
 
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.spazzinq.flightcontrol.api.objects.Region;
-import org.spazzinq.flightcontrol.multiversion.WorldGuardHook;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.object.Check;
 
-import java.util.Iterator;
-import java.util.Set;
+public final class GriefPreventionHook extends TerritoryHookBase {
+    @Override public boolean isOwnTerritory(Player p) {
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
 
-public class WorldGuardHook6 extends WorldGuardHook {
-    public String getRegionName(Location l) {
-        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
-
-        if (iter.hasNext()) {
-            return iter.next().getId();
-        }
-        return "none";
+        return claim != null && p.getUniqueId().equals(claim.ownerID);
     }
 
-    public Set<String> getRegionNames(World world) {
-        return WGBukkit.getRegionManager(world).getRegions().keySet();
+    @Override public boolean isTrustedTerritory(Player p) {
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
+
+        return claim != null && claim.allowAccess(p) == null;
     }
 
-    public boolean hasRegion(Region region) {
-        return WGBukkit.getRegionManager(region.getWorld()).hasRegion(region.getRegionName());
+    @Override public String toString() {
+        return "GriefPrevention";
     }
 }

@@ -36,8 +36,10 @@ import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
+import java.util.HashMap;
+
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
-import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
 public final class TempFlyCommand implements CommandExecutor {
     private final FlightControl pl;
@@ -57,15 +59,17 @@ public final class TempFlyCommand implements CommandExecutor {
                     FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(argPlayer);
 
                     if (flightPlayer.getTempFlyEnd() == null) {
-                        msg(s, replaceVar(pl.getLangManager().getTempFlyDisabled(), argPlayer.getName(), "player"));
+                        msgVar(s, pl.getLangManager().getTempFlyDisabled(), false, "player", argPlayer.getName());
                     } else {
-                        flightPlayer.setTempFly(null);
-                        msg(s, replaceVar(pl.getLangManager().getTempFlyDisable(), argPlayer.getName(), "player"));
+                        msgVar(s, pl.getLangManager().getTempFlyCheck(), false, new HashMap<String, String>() {{
+                            put("player", argPlayer.getName());
+                            put("duration", PlayerUtil.longPlaceholder(flightPlayer));
+                        }});
                     }
                 } else {
                     if (console) {
-                        pl.getLogger().warning("Invalid player! Use /tempfly (player) to disable a player's temporary" +
-                                " flight; otherwise, use /tempfly (length) (player) to enable flight.");
+                        pl.getLogger().warning("Invalid player! Use \"/tempfly (player) disable\" to disable a player's temporary" +
+                                " flight; otherwise, use \"/tempfly (length) (player)\" to enable flight.");
                     } else {
                         setTempFly(s, (Player) s, args[0], false);
                     }
@@ -96,7 +100,15 @@ public final class TempFlyCommand implements CommandExecutor {
     }
 
     private void setTempFly(CommandSender s, Player p, String length, boolean silent) {
-        if (length.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
+        FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(p);
+
+        if (length.equalsIgnoreCase("disable")
+                || length.equalsIgnoreCase("stop")
+                || length.equalsIgnoreCase("end")
+                || length.equalsIgnoreCase("off")) {
+            flightPlayer.setTempFly(null);
+            msgVar(s, pl.getLangManager().getTempFlyDisable(), false, "player", p.getName());
+        } else if (length.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
             char unit = findUnit(length);
             int unitIndex = length.indexOf(unit);
             // Just in case it's a really
@@ -127,7 +139,6 @@ public final class TempFlyCommand implements CommandExecutor {
                 lengthFormatted.append("s");
             }
 
-            FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(p);
             boolean alreadyHadTempFly = flightPlayer.hasTempFly();
             // Add on if the player already has tempfly
             long tempFlyEnd = time + (alreadyHadTempFly ? flightPlayer.getTempFlyEnd() : System.currentTimeMillis());
@@ -144,12 +155,13 @@ public final class TempFlyCommand implements CommandExecutor {
             }.runTaskLater(pl, time / 50 + 4);
 
             if (!silent) {
-                // TODO make clearer
-                msg(s, replaceVar(
-                        replaceVar(alreadyHadTempFly ? pl.getLangManager().getTempFlyAdd()
-                                        : pl.getLangManager().getTempFlyEnable(),
-                                p.getName(), "player"),
-                        lengthFormatted.toString(), "duration"));
+                String msg = alreadyHadTempFly ? pl.getLangManager().getTempFlyAdd()
+                        : pl.getLangManager().getTempFlyEnable();
+
+                msgVar(s, msg, false, new HashMap<String, String>() {{
+                    put("player", p.getName());
+                    put("duration", lengthFormatted.toString());
+                }});
             }
         } else {
             msg(s, pl.getLangManager().getTempFlyUsage());

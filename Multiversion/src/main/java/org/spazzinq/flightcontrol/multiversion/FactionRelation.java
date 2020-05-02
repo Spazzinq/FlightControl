@@ -29,7 +29,7 @@ public enum FactionRelation {
 
     public static FactionRelation getRelation(String relationName) {
         try {
-            return valueOf(relationName);
+            return valueOf(relationName.toUpperCase());
         } catch (IllegalArgumentException e) {
             return null;
         }

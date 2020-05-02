@@ -26,25 +26,24 @@ package org.spazzinq.flightcontrol.multiversion.current;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.spazzinq.flightcontrol.multiversion.ParticleManager;
+import org.spazzinq.flightcontrol.multiversion.Particle;
 
-public class ParticleManager13 implements ParticleManager {
-    private Particle particle = Particle.CLOUD;
-    private Particle.DustOptions o;
+public class Particle13 implements Particle {
+    private org.bukkit.Particle particle = org.bukkit.Particle.CLOUD;
+    private org.bukkit.Particle.DustOptions o;
     private int amount = 4;
     private double extra, x, y, z;
 
     public void spawn(Location loc) {
         if (loc.getWorld() != null) {
-            loc.getWorld().spawnParticle(particle, particle == Particle.CLOUD ? loc.clone().subtract(0, .3, 0) : loc,
+            loc.getWorld().spawnParticle(particle, particle == org.bukkit.Particle.CLOUD ? loc.clone().subtract(0, .3, 0) : loc,
                     amount, x, y, z, extra, o, true);
         }
     }
 
     public void setParticle(String s) {
         try {
-            particle = Particle.valueOf(s);
+            particle = org.bukkit.Particle.valueOf(s);
         } catch (Exception ignored) {
         }
         switch (particle) {
@@ -69,7 +68,7 @@ public class ParticleManager13 implements ParticleManager {
         o = null;
         switch (particle) {
             case REDSTONE:
-                o = new Particle.DustOptions(Color.fromRGB(r, g, b), amount);
+                o = new org.bukkit.Particle.DustOptions(Color.fromRGB(r, g, b), amount);
                 break;
             case SPELL_MOB:
             case SPELL_MOB_AMBIENT: {

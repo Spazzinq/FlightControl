@@ -39,12 +39,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.APIManager;
 import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
-import org.spazzinq.flightcontrol.multiversion.ParticleManager;
-import org.spazzinq.flightcontrol.multiversion.current.ParticleManager13;
-import org.spazzinq.flightcontrol.multiversion.old.ParticleManager8;
+import org.spazzinq.flightcontrol.multiversion.Particle;
+import org.spazzinq.flightcontrol.multiversion.current.Particle13;
+import org.spazzinq.flightcontrol.multiversion.legacy.Particle8;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.FlyPermission;
-import org.spazzinq.flightcontrol.object.VersionType;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.io.File;
@@ -63,7 +62,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private UpdateManager updateManager;
     // Multi-version management
     @Getter private HookManager hookManager;
-    @Getter private ParticleManager particleManager;
+    @Getter private Particle particle;
     // In-game management
     @Getter private FlightManager flightManager;
     @Getter private PlayerManager playerManager;
@@ -71,10 +70,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private FactionsManager factionsManager;
     @Getter private TrailManager trailManager;
 
-    private final HashSet<String> permissionSuffixCache = new HashSet<>();
-
     private final PluginManager pm = Bukkit.getPluginManager();
     public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
+    private final HashSet<String> permissionSuffixCache = new HashSet<>();
 
     public void onEnable() {
         // Create storage folder
@@ -82,30 +80,13 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         storageFolder.mkdirs();
 
         registerManagers();
-        new Listener(this);
+        new EventListener(this);
         registerCommands();
 
         // Ensure all hooks load before managers do
-        hookManager.load();
+        hookManager.loadHooks();
         reloadManagers();
-
-        if (updateManager.getVersion().getVersionType() == VersionType.BETA) {
-            getLogger().warning(" \n  _       _       _       _       _       _\n" +
-                    " ( )     ( )     ( )     ( )     ( )     ( )\n" +
-                    "  X       X       X       X       X       X\n" +
-                    "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
-                    "      X       X       X       X       X       X\n" +
-                    "     (_)     (_)     (_)     (_)     (_)     (_)\n" +
-                    " \nVersion " + updateManager.getVersion() + " is currently unstable and should not be run on a " +
-                    "production server.\n" +
-                    "Thanks for being a FlightControl beta tester!\n \n" +
-                    "  _       _       _       _       _       _\n" +
-                    " ( )     ( )     ( )     ( )     ( )     ( )\n" +
-                    "  X       X       X       X       X       X\n" +
-                    "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
-                    "      X       X       X       X       X       X\n" +
-                    "     (_)     (_)     (_)     (_)     (_)     (_)\n");
-        }
+        checkPlayers();
 
         // Update check
         if (confManager.isAutoUpdate()) {
@@ -133,17 +114,30 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         new MetricsLite(this);
     }
 
+    // Just in case the task isn't cancelled
+    @Override public void onDisable() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            trailManager.trailRemove(p);
+        }
+    }
+
     private void registerManagers() {
         categoryManager = new CategoryManager(this);
         confManager = new ConfManager(this);
         langManager = new LangManager(this);
-        updateManager = new UpdateManager(getDescription().getVersion());
+        updateManager = new UpdateManager(this, getDescription().getVersion());
 
-        boolean is1_13 = getServer().getBukkitVersion().contains("1.13")
-                || getServer().getBukkitVersion().contains("1.14")
-                || getServer().getBukkitVersion().contains("1.15");
+        boolean is1_13 = false;
+
+        for (int i = 13; i < 18; i++) {
+            if (getServer().getBukkitVersion().contains("1." + i)) {
+                is1_13 = true;
+                break;
+            }
+        }
+
         hookManager = new HookManager(this, is1_13);
-        particleManager = is1_13 ? new ParticleManager13() : new ParticleManager8();
+        particle = is1_13 ? new Particle13() : new Particle8();
 
         flightManager = new FlightManager(this);
         playerManager = new PlayerManager(this);
@@ -165,10 +159,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         for (World w : Bukkit.getWorlds()) {
             String worldName = w.getName();
             registerDefaultPerms(worldName);
-
-            for (String regionName : getHookManager().getWorldGuardHook().getRegionNames(w)) {
-                registerDefaultPerms(worldName + "." + regionName);
-            }
         }
 
         categoryManager.reloadCategories();
@@ -179,8 +169,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         langManager.updateLang();
 
         playerManager.loadPlayerData();
-
-        checkPlayers();
     }
 
     public void checkPlayers() {

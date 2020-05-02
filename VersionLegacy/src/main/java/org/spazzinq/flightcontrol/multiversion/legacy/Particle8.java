@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion.old;
+package org.spazzinq.flightcontrol.multiversion.legacy;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.spazzinq.flightcontrol.multiversion.ParticleManager;
+import org.spazzinq.flightcontrol.multiversion.Particle;
 
-public class ParticleManager8 implements ParticleManager {
+public class Particle8 implements Particle {
     private Effect effect = Effect.CLOUD;
     private float r = 0, g = 0, b = 0, speed = 0F;
     private int amount = 4, data = 0;
