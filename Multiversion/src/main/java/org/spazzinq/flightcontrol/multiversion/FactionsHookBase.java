@@ -22,23 +22,48 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.griefprevention;
+package org.spazzinq.flightcontrol.multiversion;
 
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public final class GriefPreventionHook extends GriefPreventionHookBase {
-    @Override public boolean claimIsOwn(Location location, Player player) {
-        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
-
-        return claim != null && player.getUniqueId().equals(claim.ownerID);
+public class FactionsHookBase extends Hook {
+    public boolean hasFaction(Player p) {
+        return false;
     }
 
-    @Override public boolean claimIsTrusted(Location location, Player player) {
-        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
+    public boolean inWarzone(Player p) {
+        return false;
+    }
 
-        return claim != null && claim.allowAccess(player) == null;
+    public boolean inSafezone(Player p) {
+        return false;
+    }
+
+    public boolean inWilderness(Player p) {
+        return false;
+    }
+
+    public boolean inOwnTerritory(Player p) {
+        return false;
+    }
+
+    public boolean inAllyTerritory(Player p) {
+        return false;
+    }
+
+    public boolean inTruceTerritory(Player p) {
+        return false;
+    }
+
+    public boolean inNeutralTerritory(Player p) {
+        return false;
+    }
+
+    public boolean inEnemyTerritory(Player p) {
+        return false;
+    }
+
+    public boolean isEnemy(Player p, Player otherP) {
+        return false;
     }
 }

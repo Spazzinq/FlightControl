@@ -69,8 +69,9 @@ public class CategoryManager {
         ConfigurationSection categoriesSection = conf.getConfigurationSection("categories");
 
         for (String categoryName : categoriesSection.getKeys(false)) {
-            Category category = loadCategory(categoryName, categoriesSection.getConfigurationSection(categoryName));
-            categories.add(category);
+            categories.add(
+                    loadCategory(categoryName.toLowerCase(), categoriesSection.getConfigurationSection(categoryName))
+            );
         }
 
         Collections.sort(categories);
@@ -125,8 +126,6 @@ public class CategoryManager {
 
                 if (region.getWorld() == null) {
                     nonexistent(categoryName, "regions", "world", worldName);
-                } else if (!pl.getHookManager().getWorldGuardHook().hasRegion(region)) {
-                    nonexistent(categoryName, "regions", "region", region.getRegionName());
                 } else {
                     // If true, then enabled
                     //    false, then disabled

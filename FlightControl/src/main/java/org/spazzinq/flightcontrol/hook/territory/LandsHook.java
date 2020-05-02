@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.lands;
+package org.spazzinq.flightcontrol.hook.territory;
 
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
@@ -32,14 +32,14 @@ import org.spazzinq.flightcontrol.FlightControl;
 
 import java.util.UUID;
 
-public final class LandsHook extends LandsHookBase {
+public final class LandsHook extends TerritoryHookBase {
     private final LandsIntegration landsIntegration;
 
     public LandsHook(FlightControl pl) {
         landsIntegration = new LandsIntegration(pl, false);
     }
 
-    @Override public boolean landsIsOwn(Player p) {
+    @Override public boolean isOwnTerritory(Player p) {
         Land land = landsIntegration.getLand(p.getLocation());
 
         // Debug
@@ -55,7 +55,7 @@ public final class LandsHook extends LandsHookBase {
         return land != null && p.getUniqueId().equals(land.getOwnerUID());
     }
 
-    @Override public boolean landsIsTrusted(Player p) {
+    @Override public boolean isTrustedTerritory(Player p) {
         Land land = landsIntegration.getLand(p.getLocation());
 
         return land != null && land.getTrustedPlayers().contains(p.getUniqueId());

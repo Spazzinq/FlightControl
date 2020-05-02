@@ -22,24 +22,28 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.lands;
+package org.spazzinq.flightcontrol.multiversion.legacy;
 
+import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.hook.Hook;
+import org.bukkit.World;
+import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 
-import java.util.UUID;
+import java.util.Iterator;
+import java.util.Set;
 
-public class LandsHookBase extends Hook {
-    public boolean landsIsOwn(Player p) {
-        return false;
+public class WorldGuardHook6 extends WorldGuardHookBase {
+    public String getRegionName(Location l) {
+        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
+
+        if (iter.hasNext()) {
+            return iter.next().getId();
+        }
+        return "none";
     }
 
-    public boolean landsIsTrusted(Player p) {
-        return false;
-    }
-
-    public UUID getOwnerUUID(Location location) {
-        return null;
+    public Set<String> getRegionNames(World world) {
+        return WGBukkit.getRegionManager(world).getRegions().keySet();
     }
 }

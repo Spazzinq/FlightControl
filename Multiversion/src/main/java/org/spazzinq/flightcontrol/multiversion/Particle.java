@@ -25,27 +25,13 @@
 package org.spazzinq.flightcontrol.multiversion;
 
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.spazzinq.flightcontrol.api.objects.Region;
 
-import java.util.Collections;
-import java.util.Set;
+public interface Particle {
+    void spawn(Location l);
 
-@SuppressWarnings("unused")
-public class WorldGuardHook extends Hook {
-    public String getRegionName(Location l) {
-        return null;
-    }
+    void setParticle(String s);
 
-    public Set<String> getRegionNames(World w) {
-        return Collections.emptySet();
-    }
+    void setAmount(int amount);
 
-    public boolean hasRegion(Region region) {
-        return false;
-    }
-
-    public boolean isHooked() {
-        return true;
-    }
+    void setRBG(int r, int g, int b);
 }

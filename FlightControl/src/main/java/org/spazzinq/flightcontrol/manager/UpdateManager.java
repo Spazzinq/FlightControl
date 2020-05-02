@@ -28,7 +28,9 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.Version;
+import org.spazzinq.flightcontrol.object.VersionType;
 
 import java.io.*;
 import java.net.URL;
@@ -46,8 +48,26 @@ public class UpdateManager {
 
     private final HashSet<UUID> notified = new HashSet<>();
 
-    public UpdateManager(String versionStr) {
+    public UpdateManager(FlightControl pl, String versionStr) {
         version = new Version(versionStr);
+
+        if (version.getVersionType() == VersionType.BETA) {
+            pl.getLogger().warning(
+                    " \n  _       _       _       _       _       _\n" +
+                    " ( )     ( )     ( )     ( )     ( )     ( )\n" +
+                    "  X       X       X       X       X       X\n" +
+                    "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
+                    "      X       X       X       X       X       X\n" +
+                    "     (_)     (_)     (_)     (_)     (_)     (_)\n" +
+                    " \nFlightControl version " + version + "-BETA is unstable\nand should not be run on a " +
+                    "production server.\n \n" +
+                    "  _       _       _       _       _       _\n" +
+                    " ( )     ( )     ( )     ( )     ( )     ( )\n" +
+                    "  X       X       X       X       X       X\n" +
+                    "-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,-' `-. ,\n" +
+                    "      X       X       X       X       X       X\n" +
+                    "     (_)     (_)     (_)     (_)     (_)     (_)\n");
+        }
     }
 
     public boolean updateExists() {
@@ -81,9 +101,10 @@ public class UpdateManager {
         if (updateExists()) {
             if (!downloaded) {
                 downloadPlugin();
+
                 if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
                     msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the configs have automatically " +
-                            "updated too)! Welcome to FlightControl " + getNewVersion() + "!");
+                            "updated too)! Welcome to FlightControl &f" + getNewVersion() + "&a!");
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload flightcontrol");
                 } else {
                     msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate downloaded. Restart " +
@@ -103,7 +124,7 @@ public class UpdateManager {
             notified.add(p.getUniqueId());
             msg(p, "&e&lFlightControl &7» &eWoot woot! Version &f" + getNewVersion() + "&e is now available! " +
                     "Update with \"/fc update\" and check out the new features: &fhttps://www.spigotmc" +
-                    ".org/resources/flightcontrol.55168/");
+                    ".org/resources/55168/");
         }
     }
 }

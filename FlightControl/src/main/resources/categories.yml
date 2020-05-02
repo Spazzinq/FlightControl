@@ -32,6 +32,16 @@ global:
     disable:
       - ENEMY
 
+  territory:
+    enable_own:
+      - GRIEFPREVENTION
+      - LANDS
+      - PLOTSQUARED
+      - TOWNY
+    enable_trusted:
+      - GRIEFPREVENTION
+
+
 #    ___      _                    _
 #  / __|__ _| |_ ___ __ _ ___ _ _(_)___ ___
 #  | (__/ _` |  _/ -_) _` / _ \ '_| / -_|_-<

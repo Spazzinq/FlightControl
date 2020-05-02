@@ -22,33 +22,32 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion.old;
+package org.spazzinq.flightcontrol.hook.territory;
 
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.spazzinq.flightcontrol.api.objects.Region;
-import org.spazzinq.flightcontrol.multiversion.WorldGuardHook;
+import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
+import org.bukkit.entity.Player;
 
-import java.util.Iterator;
-import java.util.Set;
+public final class TownyHook extends TerritoryHookBase {
+    @Override public boolean isOwnTerritory(Player p) {
+        Resident r;
 
-public class WorldGuardHook6 extends WorldGuardHook {
-    public String getRegionName(Location l) {
-        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
+        try {
+            r = TownyUniverse.getDataSource().getResident(p.getName());
 
-        if (iter.hasNext()) {
-            return iter.next().getId();
+            if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock())
+                    && r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) {
+                return true;
+            }
+        } catch (NotRegisteredException ignored) {
+            // Will return false anyways, so ignored
         }
-        return "none";
+
+        return false;
     }
 
-    public Set<String> getRegionNames(World world) {
-        return WGBukkit.getRegionManager(world).getRegions().keySet();
-    }
-
-    public boolean hasRegion(Region region) {
-        return WGBukkit.getRegionManager(region.getWorld()).hasRegion(region.getRegionName());
+    @Override public boolean wartime() {
+        return TownyUniverse.isWarTime();
     }
 }

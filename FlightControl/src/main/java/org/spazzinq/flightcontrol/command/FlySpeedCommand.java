@@ -37,8 +37,10 @@ import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.MathUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
+import java.util.HashMap;
+
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
-import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
 public class FlySpeedCommand implements CommandExecutor {
     private final FlightControl pl;
@@ -92,11 +94,18 @@ public class FlySpeedCommand implements CommandExecutor {
             FlightPlayer flightPlayer = playerManager.getFlightPlayer(p);
 
             if (flightPlayer.getActualFlightSpeed() == speed) {
-                msg(p, replaceVar(pl.getLangManager().getFlySpeedSame(), wrongSpeed + "", "speed"));
+                msgVar(s, pl.getLangManager().getFlySpeedSame(), false, new HashMap<String, String>() {{
+                    put("speed", String.valueOf(wrongSpeed));
+                    put("player", p.getName());
+                }});
             } else {
                 playerManager.getFlightPlayer(p).setActualFlightSpeed(speed);
                 p.setFlySpeed(flightPlayer.getActualFlightSpeed());
-                msg(p, replaceVar(pl.getLangManager().getFlySpeedSet(), wrongSpeed + "", "speed"));
+
+                msgVar(s, pl.getLangManager().getFlySpeedSet(), false, new HashMap<String, String>() {{
+                    put("speed", String.valueOf(wrongSpeed));
+                    put("player", p.getName());
+                }});
             }
         } else {
             msg(s, pl.getLangManager().getFlySpeedUsage());

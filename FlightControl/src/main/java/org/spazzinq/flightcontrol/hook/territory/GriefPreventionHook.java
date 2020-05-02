@@ -22,16 +22,22 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion;
+package org.spazzinq.flightcontrol.hook.territory;
 
-import org.bukkit.Location;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import org.bukkit.entity.Player;
 
-public interface ParticleManager {
-    void spawn(Location l);
+public final class GriefPreventionHook extends TerritoryHookBase {
+    @Override public boolean isOwnTerritory(Player p) {
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
 
-    void setParticle(String s);
+        return claim != null && p.getUniqueId().equals(claim.ownerID);
+    }
 
-    void setAmount(int amount);
+    @Override public boolean isTrustedTerritory(Player p) {
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
 
-    void setRBG(int r, int g, int b);
+        return claim != null && claim.allowAccess(p) == null;
+    }
 }

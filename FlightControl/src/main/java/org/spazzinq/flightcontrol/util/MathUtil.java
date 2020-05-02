@@ -46,4 +46,24 @@ public class MathUtil {
 
         return actualSpeed;
     }
+
+    public static int days(long length) {
+        return (int) (length / 86400);
+    }
+
+    public static short hours(long length) {
+        return (short) (length % 86400 / 3600);
+    }
+
+    public static short minutes(long length) {
+        return (short) (length % 3600 / 60);
+    }
+
+    public static short seconds(long length) {
+        return (short) (length % 60);
+    }
+
+    public static int[] timeArray(long length) {
+        return new int[] {days(length), hours(length), minutes(length), seconds(length)};
+    }
 }
