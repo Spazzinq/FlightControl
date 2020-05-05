@@ -22,17 +22,18 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.territory;
+package org.spazzinq.flightcontrol.hook.griefprevention;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.hook.Hook;
 
-public class TerritoryHookBase extends Hook {
-    public boolean isOwnTerritory(Player p) {
+public class GriefPreventionHookBase extends Hook {
+    public boolean claimIsOwn(Location location, Player player) {
         return false;
     }
 
-    public boolean isTrustedTerritory(Player p) {
+    public boolean claimIsTrusted(Location location, Player player) {
         return false;
     }
 }

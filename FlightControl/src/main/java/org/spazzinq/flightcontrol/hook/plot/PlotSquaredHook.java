@@ -22,32 +22,21 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.territory;
+package org.spazzinq.flightcontrol.hook.plot;
 
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
-import org.bukkit.entity.Player;
+import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
 
-public final class TownyHook extends TerritoryHookBase {
-    @Override public boolean isOwnTerritory(Player p) {
-        Resident r;
-
-        try {
-            r = TownyUniverse.getDataSource().getResident(p.getName());
-
-            if (r.hasTown() && !TownyUniverse.isWilderness(p.getLocation().getBlock())
-                    && r.getTown().equals(TownyUniverse.getTownBlock(p.getLocation()).getTown())) {
-                return true;
-            }
-        } catch (NotRegisteredException ignored) {
-            // Will return false anyways, so ignored
-        }
-
-        return false;
+public final class PlotSquaredHook extends PlotHookBase {
+    @Override public boolean canFly(String world, int x, int y, int z) {
+        com.github.intellectualsites.plotsquared.plot.object.Plot p =
+                com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
+        return p != null && p.getFlag(Flags.FLY, false);
     }
 
-    @Override public boolean wartime() {
-        return TownyUniverse.isWarTime();
+    @Override public boolean cannotFly(String world, int x, int y, int z) {
+        com.github.intellectualsites.plotsquared.plot.object.Plot p =
+                com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
+        return p != null && !p.getFlag(Flags.FLY, true);
     }
 }

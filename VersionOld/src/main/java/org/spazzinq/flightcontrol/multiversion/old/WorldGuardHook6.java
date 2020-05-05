@@ -22,41 +22,28 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.territory;
+package org.spazzinq.flightcontrol.multiversion.old;
 
-import com.intellectualcrafters.plot.flag.Flags;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
-import org.bukkit.entity.Player;
+import com.sk89q.worldguard.bukkit.WGBukkit;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 
-public final class LegacyPlotSquaredHook extends TerritoryHookBase {
-    @Override public boolean isOwnTerritory(Player p) {
-        Plot plot = getPlot(p);
+import java.util.Iterator;
+import java.util.Set;
 
-        return plot != null && plot.hasOwner() && plot.getOwners().contains(p.getUniqueId());
+public class WorldGuardHook6 extends WorldGuardHookBase {
+    public String getRegionName(Location l) {
+        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
+
+        if (iter.hasNext()) {
+            return iter.next().getId();
+        }
+        return "none";
     }
 
-    @Override public boolean isTrustedTerritory(Player p) {
-        Plot plot = getPlot(p);
-
-        return plot != null && plot.getTrusted().contains(p.getUniqueId());
-    }
-
-    @Override public boolean canFly(Player p) {
-        Plot plot = getPlot(p);
-
-        return plot != null && plot.getFlag(Flags.FLY, false);
-    }
-
-    @Override public boolean cannotFly(Player p) {
-        Plot plot = getPlot(p);
-
-        return plot != null && !plot.getFlag(Flags.FLY, true);
-    }
-
-    private Plot getPlot(Player p) {
-        org.bukkit.Location l = p.getLocation();
-
-        return Plot.getPlot(new Location(l.getWorld().getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ()));
+    public Set<String> getRegionNames(World world) {
+        return WGBukkit.getRegionManager(world).getRegions().keySet();
     }
 }

@@ -22,36 +22,17 @@
  * SOFTWARE.
  */
 
-allprojects {
-    group = 'org.spazzinq'
-    version = '4.4.4-BETA'
-}
+package org.spazzinq.flightcontrol.hook.towny;
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.hook.Hook;
 
-    sourceCompatibility = '1.8'
+public class TownyHookBase extends Hook {
+    public boolean townyOwn(Player p) {
+        return false;
+    }
 
-    repositories {
-        mavenCentral()
-        // Spigot
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats, CombatLogX
-        maven { url = 'https://repo.codemc.io/repository/maven-public/' }
-        // WorldEdit, WorldGuard
-        maven { url = 'https://maven.sk89q.com/repo/' }
-        // Essentials, FactionsUUID
-        maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
-        // PlotSquared
-        maven { url = 'https://plotsquared.com/mvn/' }
-        // CrazyEnchantments
-        maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PlotSquared
-        maven { url = 'https://jitpack.io' }
-        // PlaceholderAPI
-        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-        // MVdWPlaceholderAPI
-        maven { url = 'http://repo.mvdw-software.be/content/groups/public/' }
+    public boolean wartime() {
+        return false;
     }
 }

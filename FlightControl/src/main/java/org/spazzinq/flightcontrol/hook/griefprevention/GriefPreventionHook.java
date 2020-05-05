@@ -22,41 +22,23 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.territory;
+package org.spazzinq.flightcontrol.hook.griefprevention;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
-import com.github.intellectualsites.plotsquared.plot.object.Plot;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public final class PlotSquaredHook extends TerritoryHookBase {
-    @Override public boolean isOwnTerritory(Player p) {
-        Plot plot = getPlot(p);
+public final class GriefPreventionHook extends GriefPreventionHookBase {
+    @Override public boolean claimIsOwn(Location location, Player player) {
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
 
-        return plot != null && plot.hasOwner() && plot.getOwners().contains(p.getUniqueId());
+        return claim != null && player.getUniqueId().equals(claim.ownerID);
     }
 
-    @Override public boolean isTrustedTerritory(Player p) {
-        Plot plot = getPlot(p);
+    @Override public boolean claimIsTrusted(Location location, Player player) {
+        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
 
-        return plot != null && plot.getTrusted().contains(p.getUniqueId());
-    }
-
-    @Override public boolean canFly(Player p) {
-        Plot plot = getPlot(p);
-
-        return plot != null && plot.getFlag(Flags.FLY, false);
-    }
-
-    @Override public boolean cannotFly(Player p) {
-        Plot plot = getPlot(p);
-
-        return plot != null && !plot.getFlag(Flags.FLY, true);
-    }
-
-    private Plot getPlot(Player p) {
-        org.bukkit.Location l = p.getLocation();
-
-        return Plot.getPlot(new Location(l.getWorld().getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ()));
+        return claim != null && claim.allowAccess(player) == null;
     }
 }
