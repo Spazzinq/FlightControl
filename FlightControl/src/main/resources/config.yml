@@ -19,7 +19,7 @@ settings:
   auto_update: true
   # Enables flight automatically (no command necessary)
   auto_enable_flight: true
-  # The default speed is 1.0 and matches Essential's /flyspeed values (decimal from 0-10)
+  # The default speed is 1.0 and matches Essentials's /flyspeed values (0-10)
   flight_speed: 1.0
   # Supports: CombatTagPlus, CombatLogX, CombatLogPro, AntiCombatLogging, DeluxeCombat
   # NOTE: disable flight disabling/enabling in the combat plugin's config to prevent issues
@@ -34,10 +34,11 @@ settings:
 nearby_disable:
   # Disables flight when a player is within a certain block range (set to -1 to disable)
   range: -1
-  # Officially Supports: Factions by MassiveCraft, FactionsUUID, SavageFactions
+  # Supports: Factions by MassiveCraft, FactionsUUID, SavageFactions
   # Makes the "range" setting only for faction enemies
   factions_enemy: true
 
+# TODO Remove
 territory:
   # Requires Towny plugin
   towny:
