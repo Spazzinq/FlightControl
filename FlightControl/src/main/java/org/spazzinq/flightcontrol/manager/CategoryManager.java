@@ -91,7 +91,7 @@ public class CategoryManager {
 
         int priority = "global".equals(name) ? -1 : category.getInt("priority");
 
-        return new Category(name, worlds, regions, factions, priority);
+        return new Category(name, worlds, regions, factions, territoryHooks, priority);
     }
 
     private DualStore<World> loadWorlds(String categoryName, ConfigurationSection worldsSection) {

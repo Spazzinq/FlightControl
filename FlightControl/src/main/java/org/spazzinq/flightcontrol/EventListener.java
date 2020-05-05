@@ -54,7 +54,7 @@ final class EventListener implements org.bukkit.event.Listener {
         if (e.getFrom().getBlockX() != e.getTo().getBlockX()
                 || e.getFrom().getBlockY() != e.getTo().getBlockY()
                 || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
-            pl.getFlightManager().check(e.getPlayer(), e.getTo());
+            pl.getFlightManager().check(e.getPlayer());
         }
     }
 
@@ -81,7 +81,7 @@ final class EventListener implements org.bukkit.event.Listener {
         if (e.getCause() != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
             Player p = e.getPlayer();
 
-            pl.getFlightManager().check(p, e.getTo());
+            pl.getFlightManager().check(p);
 
             // Fixes bug where particles remain when not supposed so
             if (!p.getAllowFlight()) {

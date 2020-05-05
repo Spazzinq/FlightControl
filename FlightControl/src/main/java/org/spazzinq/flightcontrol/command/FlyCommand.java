@@ -55,7 +55,7 @@ public final class FlyCommand implements CommandExecutor {
                 if (p.getAllowFlight()) {
                     flightManager.disableFlight(p, true);
                 } else {
-                    flightManager.check(p, p.getLocation(), true);
+                    flightManager.check(p, true);
                 }
             } else {
                 pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
@@ -73,7 +73,7 @@ public final class FlyCommand implements CommandExecutor {
                     if (p.getAllowFlight()) {
                         flightManager.disableFlight(p, true);
                     } else {
-                        flightManager.check(p, p.getLocation(), true);
+                        flightManager.check(p, true);
                     }
                 } else {
                     msg(s, pl.getLangManager().getFlyCommandUsage());

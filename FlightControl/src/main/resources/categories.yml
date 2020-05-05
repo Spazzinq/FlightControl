@@ -36,9 +36,7 @@ global:
       own: [GRIEFPREVENTION, LANDS, PLOTSQUARED, TOWNY, REDPROTECT]
       # Enable/Disable in territory that player is a member of
       trusted: [GRIEFPREVENTION]
-    disable:
-      own: []
-      trusted: []
+    disable: []
 
 # These are individual categories
 categories:
