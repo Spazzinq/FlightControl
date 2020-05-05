@@ -57,11 +57,12 @@ public class FactionsManager {
                 relation = FactionRelation.ALLY;
             } else if (factions.inTruceTerritory(p)) {
                 relation = FactionRelation.TRUCE;
-            } else if (factions.inNeutralTerritory(p)) {
-                relation = FactionRelation.NEUTRAL;
             } else if (factions.inEnemyTerritory(p)) {
                 relation = FactionRelation.ENEMY;
             }
+        // As last resort--still works without faction
+        } else if (factions.inNeutralTerritory(p)) {
+            relation = FactionRelation.NEUTRAL;
         }
 
         return relation;
