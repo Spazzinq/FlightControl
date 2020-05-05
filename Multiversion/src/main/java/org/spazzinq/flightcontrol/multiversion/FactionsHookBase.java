@@ -27,10 +27,6 @@ package org.spazzinq.flightcontrol.multiversion;
 import org.bukkit.entity.Player;
 
 public class FactionsHookBase extends Hook {
-    public boolean hasFaction(Player p) {
-        return false;
-    }
-
     public boolean inWarzone(Player p) {
         return false;
     }

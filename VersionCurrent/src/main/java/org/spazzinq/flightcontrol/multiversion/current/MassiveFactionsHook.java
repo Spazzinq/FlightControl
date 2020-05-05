@@ -34,10 +34,6 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
 
 public final class MassiveFactionsHook extends FactionsHookBase {
-    @Override public boolean hasFaction(Player p) {
-        return MPlayer.get(p).hasFaction();
-    }
-
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p) == FactionColl.get().getWarzone();
     }

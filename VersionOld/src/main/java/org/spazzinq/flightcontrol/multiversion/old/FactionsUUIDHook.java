@@ -30,10 +30,6 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
 
 public final class FactionsUUIDHook extends FactionsHookBase {
-    @Override public boolean hasFaction(Player p) {
-        return getFPlayer(p).hasFaction();
-    }
-
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p).isWarZone();
     }

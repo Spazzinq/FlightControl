@@ -50,17 +50,14 @@ public class FactionsManager {
             relation = FactionRelation.SAFEZONE;
         } else if (factions.inWilderness(p)) {
             relation = FactionRelation.WILDERNESS;
-        } else if (factions.hasFaction(p)) {
-            if (factions.inOwnTerritory(p)) {
-                relation = FactionRelation.OWN;
-            } else if (factions.inAllyTerritory(p)) {
-                relation = FactionRelation.ALLY;
-            } else if (factions.inTruceTerritory(p)) {
-                relation = FactionRelation.TRUCE;
-            } else if (factions.inEnemyTerritory(p)) {
-                relation = FactionRelation.ENEMY;
-            }
-        // As last resort--still works without faction
+        } else if (factions.inOwnTerritory(p)) {
+            relation = FactionRelation.OWN;
+        } else if (factions.inAllyTerritory(p)) {
+            relation = FactionRelation.ALLY;
+        } else if (factions.inTruceTerritory(p)) {
+            relation = FactionRelation.TRUCE;
+        } else if (factions.inEnemyTerritory(p)) {
+            relation = FactionRelation.ENEMY;
         } else if (factions.inNeutralTerritory(p)) {
             relation = FactionRelation.NEUTRAL;
         }
