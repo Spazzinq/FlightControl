@@ -48,7 +48,7 @@ dependencies {
     compileOnly 'com.github.Angeschossen:LandsAPI:4.5.0.7'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.13.0'
     compileOnly 'com.SirBlobman.combatlogx:CombatLogX-API:10.0.0.0-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.10.5'
+    compileOnly 'me.clip:placeholderapi:2.10.6'
     compileOnly ('be.maximvdw:MVdWPlaceholderAPI:3.0.1-SNAPSHOT') {
         exclude group: 'org.spigotmc', module: 'spigot'
     }
