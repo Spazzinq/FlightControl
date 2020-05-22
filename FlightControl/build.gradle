@@ -34,7 +34,7 @@ dependencies {
     implementation project(':VersionOld')
     implementation project(':VersionCurrent')
 
-    compileOnly 'org.jetbrains:annotations:13.0'
+    compileOnly 'org.jetbrains:annotations:19.0.0'
     compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {
         exclude group: 'net.md-5', module: 'bungeecord-chat'
     }
