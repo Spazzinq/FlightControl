@@ -52,6 +52,6 @@ subprojects {
         // PlaceholderAPI
         maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
         // MVdWPlaceholderAPI
-        maven { url = 'http://repo.mvdw-software.be/content/groups/public/' }
+        maven { url = 'https://repo.mvdw-software.com/content/groups/public/' }
     }
 }
