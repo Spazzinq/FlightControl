@@ -44,7 +44,7 @@ import java.util.ArrayList;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
-public final class FlightManager {
+public class FlightManager {
     private final FlightControl pl;
 
     @Getter private final ArrayList<Player> alreadyCanMsg = new ArrayList<>();

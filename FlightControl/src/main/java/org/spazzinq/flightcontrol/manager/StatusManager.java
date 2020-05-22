@@ -88,7 +88,8 @@ public class StatusManager {
         Category category = pl.getCategoryManager().getCategory(p);
         FactionRelation relation = pl.getFactionsManager().getRelationToLocation(p);
 
-        if (regionName != null) { // Register new regions dynamically
+        if (regionName != null) { // Register new worlds/regions dynamically
+            pl.registerDefaultPerms(worldName);
             pl.registerDefaultPerms(worldName + "." + regionName);
         }
 
@@ -162,7 +163,6 @@ public class StatusManager {
         return new Evaluation(disable, enable);
     }
 
-    // TODO Finish optimization with caching
     private boolean nearbyCheck(Player p, Location l) {
         if (!hasPermission(p, NEARBYPASS)) {
             World world = l.getWorld();

@@ -31,13 +31,9 @@ import com.massivecraft.factions.entity.FactionColl;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.multiversion.FactionsHook;
+import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
 
-public final class MassiveFactionsHook extends FactionsHook {
-    @Override public boolean hasFaction(Player p) {
-        return MPlayer.get(p).hasFaction();
-    }
-
+public final class MassiveFactionsHook extends FactionsHookBase {
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p) == FactionColl.get().getWarzone();
     }
@@ -81,6 +77,4 @@ public final class MassiveFactionsHook extends FactionsHook {
     private Rel getRelToLocation(Player p) {
         return getFactionAtLocation(p).getRelationWish(MPlayer.get(p).getFaction());
     }
-
-    @Override public boolean isHooked() { return true; }
 }

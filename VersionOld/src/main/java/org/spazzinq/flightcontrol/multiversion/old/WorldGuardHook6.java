@@ -28,27 +28,22 @@ import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.spazzinq.flightcontrol.api.objects.Region;
-import org.spazzinq.flightcontrol.multiversion.WorldGuardHook;
+import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 
 import java.util.Iterator;
 import java.util.Set;
 
-public class WorldGuardHook6 extends WorldGuardHook {
+public class WorldGuardHook6 extends WorldGuardHookBase {
     public String getRegionName(Location l) {
         Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
 
         if (iter.hasNext()) {
             return iter.next().getId();
         }
-        return null;
+        return "none";
     }
 
     public Set<String> getRegionNames(World world) {
         return WGBukkit.getRegionManager(world).getRegions().keySet();
-    }
-
-    public boolean hasRegion(Region region) {
-        return WGBukkit.getRegionManager(region.getWorld()).hasRegion(region.getRegionName());
     }
 }

@@ -22,14 +22,21 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.combat;
+package org.spazzinq.flightcontrol.multiversion;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.hook.Hook;
+import org.bukkit.Location;
+import org.bukkit.World;
 
-public class CombatHook extends Hook {
-    public boolean tagged(Player p) {
-        return false;
+import java.util.Collections;
+import java.util.Set;
+
+@SuppressWarnings("unused")
+public class WorldGuardHookBase extends Hook {
+    public String getRegionName(Location l) {
+        return null;
+    }
+
+    public Set<String> getRegionNames(World w) {
+        return Collections.emptySet();
     }
 }
-

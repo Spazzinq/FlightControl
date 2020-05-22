@@ -22,17 +22,20 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.towny;
+package org.spazzinq.flightcontrol.hook.plot;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.hook.Hook;
+import com.intellectualcrafters.plot.flag.Flags;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
 
-public class TownyBase extends Hook {
-    public boolean townyOwn(Player p) {
-        return false;
+public final class PlotSquaredThreeHook extends PlotHookBase {
+    @Override public boolean canFly(String world, int x, int y, int z) {
+        Plot p = Plot.getPlot(new Location(world, x, y, z));
+        return p != null && p.getFlag(Flags.FLY, false);
     }
 
-    public boolean wartime() {
-        return false;
+    @Override public boolean cannotFly(String world, int x, int y, int z) {
+        Plot p = Plot.getPlot(new Location(world, x, y, z));
+        return p != null && !p.getFlag(Flags.FLY, true);
     }
 }

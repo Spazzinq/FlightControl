@@ -27,7 +27,7 @@ package org.spazzinq.flightcontrol.hook.vanish;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 
-public final class PremiumSuperVanishHook extends VanishHook {
+public final class PremiumSuperVanishHook extends VanishHookBase {
     @Override public boolean vanished(Player p) {
         return p.getMetadata("vanished").stream().findFirst().filter(MetadataValue::asBoolean).isPresent();
     }

@@ -22,16 +22,13 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion;
+package org.spazzinq.flightcontrol.hook.enchantment;
 
-import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.hook.Hook;
 
-public interface ParticleManager {
-    void spawn(Location l);
-
-    void setParticle(String s);
-
-    void setAmount(int amount);
-
-    void setRBG(int r, int g, int b);
+public class EnchantsHookBase extends Hook {
+    public boolean canFly(Player p) {
+        return false;
+    }
 }

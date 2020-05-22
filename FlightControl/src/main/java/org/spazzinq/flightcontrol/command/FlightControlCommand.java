@@ -37,7 +37,7 @@ import org.spazzinq.flightcontrol.util.PlayerUtil;
 import java.util.*;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
-import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
 public final class FlightControlCommand implements CommandExecutor, TabCompleter {
     private final Map<String, String> commands = new TreeMap<String, String>() {{
@@ -174,11 +174,9 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                         config.setDefaultFlightSpeed(actualSpeed);
 
                                         pl.getPlayerManager().loadPlayerData();
-                                        msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSet(), speed + "",
-                                                "speed"));
+                                        msgVar(s, pl.getLangManager().getGlobalFlightSpeedSet(), false, "speed", String.valueOf(speed));
                                     } else {
-                                        msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSame(), speed + "",
-                                                "speed"));
+                                        msgVar(s, pl.getLangManager().getGlobalFlightSpeedSame(), false, "speed", String.valueOf(speed));
                                     }
                                 } else {
                                     msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
@@ -203,10 +201,9 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                         config.setNearbyCheck(range != -1);
                                         config.setNearbyRangeSquared(rangeSquared);
 
-                                        msg(s, replaceVar(pl.getLangManager().getEnemyRangeSet(), range + "", "range"));
+                                        msgVar(s, pl.getLangManager().getEnemyRangeSet(), false, "range", String.valueOf(range));
                                     } else {
-                                        msg(s, replaceVar(pl.getLangManager().getEnemyRangeSame(), range + "", "range"
-                                        ));
+                                        msgVar(s, pl.getLangManager().getEnemyRangeSame(), false, "range", String.valueOf(range));
                                     }
                                 } else {
                                     msg(s, pl.getLangManager().getEnemyRangeUsage());

@@ -27,7 +27,7 @@ package org.spazzinq.flightcontrol.hook.combat;
 import nl.marido.deluxecombat.DeluxeCombat;
 import org.bukkit.entity.Player;
 
-public final class DeluxeCombatHook extends CombatHook {
+public final class DeluxeCombatHook extends CombatHookBase {
     @Override public boolean tagged(Player p) {
         boolean inCombat = false;
 
@@ -39,10 +39,5 @@ public final class DeluxeCombatHook extends CombatHook {
         }
 
         return inCombat;
-    }
-
-    @Override
-    public boolean isHooked() {
-        return true;
     }
 }
