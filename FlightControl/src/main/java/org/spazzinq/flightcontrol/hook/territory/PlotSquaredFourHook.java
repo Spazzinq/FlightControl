@@ -29,7 +29,7 @@ import com.github.intellectualsites.plotsquared.plot.object.Location;
 import com.github.intellectualsites.plotsquared.plot.object.Plot;
 import org.bukkit.entity.Player;
 
-public final class PlotSquaredHook extends TerritoryHookBase {
+public final class PlotSquaredFourHook extends TerritoryHookBase {
     @Override public boolean isOwnTerritory(Player p) {
         Plot plot = getPlot(p);
 
@@ -42,18 +42,6 @@ public final class PlotSquaredHook extends TerritoryHookBase {
         return plot != null && plot.getTrusted().contains(p.getUniqueId());
     }
 
-    @Override public boolean canFly(Player p) {
-        Plot plot = getPlot(p);
-
-        return plot != null && plot.getFlag(Flags.FLY, false);
-    }
-
-    @Override public boolean cannotFly(Player p) {
-        Plot plot = getPlot(p);
-
-        return plot != null && !plot.getFlag(Flags.FLY, true);
-    }
-
     private Plot getPlot(Player p) {
         org.bukkit.Location l = p.getLocation();
 
@@ -61,6 +49,6 @@ public final class PlotSquaredHook extends TerritoryHookBase {
     }
 
     @Override public String toString() {
-        return "PlotSquared";
+        return "PlotSquared4";
     }
 }

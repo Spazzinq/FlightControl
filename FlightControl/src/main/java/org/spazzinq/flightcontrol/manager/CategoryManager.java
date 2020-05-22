@@ -166,6 +166,10 @@ public class CategoryManager {
         return factions;
     }
 
+    private DualStore<TerritoryHookBase> loadTerritoryHooks(String categoryName, ConfigurationSection territorySection) {
+
+    }
+
     private void nonexistent(String category, String section, String type, String error) {
         // Ignore examples
         if (!error.contains("WORLDNAME")) {

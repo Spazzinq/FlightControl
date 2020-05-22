@@ -24,24 +24,35 @@
 
 package org.spazzinq.flightcontrol.hook.territory;
 
+import com.intellectualcrafters.plot.flag.Flags;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.object.Check;
-import org.spazzinq.flightcontrol.object.Hook;
 
-public class TerritoryHookBase extends Hook implements Check {
-    public boolean enable(Player p) {
+public final class PlotSquaredThreeHook extends TerritoryHookBase {
+    @Override public boolean enable(Player p) {
         return isOwnTerritory(p) || isTrustedTerritory(p);
     }
 
-    public boolean disable(Player p) {
-        return false;
+    @Override public boolean isOwnTerritory(Player p) {
+        Plot plot = getPlot(p);
+
+        return plot != null && plot.hasOwner() && plot.getOwners().contains(p.getUniqueId());
     }
 
-    public boolean isOwnTerritory(Player p) {
-        return false;
+    @Override public boolean isTrustedTerritory(Player p) {
+        Plot plot = getPlot(p);
+
+        return plot != null && plot.getTrusted().contains(p.getUniqueId());
     }
 
-    public boolean isTrustedTerritory(Player p) {
-        return false;
+    private Plot getPlot(Player p) {
+        org.bukkit.Location l = p.getLocation();
+
+        return Plot.getPlot(new Location(l.getWorld().getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ()));
+    }
+
+    @Override public String toString() {
+        return "PlotSquared3";
     }
 }

@@ -24,16 +24,11 @@
 
 package org.spazzinq.flightcontrol.hook.territory;
 
-import com.intellectualcrafters.plot.flag.Flags;
-import com.intellectualcrafters.plot.object.Location;
-import com.intellectualcrafters.plot.object.Plot;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.plot.Plot;
 import org.bukkit.entity.Player;
 
-public final class LegacyPlotSquaredHook extends TerritoryHookBase {
-    @Override public boolean enable(Player p) {
-        return isOwnTerritory(p) || isTrustedTerritory(p);
-    }
-
+public class PlotSquaredFiveHook extends TerritoryHookBase {
     @Override public boolean isOwnTerritory(Player p) {
         Plot plot = getPlot(p);
 
@@ -46,18 +41,6 @@ public final class LegacyPlotSquaredHook extends TerritoryHookBase {
         return plot != null && plot.getTrusted().contains(p.getUniqueId());
     }
 
-    private boolean canFly(Player p) {
-        Plot plot = getPlot(p);
-
-        return plot != null && plot.getFlag(Flags.FLY, false);
-    }
-
-    private boolean cannotFly(Player p) {
-        Plot plot = getPlot(p);
-
-        return plot != null && !plot.getFlag(Flags.FLY, true);
-    }
-
     private Plot getPlot(Player p) {
         org.bukkit.Location l = p.getLocation();
 
@@ -65,6 +48,6 @@ public final class LegacyPlotSquaredHook extends TerritoryHookBase {
     }
 
     @Override public String toString() {
-        return "LegacyPlotSquared";
+        return "PlotSquared5";
     }
 }

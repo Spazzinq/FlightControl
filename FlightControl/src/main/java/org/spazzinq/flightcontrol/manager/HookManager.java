@@ -138,7 +138,7 @@ public class HookManager {
 
     private void loadTerritoryHooks() {
         if (pluginLoading("PlotSquared")) {
-            territoryHooks.add(is1_13 ? new PlotSquaredHook() : new LegacyPlotSquaredHook());
+            territoryHooks.add(is1_13 ? new PlotSquaredFourHook() : new PlotSquaredThreeHook());
         }
         if (pluginLoading("Towny")) {
             territoryHooks.add(new TownyHook());
