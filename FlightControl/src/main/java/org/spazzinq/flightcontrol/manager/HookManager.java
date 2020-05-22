@@ -138,7 +138,20 @@ public class HookManager {
 
     private void loadTerritoryHooks() {
         if (pluginLoading("PlotSquared")) {
-            territoryHooks.add(is1_13 ? new PlotSquaredFourHook() : new PlotSquaredThreeHook());
+            String version = pm.getPlugin("PlotSquared").getDescription().getVersion().split("\\.")[0];
+
+            switch (version) {
+                case "5":
+                    territoryHooks.add(new PlotSquaredFiveHook());
+                    break;
+                case "4":
+                    territoryHooks.add(new PlotSquaredFourHook());
+                    break;
+                default:
+                    territoryHooks.add(new PlotSquaredThreeHook());
+                    break;
+            }
+
         }
         if (pluginLoading("Towny")) {
             territoryHooks.add(new TownyHook());
