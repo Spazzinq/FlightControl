@@ -116,6 +116,8 @@ public class HookManager {
             combatHook = new CombatLogProHook(pm.getPlugin("CombatLogPro"));
         } else if (pluginLoading("DeluxeCombat")) {
             combatHook = new DeluxeCombatHook();
+        } else if (pluginLoading("PvPManager")) {
+            combatHook = new PvPManagerHook();
         }
     }
 

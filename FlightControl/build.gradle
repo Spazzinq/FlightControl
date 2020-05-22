@@ -54,6 +54,7 @@ dependencies {
     compileOnly ('be.maximvdw:MVdWPlaceholderAPI:3.0.1-SNAPSHOT') {
         exclude group: 'org.spigotmc', module: 'spigot'
     }
+    compileOnly 'com.github.NoChanceSD.PvPManager:PvPManager:3.7'
 
     compileOnly files('../lib/RedProtect-7.6.6-b307-Universal.jar')
     compileOnly files('../lib/CombatLogX-9.9.3.1.jar')
