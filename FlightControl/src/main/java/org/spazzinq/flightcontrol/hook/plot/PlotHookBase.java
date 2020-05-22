@@ -22,48 +22,16 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion;
+package org.spazzinq.flightcontrol.hook.plot;
 
-import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.hook.Hook;
 
-public class FactionsHook extends Hook {
-    public boolean hasFaction(Player p) {
+public class PlotHookBase extends Hook {
+    public boolean canFly(String world, int x, int y, int z) {
         return false;
     }
 
-    public boolean inWarzone(Player p) {
-        return false;
-    }
-
-    public boolean inSafezone(Player p) {
-        return false;
-    }
-
-    public boolean inWilderness(Player p) {
-        return false;
-    }
-
-    public boolean inOwnTerritory(Player p) {
-        return false;
-    }
-
-    public boolean inAllyTerritory(Player p) {
-        return false;
-    }
-
-    public boolean inTruceTerritory(Player p) {
-        return false;
-    }
-
-    public boolean inNeutralTerritory(Player p) {
-        return false;
-    }
-
-    public boolean inEnemyTerritory(Player p) {
-        return false;
-    }
-
-    public boolean isEnemy(Player p, Player otherP) {
+    public boolean cannotFly(String world, int x, int y, int z) {
         return false;
     }
 }

@@ -28,7 +28,7 @@ import cx.sfy.combatlogpro.core.CombatLogProCore;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public final class CombatLogProHook extends CombatHook {
+public final class CombatLogProHook extends CombatHookBase {
     private final CombatLogProCore core;
 
     public CombatLogProHook(Plugin pl) {
@@ -38,6 +38,4 @@ public final class CombatLogProHook extends CombatHook {
     @Override public boolean tagged(Player p) {
         return core.requestPlayer(p).isInCombat();
     }
-
-    @Override public boolean isHooked() { return true; }
 }

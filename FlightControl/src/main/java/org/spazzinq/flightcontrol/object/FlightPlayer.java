@@ -58,6 +58,14 @@ public class FlightPlayer {
         return trail;
     }
 
+    public boolean hasTempFly() {
+        if (tempFlyEnd != null && tempFlyEnd <= System.currentTimeMillis()) {
+            setTempFly(null);
+        }
+
+        return tempFlyEnd != null;
+    }
+
     public void setTempFly(Long tempFlyEnd) {
         Long finalTempFlyEnd = tempFlyEnd;
 
@@ -71,14 +79,6 @@ public class FlightPlayer {
             data.set("temp_fly", finalTempFlyEnd);
             data.save();
         }
-    }
-
-    public boolean hasTempFly() {
-        if (tempFlyEnd != null && tempFlyEnd <= System.currentTimeMillis()) {
-            setTempFly(null);
-        }
-
-        return tempFlyEnd != null;
     }
 
     public void setActualFlightSpeed(float actualFlightSpeed) {

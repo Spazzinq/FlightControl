@@ -22,23 +22,18 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.hook.plot;
+package org.spazzinq.flightcontrol.hook.griefprevention;
 
-import com.github.intellectualsites.plotsquared.plot.flag.Flags;
-import com.github.intellectualsites.plotsquared.plot.object.Location;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.hook.Hook;
 
-public final class NewPlotSquaredHook extends PlotHook {
-    @Override public boolean canFly(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p =
-                com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && p.getFlag(Flags.FLY, false);
+public class GriefPreventionHookBase extends Hook {
+    public boolean claimIsOwn(Location location, Player player) {
+        return false;
     }
 
-    @Override public boolean cannotFly(String world, int x, int y, int z) {
-        com.github.intellectualsites.plotsquared.plot.object.Plot p =
-                com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
-        return p != null && !p.getFlag(Flags.FLY, true);
+    public boolean claimIsTrusted(Location location, Player player) {
+        return false;
     }
-
-    @Override public boolean isHooked() { return true; }
 }

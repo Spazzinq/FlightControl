@@ -25,5 +25,7 @@
 package org.spazzinq.flightcontrol.hook;
 
 public class Hook {
-    public boolean isHooked() { return false; }
+    public final boolean isHooked() {
+        return !getClass().getName().endsWith("Base");
+    }
 }

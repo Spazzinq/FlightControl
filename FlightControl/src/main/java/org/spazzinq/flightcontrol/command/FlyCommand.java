@@ -36,7 +36,7 @@ import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
-import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
 public final class FlyCommand implements CommandExecutor {
     private final FlightControl pl;
@@ -65,15 +65,16 @@ public final class FlyCommand implements CommandExecutor {
                 Player p = Bukkit.getPlayer(args[0]);
                 // Allow admins to disable flight
                 if (p != null) {
-                    msg(s, replaceVar(p.getAllowFlight() ? pl.getLangManager().getFlyCommandDisable()
-                            : pl.getLangManager().getFlyCommandEnable(), p.getName(), "player"));
+                    String msg = p.getAllowFlight() ? pl.getLangManager().getFlyCommandDisable()
+                            : pl.getLangManager().getFlyCommandEnable();
+
+                    msgVar(s, msg, false, "player", p.getName());
 
                     if (p.getAllowFlight()) {
                         flightManager.disableFlight(p, true);
                     } else {
                         flightManager.check(p, p.getLocation(), true);
                     }
-                    // TODO this ain't working?
                 } else {
                     msg(s, pl.getLangManager().getFlyCommandUsage());
                 }

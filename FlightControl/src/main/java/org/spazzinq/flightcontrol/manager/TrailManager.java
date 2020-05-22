@@ -35,7 +35,7 @@ import org.spazzinq.flightcontrol.FlightControl;
 
 import java.util.HashMap;
 
-public final class TrailManager {
+public class TrailManager {
     private final FlightControl pl;
 
     @Getter private final HashMap<Player, BukkitTask> particleTasks = new HashMap<>();
@@ -45,7 +45,7 @@ public final class TrailManager {
     }
 
     public void trailCheck(Player p) {
-        if (pl.getParticleManager() != null && pl.getConfManager().isTrail()
+        if (pl.getParticle() != null && pl.getConfManager().isTrail()
                 && pl.getPlayerManager().getFlightPlayer(p).trailWanted() && !particleTasks.containsKey(p)) {
             particleTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
@@ -56,7 +56,7 @@ public final class TrailManager {
                         // in the correct spot so you have to delay them
                         new BukkitRunnable() {
                             @Override public void run() {
-                                pl.getParticleManager().spawn(l);
+                                pl.getParticle().spawn(l);
                             }
                         }.runTaskLater(pl, 2);
                     }

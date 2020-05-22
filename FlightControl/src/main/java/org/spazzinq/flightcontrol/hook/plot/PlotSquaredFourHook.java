@@ -24,14 +24,19 @@
 
 package org.spazzinq.flightcontrol.hook.plot;
 
-import org.spazzinq.flightcontrol.hook.Hook;
+import com.github.intellectualsites.plotsquared.plot.flag.Flags;
+import com.github.intellectualsites.plotsquared.plot.object.Location;
 
-public class PlotHook extends Hook {
-    public boolean canFly(String world, int x, int y, int z) {
-        return false;
+public final class PlotSquaredFourHook extends PlotHookBase {
+    @Override public boolean canFly(String world, int x, int y, int z) {
+        com.github.intellectualsites.plotsquared.plot.object.Plot p =
+                com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
+        return p != null && p.getFlag(Flags.FLY, false);
     }
 
-    public boolean cannotFly(String world, int x, int y, int z) {
-        return false;
+    @Override public boolean cannotFly(String world, int x, int y, int z) {
+        com.github.intellectualsites.plotsquared.plot.object.Plot p =
+                com.github.intellectualsites.plotsquared.plot.object.Plot.getPlot(new Location(world, x, y, z));
+        return p != null && !p.getFlag(Flags.FLY, true);
     }
 }

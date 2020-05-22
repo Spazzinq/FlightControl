@@ -29,7 +29,7 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class GriefPreventionHook extends GriefPreventionBase {
+public final class GriefPreventionHook extends GriefPreventionHookBase {
     @Override public boolean claimIsOwn(Location location, Player player) {
         Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
 
@@ -40,9 +40,5 @@ public class GriefPreventionHook extends GriefPreventionBase {
         Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
 
         return claim != null && claim.allowAccess(player) == null;
-    }
-
-    @Override public boolean isHooked() {
-        return true;
     }
 }

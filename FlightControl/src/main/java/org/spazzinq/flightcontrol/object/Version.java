@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class Version implements Comparable<Version> {
-    final int[] versionData = new int[3];
+    private final int[] versionData = new int[3];
     @Getter private final VersionType versionType;
 
     public Version(String entireVersionStr) {

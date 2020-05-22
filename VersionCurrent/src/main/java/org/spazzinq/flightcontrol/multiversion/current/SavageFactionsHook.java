@@ -27,13 +27,9 @@ package org.spazzinq.flightcontrol.multiversion.current;
 import com.massivecraft.factions.*;
 import com.massivecraft.factions.struct.Relation;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.multiversion.FactionsHook;
+import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
 
-public final class SavageFactionsHook extends FactionsHook {
-    @Override public boolean hasFaction(Player p) {
-        return getFPlayer(p).hasFaction();
-    }
-
+public final class SavageFactionsHook extends FactionsHookBase {
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p).isWarZone();
     }
@@ -78,6 +74,4 @@ public final class SavageFactionsHook extends FactionsHook {
     @Override public boolean isEnemy(Player p, Player otherP) {
         return getFPlayer(p).getRelationTo(getFPlayer(otherP)) == Relation.ENEMY;
     }
-
-    @Override public boolean isHooked() { return true; }
 }
