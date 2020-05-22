@@ -38,9 +38,9 @@ import org.spazzinq.flightcontrol.hook.lands.LandsHook;
 import org.spazzinq.flightcontrol.hook.lands.LandsHookBase;
 import org.spazzinq.flightcontrol.hook.placeholder.ClipPlaceholder;
 import org.spazzinq.flightcontrol.hook.placeholder.MVdWPlaceholder;
-import org.spazzinq.flightcontrol.hook.plot.LegacyPlotSquaredHook;
+import org.spazzinq.flightcontrol.hook.plot.PlotSquaredThreeHook;
 import org.spazzinq.flightcontrol.hook.plot.PlotHookBase;
-import org.spazzinq.flightcontrol.hook.plot.PlotSquaredHook;
+import org.spazzinq.flightcontrol.hook.plot.PlotSquaredFourHook;
 import org.spazzinq.flightcontrol.hook.towny.TownyHook;
 import org.spazzinq.flightcontrol.hook.towny.TownyHookBase;
 import org.spazzinq.flightcontrol.hook.vanish.EssentialsVanishHook;
@@ -88,7 +88,20 @@ public class HookManager {
         loadPlaceholders();
 
         if (pluginLoading("PlotSquared")) {
-            plotHook = is1_13 ? new PlotSquaredHook() : new LegacyPlotSquaredHook();
+            String version = pm.getPlugin("PlotSquared").getDescription().getVersion().split("\\.")[0];
+            switch (version) {
+                case "5":
+                    // Do nothing (support added in breaking)
+                    break;
+                case "4":
+                    plotHook = new PlotSquaredFourHook();
+                    break;
+                default:
+                    plotHook = new PlotSquaredThreeHook();
+                    break;
+            }
+
+            plotHook = is1_13 ? new PlotSquaredFourHook() : new PlotSquaredThreeHook();
         }
         if (pluginLoading("WorldGuard")) {
             worldGuardHook = is1_13 ? new WorldGuardHook7() : new WorldGuardHook6();
