@@ -80,11 +80,22 @@ public class CommentConf extends YamlConfiguration {
      * @param defaultConfStream the InputStream to the new config
      */
     public CommentConf(File file, InputStream defaultConfStream) {
+        this(file, defaultConfStream, true);
+    }
+
+    /**
+     * Compares comments, loads configuration, and possibly saves the stream to a file.
+     *
+     * @param file              the location of the current modified config
+     * @param defaultConfStream the InputStream to the new config
+     * @param saveFile          should the stream be saved to the file
+     */
+    public CommentConf(File file, InputStream defaultConfStream, boolean saveFile) {
         this();
         this.file = file;
         boolean fileExists = file.exists();
 
-        if (!fileExists) {
+        if (saveFile && !fileExists) {
             try {
                 //noinspection UnstableApiUsage
                 Files.createParentDirs(file);
