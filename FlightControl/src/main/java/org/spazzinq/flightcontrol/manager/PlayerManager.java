@@ -57,19 +57,17 @@ public class PlayerManager {
         if (!playerCache.containsKey(p.getUniqueId())) {
             File data = new File(folder, p.getUniqueId() + ".yml");
 
-            if (data.exists()) {
-                CommentConf dataConf = new CommentConf(data, pl.getResource("default_data.yml"), false);
+            CommentConf dataConf = new CommentConf(data, pl.getResource("default_data.yml"), false);
 
-                float speed = dataConf.isDouble("flight_speed")
-                        ? (float) dataConf.getDouble("flight_speed")
-                        : pl.getConfManager().getDefaultFlightSpeed();
-                Long tempFlyLength = dataConf.isLong("temp_fly") ? dataConf.getLong("temp_fly") : null;
+            float speed = dataConf.isDouble("flight_speed")
+                    ? (float) dataConf.getDouble("flight_speed")
+                    : pl.getConfManager().getDefaultFlightSpeed();
+            Long tempFlyLength = dataConf.isLong("temp_fly") ? dataConf.getLong("temp_fly") : null;
 
-                FlightPlayer flightPlayer = new FlightPlayer(dataConf, p, speed, dataConf.getBoolean("trail"),
-                        tempFlyLength);
+            FlightPlayer flightPlayer = new FlightPlayer(dataConf, p, speed, dataConf.getBoolean("trail"),
+                    tempFlyLength);
 
-                playerCache.put(p.getUniqueId(), flightPlayer);
-            }
+            playerCache.put(p.getUniqueId(), flightPlayer);
         }
 
         return playerCache.get(p.getUniqueId());
