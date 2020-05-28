@@ -29,11 +29,12 @@ import lombok.Getter;
 import net.minelink.ctplus.CombatTagPlus;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.check.combat.AntiCombatLoggingCheck;
 import org.spazzinq.flightcontrol.hook.combat.*;
 import org.spazzinq.flightcontrol.hook.enchantment.CrazyEnchantmentsHook;
 import org.spazzinq.flightcontrol.hook.enchantment.EnchantsHookBase;
-import org.spazzinq.flightcontrol.hook.placeholder.ClipPlaceholder;
-import org.spazzinq.flightcontrol.hook.placeholder.MVdWPlaceholder;
+import org.spazzinq.flightcontrol.placeholder.ClipPlaceholder;
+import org.spazzinq.flightcontrol.placeholder.MVdWPlaceholder;
 import org.spazzinq.flightcontrol.hook.territory.*;
 import org.spazzinq.flightcontrol.hook.vanish.EssentialsVanishHook;
 import org.spazzinq.flightcontrol.hook.vanish.PremiumSuperVanishHook;
@@ -111,7 +112,7 @@ public class HookManager {
         } else if (pluginLoading("CombatTagPlus")) {
             combatHook = new CombatTagPlusHook(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
         } else if (pluginLoading("AntiCombatLogging")) {
-            combatHook = new AntiCombatLoggingHook();
+            combatHook = new AntiCombatLoggingCheck();
         } else if (pluginLoading("CombatLogPro")) {
             combatHook = new CombatLogProHook(pm.getPlugin("CombatLogPro"));
         } else if (pluginLoading("DeluxeCombat")) {

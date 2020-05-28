@@ -109,8 +109,6 @@ public class StatusManager {
                 /* Hook checks */
                 // CrazyEnchants has Wings
                 pl.getHookManager().getEnchantmentsHook().canFly(p),
-                // PlotSquared has flight flag
-                pl.getHookManager().getPlotHook().canFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ()),
                 // Towny Own
                 (pl.getConfManager().isTownyOwn() || hasPermission(p, TOWNY_OWN))
                         && pl.getHookManager().getTownyHook().townyOwn(p)

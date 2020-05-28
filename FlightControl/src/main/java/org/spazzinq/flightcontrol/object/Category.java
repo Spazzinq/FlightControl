@@ -26,6 +26,7 @@ package org.spazzinq.flightcontrol.object;
 
 import lombok.Getter;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.hook.territory.TerritoryHookBase;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
@@ -47,6 +48,15 @@ public class Category implements Comparable<Category> {
         this.factions = factions;
         this.territoryHooks = territoryHooks;
         this.priority = priority;
+    }
+
+    public boolean shouldEnable(Player p) {
+        if (worlds.getEnabled().contains())
+        for (TerritoryHookBase hook : territoryHooks.getEnabled()) {
+            if (hook.enable(p)) {
+                return true;
+            }
+        }
     }
 
     public boolean enabledContains(World world) {
