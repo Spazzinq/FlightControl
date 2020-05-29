@@ -49,7 +49,7 @@ public class TrailManager {
                 && pl.getPlayerManager().getFlightPlayer(p).trailWanted() && !particleTasks.containsKey(p)) {
             particleTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
-                    if (!(p.getGameMode() == GameMode.SPECTATOR || pl.getHookManager().getVanishHook().vanished(p)
+                    if (!(p.getGameMode() == GameMode.SPECTATOR || pl.getCheckManager().getVanishHook().vanished(p)
                             || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
                         Location l = p.getLocation();
                         // For some terrible reason the locations are never

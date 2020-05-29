@@ -65,12 +65,12 @@ final class EventListener implements org.bukkit.event.Listener {
         if (e.isFlying()) {
             pl.getTrailManager().trailCheck(p);
             if (pl.getConfManager().isEveryEnable()) {
-                Sound.play(p, pl.getConfManager().getESound());
+                Sound.play(p, pl.getConfManager().getEnableSound());
             }
         } else {
             pl.getTrailManager().trailRemove(p);
             if (pl.getConfManager().isEveryDisable()) {
-                Sound.play(p, pl.getConfManager().getDSound());
+                Sound.play(p, pl.getConfManager().getDisableSound());
             }
         }
     }
@@ -102,7 +102,7 @@ final class EventListener implements org.bukkit.event.Listener {
             new BukkitRunnable() {
                 @Override public void run() {
                     msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently" +
-                            " running on this server. " + pl.getHookManager().getHookedMsg());
+                            " running on this server. " + pl.getCheckManager().getHookedMsg());
                 }
             }.runTaskLater(pl, 40);
         }
@@ -167,7 +167,7 @@ final class EventListener implements org.bukkit.event.Listener {
         String worldName = world.getName();
 
         pl.registerDefaultPerms(worldName);
-        for (String regionName : pl.getHookManager().getWorldGuardHook().getRegionNames(world)) {
+        for (String regionName : pl.getCheckManager().getWorldGuardHook().getRegionNames(world)) {
             pl.registerDefaultPerms(worldName + "." + regionName);
         }
     }

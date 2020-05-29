@@ -61,7 +61,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private LangManager langManager;
     @Getter private UpdateManager updateManager;
     // Multi-version management
-    @Getter private HookManager hookManager;
+    @Getter private CheckManager checkManager;
     @Getter private Particle particle;
     // In-game management
     @Getter private FlightManager flightManager;
@@ -71,8 +71,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private TrailManager trailManager;
 
     private final PluginManager pm = Bukkit.getPluginManager();
-    public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
     private final HashSet<String> permissionSuffixCache = new HashSet<>();
+    public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
 
     public void onEnable() {
         // Create storage folder
@@ -80,13 +80,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         storageFolder.mkdirs();
 
         registerManagers();
-        new EventListener(this);
         registerCommands();
+        new EventListener(this);
 
-        // Ensure all hooks load before managers do
-        hookManager.loadHooks();
-        reloadManagers();
-        checkPlayers();
+        load();
 
         // Update check
         if (confManager.isAutoUpdate()) {
@@ -114,13 +111,16 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         new MetricsLite(this);
     }
 
-    // Just in case the task isn't cancelled
+    // Just in case the task isn't automatically cancelled
     @Override public void onDisable() {
         for (Player p : Bukkit.getOnlinePlayers()) {
             trailManager.trailRemove(p);
         }
     }
 
+    /**
+     * Registers all relevant managers in one nice method.
+     */
     private void registerManagers() {
         categoryManager = new CategoryManager(this);
         confManager = new ConfManager(this);
@@ -136,7 +136,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             }
         }
 
-        hookManager = new HookManager(this, is1_13);
+        checkManager = new CheckManager(this, is1_13);
         particle = is1_13 ? new Particle13() : new Particle8();
 
         flightManager = new FlightManager(this);
@@ -154,23 +154,26 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         getCommand("flyspeed").setExecutor(new FlySpeedCommand(this));
     }
 
-    public void reloadManagers() {
-        // Prevent permission auto-granting from "*" permission
-        for (World w : Bukkit.getWorlds()) {
-            String worldName = w.getName();
-            registerDefaultPerms(worldName);
-        }
-
-        categoryManager.reloadCategories();
+    /**
+     * Loads config data, relevant checks, categories, and player data.
+     */
+    public void load() {
         confManager.loadConf();
         langManager.loadLang();
-        // At end to allow for any necessary migration
-        confManager.updateConfig();
+        // Allow for any necessary config migration from previous versions
+        confManager.updateConf();
         langManager.updateLang();
-
+        // Load config so the check manager knows which checks to use
+        checkManager.loadChecks();
+        categoryManager.loadCategories();
         playerManager.loadPlayerData();
+
+        checkPlayers();
     }
 
+    /**
+     * Verifies trail and flight access for all online players.
+     */
     public void checkPlayers() {
         trailManager.removeEnabledTrails();
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -181,11 +184,17 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
     }
 
+    /**
+     * Sends debug information about a player's flight status.
+     *
+     * @param s the recipient of the debug message
+     * @param p the target of the debug check
+     */
     public void debug(CommandSender s, Player p) {
         Location l = p.getLocation();
         World world = l.getWorld();
         String worldName = world.getName(),
-                regionName = getHookManager().getWorldGuardHook().getRegionName(l);
+                regionName = getCheckManager().getWorldGuardHook().getRegionName(l);
         Category category = categoryManager.getCategory(p);
 
         // config options (settings) and permissions that act upon the same function are listed as
@@ -193,18 +202,24 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         msg(s, "&a&lFlightControl &f" + getDescription().getVersion() +
                 "\n&eTarget &7» &f" + p.getName() +
                 "\n&eCategory &7» &f" + category.getName() +
-                (hookManager.getWorldGuardHook().isHooked() ? "\n&eW.RG &7» &f" + worldName + "." + regionName : "") +
-                (hookManager.getFactionsHook().isHooked() ? "\n&eFac &7» &f" + category.getFactions() : "") +
+                (checkManager.getWorldGuardHook().isHooked() ? "\n&eW.RG &7» &f" + worldName + "." + regionName : "") +
+                (checkManager.getFactionsHook().isHooked() ? "\n&eFac &7» &f" + category.getFactions() : "") +
                 "\n&eWRLDs &7» &f" + category.getWorlds() +
-                (hookManager.getWorldGuardHook().isHooked() ? "\n&eRGs &7» &f" + category.getRegions() : "") +
+                (checkManager.getWorldGuardHook().isHooked() ? "\n&eRGs &7» &f" + category.getRegions() : "") +
                 ("\n&eBypass &7» &f" + (PlayerUtil.hasPermission(p, FlyPermission.BYPASS)
                         || p.getGameMode() == GameMode.SPECTATOR
-                        || confManager.isVanishBypass() && hookManager.getVanishHook().vanished(p))).replaceAll("true"
+                        || confManager.isVanishBypass() && checkManager.getVanishHook().vanished(p))).replaceAll("true"
                         , "&atrue"));
 
         statusManager.evalFlight(p,true, s);
     }
 
+    /**
+     * Registers the suffix permission to prevent operator status
+     * from automatically receiving unnecessary permissions.
+     *
+     * @param suffix the suffix to be appended to the base permission
+     */
     public void registerDefaultPerms(String suffix) {
         if (!permissionSuffixCache.contains(suffix)) {
             registerPerm("flightcontrol.fly." + suffix);

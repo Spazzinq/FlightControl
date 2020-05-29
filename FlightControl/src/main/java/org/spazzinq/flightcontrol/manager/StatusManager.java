@@ -88,7 +88,7 @@ public class StatusManager {
         Location l = p.getLocation();
         World world = l.getWorld();
         String worldName = world.getName(),
-                regionName = pl.getHookManager().getWorldGuardHook().getRegionName(l);
+                regionName = pl.getCheckManager().getWorldGuardHook().getRegionName(l);
         Region region = new Region(world, regionName);
         Category category = pl.getCategoryManager().getCategory(p);
         FactionRelation relation = pl.getFactionsManager().getRelationToLocation(p);
@@ -108,23 +108,23 @@ public class StatusManager {
 
                 /* Hook checks */
                 // CrazyEnchants has Wings
-                pl.getHookManager().getEnchantmentsHook().canFly(p),
+                pl.getCheckManager().getEnchantmentsHook().canFly(p),
                 // Towny Own
                 (pl.getConfManager().isTownyOwn() || hasPermission(p, TOWNY_OWN))
-                        && pl.getHookManager().getTownyHook().townyOwn(p)
-                        && !(pl.getConfManager().isTownyWarDisable() && pl.getHookManager().getTownyHook().wartime()),
+                        && pl.getCheckManager().getTownyHook().townyOwn(p)
+                        && !(pl.getConfManager().isTownyWarDisable() && pl.getCheckManager().getTownyHook().wartime()),
                 // Lands Own
                 (pl.getConfManager().isLandsOwnEnable() || hasPermission(p, LANDS_OWN))
-                        && pl.getHookManager().getLandsHook().landsIsOwn(p),
+                        && pl.getCheckManager().getLandsHook().landsIsOwn(p),
                 // Lands Trusted
                 (pl.getConfManager().isLandsOwnEnable() && pl.getConfManager().isLandsIncludeTrusted() || hasPermission(p, LANDS_TRUSTED) || landsOwnerHasTrustedPerm(l))
-                        && pl.getHookManager().getLandsHook().landsIsTrusted(p),
+                        && pl.getCheckManager().getLandsHook().landsIsTrusted(p),
                 // GriefPrevention Own
                 (pl.getConfManager().isGpClaimOwnEnable() || hasPermission(p, CLAIM_OWN))
-                        && pl.getHookManager().getGriefPreventionHook().claimIsOwn(l, p),
+                        && pl.getCheckManager().getGriefPreventionHook().claimIsOwn(l, p),
                 // GriefPrevention Trusted
                 ((pl.getConfManager().isGpClaimOwnEnable() && pl.getConfManager().isGpClaimIncludeTrusted()) || hasPermission(p, CLAIM_TRUSTED))
-                        && pl.getHookManager().getGriefPreventionHook().claimIsTrusted(l, p),
+                        && pl.getCheckManager().getGriefPreventionHook().claimIsTrusted(l, p),
 
                 /* Permission checks */
                 hasPermission(p, FLY_ALL),
@@ -147,9 +147,7 @@ public class StatusManager {
 
                 /* Hook checks */
                 // In combat
-                pl.getHookManager().getCombatHook().tagged(p),
-                // PlotSquared has deny flight flag
-                pl.getHookManager().getPlotHook().cannotFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ()),
+                pl.getCheckManager().getCombatHook().tagged(p),
                 // Nearby check
                 nearbyCheck(p, l),
 
@@ -183,7 +181,7 @@ public class StatusManager {
                 worldPlayers.remove(p);
 
                 for (Player otherP : worldPlayers) {
-                    if ((!pl.getConfManager().isNearbyCheckEnemies() || pl.getHookManager().getFactionsHook().isEnemy(p, otherP))
+                    if ((!pl.getConfManager().isNearbyCheckEnemies() || pl.getCheckManager().getFactionsHook().isEnemy(p, otherP))
                             && l.distanceSquared(otherP.getLocation()) <= pl.getConfManager().getNearbyRangeSquared()) {
                         if (otherP.isFlying()) {
                             pl.getFlightManager().check(otherP);
@@ -198,8 +196,8 @@ public class StatusManager {
     }
 
     private boolean landsOwnerHasTrustedPerm(Location l) {
-        if (pl.getHookManager().getLandsHook().isHooked()) {
-            Player landsOwner = Bukkit.getPlayer(pl.getHookManager().getLandsHook().getOwnerUUID(l));
+        if (pl.getCheckManager().getLandsHook().isHooked()) {
+            Player landsOwner = Bukkit.getPlayer(pl.getCheckManager().getLandsHook().getOwnerUUID(l));
 
             if (landsOwner != null) {
                 return hasPermission(landsOwner, LANDS_TRUSTED);

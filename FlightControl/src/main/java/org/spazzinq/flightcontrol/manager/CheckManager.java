@@ -29,10 +29,17 @@ import lombok.Getter;
 import net.minelink.ctplus.CombatTagPlus;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.combat.AntiCombatLoggingCheck;
+import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
+import org.spazzinq.flightcontrol.check.territory.own.GriefPreventionOwnCheck;
+import org.spazzinq.flightcontrol.check.territory.own.LandsOwnCheck;
+import org.spazzinq.flightcontrol.check.territory.own.RedProtectOwnCheck;
+import org.spazzinq.flightcontrol.check.territory.own.TownyCheck;
 import org.spazzinq.flightcontrol.hook.combat.*;
 import org.spazzinq.flightcontrol.hook.enchantment.CrazyEnchantmentsHook;
 import org.spazzinq.flightcontrol.hook.enchantment.EnchantsHookBase;
+import org.spazzinq.flightcontrol.object.DualStore;
 import org.spazzinq.flightcontrol.placeholder.ClipPlaceholder;
 import org.spazzinq.flightcontrol.placeholder.MVdWPlaceholder;
 import org.spazzinq.flightcontrol.hook.territory.*;
@@ -48,12 +55,23 @@ import org.spazzinq.flightcontrol.multiversion.legacy.FactionsUUIDHook;
 import org.spazzinq.flightcontrol.multiversion.legacy.WorldGuardHook6;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
-public class HookManager {
+public class CheckManager {
     private final FlightControl pl;
     private final PluginManager pm;
     private final boolean is1_13;
+
+    private DualStore<Check> globalChecks = new DualStore<>();
+
+    HashMap<String, TerritoryCheck> checks = new HashMap<String, TerritoryCheck>() {{
+        put("griefprevention", new GriefPreventionOwnCheck());
+        put("lands", new LandsOwnCheck(pl));
+        put("plotsquared", );
+        put("towny", new TownyCheck());
+        put("redprotect", new RedProtectOwnCheck());
+    }};
 
     // Load early to prevent NPEs
     @Getter private WorldGuardHookBase worldGuardHook = new WorldGuardHookBase();
@@ -67,18 +85,18 @@ public class HookManager {
     @Getter private String hookedMsg;
     private final ArrayList<String> hooked = new ArrayList<>();
 
-    public HookManager(FlightControl pl, boolean is1_13) {
+    public CheckManager(FlightControl pl, boolean is1_13) {
         this.pl = pl;
         this.is1_13 = is1_13;
         pm = pl.getServer().getPluginManager();
     }
 
-    public void loadHooks() {
-        loadFactionsHooks();
-        loadCombatHooks();
-        loadVanishHooks();
-        loadPlaceholderHooks();
-        loadTerritoryHooks();
+    public void loadChecks() {
+        loadFactionsChecks();
+        loadCombatChecks();
+        loadVanishChecks();
+        loadPlaceholderChecks();
+        loadTerritoryChecks();
 
         if (pluginLoading("WorldGuard")) {
             worldGuardHook = is1_13 ? new WorldGuardHook7() : new WorldGuardHook6();
@@ -91,7 +109,7 @@ public class HookManager {
         pl.getLogger().info(hookedMsg);
     }
 
-    private void loadFactionsHooks() {
+    private void loadFactionsChecks() {
         if (pluginLoading("Factions")) {
             if (pm.isPluginEnabled("MassiveCore")) {
                 factionsHook = new MassiveFactionsHook();
@@ -103,7 +121,7 @@ public class HookManager {
         }
     }
 
-    private void loadCombatHooks() {
+    private void loadCombatChecks() {
         if (pluginLoading("CombatLogX")) {
             String version = pm.getPlugin("CombatLogX").getDescription().getVersion();
             boolean versionTen = version != null && version.startsWith("10.");
@@ -122,7 +140,7 @@ public class HookManager {
         }
     }
 
-    private void loadVanishHooks() {
+    private void loadVanishChecks() {
         if (pluginLoading("PremiumVanish") || pluginLoading("SuperVanish")) {
             vanishHook = new PremiumSuperVanishHook();
         } else if (pluginLoading("Essentials")) {
@@ -130,7 +148,7 @@ public class HookManager {
         }
     }
 
-    private void loadPlaceholderHooks() {
+    private void loadPlaceholderChecks() {
         if (pluginLoading("PlaceholderAPI")) {
             new ClipPlaceholder(pl).register();
         }
@@ -139,7 +157,7 @@ public class HookManager {
         }
     }
 
-    private void loadTerritoryHooks() {
+    private void loadTerritoryChecks() {
         if (pluginLoading("PlotSquared")) {
             String version = pm.getPlugin("PlotSquared").getDescription().getVersion().split("\\.")[0];
 

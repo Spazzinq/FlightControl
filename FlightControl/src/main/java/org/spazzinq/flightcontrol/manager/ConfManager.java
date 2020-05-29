@@ -47,7 +47,10 @@ public class ConfManager {
     @Getter @Setter private boolean autoUpdate;
     @Getter @Setter private boolean inGameSupport;
 
-    @Getter @Setter private Sound eSound, dSound, cSound, nSound;
+    @Getter @Setter private Sound enableSound;
+    @Getter @Setter private Sound disableSound;
+    @Getter @Setter private Sound canEnableSound;
+    @Getter @Setter private Sound cannotEnableSound;
     @Getter @Setter private float defaultFlightSpeed;
     @Getter @Setter private boolean combatChecked;
     @Getter @Setter private boolean cancelFall;
@@ -82,7 +85,7 @@ public class ConfManager {
                 migrateFromVersion3();
             }
 
-            updateConfig();
+            updateConf();
 
             // booleans
             autoUpdate = conf.getBoolean("settings.auto_update");
@@ -128,7 +131,7 @@ public class ConfManager {
     }
 
     // TODO Continue to add!
-    public void updateConfig() {
+    public void updateConf() {
         boolean modified = false;
 
         // 4.1.0 - moved to lang.yml
@@ -207,10 +210,10 @@ public class ConfManager {
     private void loadSounds() {
         everyEnable = conf.getBoolean("sounds.every_enable");
         everyDisable = conf.getBoolean("sounds.every_disable");
-        eSound = getSound("sounds.enable");
-        dSound = getSound("sounds.disable");
-        cSound = getSound("sounds.can_enable");
-        nSound = getSound("sounds.cannot_enable");
+        enableSound = getSound("sounds.enable");
+        disableSound = getSound("sounds.disable");
+        canEnableSound = getSound("sounds.can_enable");
+        cannotEnableSound = getSound("sounds.cannot_enable");
     }
 
     private Sound getSound(String key) {

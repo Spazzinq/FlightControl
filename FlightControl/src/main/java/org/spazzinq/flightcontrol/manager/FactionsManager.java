@@ -39,7 +39,7 @@ public class FactionsManager {
 
     public FactionRelation getRelationToLocation(Player p) {
         if (factions == null) {
-            factions = pl.getHookManager().getFactionsHook();
+            factions = pl.getCheckManager().getFactionsHook();
         }
 
         FactionRelation relation = FactionRelation.DEFAULT;

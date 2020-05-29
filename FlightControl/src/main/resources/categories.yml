@@ -29,13 +29,13 @@ global:
     enable: [OWN, ALLY]
     disable: []
   # Disable/enable flight in certain plugin territories
-  # Supports: GRIEFPREVENTION, LANDS, PLOTSQUARED, TOWNY, REDPROTECT
+  # Supports: GriefPrevention, Lands, PlotSquared, Towny, RedProtect
   territory:
     enable:
       # Enable/Disable in player's own territory
-      own: [GRIEFPREVENTION, LANDS, PLOTSQUARED, TOWNY, REDPROTECT]
+      own: [GriefPrevention, Lands, PlotSquared, Towny, RedProtect]
       # Enable/Disable in territory that player is a member of
-      trusted: [GRIEFPREVENTION]
+      trusted: [GriefPrevention]
     disable: []
 
 # These are individual categories

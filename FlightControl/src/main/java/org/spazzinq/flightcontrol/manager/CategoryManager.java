@@ -34,7 +34,11 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.objects.Region;
-import org.spazzinq.flightcontrol.hook.territory.TerritoryHookBase;
+import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
+import org.spazzinq.flightcontrol.check.territory.own.GriefPreventionOwnCheck;
+import org.spazzinq.flightcontrol.check.territory.own.LandsOwnCheck;
+import org.spazzinq.flightcontrol.check.territory.own.RedProtectOwnCheck;
+import org.spazzinq.flightcontrol.check.territory.own.TownyCheck;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CommentConf;
@@ -44,6 +48,7 @@ import org.spazzinq.flightcontrol.util.PlayerUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class CategoryManager {
     private final FlightControl pl;
@@ -60,7 +65,7 @@ public class CategoryManager {
         categoryFile = new File(pl.getDataFolder(), "categories.yml");
     }
 
-    public void reloadCategories() {
+    public void loadCategories() {
         conf = new CommentConf(categoryFile, pl.getResource("categories.yml"));
 
         global = null;
@@ -87,11 +92,36 @@ public class CategoryManager {
         DualStore<World> worlds = loadWorlds(name, category.getConfigurationSection("worlds"));
         DualStore<Region> regions = loadRegions(name, category.getConfigurationSection("regions"));
         DualStore<FactionRelation> factions = loadFactions(name, category.getConfigurationSection("factions"));
-        DualStore<TerritoryHookBase> territoryHooks = loadTerritoryHooks(name, category.getConfigurationSection("territory"));
+        DualStore<TerritoryCheck> territoryHooks = loadTerritoryHooks(name, category.getConfigurationSection("territory"));
 
         int priority = "global".equals(name) ? -1 : category.getInt("priority");
 
         return new Category(name, worlds, regions, factions, territoryHooks, priority);
+    }
+
+    private DualStore<TerritoryCheck> loadTerritoryHooks(String categoryName, ConfigurationSection territorySection) {
+        DualStore<TerritoryCheck> territories = new DualStore<>();
+
+        if (territorySection != null) {
+            ConfigurationSection enable = territorySection.getConfigurationSection("enable");
+
+            if (enable != null) {
+                for (String type : enable.getStringList("own")) {
+                    type = type.toLowerCase();
+
+                    if ("griefprevention".equals(type)) {
+                        territories.addEnabled(new GriefPreventionOwnCheck());
+                    }
+                    if ("lands".equals(type)) {
+                        territories.addEnabled(new LandsOwnCheck());
+                    }
+
+                }
+            }
+
+            territories.addEnabled();
+            for (String : ))
+        }
     }
 
     private DualStore<World> loadWorlds(String categoryName, ConfigurationSection worldsSection) {
@@ -164,10 +194,6 @@ public class CategoryManager {
             }
         }
         return factions;
-    }
-
-    private DualStore<TerritoryHookBase> loadTerritoryHooks(String categoryName, ConfigurationSection territorySection) {
-
     }
 
     private void nonexistent(String category, String section, String type, String error) {
