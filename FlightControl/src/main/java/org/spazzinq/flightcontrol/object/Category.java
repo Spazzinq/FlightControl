@@ -29,7 +29,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
-import org.spazzinq.flightcontrol.hook.territory.TerritoryHookBase;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 
 public class Category implements Comparable<Category> {

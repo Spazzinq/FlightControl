@@ -27,7 +27,6 @@ package org.spazzinq.flightcontrol.manager;
 import com.google.common.io.Files;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.spazzinq.flightcontrol.FlightControl;

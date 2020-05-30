@@ -25,5 +25,5 @@
 package org.spazzinq.flightcontrol.object;
 
 public enum Cause {
-    COMBAT, CATEGORY, ENCHANT, TERRITORY, VANISH
+    COMBAT, CATEGORY, ENCHANT, TERRITORY, VANISH, PERMISSION, TEMPFLY;
 }

@@ -27,7 +27,6 @@ package org.spazzinq.flightcontrol.check.combat;
 import cx.sfy.combatlogpro.core.CombatLogProCore;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public final class CombatLogProCheck extends CombatCheck {
     private CombatLogProCore core;

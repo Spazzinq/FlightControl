@@ -28,7 +28,6 @@ import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
 public final class LandsOwnCheck extends TerritoryCheck {

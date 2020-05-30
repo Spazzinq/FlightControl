@@ -37,8 +37,6 @@ import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 import org.spazzinq.flightcontrol.check.territory.own.GriefPreventionOwnCheck;
 import org.spazzinq.flightcontrol.check.territory.own.LandsOwnCheck;
-import org.spazzinq.flightcontrol.check.territory.own.RedProtectOwnCheck;
-import org.spazzinq.flightcontrol.check.territory.own.TownyCheck;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CommentConf;
@@ -48,7 +46,6 @@ import org.spazzinq.flightcontrol.util.PlayerUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 public class CategoryManager {
     private final FlightControl pl;
