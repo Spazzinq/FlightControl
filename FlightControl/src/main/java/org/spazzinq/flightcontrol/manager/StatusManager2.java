@@ -22,22 +22,30 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.manager;
 
-public final class Evaluation {
-    private final boolean disabled;
-    private final boolean enabled;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.CheckSet;
 
-    public Evaluation(boolean disabled, boolean enabled) {
-        this.disabled = disabled;
-        this.enabled = enabled;
+import java.util.HashSet;
+
+public class StatusManager2 {
+    boolean checkEnable(Player p) {
+        CheckSet d = new CheckSet();
+
+        d.checkAll(p);
+
+        // eval always CheckSet
+        // eval category CheckSet
     }
 
-    public boolean enabled() {
-        return enabled;
-    }
+    boolean checkDisable(Player p) {
+        CheckSet d = new CheckSet();
 
-    public boolean disabled() {
-        return disabled;
+        d.checkAll(p);
+
+        // eval always CheckSet
+        // eval category CheckSet
     }
 }

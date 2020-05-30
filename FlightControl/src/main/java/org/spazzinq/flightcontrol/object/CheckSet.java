@@ -36,7 +36,7 @@ public class CheckSet extends HashSet<Check> {
      * @param p the player to check
      * @return true if at least one check is true
      */
-    boolean checkAll(Player p) {
+    public boolean checkAll(Player p) {
         for (Check check : this) {
             if (check.check(p)) {
                 return true;
