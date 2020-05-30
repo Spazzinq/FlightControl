@@ -70,15 +70,19 @@ public class FlightManager {
                 if (disable || !enable) {
                     disableFlight(p, false);
                 }
+            // If all clear to enable
             } else if (enable && !disable) {
+                // If directly enabled or auto-enable is enabled
                 if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
                     enableFlight(p, usingCMD);
                 } else {
                     canEnable(p);
                 }
+            // If now denied
             } else if (usingCMD || alreadyCanMsg.contains(p)) {
                 cannotEnable(p);
             }
+        // If bypassing checks
         } else if (!p.getAllowFlight()) {
             if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
                 enableFlight(p, usingCMD);
