@@ -26,6 +26,7 @@ package org.spazzinq.flightcontrol.object;
 
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class DualStore<T> {
@@ -37,13 +38,22 @@ public class DualStore<T> {
         disabled = new HashSet<>();
     }
 
-    public void addEnabled(T type) {
-        enabled.add(type);
+    @SafeVarargs public final void addEnabled(T... type) {
+        enabled.addAll(Arrays.asList(type));
     }
 
-    public void addDisabled(T type) {
-        disabled.add(type);
+    @SafeVarargs public final void addDisabled(T... type) {
+        disabled.addAll(Arrays.asList(type));
     }
+
+    public void addEnabled(HashSet<T> checks) {
+        enabled.addAll(checks);
+    }
+
+    public void addDisabled(HashSet<T> checks) {
+        disabled.addAll(checks);
+    }
+
 
     @Override public String toString() {
         return (enabled + "; " + disabled)

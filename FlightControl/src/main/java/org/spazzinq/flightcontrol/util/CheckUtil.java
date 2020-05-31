@@ -24,46 +24,26 @@
 
 package org.spazzinq.flightcontrol.util;
 
-public final class MathUtil {
-    public static float calcConvertedSpeed(float unconvertedSpeed) {
-        float actualSpeed;
-        float defaultSpeed = 0.1f;
-        float maxSpeed = 1f;
-        float wrongSpeed = unconvertedSpeed;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.Check;
 
-        if (wrongSpeed > 10f) {
-            wrongSpeed = 10f;
-        } else if (wrongSpeed < 0.0001f) {
-            wrongSpeed = 0.0001f;
+import java.util.HashSet;
+
+public final class CheckUtil {
+    /**
+     * Returns true if at least one check is true.
+     *
+     * @param checks the set of checks to check
+     * @param p the player to check
+     * @return true if at least one check is true
+     */
+    public static boolean checkAll(HashSet<Check> checks, Player p) {
+        for (Check check : checks) {
+            if (check.check(p)) {
+                return true;
+            }
         }
 
-        if (wrongSpeed < 1f) {
-            actualSpeed = defaultSpeed * wrongSpeed;
-        } else {
-            float ratio = ((wrongSpeed - 1) / 9) * (maxSpeed - defaultSpeed);
-            actualSpeed = ratio + defaultSpeed;
-        }
-
-        return actualSpeed;
-    }
-
-    public static int days(long length) {
-        return (int) (length / 86400);
-    }
-
-    public static short hours(long length) {
-        return (short) (length % 86400 / 3600);
-    }
-
-    public static short minutes(long length) {
-        return (short) (length % 3600 / 60);
-    }
-
-    public static short seconds(long length) {
-        return (short) (length % 60);
-    }
-
-    public static int[] timeArray(long length) {
-        return new int[] {days(length), hours(length), minutes(length), seconds(length)};
+        return false;
     }
 }

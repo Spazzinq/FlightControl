@@ -34,9 +34,6 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.objects.Region;
-import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
-import org.spazzinq.flightcontrol.check.territory.own.GriefPreventionOwnCheck;
-import org.spazzinq.flightcontrol.check.territory.own.LandsOwnCheck;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CommentConf;
@@ -89,36 +86,38 @@ public class CategoryManager {
         DualStore<World> worlds = loadWorlds(name, category.getConfigurationSection("worlds"));
         DualStore<Region> regions = loadRegions(name, category.getConfigurationSection("regions"));
         DualStore<FactionRelation> factions = loadFactions(name, category.getConfigurationSection("factions"));
-        DualStore<TerritoryCheck> territoryHooks = loadTerritoryHooks(name, category.getConfigurationSection("territory"));
+        DualStore<String> ownTerritories = loadTerritoryTypes(name, category.getConfigurationSection("territory"), "own");
+        DualStore<String> trustedTerritories = loadTerritoryTypes(name, category.getConfigurationSection("territory"), "trusted");
+
+
+
 
         int priority = "global".equals(name) ? -1 : category.getInt("priority");
 
-        return new Category(name, worlds, regions, factions, territoryHooks, priority);
+        return new Category(name, worlds, regions, factions, checks, priority);
     }
 
-    private DualStore<TerritoryCheck> loadTerritoryHooks(String categoryName, ConfigurationSection territorySection) {
-        DualStore<TerritoryCheck> territories = new DualStore<>();
+    private DualStore<String> loadTerritoryTypes(String categoryName, ConfigurationSection territorySection, String type) {
+        DualStore<String> territories = new DualStore<>();
 
         if (territorySection != null) {
             ConfigurationSection enable = territorySection.getConfigurationSection("enable");
+            ConfigurationSection disable = territorySection.getConfigurationSection("disable");
 
-            if (enable != null) {
-                for (String type : enable.getStringList("own")) {
-                    type = type.toLowerCase();
-
-                    if ("griefprevention".equals(type)) {
-                        territories.addEnabled(new GriefPreventionOwnCheck());
-                    }
-                    if ("lands".equals(type)) {
-                        territories.addEnabled(new LandsOwnCheck());
-                    }
-
+            if (enable != null && enable.isList(type)) {
+                for (String territory : enable.getStringList(type)) {
+                    territories.addEnabled(territory.toLowerCase());
                 }
             }
 
-            territories.addEnabled();
-            for (String : ))
+            if (disable != null && disable.isList(type)) {
+                for (String territory : disable.getStringList(type)) {
+                    territories.addDisabled(territory.toLowerCase());
+                }
+            }
         }
+
+        return territories;
     }
 
     private DualStore<World> loadWorlds(String categoryName, ConfigurationSection worldsSection) {

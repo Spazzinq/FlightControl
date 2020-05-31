@@ -24,137 +24,83 @@
 
 package org.spazzinq.flightcontrol.manager;
 
-import com.earth2me.essentials.Essentials;
-import lombok.Getter;
-import net.minelink.ctplus.CombatTagPlus;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.check.combat.AntiCombatLoggingCheck;
+import org.spazzinq.flightcontrol.check.always.CrazyEnchantmentsCheck;
+import org.spazzinq.flightcontrol.check.always.FlyAllCheck;
+import org.spazzinq.flightcontrol.check.always.TempFlyCheck;
+import org.spazzinq.flightcontrol.check.bypass.BypassPermissionCheck;
+import org.spazzinq.flightcontrol.check.bypass.SpectatorModeCheck;
+import org.spazzinq.flightcontrol.check.bypass.vanish.EssentialsVanishCheck;
+import org.spazzinq.flightcontrol.check.bypass.vanish.PremiumSuperVanishCheck;
+import org.spazzinq.flightcontrol.check.combat.*;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
-import org.spazzinq.flightcontrol.check.territory.own.GriefPreventionOwnCheck;
-import org.spazzinq.flightcontrol.check.territory.own.LandsOwnCheck;
-import org.spazzinq.flightcontrol.check.territory.own.RedProtectOwnCheck;
-import org.spazzinq.flightcontrol.check.territory.own.TownyCheck;
-import org.spazzinq.flightcontrol.hook.combat.*;
-import org.spazzinq.flightcontrol.hook.enchantment.CrazyEnchantmentsHook;
-import org.spazzinq.flightcontrol.hook.enchantment.EnchantsHookBase;
-import org.spazzinq.flightcontrol.hook.territory.*;
-import org.spazzinq.flightcontrol.hook.vanish.EssentialsVanishHook;
-import org.spazzinq.flightcontrol.hook.vanish.PremiumSuperVanishHook;
-import org.spazzinq.flightcontrol.hook.vanish.VanishHookBase;
-import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
-import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
-import org.spazzinq.flightcontrol.multiversion.current.MassiveFactionsHook;
-import org.spazzinq.flightcontrol.multiversion.current.SavageFactionsHook;
-import org.spazzinq.flightcontrol.multiversion.current.WorldGuardHook7;
-import org.spazzinq.flightcontrol.multiversion.legacy.FactionsUUIDHook;
-import org.spazzinq.flightcontrol.multiversion.legacy.WorldGuardHook6;
+import org.spazzinq.flightcontrol.check.territory.own.*;
+import org.spazzinq.flightcontrol.check.territory.trusted.*;
 import org.spazzinq.flightcontrol.object.DualStore;
-import org.spazzinq.flightcontrol.placeholder.ClipPlaceholder;
-import org.spazzinq.flightcontrol.placeholder.MVdWPlaceholder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class CheckManager {
     private final FlightControl pl;
     private final PluginManager pm;
-    private final boolean is1_13;
 
-    private DualStore<Check> globalChecks = new DualStore<>();
+    private DualStore<Check> alwaysChecks = new DualStore<Check>();
+    private HashSet<Check> bypassChecks = new HashSet<>();
 
-    HashMap<String, TerritoryCheck> checks = new HashMap<String, TerritoryCheck>() {{
-        put("griefprevention", new GriefPreventionOwnCheck());
-        put("lands", new LandsOwnCheck(pl));
-        put("plotsquared", );
-        put("towny", new TownyCheck());
-        put("redprotect", new RedProtectOwnCheck());
-    }};
+    HashMap<String, TerritoryCheck> ownTerritoryChecks = new HashMap<String, TerritoryCheck>();
+    HashMap<String, TerritoryCheck> trustedTerritoryChecks = new HashMap<String, TerritoryCheck>();
 
-    // Load early to prevent NPEs
-    @Getter private WorldGuardHookBase worldGuardHook = new WorldGuardHookBase();
-    @Getter private VanishHookBase vanishHook = new VanishHookBase();
-    @Getter private CombatHookBase combatHook = new CombatHookBase();
-    @Getter private EnchantsHookBase enchantmentsHook = new EnchantsHookBase();
-    @Getter private FactionsHookBase factionsHook = new FactionsHookBase();
-    @Getter private TerritoryHookBase plotHook = new TerritoryHookBase();
-    @Getter private HashSet<TerritoryHookBase> territoryHooks = new HashSet<>();
-
-    @Getter private String hookedMsg;
-    private final ArrayList<String> hooked = new ArrayList<>();
-
-    public CheckManager(FlightControl pl, boolean is1_13) {
+    public CheckManager(FlightControl pl) {
         this.pl = pl;
-        this.is1_13 = is1_13;
         pm = pl.getServer().getPluginManager();
     }
 
     public void loadChecks() {
-        loadFactionsChecks();
-        loadCombatChecks();
-        loadVanishChecks();
-        loadPlaceholderChecks();
+        loadBypassChecks();
+        loadAlwaysChecks();
+
         loadTerritoryChecks();
 
-        if (pluginLoading("WorldGuard")) {
-            worldGuardHook = is1_13 ? new WorldGuardHook7() : new WorldGuardHook6();
-        }
-        if (pluginLoading("CrazyEnchantments") && pm.getPlugin("CrazyEnchantments").getDescription().getVersion().startsWith("1.8")) {
-            enchantmentsHook = new CrazyEnchantmentsHook();
-        }
-
-        loadHookMsg();
-        pl.getLogger().info(hookedMsg);
+        printLoadedChecks();
     }
 
-    private void loadFactionsChecks() {
-        if (pluginLoading("Factions")) {
-            if (pm.isPluginEnabled("MassiveCore")) {
-                factionsHook = new MassiveFactionsHook();
-            } else if (pm.getPlugin("Factions").getDescription().getAuthors().contains("ProSavage")) {
-                factionsHook = new SavageFactionsHook();
-            } else {
-                factionsHook = new FactionsUUIDHook();
-            }
-        }
-    }
+    private void loadBypassChecks() {
+        /* ENABLE */
+        // Bypass perm Check
+        bypassChecks.add(new BypassPermissionCheck());
+        // Spectator Check
+        bypassChecks.add(new SpectatorModeCheck());
+        // Vanish Checks
+        HashSet<Check> vanishChecks = new HashSet<>();
 
-    private void loadCombatChecks() {
-        if (pluginLoading("CombatLogX")) {
-            String version = pm.getPlugin("CombatLogX").getDescription().getVersion();
-            boolean versionTen = version != null && version.startsWith("10.");
-
-            combatHook = versionTen ? new CombatLogX10Hook() : new CombatLogX9Hook();
-        } else if (pluginLoading("CombatTagPlus")) {
-            combatHook = new CombatTagPlusHook(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
-        } else if (pluginLoading("AntiCombatLogging")) {
-            combatHook = new AntiCombatLoggingCheck();
-        } else if (pluginLoading("CombatLogPro")) {
-            combatHook = new CombatLogProHook(pm.getPlugin("CombatLogPro"));
-        } else if (pluginLoading("DeluxeCombat")) {
-            combatHook = new DeluxeCombatHook();
-        } else if (pluginLoading("PvPManager")) {
-            combatHook = new PvPManagerHook();
-        }
-    }
-
-    private void loadVanishChecks() {
         if (pluginLoading("PremiumVanish") || pluginLoading("SuperVanish")) {
-            vanishHook = new PremiumSuperVanishHook();
+            vanishChecks.add(new PremiumSuperVanishCheck());
         } else if (pluginLoading("Essentials")) {
-            vanishHook = new EssentialsVanishHook((Essentials) pm.getPlugin("Essentials"));
+            vanishChecks.add(new EssentialsVanishCheck());
         }
+
+        if (!vanishChecks.isEmpty() && pl.getConfManager().isVanishBypass()) {
+            bypassChecks.addAll(vanishChecks);
+        }
+        /* DISABLE EMPTY */
     }
 
-    private void loadPlaceholderChecks() {
-        if (pluginLoading("PlaceholderAPI")) {
-            new ClipPlaceholder(pl).register();
+    private void loadAlwaysChecks() {
+        /* ENABLE */
+        // Flyall perm Check, Tempfly Check
+        alwaysChecks.addEnabled(
+                new FlyAllCheck(),
+                new TempFlyCheck(pl.getPlayerManager())
+        );
+        // CrazyEnchants Check
+        if (pluginLoading("CrazyEnchantments") && pm.getPlugin("CrazyEnchantments").getDescription().getVersion().startsWith("1.8")) {
+            alwaysChecks.addEnabled(new CrazyEnchantmentsCheck());
         }
-        if (pluginLoading("MVdWPlaceholderAPI")) {
-            new MVdWPlaceholder(pl);
-        }
+        /* DISABLE */
+        loadCombatChecks();
     }
 
     private void loadTerritoryChecks() {
@@ -163,57 +109,84 @@ public class CheckManager {
 
             switch (version) {
                 case "5":
-                    territoryHooks.add(new PlotSquaredFiveHook());
+                    ownTerritoryChecks.put("PlotSquared", new PlotSquared5OwnCheck());
+                    trustedTerritoryChecks.put("PlotSquared", new PlotSquared5TrustedCheck());
                     break;
                 case "4":
-                    territoryHooks.add(new PlotSquaredFourHook());
+                    ownTerritoryChecks.put("PlotSquared", new PlotSquared4OwnCheck());
+                    trustedTerritoryChecks.put("PlotSquared", new PlotSquared4TrustedCheck());
                     break;
                 default:
-                    territoryHooks.add(new PlotSquaredThreeHook());
+                    ownTerritoryChecks.put("PlotSquared", new PlotSquared3OwnCheck());
+                    trustedTerritoryChecks.put("PlotSquared", new PlotSquared3TrustedCheck());
                     break;
             }
 
         }
         if (pluginLoading("Towny")) {
-            territoryHooks.add(new TownyHook());
+            // trusted == own
+            ownTerritoryChecks.put("Towny", new TownyCheck());
+            trustedTerritoryChecks.put("Towny", new TownyCheck());
         }
         if (pluginLoading("Lands")) {
-            territoryHooks.add(new LandsHook(pl));
+            ownTerritoryChecks.put("Lands", new LandsOwnCheck(pl));
+            trustedTerritoryChecks.put("Lands", new LandsTrustedCheck(pl));
         }
         if (pluginLoading("GriefPrevention")) {
-            territoryHooks.add(new GriefPreventionHook());
+            ownTerritoryChecks.put("GriefPrevention", new GriefPreventionOwnCheck());
+            trustedTerritoryChecks.put("GriefPrevention", new GriefPreventionTrustedCheck());
+        }
+        if (pluginLoading("RedProtect")) {
+            ownTerritoryChecks.put("RedProtect", new RedProtectOwnCheck());
+            trustedTerritoryChecks.put("RedProtect", new RedProtectTrustedCheck());
         }
     }
 
-    private void loadHookMsg() {
-        // Prepare hooked msg
-        StringBuilder hookMsg = new StringBuilder("Hooked with ");
-        if (hooked.isEmpty()) {
-            hookMsg.append("no plugins.");
-        } else {
-            for (int i = 0; i < hooked.size(); i++) {
-                if (i != 0) {
-                    hookMsg.append(", ");
-                }
-                if (i == hooked.size() - 1) {
-                    hookMsg.append("and ");
-                }
-                hookMsg.append(hooked.get(i));
-            }
-            hookMsg.append(".");
+    private void loadCombatChecks() {
+        HashSet<Check> combatChecks = new HashSet<>();
+
+        if (pluginLoading("CombatLogX")) {
+            String version = pm.getPlugin("CombatLogX").getDescription().getVersion();
+            boolean versionTen = version != null && version.startsWith("10.");
+
+            combatChecks.add(versionTen ? new CombatLogX10Check() : new CombatLogX9Check());
+        } else if (pluginLoading("CombatTagPlus")) {
+            combatChecks.add(new CombatTagPlusCheck());
+        } else if (pluginLoading("AntiCombatLogging")) {
+            combatChecks.add(new AntiCombatLoggingCheck());
+        } else if (pluginLoading("CombatLogPro")) {
+            combatChecks.add(new CombatLogProCheck());
+        } else if (pluginLoading("DeluxeCombat")) {
+            combatChecks.add(new DeluxeCombatCheck());
+        } else if (pluginLoading("PvPManager")) {
+            combatChecks.add(new PvPManagerCheck());
         }
 
-        hookedMsg = hookMsg.toString();
+        if (!combatChecks.isEmpty() && pl.getConfManager().isCombatChecked()) {
+            alwaysChecks.addDisabled(combatChecks);
+        }
+    }
+
+    private void printLoadedChecks() {
+        HashSet<Check> checks = new HashSet<>(bypassChecks);
+        checks.addAll(alwaysChecks.getEnabled());
+        checks.addAll(alwaysChecks.getDisabled());
+        checks.addAll(ownTerritoryChecks.values());
+        checks.addAll(trustedTerritoryChecks.values());
+
+        StringBuilder loadedChecksMsg = new StringBuilder("Loaded the following checks: ");
+
+        for (Check check : checks) {
+            loadedChecksMsg.append(check.getClass()).append(", ");
+        }
+        loadedChecksMsg.delete(loadedChecksMsg.length() - 2, loadedChecksMsg.length());
+        loadedChecksMsg.append(".");
+
+        pl.getLogger().info(loadedChecksMsg.toString());
     }
 
     private boolean pluginLoading(String pluginName) {
-        // Problematic as isPluginEnabled
-        boolean enabled = pm.getPlugin(pluginName) != null;
-
-        if (enabled) {
-            hooked.add(pluginName);
-        }
-
-        return enabled;
+        // Don't use .isPluginEnabled()--plugin might not yet be ready
+        return pm.getPlugin(pluginName) != null;
     }
 }

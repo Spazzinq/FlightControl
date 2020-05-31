@@ -62,6 +62,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private UpdateManager updateManager;
     // Multi-version management
     @Getter private CheckManager checkManager;
+    @Getter private HookManager hookManager;
     @Getter private Particle particle;
     // In-game management
     @Getter private FlightManager flightManager;
@@ -136,7 +137,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             }
         }
 
-        checkManager = new CheckManager(this, is1_13);
+        checkManager = new CheckManager(this);
+        hookManager = new HookManager(this, is1_13);
         particle = is1_13 ? new Particle13() : new Particle8();
 
         flightManager = new FlightManager(this);
@@ -163,8 +165,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         // Allow for any necessary config migration from previous versions
         confManager.updateConf();
         langManager.updateLang();
-        // Load config so the check manager knows which checks to use
+        // Load config first so the check manager knows which checks to use
         checkManager.loadChecks();
+        hookManager.loadHooks();
         categoryManager.loadCategories();
         playerManager.loadPlayerData();
 

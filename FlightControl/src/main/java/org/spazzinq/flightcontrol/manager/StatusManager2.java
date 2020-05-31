@@ -25,22 +25,31 @@
 package org.spazzinq.flightcontrol.manager;
 
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CheckSet;
-
-import java.util.HashSet;
+import org.spazzinq.flightcontrol.util.CheckUtil;
 
 public class StatusManager2 {
-    boolean checkEnable(Player p) {
-        CheckSet d = new CheckSet();
+    FlightControl pl;
 
-        d.checkAll(p);
+    public StatusManager2(FlightControl pl) {
+        this.pl = pl;
+    }
+
+    // TODO Add debug stuff
+    boolean checkEnable(Player p) {
+        Category c = pl.getCategoryManager().getCategory(p);
+
+        CheckUtil.checkAll(c.getChecks(), p);
 
         // eval always CheckSet
         // eval category CheckSet
     }
 
     boolean checkDisable(Player p) {
+        ategory c = pl.getCategoryManager().getCategory(p);
+
         CheckSet d = new CheckSet();
 
         d.checkAll(p);
