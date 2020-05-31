@@ -28,9 +28,7 @@ import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.check.always.CrazyEnchantmentsCheck;
-import org.spazzinq.flightcontrol.check.always.FlyAllCheck;
-import org.spazzinq.flightcontrol.check.always.TempFlyCheck;
+import org.spazzinq.flightcontrol.check.always.*;
 import org.spazzinq.flightcontrol.check.bypass.BypassPermissionCheck;
 import org.spazzinq.flightcontrol.check.bypass.SpectatorModeCheck;
 import org.spazzinq.flightcontrol.check.bypass.vanish.EssentialsVanishCheck;
@@ -92,6 +90,7 @@ public class CheckManager {
         if (!vanishChecks.isEmpty() && pl.getConfManager().isVanishBypass()) {
             bypassChecks.addAll(vanishChecks);
         }
+
         /* DISABLE EMPTY */
     }
 
@@ -106,8 +105,14 @@ public class CheckManager {
         if (pluginLoading("CrazyEnchantments") && pm.getPlugin("CrazyEnchantments").getDescription().getVersion().startsWith("1.8")) {
             alwaysChecks.addEnabled(new CrazyEnchantmentsCheck());
         }
+
         /* DISABLE */
+        // Combat Checks
         loadCombatChecks();
+        // Nearby Checks
+        if (pl.getConfManager().isNearbyCheck()) {
+            alwaysChecks.addDisabled(pl.getConfManager().isNearbyCheckEnemies() ? new NearbyEnemyCheck(pl) : new NearbyCheck(pl));
+        }
     }
 
     private void loadTerritoryChecks() {
