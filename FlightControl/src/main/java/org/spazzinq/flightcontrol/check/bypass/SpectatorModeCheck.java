@@ -22,13 +22,19 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.enchant;
+package org.spazzinq.flightcontrol.check.bypass;
 
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public abstract class EnchantCheck implements Check {
+public class SpectatorModeCheck implements Check {
+    @Override public boolean check(Player p) {
+        return p.getGameMode() == GameMode.SPECTATOR;
+    }
+
     @Override public Cause getCause() {
-        return Cause.ENCHANT;
+        return Cause.SPECTATOR_MODE;
     }
 }

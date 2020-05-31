@@ -22,9 +22,20 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.check.bypass.vanish;
 
-public enum Cause {
-    COMBAT, CATEGORY, ENCHANT, TERRITORY, VANISH, PERMISSION, TEMP_FLY, FLY_ALL, BYPASS;
-    public static Cause SPECTATOR_MODE;
+import com.earth2me.essentials.Essentials;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+public class EssentialsVanishCheck extends VanishCheck {
+    Essentials e;
+
+    @Override public boolean check(Player p) {
+        if (e == null) {
+            e = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+        }
+
+        return e.getUser(p).isVanished();
+    }
 }

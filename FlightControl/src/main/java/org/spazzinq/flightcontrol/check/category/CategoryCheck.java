@@ -22,13 +22,22 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.vanish;
+package org.spazzinq.flightcontrol.check.category;
 
-import org.bukkit.entity.Player;
-import org.bukkit.metadata.MetadataValue;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.Category;
+import org.spazzinq.flightcontrol.object.Cause;
 
-public class PremiumSuperVanishCheck extends VanishCheck {
-    @Override public boolean check(Player p) {
-        return p.getMetadata("vanished").stream().findFirst().filter(MetadataValue::asBoolean).isPresent();
+public abstract class CategoryCheck implements Check {
+    protected Category category;
+    protected boolean enabledOrDisabled;
+
+    public CategoryCheck(Category category, boolean enabledOrDisabled) {
+        this.category = category;
+        this.enabledOrDisabled = enabledOrDisabled;
+    }
+
+    @Override public Cause getCause() {
+        return Cause.CATEGORY;
     }
 }

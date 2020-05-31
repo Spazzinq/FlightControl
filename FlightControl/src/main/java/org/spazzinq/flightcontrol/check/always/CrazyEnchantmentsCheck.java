@@ -22,9 +22,20 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.check.always;
 
-public enum Cause {
-    COMBAT, CATEGORY, ENCHANT, TERRITORY, VANISH, PERMISSION, TEMP_FLY, FLY_ALL, BYPASS;
-    public static Cause SPECTATOR_MODE;
+import me.badbones69.crazyenchantments.api.CrazyEnchantments;
+import me.badbones69.crazyenchantments.api.enums.CEnchantments;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.Cause;
+
+public final class CrazyEnchantmentsCheck implements Check {
+    @Override public boolean check(Player p) {
+        return CrazyEnchantments.getInstance().hasEnchantment(p.getEquipment().getBoots(), CEnchantments.WINGS);
+    }
+
+    @Override public Cause getCause() {
+        return Cause.ENCHANT;
+    }
 }

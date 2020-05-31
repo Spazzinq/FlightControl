@@ -22,9 +22,25 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.check.always;
 
-public enum Cause {
-    COMBAT, CATEGORY, ENCHANT, TERRITORY, VANISH, PERMISSION, TEMP_FLY, FLY_ALL, BYPASS;
-    public static Cause SPECTATOR_MODE;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.manager.PlayerManager;
+import org.spazzinq.flightcontrol.object.Cause;
+
+public class TempFlyCheck implements Check {
+    private PlayerManager playerManager;
+
+    public TempFlyCheck(PlayerManager playerManager) {
+        this.playerManager = playerManager;
+    }
+
+    @Override public boolean check(Player p) {
+        return playerManager.getFlightPlayer(p).hasTempFly();
+    }
+
+    @Override public Cause getCause() {
+        return Cause.TEMP_FLY;
+    }
 }

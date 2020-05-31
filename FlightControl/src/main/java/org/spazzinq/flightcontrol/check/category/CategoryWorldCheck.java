@@ -22,20 +22,17 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.vanish;
+package org.spazzinq.flightcontrol.check.category;
 
-import com.earth2me.essentials.Essentials;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.object.Category;
 
-public class EssentialsVanishCheck extends VanishCheck {
-    Essentials e;
+public class CategoryWorldCheck extends CategoryCheck {
+    public CategoryWorldCheck(Category category, boolean enabledOrDisabled) {
+        super(category, enabledOrDisabled);
+    }
 
     @Override public boolean check(Player p) {
-        if (e == null) {
-            e = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-        }
-
-        return e.getUser(p).isVanished();
+        return enabledOrDisabled ? category.enabledContains(p.getWorld()) : category.disabledContains(p.getWorld());
     }
 }

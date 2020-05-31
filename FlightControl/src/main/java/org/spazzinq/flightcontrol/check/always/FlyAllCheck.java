@@ -22,14 +22,20 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.enchant;
+package org.spazzinq.flightcontrol.check.always;
 
-import me.badbones69.crazyenchantments.api.CrazyEnchantments;
-import me.badbones69.crazyenchantments.api.enums.CEnchantments;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.Cause;
+import org.spazzinq.flightcontrol.object.FlyPermission;
+import org.spazzinq.flightcontrol.util.PlayerUtil;
 
-public final class CrazyEnchantmentsCheck extends EnchantCheck {
+public class FlyAllCheck implements Check {
     @Override public boolean check(Player p) {
-        return CrazyEnchantments.getInstance().hasEnchantment(p.getEquipment().getBoots(), CEnchantments.WINGS);
+        return PlayerUtil.hasPermission(p, FlyPermission.FLY_ALL);
+    }
+
+    @Override public Cause getCause() {
+        return Cause.FLY_ALL;
     }
 }

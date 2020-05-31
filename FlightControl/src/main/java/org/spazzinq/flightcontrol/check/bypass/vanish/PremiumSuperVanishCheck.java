@@ -22,27 +22,13 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.check.bypass.vanish;
 
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.check.Check;
+import org.bukkit.metadata.MetadataValue;
 
-import java.util.HashSet;
-
-public class CheckSet extends HashSet<Check> {
-    /**
-     * Returns true if at least one check is true.
-     *
-     * @param p the player to check
-     * @return true if at least one check is true
-     */
-    public boolean checkAll(Player p) {
-        for (Check check : this) {
-            if (check.check(p)) {
-                return true;
-            }
-        }
-
-        return false;
+public class PremiumSuperVanishCheck extends VanishCheck {
+    @Override public boolean check(Player p) {
+        return p.getMetadata("vanished").stream().findFirst().filter(MetadataValue::asBoolean).isPresent();
     }
 }

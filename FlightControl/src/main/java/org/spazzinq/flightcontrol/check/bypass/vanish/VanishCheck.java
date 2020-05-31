@@ -22,9 +22,13 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.check.bypass.vanish;
 
-public enum Cause {
-    COMBAT, CATEGORY, ENCHANT, TERRITORY, VANISH, PERMISSION, TEMP_FLY, FLY_ALL, BYPASS;
-    public static Cause SPECTATOR_MODE;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.Cause;
+
+public abstract class VanishCheck implements Check {
+    @Override public Cause getCause() {
+        return Cause.VANISH;
+    }
 }

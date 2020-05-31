@@ -22,9 +22,20 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.check.bypass;
 
-public enum Cause {
-    COMBAT, CATEGORY, ENCHANT, TERRITORY, VANISH, PERMISSION, TEMP_FLY, FLY_ALL, BYPASS;
-    public static Cause SPECTATOR_MODE;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.Cause;
+import org.spazzinq.flightcontrol.object.FlyPermission;
+import org.spazzinq.flightcontrol.util.PlayerUtil;
+
+public class BypassPermissionCheck implements Check {
+    @Override public boolean check(Player p) {
+        return PlayerUtil.hasPermission(p, FlyPermission.BYPASS);
+    }
+
+    @Override public Cause getCause() {
+        return Cause.BYPASS;
+    }
 }

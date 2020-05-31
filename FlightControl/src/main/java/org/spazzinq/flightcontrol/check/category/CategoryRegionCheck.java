@@ -22,9 +22,37 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.check.category;
 
-public enum Cause {
-    COMBAT, CATEGORY, ENCHANT, TERRITORY, VANISH, PERMISSION, TEMP_FLY, FLY_ALL, BYPASS;
-    public static Cause SPECTATOR_MODE;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.api.objects.Region;
+import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
+import org.spazzinq.flightcontrol.object.Category;
+
+import java.util.HashSet;
+
+public class CategoryRegionCheck extends CategoryCheck {
+    private WorldGuardHookBase worldGuard;
+
+    public CategoryRegionCheck(WorldGuardHookBase worldGuard, Category category, boolean enabledOrDisabled) {
+        super(category, enabledOrDisabled);
+
+        this.worldGuard = worldGuard;
+    }
+
+    @Override public boolean check(Player p) {
+        World world = p.getWorld();
+        String region = worldGuard.getRegionName(p.getLocation());
+        HashSet<Region> regions = enabledOrDisabled ? category.getRegions().getEnabled() : category.getRegions().getDisabled();
+
+        for (Region catRegion : regions) {
+            // Avoid creating a new object for performance
+            if (world == catRegion.getWorld() && region.equals(catRegion.getRegionName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

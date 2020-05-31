@@ -22,13 +22,25 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.vanish;
+package org.spazzinq.flightcontrol.check.category;
 
-import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.object.Cause;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.manager.FactionsManager;
+import org.spazzinq.flightcontrol.multiversion.FactionRelation;
+import org.spazzinq.flightcontrol.object.Category;
 
-public abstract class VanishCheck implements Check {
-    @Override public Cause getCause() {
-        return Cause.VANISH;
+public class CategoryRelationCheck extends CategoryCheck {
+    private FactionsManager factionsManager;
+
+    public CategoryRelationCheck(FactionsManager factionsManager, Category category, boolean enabledOrDisabled) {
+        super(category, enabledOrDisabled);
+
+        this.factionsManager = factionsManager;
+    }
+
+    @Override public boolean check(Player p) {
+        FactionRelation relation = factionsManager.getRelationToLocation(p);
+
+        return enabledOrDisabled ? category.enabledContains(relation) : category.disabledContains(relation);
     }
 }
