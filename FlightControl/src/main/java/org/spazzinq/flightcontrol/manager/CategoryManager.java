@@ -92,6 +92,7 @@ public class CategoryManager {
 
 
 
+
         int priority = "global".equals(name) ? -1 : category.getInt("priority");
 
         return new Category(name, worlds, regions, factions, checks, priority);

@@ -24,6 +24,7 @@
 
 package org.spazzinq.flightcontrol.manager;
 
+import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
@@ -47,11 +48,13 @@ public class CheckManager {
     private final FlightControl pl;
     private final PluginManager pm;
 
-    private DualStore<Check> alwaysChecks = new DualStore<Check>();
-    private HashSet<Check> bypassChecks = new HashSet<>();
+    @Getter private DualStore<Check> alwaysChecks = new DualStore<>();
+    @Getter private HashSet<Check> bypassChecks = new HashSet<>();
 
-    HashMap<String, TerritoryCheck> ownTerritoryChecks = new HashMap<String, TerritoryCheck>();
-    HashMap<String, TerritoryCheck> trustedTerritoryChecks = new HashMap<String, TerritoryCheck>();
+    @Getter private HashMap<String, TerritoryCheck> ownTerritoryChecks = new HashMap<String, TerritoryCheck>();
+    @Getter private HashMap<String, TerritoryCheck> trustedTerritoryChecks = new HashMap<String, TerritoryCheck>();
+
+    @Getter private String checksMsg;
 
     public CheckManager(FlightControl pl) {
         this.pl = pl;
@@ -59,6 +62,10 @@ public class CheckManager {
     }
 
     public void loadChecks() {
+        alwaysChecks.getEnabled().clear();
+        alwaysChecks.getDisabled().clear();
+        bypassChecks.clear();
+
         loadBypassChecks();
         loadAlwaysChecks();
 
@@ -182,7 +189,7 @@ public class CheckManager {
         loadedChecksMsg.delete(loadedChecksMsg.length() - 2, loadedChecksMsg.length());
         loadedChecksMsg.append(".");
 
-        pl.getLogger().info(loadedChecksMsg.toString());
+        pl.getLogger().info(checksMsg = loadedChecksMsg.toString());
     }
 
     private boolean pluginLoading(String pluginName) {

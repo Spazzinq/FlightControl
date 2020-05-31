@@ -197,7 +197,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         Location l = p.getLocation();
         World world = l.getWorld();
         String worldName = world.getName(),
-                regionName = getCheckManager().getWorldGuardHook().getRegionName(l);
+                regionName = getHookManager().getWorldGuardHook().getRegionName(l);
         Category category = categoryManager.getCategory(p);
 
         // config options (settings) and permissions that act upon the same function are listed as

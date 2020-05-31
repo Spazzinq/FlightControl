@@ -31,19 +31,19 @@ import java.util.HashSet;
 
 public final class CheckUtil {
     /**
-     * Returns true if at least one check is true.
+     * Returns the first true check.
      *
      * @param checks the set of checks to check
      * @param p the player to check
-     * @return true if at least one check is true
+     * @return returns the first true check
      */
-    public static boolean checkAll(HashSet<Check> checks, Player p) {
+    public static Check checkAll(HashSet<Check> checks, Player p) {
         for (Check check : checks) {
             if (check.check(p)) {
-                return true;
+                return check;
             }
         }
 
-        return false;
+        return null;
     }
 }

@@ -65,8 +65,7 @@ public class HookManager {
             worldGuardHook = is1_13 ? new WorldGuardHook7() : new WorldGuardHook6();
         }
 
-        loadHookMsg();
-        pl.getLogger().info(hookedMsg);
+        printLoadedHooks();
     }
 
     private void loadFactionsHook() {
@@ -90,7 +89,7 @@ public class HookManager {
         }
     }
 
-    private void loadHookMsg() {
+    private void printLoadedHooks() {
         // Prepare hooked msg
         StringBuilder hookMsg = new StringBuilder("Hooked with ");
         if (hooked.isEmpty()) {
@@ -108,7 +107,7 @@ public class HookManager {
             hookMsg.append(".");
         }
 
-        hookedMsg = hookMsg.toString();
+        pl.getLogger().info(hookedMsg = hookMsg.toString());
     }
 
     private boolean pluginLoading(String pluginName) {

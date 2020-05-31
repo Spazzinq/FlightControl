@@ -102,7 +102,7 @@ final class EventListener implements org.bukkit.event.Listener {
             new BukkitRunnable() {
                 @Override public void run() {
                     msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently" +
-                            " running on this server. " + pl.getCheckManager().getHookedMsg());
+                            " running on this server. " + pl.getHookManager().getHookedMsg() + pl.getCheckManager().getChecksMsg());
                 }
             }.runTaskLater(pl, 40);
         }
@@ -167,7 +167,8 @@ final class EventListener implements org.bukkit.event.Listener {
         String worldName = world.getName();
 
         pl.registerDefaultPerms(worldName);
-        for (String regionName : pl.getCheckManager().getWorldGuardHook().getRegionNames(world)) {
+
+        for (String regionName : pl.getHookManager().getWorldGuardHook().getRegionNames(world)) {
             pl.registerDefaultPerms(worldName + "." + regionName);
         }
     }
