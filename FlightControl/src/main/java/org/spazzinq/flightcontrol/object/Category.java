@@ -36,14 +36,15 @@ public class Category implements Comparable<Category> {
 
     @Getter private final DualStore<Check> checks;
 
+    // Just storage for other plugins to use
     @Getter private final DualStore<World> worlds;
     @Getter private final DualStore<Region> regions;
     @Getter private final DualStore<FactionRelation> factions;
-    @Getter private final DualStore<String> ownTerritories;
-    @Getter private final DualStore<String> trustedTerritories;
+    @Getter private final DualStore<Check> ownTerritories;
+    @Getter private final DualStore<Check> trustedTerritories;
 
     public Category(String name, DualStore<Check> checks, DualStore<World> worlds, DualStore<Region> regions,
-                    DualStore<FactionRelation> factions, DualStore<String> ownTerritories, DualStore<String> trustedTerritories, int priority) {
+                    DualStore<FactionRelation> factions, DualStore<Check> ownTerritories, DualStore<Check> trustedTerritories, int priority) {
         this.name = name;
         this.checks = checks;
         this.worlds = worlds;

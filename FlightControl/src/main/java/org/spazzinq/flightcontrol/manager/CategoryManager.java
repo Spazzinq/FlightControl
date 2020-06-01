@@ -38,6 +38,7 @@ import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.category.CategoryRegionCheck;
 import org.spazzinq.flightcontrol.check.category.CategoryRelationCheck;
 import org.spazzinq.flightcontrol.check.category.CategoryWorldCheck;
+import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CommentConf;
@@ -47,6 +48,8 @@ import org.spazzinq.flightcontrol.util.PlayerUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.TreeMap;
+import java.util.zip.Checksum;
 
 public class CategoryManager {
     private final FlightControl pl;
@@ -93,16 +96,17 @@ public class CategoryManager {
         DualStore<Region> regions = loadRegions(name, category.getConfigurationSection("regions"), checks);
         DualStore<FactionRelation> factions = loadFactions(name, category.getConfigurationSection("factions"), checks);
 
-        DualStore<String> ownTerritories = loadTerritoryTypes(name, category.getConfigurationSection("territory"), checks, "own");
-        DualStore<String> trustedTerritories = loadTerritoryTypes(name, category.getConfigurationSection("territory"), checks, "trusted");
+        DualStore<Check> ownTerritories = loadTerritoryTypes(name, category.getConfigurationSection("territory"), checks, "own");
+        DualStore<Check> trustedTerritories = loadTerritoryTypes(name, category.getConfigurationSection("territory"), checks, "trusted");
 
         int priority = "global".equals(name) ? -1 : category.getInt("priority");
 
         return new Category(name, checks, worlds, regions, factions, ownTerritories, trustedTerritories, priority);
     }
 
-    private DualStore<String> loadTerritoryTypes(String categoryName, ConfigurationSection territorySection, DualStore<Check> checks, String type) {
+    private DualStore<Check> loadTerritoryTypes(String categoryName, ConfigurationSection territorySection, DualStore<Check> checks, String type) {
         DualStore<Check> territories = new DualStore<>();
+        TreeMap<String, TerritoryCheck> territoryChecks = "own".equals(type) ? pl.getCheckManager().getOwnTerritoryChecks() : pl.getCheckManager().getTrustedTerritoryChecks();
 
         if (territorySection != null) {
             ConfigurationSection enable = territorySection.getConfigurationSection("enable");
@@ -110,23 +114,19 @@ public class CategoryManager {
 
             if (enable != null && enable.isList(type)) {
                 for (String territory : enable.getStringList(type)) {
-                    territories.addEnabled(pl.getCheckManager().getOwnTerritoryChecks().get(territory));
+                    territories.addEnabled(territoryChecks.get(territory));
                 }
             }
 
             if (disable != null && disable.isList(type)) {
                 for (String territory : disable.getStringList(type)) {
-                    territories.addDisabled(territory.toLowerCase());
+                    territories.addDisabled(territoryChecks.get(territory));
                 }
             }
         }
 
-        if (!worlds.isEnabledEmpty()) {
-            checks.addEnabled(new CategoryWorldCheck(worlds.getEnabled()));
-        }
-        if (!worlds.isDisabledEmpty()) {
-            checks.addDisabled(new CategoryWorldCheck(worlds.getDisabled()));
-        }
+        checks.addEnabled(territories.getEnabled());
+        checks.addDisabled(territories.getDisabled());
 
         return territories;
     }
