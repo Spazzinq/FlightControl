@@ -34,6 +34,10 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.objects.Region;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.check.category.CategoryRegionCheck;
+import org.spazzinq.flightcontrol.check.category.CategoryRelationCheck;
+import org.spazzinq.flightcontrol.check.category.CategoryWorldCheck;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CommentConf;
@@ -83,23 +87,22 @@ public class CategoryManager {
             pm.addPermission(new Permission("flightcontrol.category." + name, PermissionDefault.FALSE));
         }
 
-        DualStore<World> worlds = loadWorlds(name, category.getConfigurationSection("worlds"));
-        DualStore<Region> regions = loadRegions(name, category.getConfigurationSection("regions"));
-        DualStore<FactionRelation> factions = loadFactions(name, category.getConfigurationSection("factions"));
-        DualStore<String> ownTerritories = loadTerritoryTypes(name, category.getConfigurationSection("territory"), "own");
-        DualStore<String> trustedTerritories = loadTerritoryTypes(name, category.getConfigurationSection("territory"), "trusted");
+        DualStore<Check> checks = new DualStore<>();
 
+        DualStore<World> worlds = loadWorlds(name, category.getConfigurationSection("worlds"), checks);
+        DualStore<Region> regions = loadRegions(name, category.getConfigurationSection("regions"), checks);
+        DualStore<FactionRelation> factions = loadFactions(name, category.getConfigurationSection("factions"), checks);
 
-
-
+        DualStore<String> ownTerritories = loadTerritoryTypes(name, category.getConfigurationSection("territory"), checks, "own");
+        DualStore<String> trustedTerritories = loadTerritoryTypes(name, category.getConfigurationSection("territory"), checks, "trusted");
 
         int priority = "global".equals(name) ? -1 : category.getInt("priority");
 
-        return new Category(name, worlds, regions, factions, checks, priority);
+        return new Category(name, checks, worlds, regions, factions, ownTerritories, trustedTerritories, priority);
     }
 
-    private DualStore<String> loadTerritoryTypes(String categoryName, ConfigurationSection territorySection, String type) {
-        DualStore<String> territories = new DualStore<>();
+    private DualStore<String> loadTerritoryTypes(String categoryName, ConfigurationSection territorySection, DualStore<Check> checks, String type) {
+        DualStore<Check> territories = new DualStore<>();
 
         if (territorySection != null) {
             ConfigurationSection enable = territorySection.getConfigurationSection("enable");
@@ -107,7 +110,7 @@ public class CategoryManager {
 
             if (enable != null && enable.isList(type)) {
                 for (String territory : enable.getStringList(type)) {
-                    territories.addEnabled(territory.toLowerCase());
+                    territories.addEnabled(pl.getCheckManager().getOwnTerritoryChecks().get(territory));
                 }
             }
 
@@ -118,10 +121,17 @@ public class CategoryManager {
             }
         }
 
+        if (!worlds.isEnabledEmpty()) {
+            checks.addEnabled(new CategoryWorldCheck(worlds.getEnabled()));
+        }
+        if (!worlds.isDisabledEmpty()) {
+            checks.addDisabled(new CategoryWorldCheck(worlds.getDisabled()));
+        }
+
         return territories;
     }
 
-    private DualStore<World> loadWorlds(String categoryName, ConfigurationSection worldsSection) {
+    private DualStore<World> loadWorlds(String categoryName, ConfigurationSection worldsSection, DualStore<Check> checks) {
         DualStore<World> worlds = new DualStore<>();
 
         if (worldsSection != null) {
@@ -139,11 +149,20 @@ public class CategoryManager {
                     }
                 }
             }
+
+            if (!worlds.isEnabledEmpty()) {
+                checks.addEnabled(new CategoryWorldCheck(worlds.getEnabled()));
+            }
+            if (!worlds.isDisabledEmpty()) {
+                checks.addDisabled(new CategoryWorldCheck(worlds.getDisabled()));
+            }
         }
+
         return worlds;
     }
 
-    private DualStore<Region> loadRegions(String categoryName, ConfigurationSection regionsSection) {
+    private DualStore<Region> loadRegions(String categoryName, ConfigurationSection regionsSection,
+                                          DualStore<Check> checks) {
         DualStore<Region> regions = new DualStore<>();
 
         if (regionsSection != null) {
@@ -165,11 +184,19 @@ public class CategoryManager {
                     }
                 }
             }
+
+            if (!regions.isEnabledEmpty()) {
+                checks.addEnabled(new CategoryRegionCheck(pl.getHookManager().getWorldGuardHook(), regions.getEnabled()));
+            }
+            if (!regions.isDisabledEmpty()) {
+                checks.addDisabled(new CategoryRegionCheck(pl.getHookManager().getWorldGuardHook(), regions.getDisabled()));
+            }
         }
         return regions;
     }
 
-    private DualStore<FactionRelation> loadFactions(String categoryName, ConfigurationSection factionsSection) {
+    private DualStore<FactionRelation> loadFactions(String categoryName, ConfigurationSection factionsSection,
+                                                    DualStore<Check> checks) {
         DualStore<FactionRelation> factions = new DualStore<>();
 
         if (factionsSection != null) {
@@ -188,6 +215,13 @@ public class CategoryManager {
                 } else {
                     factions.addDisabled(relation);
                 }
+            }
+
+            if (!factions.isEnabledEmpty()) {
+                checks.addEnabled(new CategoryRelationCheck(pl.getFactionsManager(), factions.getEnabled()));
+            }
+            if (!factions.isDisabledEmpty()) {
+                checks.addDisabled(new CategoryRelationCheck(pl.getFactionsManager(), factions.getDisabled()));
             }
         }
         return factions;

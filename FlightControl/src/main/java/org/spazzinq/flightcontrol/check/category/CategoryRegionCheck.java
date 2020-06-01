@@ -29,26 +29,25 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.api.objects.Region;
 import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 import org.spazzinq.flightcontrol.object.Category;
+import org.spazzinq.flightcontrol.object.DualStore;
 
 import java.util.HashSet;
 
 public class CategoryRegionCheck extends CategoryCheck {
-    private WorldGuardHookBase worldGuard;
+    private final WorldGuardHookBase worldGuard;
+    private final HashSet<Region> regions;
 
-    public CategoryRegionCheck(WorldGuardHookBase worldGuard, Category category, boolean enabledOrDisabled) {
-        super(category, enabledOrDisabled);
-
+    public CategoryRegionCheck(WorldGuardHookBase worldGuard, HashSet<Region> regions) {
         this.worldGuard = worldGuard;
+        this.regions = regions;
     }
 
     @Override public boolean check(Player p) {
-        World world = p.getWorld();
-        String region = worldGuard.getRegionName(p.getLocation());
-        HashSet<Region> regions = enabledOrDisabled ? category.getRegions().getEnabled() : category.getRegions().getDisabled();
+        String currentRegion = worldGuard.getRegionName(p.getLocation());
 
-        for (Region catRegion : regions) {
+        for (Region region : regions) {
             // Avoid creating a new object for performance
-            if (world == catRegion.getWorld() && region.equals(catRegion.getRegionName())) {
+            if (p.getWorld() == region.getWorld() && currentRegion.equals(region.getRegionName())) {
                 return true;
             }
         }

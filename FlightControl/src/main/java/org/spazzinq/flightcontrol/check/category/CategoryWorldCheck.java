@@ -24,15 +24,21 @@
 
 package org.spazzinq.flightcontrol.check.category;
 
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.object.Category;
+import org.spazzinq.flightcontrol.object.DualStore;
+
+import java.util.HashSet;
 
 public class CategoryWorldCheck extends CategoryCheck {
-    public CategoryWorldCheck(Category category, boolean enabledOrDisabled) {
-        super(category, enabledOrDisabled);
+    private final HashSet<World> worlds;
+
+    public CategoryWorldCheck(HashSet<World> worlds) {
+        this.worlds = worlds;
     }
 
     @Override public boolean check(Player p) {
-        return enabledOrDisabled ? category.enabledContains(p.getWorld()) : category.disabledContains(p.getWorld());
+        return worlds.contains(p.getWorld());
     }
 }

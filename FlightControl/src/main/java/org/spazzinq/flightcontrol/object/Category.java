@@ -34,45 +34,49 @@ public class Category implements Comparable<Category> {
     @Getter private final String name;
     @Getter private final int priority;
 
+    @Getter private final DualStore<Check> checks;
+
     @Getter private final DualStore<World> worlds;
     @Getter private final DualStore<Region> regions;
     @Getter private final DualStore<FactionRelation> factions;
+    @Getter private final DualStore<String> ownTerritories;
+    @Getter private final DualStore<String> trustedTerritories;
 
-    @Getter private final DualStore<Check> checks;
-
-    public Category(String name, DualStore<World> worlds, DualStore<Region> regions,
-                    DualStore<FactionRelation> factions, DualStore<Check> checks, int priority) {
+    public Category(String name, DualStore<Check> checks, DualStore<World> worlds, DualStore<Region> regions,
+                    DualStore<FactionRelation> factions, DualStore<String> ownTerritories, DualStore<String> trustedTerritories, int priority) {
         this.name = name;
+        this.checks = checks;
         this.worlds = worlds;
         this.regions = regions;
         this.factions = factions;
-        this.checks = checks;
+        this.ownTerritories = ownTerritories;
+        this.trustedTerritories = trustedTerritories;
         this.priority = priority;
     }
 
-    public boolean enabledContains(World world) {
-        return worlds.getEnabled().contains(world);
-    }
-
-    public boolean enabledContains(Region region) {
-        return regions.getEnabled().contains(region);
-    }
-
-    public boolean enabledContains(FactionRelation relation) {
-        return factions.getEnabled().contains(relation);
-    }
-
-    public boolean disabledContains(World world) {
-        return worlds.getDisabled().contains(world);
-    }
-
-    public boolean disabledContains(Region region) {
-        return regions.getDisabled().contains(region);
-    }
-
-    public boolean disabledContains(FactionRelation relation) {
-        return factions.getDisabled().contains(relation);
-    }
+//    public boolean enabledContains(World world) {
+//        return worlds.getEnabled().contains(world);
+//    }
+//
+//    public boolean enabledContains(Region region) {
+//        return regions.getEnabled().contains(region);
+//    }
+//
+//    public boolean enabledContains(FactionRelation relation) {
+//        return factions.getEnabled().contains(relation);
+//    }
+//
+//    public boolean disabledContains(World world) {
+//        return worlds.getDisabled().contains(world);
+//    }
+//
+//    public boolean disabledContains(Region region) {
+//        return regions.getDisabled().contains(region);
+//    }
+//
+//    public boolean disabledContains(FactionRelation relation) {
+//        return factions.getDisabled().contains(relation);
+//    }
 
     @Override
     public int compareTo(Category o) {

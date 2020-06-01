@@ -25,6 +25,8 @@
 package org.spazzinq.flightcontrol.object;
 
 import lombok.Getter;
+import org.bukkit.World;
+import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -54,6 +56,13 @@ public class DualStore<T> {
         disabled.addAll(checks);
     }
 
+    public boolean isEnabledEmpty() {
+        return enabled.isEmpty();
+    }
+
+    public boolean isDisabledEmpty() {
+        return disabled.isEmpty();
+    }
 
     @Override public String toString() {
         return (enabled + "; " + disabled)

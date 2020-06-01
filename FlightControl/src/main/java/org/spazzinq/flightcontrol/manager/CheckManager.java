@@ -41,16 +41,17 @@ import org.spazzinq.flightcontrol.object.DualStore;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeMap;
 
 public class CheckManager {
     private final FlightControl pl;
     private final PluginManager pm;
 
-    @Getter private DualStore<Check> alwaysChecks = new DualStore<>();
-    @Getter private HashSet<Check> bypassChecks = new HashSet<>();
+    @Getter private final DualStore<Check> alwaysChecks = new DualStore<>();
+    @Getter private final HashSet<Check> bypassChecks = new HashSet<>();
 
-    @Getter private HashMap<String, TerritoryCheck> ownTerritoryChecks = new HashMap<String, TerritoryCheck>();
-    @Getter private HashMap<String, TerritoryCheck> trustedTerritoryChecks = new HashMap<String, TerritoryCheck>();
+    @Getter private final TreeMap<String, TerritoryCheck> ownTerritoryChecks = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    @Getter private final TreeMap<String, TerritoryCheck> trustedTerritoryChecks = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     @Getter private String checksMsg;
 
@@ -63,6 +64,8 @@ public class CheckManager {
         alwaysChecks.getEnabled().clear();
         alwaysChecks.getDisabled().clear();
         bypassChecks.clear();
+        ownTerritoryChecks.clear();
+        trustedTerritoryChecks.clear();
 
         loadBypassChecks();
         loadAlwaysChecks();

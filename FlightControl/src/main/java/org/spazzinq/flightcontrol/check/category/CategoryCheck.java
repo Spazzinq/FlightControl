@@ -29,14 +29,6 @@ import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.Cause;
 
 public abstract class CategoryCheck implements Check {
-    protected Category category;
-    protected boolean enabledOrDisabled;
-
-    public CategoryCheck(Category category, boolean enabledOrDisabled) {
-        this.category = category;
-        this.enabledOrDisabled = enabledOrDisabled;
-    }
-
     @Override public Cause getCause() {
         return Cause.CATEGORY;
     }
