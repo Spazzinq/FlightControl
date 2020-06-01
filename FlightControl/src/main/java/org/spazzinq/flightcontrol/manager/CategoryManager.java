@@ -49,7 +49,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.TreeMap;
-import java.util.zip.Checksum;
 
 public class CategoryManager {
     private final FlightControl pl;

@@ -37,13 +37,35 @@ public final class CheckUtil {
      * @param p the player to check
      * @return returns the first true check
      */
-    public static Check checkAll(HashSet<Check> checks, Player p) {
-        for (Check check : checks) {
-            if (check.check(p)) {
-                return check;
+    public static HashSet<Check> checkAll(HashSet<Check> checks, Player p) {
+        return checkAll(checks, p, false);
+    }
+
+    /**
+     * Returns the first true check or if debugging all true checks.
+     *
+     * @param checks the set of checks to check
+     * @param p the player to check
+     * @return returns the first true check or if debugging all true checks
+     */
+    public static HashSet<Check> checkAll(HashSet<Check> checks, Player p, boolean debug) {
+        HashSet<Check> trueChecks = new HashSet<>();
+
+        if (debug) {
+            for (Check check : checks) {
+                if (check.check(p)) {
+                    trueChecks.add(check);
+                }
+            }
+        } else {
+            for (Check check : checks) {
+                if (check.check(p)) {
+                    trueChecks.add(check);
+                    break;
+                }
             }
         }
 
-        return null;
+        return trueChecks;
     }
 }

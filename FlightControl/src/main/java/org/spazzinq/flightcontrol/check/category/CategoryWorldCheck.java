@@ -26,8 +26,6 @@ package org.spazzinq.flightcontrol.check.category;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.object.Category;
-import org.spazzinq.flightcontrol.object.DualStore;
 
 import java.util.HashSet;
 

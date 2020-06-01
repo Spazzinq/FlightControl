@@ -24,12 +24,16 @@
 
 package org.spazzinq.flightcontrol.manager;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.check.always.DummyPermissionCheck;
 import org.spazzinq.flightcontrol.object.Category;
-import org.spazzinq.flightcontrol.object.Cause;
 import org.spazzinq.flightcontrol.util.CheckUtil;
+import org.spazzinq.flightcontrol.util.MessageUtil;
+
+import java.util.HashSet;
 
 import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionFly;
 import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionNoFly;
@@ -41,54 +45,86 @@ public class StatusManager {
         this.pl = pl;
     }
 
+    public boolean checkEnable(Player p) {
+        return checkEnable(p, null);
+    }
+
+    public boolean checkDisable(Player p) {
+        return checkDisable(p, null);
+    }
+
     // TODO Add simple debug then ALL eval debug in FC main class
-    boolean checkEnable(Player p) {
+    public boolean checkEnable(Player p, CommandSender s) {
+        boolean debug = s != null;
+
         // Eval always CheckSet
-        Check check = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().getEnabled(), p);
-        Cause cause = null;
+        HashSet<Check> trueChecks = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().getEnabled(), p, debug);
 
         // Eval category CheckSet
-        if (check == null) {
+        if (!trueChecks.isEmpty() || debug) {
             Category category = pl.getCategoryManager().getCategory(p);
-            check = CheckUtil.checkAll(category.getChecks().getEnabled(), p);
+            trueChecks.addAll(CheckUtil.checkAll(category.getChecks().getEnabled(), p, debug));
         }
 
         // Eval permissions
-        if (check == null) {
+        if (!trueChecks.isEmpty() || debug) {
             String worldName = p.getWorld().getName();
             String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
 
             if (hasPermissionFly(p, worldName)
                     || regionName != null && hasPermissionFly(p, worldName + "." + regionName)) {
-                cause = Cause.PERMISSION;
+                trueChecks.add(DummyPermissionCheck.getInstance());
             }
         }
 
-        return check != null || cause != null;
+        if (debug) {
+            Category category = pl.getCategoryManager().getCategory(p);
+            HashSet<Check> falseChecks = pl.getCheckManager().getAlwaysChecks().getEnabled();
+            falseChecks.addAll(category.getChecks().getEnabled());
+            falseChecks.add(DummyPermissionCheck.getInstance());
+
+            falseChecks.removeAll(trueChecks);
+
+            MessageUtil.msg(s, "&e&lEnable\n&aTrue&f:" + trueChecks + "\n&cFalse&f:" + falseChecks);
+        }
+
+        return !trueChecks.isEmpty();
     }
 
-    boolean checkDisable(Player p) {
+    public boolean checkDisable(Player p, CommandSender s) {
+        boolean debug = s != null;
+
         // Eval always CheckSet
-        Check check = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().getDisabled(), p);
-        Cause cause = null;
+        HashSet<Check> trueChecks = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().getDisabled(), p, debug);
 
         // Eval category CheckSet
-        if (check == null) {
+        if (!trueChecks.isEmpty() || debug) {
             Category category = pl.getCategoryManager().getCategory(p);
-            check = CheckUtil.checkAll(category.getChecks().getDisabled(), p);
+            trueChecks.addAll(CheckUtil.checkAll(category.getChecks().getDisabled(), p, debug));
         }
 
         // Eval permissions
-        if (check == null) {
+        if (!trueChecks.isEmpty() || debug) {
             String worldName = p.getWorld().getName();
             String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
 
             if (hasPermissionNoFly(p, worldName)
                     || regionName != null && hasPermissionNoFly(p, worldName + "." + regionName)) {
-                cause = Cause.PERMISSION;
+                trueChecks.add(DummyPermissionCheck.getInstance());
             }
         }
 
-        return check != null || cause != null;
+        if (debug) {
+            Category category = pl.getCategoryManager().getCategory(p);
+            HashSet<Check> falseChecks = pl.getCheckManager().getAlwaysChecks().getDisabled();
+            falseChecks.addAll(category.getChecks().getDisabled());
+            falseChecks.add(DummyPermissionCheck.getInstance());
+
+            falseChecks.removeAll(trueChecks);
+
+            MessageUtil.msg(s, "&e&lOverride\n&aTrue&f:" + trueChecks + "\n&cFalse&f:" + falseChecks);
+        }
+
+        return !trueChecks.isEmpty();
     }
 }

@@ -25,7 +25,6 @@
 package org.spazzinq.flightcontrol.check.category;
 
 import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.Cause;
 
 public abstract class CategoryCheck implements Check {

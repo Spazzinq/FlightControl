@@ -25,8 +25,6 @@
 package org.spazzinq.flightcontrol.object;
 
 import lombok.Getter;
-import org.bukkit.World;
-import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 
 import java.util.Arrays;
 import java.util.HashSet;

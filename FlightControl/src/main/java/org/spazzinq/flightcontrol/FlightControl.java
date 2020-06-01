@@ -27,7 +27,6 @@ package org.spazzinq.flightcontrol;
 import lombok.Getter;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -43,8 +42,7 @@ import org.spazzinq.flightcontrol.multiversion.Particle;
 import org.spazzinq.flightcontrol.multiversion.current.Particle13;
 import org.spazzinq.flightcontrol.multiversion.legacy.Particle8;
 import org.spazzinq.flightcontrol.object.Category;
-import org.spazzinq.flightcontrol.object.FlyPermission;
-import org.spazzinq.flightcontrol.util.PlayerUtil;
+import org.spazzinq.flightcontrol.util.CheckUtil;
 
 import java.io.File;
 import java.util.HashSet;
@@ -205,16 +203,14 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         msg(s, "&a&lFlightControl &f" + getDescription().getVersion() +
                 "\n&eTarget &7» &f" + p.getName() +
                 "\n&eCategory &7» &f" + category.getName() +
-                (checkManager.getWorldGuardHook().isHooked() ? "\n&eW.RG &7» &f" + worldName + "." + regionName : "") +
-                (checkManager.getFactionsHook().isHooked() ? "\n&eFac &7» &f" + category.getFactions() : "") +
+                (hookManager.getWorldGuardHook().isHooked() ? "\n&eW.RG &7» &f" + worldName + "." + regionName : "") +
+                (hookManager.getFactionsHook().isHooked() ? "\n&eFac &7» &f" + category.getFactions() : "") +
                 "\n&eWRLDs &7» &f" + category.getWorlds() +
-                (checkManager.getWorldGuardHook().isHooked() ? "\n&eRGs &7» &f" + category.getRegions() : "") +
-                ("\n&eBypass &7» &f" + (PlayerUtil.hasPermission(p, FlyPermission.BYPASS)
-                        || p.getGameMode() == GameMode.SPECTATOR
-                        || confManager.isVanishBypass() && checkManager.getVanishHook().vanished(p))).replaceAll("true"
-                        , "&atrue"));
+                (hookManager.getWorldGuardHook().isHooked() ? "\n&eRGs &7» &f" + category.getRegions() : "") +
+                ("\n&eBypass &7» &f" + CheckUtil.checkAll(checkManager.getBypassChecks(), p, true)));
 
-        statusManager.evalFlight(p,true, s);
+        statusManager.checkEnable(p, s);
+        statusManager.checkDisable(p, s);
     }
 
     /**

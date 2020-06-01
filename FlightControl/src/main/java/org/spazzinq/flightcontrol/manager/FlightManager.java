@@ -38,6 +38,7 @@ import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.util.CheckUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
@@ -57,9 +58,9 @@ public class FlightManager {
     }
 
     public void check(Player p, boolean usingCMD) {
-        Check bypassCheck = CheckUtil.checkAll(pl.getCheckManager().getBypassChecks(), p);
+        HashSet<Check> bypassCheck = CheckUtil.checkAll(pl.getCheckManager().getBypassChecks(), p);
         // If has bypass
-        if (bypassCheck == null) {
+        if (bypassCheck.isEmpty()) {
             boolean enable = pl.getStatusManager().checkEnable(p),
                     disable = pl.getStatusManager().checkDisable(p);
 
