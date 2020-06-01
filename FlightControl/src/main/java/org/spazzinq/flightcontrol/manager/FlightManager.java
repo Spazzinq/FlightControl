@@ -25,7 +25,6 @@
 package org.spazzinq.flightcontrol.manager;
 
 import lombok.Getter;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -35,9 +34,8 @@ import org.spazzinq.flightcontrol.api.events.FlightCannotEnableEvent;
 import org.spazzinq.flightcontrol.api.events.FlightDisableEvent;
 import org.spazzinq.flightcontrol.api.events.FlightEnableEvent;
 import org.spazzinq.flightcontrol.api.objects.Sound;
-import org.spazzinq.flightcontrol.object.Evaluation;
-import org.spazzinq.flightcontrol.object.FlyPermission;
-import org.spazzinq.flightcontrol.util.PlayerUtil;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.util.CheckUtil;
 
 import java.util.ArrayList;
 
@@ -59,14 +57,14 @@ public class FlightManager {
     }
 
     public void check(Player p, boolean usingCMD) {
-        if (!PlayerUtil.hasPermission(p, FlyPermission.BYPASS)
-                && p.getGameMode() != GameMode.SPECTATOR
-                && !(pl.getConfManager().isVanishBypass() && pl.getCheckManager().getVanishHook().vanished(p))) {
-            Evaluation eval = pl.getStatusManager().evalFlight(p);
-            boolean enable = eval.enabled(),
-                    disable = eval.disabled();
+        Check bypassCheck = CheckUtil.checkAll(pl.getCheckManager().getBypassChecks(), p);
+        // If has bypass
+        if (bypassCheck == null) {
+            boolean enable = pl.getStatusManager().checkEnable(p),
+                    disable = pl.getStatusManager().checkDisable(p);
 
             if (p.getAllowFlight()) {
+                // If override or not enabled
                 if (disable || !enable) {
                     disableFlight(p, false);
                 }
