@@ -108,7 +108,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
 
                 switch (autoComplete.isEmpty() ? args[0] : (autoComplete.size() == 1 ? autoComplete.get(0) : "")) {
                     case "reload":
-                        pl.reloadManagers();
+                        pl.load();
                         msg(s, pl.getLangManager().getPluginReloaded());
                         break;
                     case "update":

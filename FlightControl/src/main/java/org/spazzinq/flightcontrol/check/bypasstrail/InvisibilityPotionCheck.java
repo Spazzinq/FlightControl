@@ -22,19 +22,19 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.bypass;
+package org.spazzinq.flightcontrol.check.bypasstrail;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public class SpectatorModeCheck implements Check {
+public class InvisibilityPotionCheck implements Check {
     @Override public boolean check(Player p) {
-        return p.getGameMode() == GameMode.SPECTATOR;
+        return p.hasPotionEffect(PotionEffectType.INVISIBILITY);
     }
 
     @Override public Cause getCause() {
-        return Cause.SPECTATOR_MODE;
+        return Cause.INVISIBILITY_POTION;
     }
 }

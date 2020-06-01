@@ -22,20 +22,13 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.bypass.vanish;
+package org.spazzinq.flightcontrol.check.bypasstrail.vanish;
 
-import com.earth2me.essentials.Essentials;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 
-public class EssentialsVanishCheck extends VanishCheck {
-    Essentials e;
-
+public class PremiumSuperVanishCheck extends VanishCheck {
     @Override public boolean check(Player p) {
-        if (e == null) {
-            e = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-        }
-
-        return e.getUser(p).isVanished();
+        return p.getMetadata("vanished").stream().findFirst().filter(MetadataValue::asBoolean).isPresent();
     }
 }

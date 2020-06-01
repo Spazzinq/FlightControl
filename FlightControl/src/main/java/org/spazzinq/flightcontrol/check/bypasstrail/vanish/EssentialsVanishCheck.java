@@ -22,13 +22,20 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.bypass.vanish;
+package org.spazzinq.flightcontrol.check.bypasstrail.vanish;
 
-import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.object.Cause;
+import com.earth2me.essentials.Essentials;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-public abstract class VanishCheck implements Check {
-    @Override public Cause getCause() {
-        return Cause.VANISH;
+public class EssentialsVanishCheck extends VanishCheck {
+    Essentials e;
+
+    @Override public boolean check(Player p) {
+        if (e == null) {
+            e = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+        }
+
+        return e.getUser(p).isVanished();
     }
 }

@@ -22,13 +22,19 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.bypass.vanish;
+package org.spazzinq.flightcontrol.check.bypasstrail;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.MetadataValue;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.Cause;
 
-public class PremiumSuperVanishCheck extends VanishCheck {
+public class SpectatorModeCheck implements Check {
     @Override public boolean check(Player p) {
-        return p.getMetadata("vanished").stream().findFirst().filter(MetadataValue::asBoolean).isPresent();
+        return p.getGameMode() == GameMode.SPECTATOR;
+    }
+
+    @Override public Cause getCause() {
+        return Cause.SPECTATOR_MODE;
     }
 }

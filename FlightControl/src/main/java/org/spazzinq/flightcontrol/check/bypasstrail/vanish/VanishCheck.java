@@ -22,20 +22,13 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.bypass;
+package org.spazzinq.flightcontrol.check.bypasstrail.vanish;
 
-import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
-import org.spazzinq.flightcontrol.object.FlyPermission;
-import org.spazzinq.flightcontrol.util.PlayerUtil;
 
-public class BypassPermissionCheck implements Check {
-    @Override public boolean check(Player p) {
-        return PlayerUtil.hasPermission(p, FlyPermission.BYPASS);
-    }
-
+public abstract class VanishCheck implements Check {
     @Override public Cause getCause() {
-        return Cause.BYPASS;
+        return Cause.VANISH;
     }
 }

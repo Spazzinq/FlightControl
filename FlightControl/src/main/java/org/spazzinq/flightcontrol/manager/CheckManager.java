@@ -29,17 +29,17 @@ import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.always.*;
-import org.spazzinq.flightcontrol.check.bypass.BypassPermissionCheck;
-import org.spazzinq.flightcontrol.check.bypass.SpectatorModeCheck;
-import org.spazzinq.flightcontrol.check.bypass.vanish.EssentialsVanishCheck;
-import org.spazzinq.flightcontrol.check.bypass.vanish.PremiumSuperVanishCheck;
+import org.spazzinq.flightcontrol.check.bypasstrail.BypassPermissionCheck;
+import org.spazzinq.flightcontrol.check.bypasstrail.InvisibilityPotionCheck;
+import org.spazzinq.flightcontrol.check.bypasstrail.SpectatorModeCheck;
+import org.spazzinq.flightcontrol.check.bypasstrail.vanish.EssentialsVanishCheck;
+import org.spazzinq.flightcontrol.check.bypasstrail.vanish.PremiumSuperVanishCheck;
 import org.spazzinq.flightcontrol.check.combat.*;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 import org.spazzinq.flightcontrol.check.territory.own.*;
 import org.spazzinq.flightcontrol.check.territory.trusted.*;
 import org.spazzinq.flightcontrol.object.DualStore;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeMap;
 
@@ -49,6 +49,7 @@ public class CheckManager {
 
     @Getter private final DualStore<Check> alwaysChecks = new DualStore<>();
     @Getter private final HashSet<Check> bypassChecks = new HashSet<>();
+    @Getter private final HashSet<Check> trailChecks = new HashSet<>();
 
     @Getter private final TreeMap<String, TerritoryCheck> ownTerritoryChecks = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     @Getter private final TreeMap<String, TerritoryCheck> trustedTerritoryChecks = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -67,20 +68,21 @@ public class CheckManager {
         ownTerritoryChecks.clear();
         trustedTerritoryChecks.clear();
 
-        loadBypassChecks();
+        loadBypassAndTrailChecks();
         loadAlwaysChecks();
-
         loadTerritoryChecks();
 
         printLoadedChecks();
     }
 
-    private void loadBypassChecks() {
+    private void loadBypassAndTrailChecks() {
         /* ENABLE */
         // Bypass perm Check
         bypassChecks.add(new BypassPermissionCheck());
         // Spectator Check
-        bypassChecks.add(new SpectatorModeCheck());
+        SpectatorModeCheck spectatorModeCheck = new SpectatorModeCheck();
+        bypassChecks.add(spectatorModeCheck);
+        trailChecks.add(spectatorModeCheck);
         // Vanish Checks
         HashSet<Check> vanishChecks = new HashSet<>();
 
@@ -92,8 +94,10 @@ public class CheckManager {
 
         if (!vanishChecks.isEmpty() && pl.getConfManager().isVanishBypass()) {
             bypassChecks.addAll(vanishChecks);
+            trailChecks.addAll(vanishChecks);
         }
-
+        // Invisibility potion Check
+        trailChecks.add(new InvisibilityPotionCheck());
         /* DISABLE EMPTY */
     }
 

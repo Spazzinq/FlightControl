@@ -22,15 +22,20 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.check.bypasstrail;
 
-public enum Cause {
-    // Bypass and trail Checks
-    BYPASS_PERMISSION, INVISIBILITY_POTION, SPECTATOR_MODE, VANISH,
-    // Always enable Checks
-    ENCHANT, FLY_ALL, TEMP_FLY,
-    // Always disable Checks
-    COMBAT, NEARBY,
-    // Category specific Checks
-    CATEGORY, PERMISSION, TERRITORY;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.Cause;
+import org.spazzinq.flightcontrol.object.FlyPermission;
+import org.spazzinq.flightcontrol.util.PlayerUtil;
+
+public class BypassPermissionCheck implements Check {
+    @Override public boolean check(Player p) {
+        return PlayerUtil.hasPermission(p, FlyPermission.BYPASS);
+    }
+
+    @Override public Cause getCause() {
+        return Cause.BYPASS_PERMISSION;
+    }
 }
