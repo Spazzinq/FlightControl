@@ -29,11 +29,11 @@ global:
     enable: [OWN, ALLY]
     disable: []
   # Disable/enable flight in certain plugin territories
-  # Supports: GriefPrevention, Lands, PlotSquared, Towny, RedProtect
+  # Supports: GriefPrevention, Lands, PlotSquared, Towny, RedProtect, BentoBox (island)
   territory:
     enable:
       # Enable/Disable in player's own territory
-      own: [GriefPrevention, Lands, PlotSquared, Towny, RedProtect]
+      own: [GriefPrevention, Lands, PlotSquared, Towny, RedProtect, BentoBox]
       # Enable/Disable in territory that player is a member of
       trusted: [GriefPrevention]
     disable: []

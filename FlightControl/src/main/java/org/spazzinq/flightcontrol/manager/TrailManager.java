@@ -25,10 +25,8 @@
 package org.spazzinq.flightcontrol.manager;
 
 import lombok.Getter;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.spazzinq.flightcontrol.FlightControl;

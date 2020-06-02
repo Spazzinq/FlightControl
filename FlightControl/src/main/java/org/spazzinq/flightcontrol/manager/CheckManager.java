@@ -159,6 +159,10 @@ public class CheckManager {
             ownTerritoryChecks.put("RedProtect", new RedProtectOwnCheck());
             trustedTerritoryChecks.put("RedProtect", new RedProtectTrustedCheck());
         }
+        if (pluginLoading("BentoBox")) {
+            ownTerritoryChecks.put("BentoBox", new BentoBoxOwnCheck());
+            trustedTerritoryChecks.put("BentoBox", new BentoBoxTrustedCheck());
+        }
     }
 
     private void loadCombatChecks() {

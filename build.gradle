@@ -37,7 +37,7 @@ subprojects {
         mavenCentral()
         // Spigot
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats, CombatLogX
+        // bStats, CombatLogX, [BentoBox doesn't work]
         maven { url = 'https://repo.codemc.io/repository/maven-public/' }
         // WorldEdit, WorldGuard
         maven { url = 'https://maven.sk89q.com/repo/' }
