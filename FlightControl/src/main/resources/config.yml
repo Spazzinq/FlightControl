@@ -9,11 +9,6 @@
 # Spigot Page: https://www.spigotmc.org/resources/flightcontrol.55168/
 # Permissions: https://spazzinq.org/flightcontrol/permissions
 
-# Before you leave a negative review:
-# ✓ Read through ALL the information in this configuration
-# ✓ Contact me on Discord (if the config does not solve your problem)
-# ✓ Create an official bug report or feature request on GitHub
-
 settings:
   # Updates the config automatically and adds new features
   auto_update: true
