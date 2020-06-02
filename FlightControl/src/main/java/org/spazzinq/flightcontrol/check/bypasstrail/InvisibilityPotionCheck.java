@@ -29,7 +29,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public class InvisibilityPotionCheck implements Check {
+public class InvisibilityPotionCheck extends Check {
     @Override public boolean check(Player p) {
         return p.hasPotionEffect(PotionEffectType.INVISIBILITY);
     }

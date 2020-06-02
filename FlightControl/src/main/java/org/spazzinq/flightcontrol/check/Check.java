@@ -27,8 +27,12 @@ package org.spazzinq.flightcontrol.check;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public interface Check {
-    boolean check(Player p);
+public abstract class Check {
+    public abstract boolean check(Player p);
 
-    Cause getCause();
+    public abstract Cause getCause();
+
+    @Override public String toString() {
+        return getClass().getSimpleName();
+    }
 }

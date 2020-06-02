@@ -29,8 +29,8 @@ import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.manager.PlayerManager;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public class TempFlyCheck implements Check {
-    private PlayerManager playerManager;
+public class TempFlyCheck extends Check {
+    private final PlayerManager playerManager;
 
     public TempFlyCheck(PlayerManager playerManager) {
         this.playerManager = playerManager;

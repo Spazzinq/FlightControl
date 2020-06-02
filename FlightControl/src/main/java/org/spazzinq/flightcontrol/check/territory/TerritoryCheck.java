@@ -27,7 +27,7 @@ package org.spazzinq.flightcontrol.check.territory;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public abstract class TerritoryCheck implements Check {
+public abstract class TerritoryCheck extends Check {
     @Override public Cause getCause() {
         return Cause.TERRITORY;
     }

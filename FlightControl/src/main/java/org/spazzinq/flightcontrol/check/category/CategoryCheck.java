@@ -27,7 +27,7 @@ package org.spazzinq.flightcontrol.check.category;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public abstract class CategoryCheck implements Check {
+public abstract class CategoryCheck extends Check {
     @Override public Cause getCause() {
         return Cause.CATEGORY;
     }

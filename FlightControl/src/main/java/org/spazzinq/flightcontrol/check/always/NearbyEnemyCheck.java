@@ -34,7 +34,7 @@ import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.util.List;
 
-public class NearbyEnemyCheck implements Check {
+public class NearbyEnemyCheck extends Check {
     private final FlightControl pl;
 
     public NearbyEnemyCheck(FlightControl pl) {

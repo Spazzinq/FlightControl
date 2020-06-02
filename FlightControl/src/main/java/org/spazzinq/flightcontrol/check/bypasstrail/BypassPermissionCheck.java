@@ -30,7 +30,7 @@ import org.spazzinq.flightcontrol.object.Cause;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
-public class BypassPermissionCheck implements Check {
+public class BypassPermissionCheck extends Check {
     @Override public boolean check(Player p) {
         return PlayerUtil.hasPermission(p, FlyPermission.BYPASS);
     }

@@ -27,7 +27,7 @@ package org.spazzinq.flightcontrol.check.combat;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public abstract class CombatCheck implements Check {
+public abstract class CombatCheck extends Check {
     @Override public Cause getCause() {
         return Cause.COMBAT;
     }

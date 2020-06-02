@@ -200,7 +200,7 @@ public class CheckManager {
         StringBuilder loadedChecksMsg = new StringBuilder("Loaded the following checks: ");
 
         for (Check check : checks) {
-            loadedChecksMsg.append(check.getClass()).append(", ");
+            loadedChecksMsg.append(check).append(", ");
         }
         loadedChecksMsg.delete(loadedChecksMsg.length() - 2, loadedChecksMsg.length());
         loadedChecksMsg.append(".");

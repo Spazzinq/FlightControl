@@ -29,7 +29,7 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public class SpectatorModeCheck implements Check {
+public class SpectatorModeCheck extends Check {
     @Override public boolean check(Player p) {
         return p.getGameMode() == GameMode.SPECTATOR;
     }

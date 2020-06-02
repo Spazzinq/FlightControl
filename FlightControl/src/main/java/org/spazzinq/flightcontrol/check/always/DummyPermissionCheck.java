@@ -28,7 +28,7 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public class DummyPermissionCheck implements Check {
+public class DummyPermissionCheck extends Check {
     private static DummyPermissionCheck instance;
 
     @Override public boolean check(Player p) {
