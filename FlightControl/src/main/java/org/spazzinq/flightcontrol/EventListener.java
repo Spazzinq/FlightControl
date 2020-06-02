@@ -102,7 +102,7 @@ final class EventListener implements org.bukkit.event.Listener {
             new BukkitRunnable() {
                 @Override public void run() {
                     msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently" +
-                            " running on this server. " + pl.getHookManager().getHookedMsg() + pl.getCheckManager().getChecksMsg());
+                            " running on this server. " + pl.getHookManager().getHookedMsg() + " " + pl.getCheckManager().getChecksMsg());
                 }
             }.runTaskLater(pl, 40);
         }

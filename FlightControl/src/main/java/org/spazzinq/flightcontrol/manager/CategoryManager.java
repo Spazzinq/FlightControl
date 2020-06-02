@@ -238,13 +238,23 @@ public class CategoryManager {
 
             if (enable != null && enable.isList(type)) {
                 for (String territory : enable.getStringList(type)) {
-                    territories.addEnabled(territoryChecks.get(territory));
+                    Check check = territoryChecks.get(territory);
+                    if (check != null) {
+                        territories.addEnabled(check);
+                    } else {
+                        nonexistent(categoryName, "territory", "enabled check", territory, "Is the plugin supported and installed on the server?");
+                    }
                 }
             }
 
             if (disable != null && disable.isList(type)) {
                 for (String territory : disable.getStringList(type)) {
-                    territories.addDisabled(territoryChecks.get(territory));
+                    Check check = territoryChecks.get(territory);
+                    if (check != null) {
+                        territories.addDisabled(territoryChecks.get(territory));
+                    } else {
+                        nonexistent(categoryName, "territory", "disabled check", territory, "Is the plugin supported and installed on the server?");
+                    }
                 }
             }
         }
@@ -256,10 +266,14 @@ public class CategoryManager {
     }
 
     private void nonexistent(String category, String section, String type, String error) {
+        nonexistent(category, section, type, error, "");
+    }
+
+    private void nonexistent(String category, String section, String type, String error, String extra) {
         // Ignore examples
         if (!error.contains("WORLDNAME")) {
             pl.getLogger().warning("Category \"" + category + "\" in section \"" + section + "\" contains " +
-                    "non-existent " + type + " \"" + error + "\"");
+                    "non-existent " + type + " \"" + error + ".\" " + extra);
         }
     }
 
