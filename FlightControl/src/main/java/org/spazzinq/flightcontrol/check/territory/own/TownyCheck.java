@@ -22,11 +22,7 @@
  * SOFTWARE.
  */
 
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/towny/TownyHook.java
-package org.spazzinq.flightcontrol.hook.towny;
-=======
 package org.spazzinq.flightcontrol.check.territory.own;
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/territory/own/TownyCheck.java
 
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -34,15 +30,8 @@ import com.palmergames.bukkit.towny.object.TownyUniverse;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/towny/TownyHook.java
-public final class TownyHook extends TownyHookBase {
-    @Override public boolean townyOwn(Player p) {
-        Resident r;
-
-=======
 public final class TownyCheck extends TerritoryCheck {
     @Override public boolean check(Player p) {
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/territory/own/TownyCheck.java
         try {
             Resident r = TownyUniverse.getDataSource().getResident(p.getName());
 

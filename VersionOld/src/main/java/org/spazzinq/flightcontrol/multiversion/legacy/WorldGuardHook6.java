@@ -27,11 +27,9 @@ package org.spazzinq.flightcontrol.multiversion.old;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 
 import java.util.Iterator;
-import java.util.Set;
 
 public class WorldGuardHook6 extends WorldGuardHookBase {
     public String getRegionName(Location l) {

@@ -32,8 +32,8 @@ import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 import org.spazzinq.flightcontrol.multiversion.current.MassiveFactionsHook;
 import org.spazzinq.flightcontrol.multiversion.current.SavageFactionsHook;
 import org.spazzinq.flightcontrol.multiversion.current.WorldGuardHook7;
-import org.spazzinq.flightcontrol.multiversion.legacy.FactionsUUIDHook;
-import org.spazzinq.flightcontrol.multiversion.legacy.WorldGuardHook6;
+import org.spazzinq.flightcontrol.multiversion.old.FactionsUUIDHook;
+import org.spazzinq.flightcontrol.multiversion.old.WorldGuardHook6;
 import org.spazzinq.flightcontrol.placeholder.ClipPlaceholder;
 import org.spazzinq.flightcontrol.placeholder.MVdWPlaceholder;
 
@@ -61,22 +61,6 @@ public class HookManager {
         loadFactionsHook();
         loadPlaceholderHooks();
 
-        if (pluginLoading("PlotSquared")) {
-            String version = pm.getPlugin("PlotSquared").getDescription().getVersion().split("\\.")[0];
-            switch (version) {
-                case "5":
-                    // Do nothing (support added in breaking)
-                    break;
-                case "4":
-                    plotHook = new PlotSquaredFourHook();
-                    break;
-                default:
-                    plotHook = new PlotSquaredThreeHook();
-                    break;
-            }
-
-            plotHook = is1_13 ? new PlotSquaredFourHook() : new PlotSquaredThreeHook();
-        }
         if (pluginLoading("WorldGuard")) {
             worldGuardHook = is1_13 ? new WorldGuardHook7() : new WorldGuardHook6();
         }

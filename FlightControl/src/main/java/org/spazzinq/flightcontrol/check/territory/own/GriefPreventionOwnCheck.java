@@ -22,37 +22,17 @@
  * SOFTWARE.
  */
 
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/griefprevention/GriefPreventionHook.java
-package org.spazzinq.flightcontrol.hook.griefprevention;
-=======
 package org.spazzinq.flightcontrol.check.territory.own;
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/territory/own/GriefPreventionOwnCheck.java
 
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/griefprevention/GriefPreventionHook.java
-public final class GriefPreventionHook extends GriefPreventionHookBase {
-    @Override public boolean claimIsOwn(Location location, Player player) {
-        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
-=======
 public final class GriefPreventionOwnCheck extends TerritoryCheck {
     @Override public boolean check(Player p) {
         Claim claim = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/territory/own/GriefPreventionOwnCheck.java
 
-        return claim != null && player.getUniqueId().equals(claim.ownerID);
+        return claim != null && p.getUniqueId().equals(claim.ownerID);
     }
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/griefprevention/GriefPreventionHook.java
-
-    @Override public boolean claimIsTrusted(Location location, Player player) {
-        Claim claim = GriefPrevention.instance.dataStore.getClaimAt(location, true, null);
-
-        return claim != null && claim.allowAccess(player) == null;
-    }
-=======
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/territory/own/GriefPreventionOwnCheck.java
 }

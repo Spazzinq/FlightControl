@@ -34,7 +34,10 @@ import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ConfManager {
     private final FlightControl pl;

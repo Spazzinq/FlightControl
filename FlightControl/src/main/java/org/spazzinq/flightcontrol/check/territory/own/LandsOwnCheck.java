@@ -22,11 +22,7 @@
  * SOFTWARE.
  */
 
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/lands/LandsHook.java
-package org.spazzinq.flightcontrol.hook.lands;
-=======
 package org.spazzinq.flightcontrol.check.territory.own;
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/territory/own/LandsOwnCheck.java
 
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.Land;
@@ -34,24 +30,14 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/lands/LandsHook.java
-import java.util.UUID;
-
-public final class LandsHook extends LandsHookBase {
-=======
 public final class LandsOwnCheck extends TerritoryCheck {
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/territory/own/LandsOwnCheck.java
     private final LandsIntegration landsIntegration;
 
     public LandsOwnCheck(FlightControl pl) {
         landsIntegration = new LandsIntegration(pl);
     }
 
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/lands/LandsHook.java
-    @Override public boolean landsIsOwn(Player p) {
-=======
     @Override public boolean check(Player p) {
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/territory/own/LandsOwnCheck.java
         Land land = landsIntegration.getLand(p.getLocation());
 
         // Debug
@@ -66,19 +52,4 @@ public final class LandsOwnCheck extends TerritoryCheck {
 
         return land != null && p.getUniqueId().equals(land.getOwnerUID());
     }
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/lands/LandsHook.java
-
-    @Override public boolean landsIsTrusted(Player p) {
-        Land land = landsIntegration.getLand(p.getLocation());
-
-        return land != null && land.getTrustedPlayers().contains(p.getUniqueId());
-    }
-
-    @Override public UUID getOwnerUUID(Location location) {
-        Land land = landsIntegration.getLand(location);
-
-        return land != null ? land.getOwnerUID() : null;
-    }
-=======
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/territory/own/LandsOwnCheck.java
 }

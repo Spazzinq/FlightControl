@@ -25,10 +25,6 @@
 package org.spazzinq.flightcontrol.multiversion;
 
 import org.bukkit.Location;
-import org.bukkit.World;
-
-import java.util.Collections;
-import java.util.Set;
 
 @SuppressWarnings("unused")
 public class WorldGuardHookBase extends Hook {

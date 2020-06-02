@@ -22,24 +22,11 @@
  * SOFTWARE.
  */
 
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/towny/TownyHookBase.java
-package org.spazzinq.flightcontrol.hook.towny;
-=======
 package org.spazzinq.flightcontrol.check;
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/Check.java
 
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.object.Cause;
 
-<<<<<<< HEAD:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/towny/TownyHookBase.java
-public class TownyHookBase extends Hook {
-    public boolean townyOwn(Player p) {
-        return false;
-    }
-
-    public boolean wartime() {
-        return false;
-=======
 public abstract class Check {
     public abstract boolean check(Player p);
 
@@ -47,6 +34,5 @@ public abstract class Check {
 
     @Override public String toString() {
         return getClass().getSimpleName();
->>>>>>> breaking:FlightControl/src/main/java/org/spazzinq/flightcontrol/check/Check.java
     }
 }

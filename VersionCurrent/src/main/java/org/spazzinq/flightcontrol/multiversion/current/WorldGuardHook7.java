@@ -30,11 +30,9 @@ import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 
 import java.util.Iterator;
-import java.util.Set;
 
 @SuppressWarnings("ALL")
 public class WorldGuardHook7 extends WorldGuardHookBase {
