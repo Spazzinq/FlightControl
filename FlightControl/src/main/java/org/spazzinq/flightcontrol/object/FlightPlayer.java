@@ -26,17 +26,24 @@ package org.spazzinq.flightcontrol.object;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.io.IOException;
+
 public class FlightPlayer {
-    @Getter private final CommentConf data;
+    private final File dataFile;
+    @Getter private final YamlConfiguration data;
     private final Player player;
 
     @Getter private float actualFlightSpeed;
     @Setter private boolean trail;
     @Getter private Long tempFlyEnd;
 
-    public FlightPlayer(CommentConf data, Player player, float actualFlightSpeed, boolean trail, Long tempFlyEnd) {
+    public FlightPlayer(File dataFile, YamlConfiguration data, Player player, float actualFlightSpeed, boolean trail, Long tempFlyEnd) {
+        this.dataFile = dataFile;
         this.data = data;
         this.player = player;
         // Don't store speed in data conf if not personal for player
@@ -49,11 +56,11 @@ public class FlightPlayer {
         return trail;
     }
 
-    public boolean toggleTrail() {
+    @SneakyThrows public boolean toggleTrail() {
         trail = !trail;
 
         data.set("trail", trail);
-        data.save();
+        data.save(dataFile);
 
         return trail;
     }
@@ -66,7 +73,7 @@ public class FlightPlayer {
         return tempFlyEnd != null;
     }
 
-    public void setTempFly(Long tempFlyEnd) {
+    @SneakyThrows public void setTempFly(Long tempFlyEnd) {
         Long finalTempFlyEnd = tempFlyEnd;
 
         if (finalTempFlyEnd != null && finalTempFlyEnd <= System.currentTimeMillis()) {
@@ -77,15 +84,15 @@ public class FlightPlayer {
         // Prevent NPE for data migration
         if (data != null) {
             data.set("temp_fly", finalTempFlyEnd);
-            data.save();
+            data.save(dataFile);
         }
     }
 
-    public void setActualFlightSpeed(float actualFlightSpeed) {
+    @SneakyThrows public void setActualFlightSpeed(float actualFlightSpeed) {
         this.actualFlightSpeed = actualFlightSpeed;
 
         data.set("flight_speed", actualFlightSpeed);
-        data.save();
+        data.save(dataFile);
 
         player.setFlySpeed(actualFlightSpeed);
     }
