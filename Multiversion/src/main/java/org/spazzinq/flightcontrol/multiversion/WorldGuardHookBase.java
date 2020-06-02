@@ -35,8 +35,4 @@ public class WorldGuardHookBase extends Hook {
     public String getRegionName(Location l) {
         return null;
     }
-
-    public Set<String> getRegionNames(World w) {
-        return Collections.emptySet();
-    }
 }

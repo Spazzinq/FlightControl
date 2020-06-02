@@ -42,8 +42,4 @@ public class WorldGuardHook6 extends WorldGuardHookBase {
         }
         return "none";
     }
-
-    public Set<String> getRegionNames(World world) {
-        return WGBukkit.getRegionManager(world).getRegions().keySet();
-    }
 }

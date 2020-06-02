@@ -50,10 +50,6 @@ public class WorldGuardHook7 extends WorldGuardHookBase {
         return "none";
     }
 
-    public Set<String> getRegionNames(World w) {
-        return getRegionContainer().get(BukkitAdapter.adapt(w)).getRegions().keySet();
-    }
-
     private RegionContainer getRegionContainer() {
         if (platform == null) {
             try {

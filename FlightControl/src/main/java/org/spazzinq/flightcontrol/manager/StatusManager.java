@@ -71,6 +71,10 @@ public class StatusManager {
             String worldName = p.getWorld().getName();
             String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
 
+            if (regionName != null) { // Register new regions dynamically
+                pl.registerDefaultPerms(worldName + "." + regionName);
+            }
+
             if (hasPermissionFly(p, worldName)
                     || regionName != null && hasPermissionFly(p, worldName + "." + regionName)) {
                 trueChecks.add(DummyPermissionCheck.getInstance());
@@ -85,7 +89,7 @@ public class StatusManager {
 
             falseChecks.removeAll(trueChecks);
 
-            MessageUtil.msg(s, "&e&lEnable\n&aTrue&f:" + trueChecks + "\n&cFalse&f:" + falseChecks);
+            MessageUtil.msg(s, "&e&lEnable\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
         }
 
         return !trueChecks.isEmpty();
@@ -122,7 +126,7 @@ public class StatusManager {
 
             falseChecks.removeAll(trueChecks);
 
-            MessageUtil.msg(s, "&e&lOverride\n&aTrue&f:" + trueChecks + "\n&cFalse&f:" + falseChecks);
+            MessageUtil.msg(s, "&e&lOverride\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
         }
 
         return !trueChecks.isEmpty();

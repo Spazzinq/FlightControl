@@ -32,6 +32,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.objects.Sound;
@@ -161,15 +162,9 @@ final class EventListener implements org.bukkit.event.Listener {
         }
     }
 
-    // On-the-fly permission management
-    @EventHandler private void onWorldLoad(WorldLoadEvent e) {
-        World world = e.getWorld();
-        String worldName = world.getName();
-
-        pl.registerDefaultPerms(worldName);
-
-        for (String regionName : pl.getHookManager().getWorldGuardHook().getRegionNames(world)) {
-            pl.registerDefaultPerms(worldName + "." + regionName);
-        }
+    // On-the-fly world permission management
+    // Note: does not take care of initial server start because of "load: POSTWORLD" in plugin.yml
+    @EventHandler private void onWorldInit(WorldInitEvent e) {
+        pl.registerDefaultPerms(e.getWorld().getName());
     }
 }
