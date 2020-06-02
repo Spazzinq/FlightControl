@@ -59,12 +59,6 @@ public class ConfManager {
     @Getter @Setter private boolean everyEnable;
     @Getter @Setter private boolean everyDisable;
 
-    @Getter @Setter private boolean townyOwn;
-    @Getter @Setter private boolean townyWarDisable;
-    @Getter @Setter private boolean landsOwnEnable;
-    @Getter @Setter private boolean landsIncludeTrusted;
-    @Getter @Setter private boolean gpClaimOwnEnable;
-    @Getter @Setter private boolean gpClaimIncludeTrusted;
     @Getter @Setter private boolean nearbyCheck;
     @Getter @Setter private boolean isNearbyCheckEnemies;
     @Getter @Setter private double nearbyRangeSquared;
@@ -93,13 +87,6 @@ public class ConfManager {
             combatChecked = conf.getBoolean("settings.disable_flight_in_combat");
             cancelFall = conf.getBoolean("settings.prevent_fall_damage");
             vanishBypass = conf.getBoolean("settings.vanish_bypass");
-
-            townyOwn = conf.getBoolean("territory.towny.enable_own_town");
-            townyWarDisable = conf.getBoolean("territory.towny.negate_during_war");
-            landsOwnEnable = conf.getBoolean("territory.lands.enable_own_land");
-            landsIncludeTrusted = conf.getBoolean("territory.lands.include_trusted");
-            gpClaimOwnEnable = conf.getBoolean("territory.griefprevention.enable_own_claim");
-            gpClaimIncludeTrusted = conf.getBoolean("territory.griefprevention.include_trusted");
 
             // ints
             int range = conf.getInt("nearby_disable.range");
@@ -138,6 +125,7 @@ public class ConfManager {
         if (conf.isConfigurationSection("messages")) {
             pl.getLogger().info("Removed the messages section from config.yml!");
             conf.deleteNode("messages");
+
             modified = true;
         }
 
@@ -182,6 +170,13 @@ public class ConfManager {
 
             conf.addSubnodes(new HashSet<>(Collections.singleton("include_trusted: false")), "territory" +
                     ".griefprevention.enable_own_claim");
+
+            modified = true;
+        }
+
+        // 4.5.0 - remove "territory"
+        if (conf.isConfigurationSection("territory")) {
+            conf.deleteNode("territory");
 
             modified = true;
         }

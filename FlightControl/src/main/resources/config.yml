@@ -38,24 +38,6 @@ nearby_disable:
   # Makes the "range" setting only for faction enemies
   factions_enemy: true
 
-# TODO Remove
-territory:
-  # Requires Towny plugin
-  towny:
-    enable_own_town: false
-    # Ignores above setting if in a war
-    negate_during_war: false
-  # Requires Lands plugin
-  lands:
-    enable_own_land: false
-    # Includes trusted people for "enable_own_land"
-    include_trusted: false
-  # Requires GriefPrevention plugin
-  griefprevention:
-    enable_own_claim: false
-    # Includes trusted people for "enable_own_claim"
-    include_trusted: false
-
 trail:
   enabled: false
   # 1.8 Particle Info: https://spazzinq.org/flightcontrol/particles/1
