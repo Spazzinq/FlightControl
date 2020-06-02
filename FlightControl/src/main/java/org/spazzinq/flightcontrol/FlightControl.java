@@ -158,10 +158,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
      * Loads config data, relevant checks, categories, and player data.
      */
     public void load() {
-        for (World world : Bukkit.getWorlds()) {
-            registerDefaultPerms(world.getName());
-        }
-
         confManager.loadConf();
         langManager.loadLang();
         // Allow for any necessary config migration from previous versions

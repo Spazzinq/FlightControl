@@ -54,7 +54,6 @@ public class StatusManager {
         return checkDisable(p, null);
     }
 
-    // TODO Add simple debug then ALL eval debug in FC main class
     public boolean checkEnable(Player p, CommandSender s) {
         boolean debug = s != null;
 
@@ -62,16 +61,17 @@ public class StatusManager {
         HashSet<Check> trueChecks = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().getEnabled(), p, debug);
 
         // Eval category CheckSet
-        if (!trueChecks.isEmpty() || debug) {
+        if (trueChecks.isEmpty() || debug) {
             Category category = pl.getCategoryManager().getCategory(p);
             trueChecks.addAll(CheckUtil.checkAll(category.getChecks().getEnabled(), p, debug));
         }
 
         // Eval permissions
-        if (!trueChecks.isEmpty() || debug) {
+        if (trueChecks.isEmpty() || debug) {
             String worldName = p.getWorld().getName();
             String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
 
+            pl.registerDefaultPerms(worldName);
             if (regionName != null) { // Register new regions dynamically
                 pl.registerDefaultPerms(worldName + "." + regionName);
             }
@@ -79,8 +79,9 @@ public class StatusManager {
             if (hasPermissionFly(p, worldName)) {
                 trueChecks.add(WorldPermissionCheck.getInstance());
             }
+
             // Allow debug to still eval
-            if ((!trueChecks.isEmpty() || debug)
+            if ((trueChecks.isEmpty() || debug)
                     && regionName != null && hasPermissionFly(p, worldName + "." + regionName)) {
                 trueChecks.add(RegionPermissionCheck.getInstance());
             }
@@ -88,9 +89,11 @@ public class StatusManager {
 
         if (debug) {
             Category category = pl.getCategoryManager().getCategory(p);
-            HashSet<Check> falseChecks = pl.getCheckManager().getAlwaysChecks().getEnabled();
+            HashSet<Check> falseChecks = new HashSet<>();
+            falseChecks.addAll(pl.getCheckManager().getAlwaysChecks().getEnabled());
             falseChecks.addAll(category.getChecks().getEnabled());
             falseChecks.add(WorldPermissionCheck.getInstance());
+            falseChecks.add(RegionPermissionCheck.getInstance());
 
             falseChecks.removeAll(trueChecks);
 
@@ -107,21 +110,22 @@ public class StatusManager {
         HashSet<Check> trueChecks = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().getDisabled(), p, debug);
 
         // Eval category CheckSet
-        if (!trueChecks.isEmpty() || debug) {
+        if (trueChecks.isEmpty() || debug) {
             Category category = pl.getCategoryManager().getCategory(p);
             trueChecks.addAll(CheckUtil.checkAll(category.getChecks().getDisabled(), p, debug));
         }
 
         // Eval permissions
-        if (!trueChecks.isEmpty() || debug) {
+        if (trueChecks.isEmpty() || debug) {
             String worldName = p.getWorld().getName();
             String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
 
             if (hasPermissionNoFly(p, worldName)) {
                 trueChecks.add(WorldPermissionCheck.getInstance());
             }
+
             // Allow debug to still eval
-            if ((!trueChecks.isEmpty() || debug)
+            if ((trueChecks.isEmpty() || debug)
                     && regionName != null && hasPermissionNoFly(p, worldName + "." + regionName)) {
                 trueChecks.add(RegionPermissionCheck.getInstance());
             }
@@ -129,9 +133,11 @@ public class StatusManager {
 
         if (debug) {
             Category category = pl.getCategoryManager().getCategory(p);
-            HashSet<Check> falseChecks = pl.getCheckManager().getAlwaysChecks().getDisabled();
+            HashSet<Check> falseChecks = new HashSet<>();
+            falseChecks.addAll(pl.getCheckManager().getAlwaysChecks().getDisabled());
             falseChecks.addAll(category.getChecks().getDisabled());
             falseChecks.add(WorldPermissionCheck.getInstance());
+            falseChecks.add(RegionPermissionCheck.getInstance());
 
             falseChecks.removeAll(trueChecks);
 

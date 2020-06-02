@@ -53,7 +53,11 @@ final class EventListener implements org.bukkit.event.Listener {
         if (e.getFrom().getBlockX() != e.getTo().getBlockX()
                 || e.getFrom().getBlockY() != e.getTo().getBlockY()
                 || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
-            pl.getFlightManager().check(e.getPlayer());
+            new BukkitRunnable() {
+                @Override public void run() {
+                    pl.getFlightManager().check(e.getPlayer());
+                }
+            }.runTask(pl);
         }
     }
 
