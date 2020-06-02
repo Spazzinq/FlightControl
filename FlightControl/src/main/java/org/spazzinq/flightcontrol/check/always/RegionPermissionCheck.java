@@ -22,36 +22,28 @@
  * SOFTWARE.
  */
 
-allprojects {
-    group = 'org.spazzinq'
-    version = '4.5.5-BETA'
-}
+package org.spazzinq.flightcontrol.check.always;
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.Cause;
 
-    sourceCompatibility = '1.8'
+public class RegionPermissionCheck extends Check {
+    private static RegionPermissionCheck instance;
 
-    repositories {
-        mavenCentral()
-        // Spigot
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats, CombatLogX, [BentoBox doesn't work]
-        maven { url = 'https://repo.codemc.io/repository/maven-public/' }
-        // WorldEdit, WorldGuard
-        maven { url = 'https://maven.sk89q.com/repo/' }
-        // Essentials, FactionsUUID
-        maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
-        // PlotSquared
-        maven { url = 'https://plotsquared.com/mvn/' }
-        // CrazyEnchantments
-        maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PvPManager
-        maven { url = 'https://jitpack.io' }
-        // PlaceholderAPI
-        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-        // MVdWPlaceholderAPI
-        maven { url = 'https://repo.mvdw-software.com/content/groups/public/' }
+    @Override public boolean check(Player p) {
+        return true;
+    }
+
+    @Override public Cause getCause() {
+        return Cause.PERMISSION_REGION;
+    }
+
+    public static RegionPermissionCheck getInstance() {
+        if (instance == null) {
+            instance = new RegionPermissionCheck();
+        }
+
+        return instance;
     }
 }

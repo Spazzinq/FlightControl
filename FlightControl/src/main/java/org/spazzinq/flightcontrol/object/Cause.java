@@ -28,9 +28,9 @@ public enum Cause {
     // Bypass and trail Checks
     BYPASS_PERMISSION, INVISIBILITY_POTION, SPECTATOR_MODE, VANISH,
     // Always enable Checks
-    ENCHANT, FLY_ALL, TEMP_FLY,
+    ENCHANT, FLY_ALL, TEMP_FLY, PERMISSION_REGION, PERMISSION_WORLD,
     // Always disable Checks
     COMBAT, NEARBY,
     // Category specific Checks
-    CATEGORY, PERMISSION, TERRITORY;
+    CATEGORY, TERRITORY;
 }

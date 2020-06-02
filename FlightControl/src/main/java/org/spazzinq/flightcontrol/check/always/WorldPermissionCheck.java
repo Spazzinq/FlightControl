@@ -28,20 +28,20 @@ import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
 
-public class DummyPermissionCheck extends Check {
-    private static DummyPermissionCheck instance;
+public class WorldPermissionCheck extends Check {
+    private static WorldPermissionCheck instance;
 
     @Override public boolean check(Player p) {
         return true;
     }
 
     @Override public Cause getCause() {
-        return Cause.PERMISSION;
+        return Cause.PERMISSION_WORLD;
     }
 
-    public static DummyPermissionCheck getInstance() {
+    public static WorldPermissionCheck getInstance() {
         if (instance == null) {
-            instance = new DummyPermissionCheck();
+            instance = new WorldPermissionCheck();
         }
 
         return instance;

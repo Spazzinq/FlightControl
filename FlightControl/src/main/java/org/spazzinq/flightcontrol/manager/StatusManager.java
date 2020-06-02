@@ -28,7 +28,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.check.always.DummyPermissionCheck;
+import org.spazzinq.flightcontrol.check.always.RegionPermissionCheck;
+import org.spazzinq.flightcontrol.check.always.WorldPermissionCheck;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.util.CheckUtil;
 import org.spazzinq.flightcontrol.util.MessageUtil;
@@ -75,9 +76,13 @@ public class StatusManager {
                 pl.registerDefaultPerms(worldName + "." + regionName);
             }
 
-            if (hasPermissionFly(p, worldName)
-                    || regionName != null && hasPermissionFly(p, worldName + "." + regionName)) {
-                trueChecks.add(DummyPermissionCheck.getInstance());
+            if (hasPermissionFly(p, worldName)) {
+                trueChecks.add(WorldPermissionCheck.getInstance());
+            }
+            // Allow debug to still eval
+            if ((!trueChecks.isEmpty() || debug)
+                    && regionName != null && hasPermissionFly(p, worldName + "." + regionName)) {
+                trueChecks.add(RegionPermissionCheck.getInstance());
             }
         }
 
@@ -85,7 +90,7 @@ public class StatusManager {
             Category category = pl.getCategoryManager().getCategory(p);
             HashSet<Check> falseChecks = pl.getCheckManager().getAlwaysChecks().getEnabled();
             falseChecks.addAll(category.getChecks().getEnabled());
-            falseChecks.add(DummyPermissionCheck.getInstance());
+            falseChecks.add(WorldPermissionCheck.getInstance());
 
             falseChecks.removeAll(trueChecks);
 
@@ -112,9 +117,13 @@ public class StatusManager {
             String worldName = p.getWorld().getName();
             String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
 
-            if (hasPermissionNoFly(p, worldName)
-                    || regionName != null && hasPermissionNoFly(p, worldName + "." + regionName)) {
-                trueChecks.add(DummyPermissionCheck.getInstance());
+            if (hasPermissionNoFly(p, worldName)) {
+                trueChecks.add(WorldPermissionCheck.getInstance());
+            }
+            // Allow debug to still eval
+            if ((!trueChecks.isEmpty() || debug)
+                    && regionName != null && hasPermissionNoFly(p, worldName + "." + regionName)) {
+                trueChecks.add(RegionPermissionCheck.getInstance());
             }
         }
 
@@ -122,7 +131,7 @@ public class StatusManager {
             Category category = pl.getCategoryManager().getCategory(p);
             HashSet<Check> falseChecks = pl.getCheckManager().getAlwaysChecks().getDisabled();
             falseChecks.addAll(category.getChecks().getDisabled());
-            falseChecks.add(DummyPermissionCheck.getInstance());
+            falseChecks.add(WorldPermissionCheck.getInstance());
 
             falseChecks.removeAll(trueChecks);
 
