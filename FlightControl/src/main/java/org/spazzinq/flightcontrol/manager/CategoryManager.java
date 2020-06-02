@@ -24,6 +24,7 @@
 
 package org.spazzinq.flightcontrol.manager;
 
+import com.google.common.io.Files;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -46,8 +47,10 @@ import org.spazzinq.flightcontrol.object.DualStore;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.TreeMap;
 
 public class CategoryManager {
@@ -56,7 +59,7 @@ public class CategoryManager {
 
     @Getter private CommentConf conf;
     @Getter private final File categoryFile;
-    private final ArrayList<Category> categories = new ArrayList<>();
+    @Getter private final ArrayList<Category> categories = new ArrayList<>();
     @Getter private Category global;
 
     public CategoryManager(FlightControl pl) {
@@ -70,6 +73,11 @@ public class CategoryManager {
 
         global = null;
         categories.clear();
+
+        // Remove the old global territory
+        if (!conf.isConfigurationSection("global.territory")) {
+            migrateFromVersion4();
+        }
 
         global = loadCategory("global", conf.getConfigurationSection("global"));
         ConfigurationSection categoriesSection = conf.getConfigurationSection("categories");
@@ -103,48 +111,32 @@ public class CategoryManager {
         return new Category(name, checks, worlds, regions, factions, ownTerritories, trustedTerritories, priority);
     }
 
-    private DualStore<Check> loadTerritoryTypes(String categoryName, ConfigurationSection territorySection, DualStore<Check> checks, String type) {
-        DualStore<Check> territories = new DualStore<>();
-        TreeMap<String, TerritoryCheck> territoryChecks = "own".equals(type) ? pl.getCheckManager().getOwnTerritoryChecks() : pl.getCheckManager().getTrustedTerritoryChecks();
-
-        if (territorySection != null) {
-            ConfigurationSection enable = territorySection.getConfigurationSection("enable");
-            ConfigurationSection disable = territorySection.getConfigurationSection("disable");
-
-            if (enable != null && enable.isList(type)) {
-                for (String territory : enable.getStringList(type)) {
-                    territories.addEnabled(territoryChecks.get(territory));
-                }
-            }
-
-            if (disable != null && disable.isList(type)) {
-                for (String territory : disable.getStringList(type)) {
-                    territories.addDisabled(territoryChecks.get(territory));
-                }
-            }
-        }
-
-        checks.addEnabled(territories.getEnabled());
-        checks.addDisabled(territories.getDisabled());
-
-        return territories;
-    }
-
     private DualStore<World> loadWorlds(String categoryName, ConfigurationSection worldsSection, DualStore<Check> checks) {
         DualStore<World> worlds = new DualStore<>();
 
         if (worldsSection != null) {
-            for (String worldName : worldsSection.getKeys(false)) {
-                World world = Bukkit.getWorld(worldName);
-                if (world == null) {
-                    nonexistent(categoryName, "worlds", "world", worldName);
-                } else {
-                    // If true, then enabled
-                    //    false, then disabled
-                    if (worldsSection.getBoolean(worldName)) {
-                        worlds.addEnabled(world);
-                    } else {
+            List<String> enable = worldsSection.getStringList("enable");
+            List<String> disable = worldsSection.getStringList("disable");
+
+            if (enable != null) {
+               for (String worldName : enable) {
+                   World world = Bukkit.getWorld(worldName);
+
+                   if (world != null) {
+                       worlds.addEnabled(world);
+                   } else {
+                       nonexistent(categoryName, "worlds", "enabled world", worldName);
+                   }
+               }
+            }
+            if (disable != null) {
+                for (String worldName : disable) {
+                    World world = Bukkit.getWorld(worldName);
+
+                    if (world != null) {
                         worlds.addDisabled(world);
+                    } else {
+                        nonexistent(categoryName, "worlds", "disabled world", worldName);
                     }
                 }
             }
@@ -165,21 +157,30 @@ public class CategoryManager {
         DualStore<Region> regions = new DualStore<>();
 
         if (regionsSection != null) {
-            // RegionID is formatted like WORLDNAME+REGIONNAME
-            for (String regionID : regionsSection.getKeys(false)) {
-                String[] regionData = regionID.split("\\+");
-                String worldName = regionData[0];
-                Region region = new Region(Bukkit.getWorld(worldName), regionData[1]);
+            ConfigurationSection enable = regionsSection.getConfigurationSection("enable");
+            ConfigurationSection disable = regionsSection.getConfigurationSection("disable");
 
-                if (region.getWorld() == null) {
-                    nonexistent(categoryName, "regions", "world", worldName);
-                } else {
-                    // If true, then enabled
-                    //    false, then disabled
-                    if (regionsSection.getBoolean(regionID)) {
-                        regions.addEnabled(region);
+            if (enable != null) {
+                for (String worldName : enable.getKeys(false)) {
+                    World world = Bukkit.getWorld(worldName);
+
+                    if (world != null) {
+                        for (String regionName : enable.getStringList(worldName)) {
+                            regions.addEnabled(new Region(world, regionName));
+                        }
                     } else {
-                        regions.addDisabled(region);
+                        nonexistent(categoryName, "regions", "enabled world", worldName);
+                    }
+                }
+            }
+            if (disable != null) {
+                for (String worldName : disable.getKeys(false)) {
+                    if (Bukkit.getWorld(worldName) != null) {
+                        for (String regionName : disable.getStringList(worldName)) {
+                            regions.addDisabled(new Region(Bukkit.getWorld(worldName), regionName));
+                        }
+                    } else {
+                        nonexistent(categoryName, "regions", "disabled world", worldName);
                     }
                 }
             }
@@ -191,6 +192,7 @@ public class CategoryManager {
                 checks.addDisabled(new CategoryRegionCheck(pl.getHookManager().getWorldGuardHook(), regions.getDisabled()));
             }
         }
+
         return regions;
     }
 
@@ -226,6 +228,33 @@ public class CategoryManager {
         return factions;
     }
 
+    private DualStore<Check> loadTerritoryTypes(String categoryName, ConfigurationSection territorySection, DualStore<Check> checks, String type) {
+        DualStore<Check> territories = new DualStore<>();
+        TreeMap<String, TerritoryCheck> territoryChecks = "own".equals(type) ? pl.getCheckManager().getOwnTerritoryChecks() : pl.getCheckManager().getTrustedTerritoryChecks();
+
+        if (territorySection != null) {
+            ConfigurationSection enable = territorySection.getConfigurationSection("enable");
+            ConfigurationSection disable = territorySection.getConfigurationSection("disable");
+
+            if (enable != null && enable.isList(type)) {
+                for (String territory : enable.getStringList(type)) {
+                    territories.addEnabled(territoryChecks.get(territory));
+                }
+            }
+
+            if (disable != null && disable.isList(type)) {
+                for (String territory : disable.getStringList(type)) {
+                    territories.addDisabled(territoryChecks.get(territory));
+                }
+            }
+        }
+
+        checks.addEnabled(territories.getEnabled());
+        checks.addDisabled(territories.getDisabled());
+
+        return territories;
+    }
+
     private void nonexistent(String category, String section, String type, String error) {
         // Ignore examples
         if (!error.contains("WORLDNAME")) {
@@ -245,7 +274,13 @@ public class CategoryManager {
         return pl.getCategoryManager().getGlobal();
     }
 
-    public ArrayList<Category> getCategories() {
-        return categories;
+    private void migrateFromVersion4() {
+        try {
+            //noinspection UnstableApiUsage
+            Files.move(categoryFile, new File(pl.getDataFolder(), "categories_old.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        loadCategories();
     }
 }
