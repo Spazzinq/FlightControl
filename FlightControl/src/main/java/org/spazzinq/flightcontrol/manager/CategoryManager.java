@@ -275,6 +275,7 @@ public class CategoryManager {
     }
 
     private void migrateFromVersion4() {
+        pl.getLogger().severe("The categories.yml was updated to a new format, and FlightControl could not migrate the data. Please reconfigure your categories.yml!");
         try {
             //noinspection UnstableApiUsage
             Files.move(categoryFile, new File(pl.getDataFolder(), "categories_old.yml"));

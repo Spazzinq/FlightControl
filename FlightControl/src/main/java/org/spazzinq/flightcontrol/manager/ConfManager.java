@@ -131,19 +131,7 @@ public class ConfManager {
 
         // 4.2.5 - relocate lands, towny; add griefprevention
         if (conf.isConfigurationSection("towny") || conf.isConfigurationSection("lands")) {
-            pl.getLogger().info("Migrated the towny and lands section of the configuration!");
-
-            conf.addNode("territory:", "trail");
-            conf.addSubnodes(new HashSet<>(Arrays.asList("towny:", "lands:", "griefprevention:")), "territory");
-            conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
-                    "enable_own_town: " + conf.getBoolean("towny.enable_own_town"),
-                    "negate_during_war: " + conf.getBoolean("towny.negate_during_war"))), "territory.towny");
-            conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
-                    "enable_own_land: " + conf.getBoolean("lands.enable_own_land"),
-                    "include_trusted: " + conf.getBoolean("lands.include_trusted", false))), "territory.lands");
-            conf.addIndentedSubnodes(new HashSet<>(Collections.singletonList("enable_own_claim: false")), "territory" +
-                    ".griefprevention");
-
+            pl.getLogger().info("Territories have migrated to the categories.yml!");
             conf.deleteNode("towny");
             conf.deleteNode("lands");
 
@@ -164,18 +152,9 @@ public class ConfManager {
             modified = true;
         }
 
-        // 4.3.8 - add trusted to GriefPrevention section
-        if (!conf.isBoolean("territory.griefprevention.include_trusted")) {
-            pl.getLogger().info("Added \"include_trusted\" to the GriefPrevention section of the config!");
-
-            conf.addSubnodes(new HashSet<>(Collections.singleton("include_trusted: false")), "territory" +
-                    ".griefprevention.enable_own_claim");
-
-            modified = true;
-        }
-
         // 4.5.0 - remove "territory"
         if (conf.isConfigurationSection("territory")) {
+            pl.getLogger().info("Territories have migrated to the categories.yml!");
             conf.deleteNode("territory");
 
             modified = true;
