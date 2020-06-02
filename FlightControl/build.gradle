@@ -28,7 +28,7 @@ plugins {
 }
 
 dependencies {
-    implementation 'org.bstats:bstats-bukkit-lite:1.5'
+    implementation 'org.bstats:bstats-bukkit-lite:1.7'
     implementation project(':API')
     implementation project(':Multiversion')
     implementation project(':VersionOld')
@@ -47,14 +47,18 @@ dependencies {
     compileOnly 'com.plotsquared:plotsquared-api:3.1'
     compileOnly 'com.github.intellectualsites.plotsquared:PlotSquared-API:4.514'
     compileOnly 'com.plotsquared:PlotSquared:5.1'
-    compileOnly 'com.github.Angeschossen:LandsAPI:4.5.0.7'
+    compileOnly 'com.github.Angeschossen:LandsAPI:4.5.9.9'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.13.0'
     compileOnly 'com.SirBlobman.combatlogx:CombatLogX-API:10.0.0.0-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.10.6'
     compileOnly ('be.maximvdw:MVdWPlaceholderAPI:3.0.1-SNAPSHOT') {
         exclude group: 'org.spigotmc', module: 'spigot'
     }
+    compileOnly 'com.github.NoChanceSD.PvPManager:PvPManager:3.7'
+//    compileOnly 'world.bentobox:bentobox:1.13.1'
 
+    compileOnly files('../lib/BentoBox-1.13.1.jar')
+    compileOnly files('../lib/RedProtect-7.6.6-b307-Universal.jar')
     compileOnly files('../lib/CombatLogX-9.9.3.1.jar')
     compileOnly files('../lib/DeluxeCombat_v.1.14.2.jar')
     compileOnly files('../lib/DummyCombatTagPlus.jar')
@@ -66,7 +70,7 @@ dependencies {
 
 processResources {
     eachFile { details ->
-        if (details.name.endsWith('.yml')) { // or whatever pattern/criteria is appropriate
+        if (details.name.endsWith('.yml')) {
             filter {
                 String line -> line.replaceAll('\\$\\{revision}', version.toString())
             }

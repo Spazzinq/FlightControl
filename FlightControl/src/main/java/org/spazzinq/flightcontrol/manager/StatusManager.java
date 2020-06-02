@@ -24,205 +24,111 @@
 
 package org.spazzinq.flightcontrol.manager;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.api.objects.Region;
-import org.spazzinq.flightcontrol.multiversion.FactionRelation;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.check.always.DummyPermissionCheck;
 import org.spazzinq.flightcontrol.object.Category;
-import org.spazzinq.flightcontrol.object.Evaluation;
+import org.spazzinq.flightcontrol.util.CheckUtil;
 import org.spazzinq.flightcontrol.util.MessageUtil;
 
 import java.util.HashSet;
 
-import static org.spazzinq.flightcontrol.object.FlyPermission.*;
-import static org.spazzinq.flightcontrol.util.PlayerUtil.*;
+import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionFly;
+import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionNoFly;
 
 public class StatusManager {
-    private final FlightControl pl;
-
-    private static final String[] debugEnableTitles = {
-            "World",
-            "Region",
-            "Factions",
-            "CrazyEnchants",
-            "PlotSquared",
-            "Towny: Own",
-            "Lands: Own",
-            "Lands: Trusted",
-            "GriefPrevention: Own",
-            "GriefPrevention: Trusted",
-            "Permission: ALL",
-            "Permission: World",
-            "Permission: Region",
-            "Tempfly"
-    };
-
-    private static final String[] debugDisableTitles = {
-            "World",
-            "Region",
-            "Factions",
-            "Combat",
-            "PlotSquared",
-            "Nearby",
-            "Permission: World",
-            "Permission: Region"
-    };
+    FlightControl pl;
 
     public StatusManager(FlightControl pl) {
         this.pl = pl;
     }
 
-    public Evaluation evalFlight(Player p, Location l) {
-        return evalFlight(p, l, false, null);
+    public boolean checkEnable(Player p) {
+        return checkEnable(p, null);
     }
 
-    public Evaluation evalFlight(Player p, Location l, boolean debug, CommandSender debugRecipient) {
-        World world = l.getWorld();
-        String worldName = world.getName(),
-                regionName = pl.getHookManager().getWorldGuardHook().getRegionName(l);
-        Region region = new Region(world, regionName);
-        Category category = pl.getCategoryManager().getCategory(p);
-        FactionRelation relation = pl.getFactionsManager().getRelationToLocation(p);
+    public boolean checkDisable(Player p) {
+        return checkDisable(p, null);
+    }
 
-        if (regionName != null) { // Register new worlds/regions dynamically
-            pl.registerDefaultPerms(worldName);
-            pl.registerDefaultPerms(worldName + "." + regionName);
+    // TODO Add simple debug then ALL eval debug in FC main class
+    public boolean checkEnable(Player p, CommandSender s) {
+        boolean debug = s != null;
+
+        // Eval always CheckSet
+        HashSet<Check> trueChecks = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().getEnabled(), p, debug);
+
+        // Eval category CheckSet
+        if (!trueChecks.isEmpty() || debug) {
+            Category category = pl.getCategoryManager().getCategory(p);
+            trueChecks.addAll(CheckUtil.checkAll(category.getChecks().getEnabled(), p, debug));
         }
 
-        StringBuilder debugMsg = debug ? new StringBuilder("&e&lEnable\n&f") : null;
+        // Eval permissions
+        if (!trueChecks.isEmpty() || debug) {
+            String worldName = p.getWorld().getName();
+            String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
 
-        boolean enable = oneTrue(debugMsg,
-                /* Category checks */
-                category.enabledContains(world),
-                category.enabledContains(region),
-                category.enabledContains(relation),
+            if (regionName != null) { // Register new regions dynamically
+                pl.registerDefaultPerms(worldName + "." + regionName);
+            }
 
-                /* Hook checks */
-                // CrazyEnchants has Wings
-                pl.getHookManager().getEnchantmentsHook().canFly(p),
-                // PlotSquared has flight flag
-                pl.getHookManager().getPlotHook().canFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ()),
-                // Towny Own
-                (pl.getConfManager().isTownyOwn() || hasPermission(p, TOWNY_OWN))
-                        && pl.getHookManager().getTownyHook().townyOwn(p)
-                        && !(pl.getConfManager().isTownyWarDisable() && pl.getHookManager().getTownyHook().wartime()),
-                // Lands Own
-                (pl.getConfManager().isLandsOwnEnable() || hasPermission(p, LANDS_OWN))
-                        && pl.getHookManager().getLandsHook().landsIsOwn(p),
-                // Lands Trusted
-                (pl.getConfManager().isLandsOwnEnable() && pl.getConfManager().isLandsIncludeTrusted() || hasPermission(p, LANDS_TRUSTED) || landsOwnerHasTrustedPerm(l))
-                        && pl.getHookManager().getLandsHook().landsIsTrusted(p),
-                // GriefPrevention Own
-                (pl.getConfManager().isGpClaimOwnEnable() || hasPermission(p, CLAIM_OWN))
-                        && pl.getHookManager().getGriefPreventionHook().claimIsOwn(l, p),
-                // GriefPrevention Trusted
-                ((pl.getConfManager().isGpClaimOwnEnable() && pl.getConfManager().isGpClaimIncludeTrusted()) || hasPermission(p, CLAIM_TRUSTED))
-                        && pl.getHookManager().getGriefPreventionHook().claimIsTrusted(l, p),
-
-                /* Permission checks */
-                hasPermission(p, FLY_ALL),
-                hasPermissionFly(p, worldName),
-                regionName != null && hasPermissionFly(p, worldName + "." + regionName),
-
-                /* Tempfly check*/
-                pl.getPlayerManager().getFlightPlayer(p).hasTempFly()
-        );
+            if (hasPermissionFly(p, worldName)
+                    || regionName != null && hasPermissionFly(p, worldName + "." + regionName)) {
+                trueChecks.add(DummyPermissionCheck.getInstance());
+            }
+        }
 
         if (debug) {
-            debugMsg.append(" \n&e&lDisable\n&f");
+            Category category = pl.getCategoryManager().getCategory(p);
+            HashSet<Check> falseChecks = pl.getCheckManager().getAlwaysChecks().getEnabled();
+            falseChecks.addAll(category.getChecks().getEnabled());
+            falseChecks.add(DummyPermissionCheck.getInstance());
+
+            falseChecks.removeAll(trueChecks);
+
+            MessageUtil.msg(s, "&e&lEnable\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
         }
 
-        boolean disable = oneTrue(debugMsg,
-                /* Category checks */
-                category.disabledContains(world),
-                category.disabledContains(region),
-                category.disabledContains(relation),
+        return !trueChecks.isEmpty();
+    }
 
-                /* Hook checks */
-                // In combat
-                pl.getHookManager().getCombatHook().tagged(p),
-                // PlotSquared has deny flight flag
-                pl.getHookManager().getPlotHook().cannotFly(worldName, l.getBlockX(), l.getBlockY(), l.getBlockZ()),
-                // Nearby check
-                nearbyCheck(p, l),
+    public boolean checkDisable(Player p, CommandSender s) {
+        boolean debug = s != null;
 
-                /* Permission checks */
-                hasPermissionNoFly(p, worldName),
-                regionName != null && hasPermissionNoFly(p, worldName + "." + regionName)
-        );
+        // Eval always CheckSet
+        HashSet<Check> trueChecks = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().getDisabled(), p, debug);
+
+        // Eval category CheckSet
+        if (!trueChecks.isEmpty() || debug) {
+            Category category = pl.getCategoryManager().getCategory(p);
+            trueChecks.addAll(CheckUtil.checkAll(category.getChecks().getDisabled(), p, debug));
+        }
+
+        // Eval permissions
+        if (!trueChecks.isEmpty() || debug) {
+            String worldName = p.getWorld().getName();
+            String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
+
+            if (hasPermissionNoFly(p, worldName)
+                    || regionName != null && hasPermissionNoFly(p, worldName + "." + regionName)) {
+                trueChecks.add(DummyPermissionCheck.getInstance());
+            }
+        }
 
         if (debug) {
-            MessageUtil.msg(debugRecipient,
-                    debugMsg.toString().replaceAll("true", "&atrue"));
+            Category category = pl.getCategoryManager().getCategory(p);
+            HashSet<Check> falseChecks = pl.getCheckManager().getAlwaysChecks().getDisabled();
+            falseChecks.addAll(category.getChecks().getDisabled());
+            falseChecks.add(DummyPermissionCheck.getInstance());
+
+            falseChecks.removeAll(trueChecks);
+
+            MessageUtil.msg(s, "&e&lOverride\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
         }
 
-        return new Evaluation(disable, enable);
-    }
-
-    private boolean nearbyCheck(Player p, Location l) {
-        if (!hasPermission(p, NEARBYPASS)) {
-            World world = l.getWorld();
-            boolean disable = false;
-
-            // Prevent comparing 2 different worlds
-            if (pl.getConfManager().isNearbyCheck() && p.getWorld().equals(l.getWorld())) {
-                HashSet<Player> worldPlayers = new HashSet<>();
-
-                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (world.equals(onlinePlayer.getWorld())) {
-                        worldPlayers.add(onlinePlayer);
-                    }
-                }
-                worldPlayers.remove(p);
-
-                for (Player otherP : worldPlayers) {
-                    if ((!pl.getConfManager().isNearbyCheckEnemies() || pl.getHookManager().getFactionsHook().isEnemy(p, otherP))
-                            && l.distanceSquared(otherP.getLocation()) <= pl.getConfManager().getNearbyRangeSquared()) {
-                        if (otherP.isFlying()) {
-                            pl.getFlightManager().check(otherP);
-                        }
-                        disable = true;
-                    }
-                }
-            }
-            return disable;
-        }
-        return false;
-    }
-
-    private boolean landsOwnerHasTrustedPerm(Location l) {
-        if (pl.getHookManager().getLandsHook().isHooked()) {
-            Player landsOwner = Bukkit.getPlayer(pl.getHookManager().getLandsHook().getOwnerUUID(l));
-
-            if (landsOwner != null) {
-                return hasPermission(landsOwner, LANDS_TRUSTED);
-            }
-        }
-
-        return false;
-    }
-
-    private boolean oneTrue(StringBuilder debugMsg, boolean... booleans) {
-        // If debug
-        if (debugMsg != null) {
-            String[] debugTitles = booleans.length == debugEnableTitles.length ? debugEnableTitles : debugDisableTitles;
-
-            for (int i = 0; i < booleans.length; i++) {
-                debugMsg.append("&7 | &f").append(debugTitles[i]).append(" &7» ").append(booleans[i]);
-            }
-            // Return value does not matter as it is debug
-        } else {
-            for (boolean bool : booleans) {
-                if (bool) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return !trueChecks.isEmpty();
     }
 }

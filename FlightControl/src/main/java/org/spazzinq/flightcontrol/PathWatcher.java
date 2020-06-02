@@ -74,7 +74,7 @@ class PathWatcher extends BukkitRunnable {
                 switch (fileString) {
                     case CATEGORIES:
                         logChanges(CATEGORIES);
-                        pl.getCategoryManager().reloadCategories();
+                        pl.getCategoryManager().loadCategories();
                         playerStateChanged = true;
                         break;
                     case CONFIG:

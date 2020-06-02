@@ -25,15 +25,16 @@
 package org.spazzinq.flightcontrol.manager;
 
 import lombok.Getter;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.util.CheckUtil;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class TrailManager {
     private final FlightControl pl;
@@ -49,8 +50,9 @@ public class TrailManager {
                 && pl.getPlayerManager().getFlightPlayer(p).trailWanted() && !particleTasks.containsKey(p)) {
             particleTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
-                    if (!(p.getGameMode() == GameMode.SPECTATOR || pl.getHookManager().getVanishHook().vanished(p)
-                            || p.hasPotionEffect(PotionEffectType.INVISIBILITY))) {
+                    HashSet<Check> trailCheck = CheckUtil.checkAll(pl.getCheckManager().getTrailChecks(), p);
+
+                    if (trailCheck.isEmpty()) {
                         Location l = p.getLocation();
                         // For some terrible reason the locations are never
                         // in the correct spot so you have to delay them

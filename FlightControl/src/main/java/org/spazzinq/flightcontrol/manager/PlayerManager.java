@@ -55,16 +55,16 @@ public class PlayerManager {
     public FlightPlayer getFlightPlayer(Player p) {
         // Cached loading
         if (!playerCache.containsKey(p.getUniqueId())) {
-            File data = new File(folder, p.getUniqueId() + ".yml");
+            File dataFile = new File(folder, p.getUniqueId() + ".yml");
 
-            CommentConf dataConf = new CommentConf(data, pl.getResource("default_data.yml"));
+            YamlConfiguration dataConf = YamlConfiguration.loadConfiguration(dataFile);
 
             float speed = dataConf.isDouble("flight_speed")
                     ? (float) dataConf.getDouble("flight_speed")
                     : pl.getConfManager().getDefaultFlightSpeed();
             Long tempFlyLength = dataConf.isLong("temp_fly") ? dataConf.getLong("temp_fly") : null;
 
-            FlightPlayer flightPlayer = new FlightPlayer(dataConf, p, speed, dataConf.getBoolean("trail"),
+            FlightPlayer flightPlayer = new FlightPlayer(dataFile, dataConf, p, speed, dataConf.getBoolean("trail"),
                     tempFlyLength);
 
             playerCache.put(p.getUniqueId(), flightPlayer);
@@ -94,7 +94,7 @@ public class PlayerManager {
         HashMap<String, FlightPlayer> migrateStorage = new HashMap<>();
 
         for (String uuid : disabledConf.getStringList("disabled_trail")) {
-            migrateStorage.put(uuid, new FlightPlayer(null, null, -1, false, null));
+            migrateStorage.put(uuid, new FlightPlayer(null,null, null, -1, false, null));
         }
         disabledTrails.delete();
 
@@ -102,7 +102,7 @@ public class PlayerManager {
         YamlConfiguration tempflyConf = YamlConfiguration.loadConfiguration(tempfly);
 
         for (String uuid : tempflyConf.getKeys(false)) {
-            FlightPlayer flightPlayer = migrateStorage.getOrDefault(uuid, new FlightPlayer(null, null, -1, true, null));
+            FlightPlayer flightPlayer = migrateStorage.getOrDefault(uuid, new FlightPlayer(null, null, null, -1, true, null));
             flightPlayer.setTempFly(tempflyConf.getLong(uuid));
         }
         tempfly.delete();

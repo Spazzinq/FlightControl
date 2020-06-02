@@ -47,7 +47,10 @@ public class ConfManager {
     @Getter @Setter private boolean autoUpdate;
     @Getter @Setter private boolean inGameSupport;
 
-    @Getter @Setter private Sound eSound, dSound, cSound, nSound;
+    @Getter @Setter private Sound enableSound;
+    @Getter @Setter private Sound disableSound;
+    @Getter @Setter private Sound canEnableSound;
+    @Getter @Setter private Sound cannotEnableSound;
     @Getter @Setter private float defaultFlightSpeed;
     @Getter @Setter private boolean combatChecked;
     @Getter @Setter private boolean cancelFall;
@@ -56,12 +59,6 @@ public class ConfManager {
     @Getter @Setter private boolean everyEnable;
     @Getter @Setter private boolean everyDisable;
 
-    @Getter @Setter private boolean townyOwn;
-    @Getter @Setter private boolean townyWarDisable;
-    @Getter @Setter private boolean landsOwnEnable;
-    @Getter @Setter private boolean landsIncludeTrusted;
-    @Getter @Setter private boolean gpClaimOwnEnable;
-    @Getter @Setter private boolean gpClaimIncludeTrusted;
     @Getter @Setter private boolean nearbyCheck;
     @Getter @Setter private boolean isNearbyCheckEnemies;
     @Getter @Setter private double nearbyRangeSquared;
@@ -82,7 +79,7 @@ public class ConfManager {
                 migrateFromVersion3();
             }
 
-            updateConfig();
+            updateConf();
 
             // booleans
             autoUpdate = conf.getBoolean("settings.auto_update");
@@ -90,13 +87,6 @@ public class ConfManager {
             combatChecked = conf.getBoolean("settings.disable_flight_in_combat");
             cancelFall = conf.getBoolean("settings.prevent_fall_damage");
             vanishBypass = conf.getBoolean("settings.vanish_bypass");
-
-            townyOwn = conf.getBoolean("territory.towny.enable_own_town");
-            townyWarDisable = conf.getBoolean("territory.towny.negate_during_war");
-            landsOwnEnable = conf.getBoolean("territory.lands.enable_own_land");
-            landsIncludeTrusted = conf.getBoolean("territory.lands.include_trusted");
-            gpClaimOwnEnable = conf.getBoolean("territory.griefprevention.enable_own_claim");
-            gpClaimIncludeTrusted = conf.getBoolean("territory.griefprevention.include_trusted");
 
             // ints
             int range = conf.getInt("nearby_disable.range");
@@ -128,31 +118,20 @@ public class ConfManager {
     }
 
     // TODO Continue to add!
-    public void updateConfig() {
+    public void updateConf() {
         boolean modified = false;
 
         // 4.1.0 - moved to lang.yml
         if (conf.isConfigurationSection("messages")) {
             pl.getLogger().info("Removed the messages section from config.yml!");
             conf.deleteNode("messages");
+
             modified = true;
         }
 
         // 4.2.5 - relocate lands, towny; add griefprevention
         if (conf.isConfigurationSection("towny") || conf.isConfigurationSection("lands")) {
-            pl.getLogger().info("Migrated the towny and lands section of the configuration!");
-
-            conf.addNode("territory:", "trail");
-            conf.addSubnodes(new HashSet<>(Arrays.asList("towny:", "lands:", "griefprevention:")), "territory");
-            conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
-                    "enable_own_town: " + conf.getBoolean("towny.enable_own_town"),
-                    "negate_during_war: " + conf.getBoolean("towny.negate_during_war"))), "territory.towny");
-            conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
-                    "enable_own_land: " + conf.getBoolean("lands.enable_own_land"),
-                    "include_trusted: " + conf.getBoolean("lands.include_trusted", false))), "territory.lands");
-            conf.addIndentedSubnodes(new HashSet<>(Collections.singletonList("enable_own_claim: false")), "territory" +
-                    ".griefprevention");
-
+            pl.getLogger().info("Territories have migrated to the categories.yml!");
             conf.deleteNode("towny");
             conf.deleteNode("lands");
 
@@ -173,12 +152,10 @@ public class ConfManager {
             modified = true;
         }
 
-        // 4.3.8 - add trusted to GriefPrevention section
-        if (!conf.isBoolean("territory.griefprevention.include_trusted")) {
-            pl.getLogger().info("Added \"include_trusted\" to the GriefPrevention section of the config!");
-
-            conf.addSubnodes(new HashSet<>(Collections.singleton("include_trusted: false")), "territory" +
-                    ".griefprevention.enable_own_claim");
+        // 4.5.0 - remove "territory"
+        if (conf.isConfigurationSection("territory")) {
+            pl.getLogger().info("Territories have migrated to the categories.yml!");
+            conf.deleteNode("territory");
 
             modified = true;
         }
@@ -207,10 +184,10 @@ public class ConfManager {
     private void loadSounds() {
         everyEnable = conf.getBoolean("sounds.every_enable");
         everyDisable = conf.getBoolean("sounds.every_disable");
-        eSound = getSound("sounds.enable");
-        dSound = getSound("sounds.disable");
-        cSound = getSound("sounds.can_enable");
-        nSound = getSound("sounds.cannot_enable");
+        enableSound = getSound("sounds.enable");
+        disableSound = getSound("sounds.disable");
+        canEnableSound = getSound("sounds.can_enable");
+        cannotEnableSound = getSound("sounds.cannot_enable");
     }
 
     private Sound getSound(String key) {

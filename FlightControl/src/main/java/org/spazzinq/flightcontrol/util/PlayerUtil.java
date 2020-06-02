@@ -32,7 +32,7 @@ import org.spazzinq.flightcontrol.object.FlyPermission;
 
 import static org.spazzinq.flightcontrol.util.MathUtil.timeArray;
 
-public class PlayerUtil {
+public final class PlayerUtil {
     private static final String[] longUnits = {"day", "hour", "minute", "second"};
     private static final String[] shortUnits = {"d", "h", "m", "s"};
 

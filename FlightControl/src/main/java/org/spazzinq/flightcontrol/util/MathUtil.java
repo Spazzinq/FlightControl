@@ -24,7 +24,7 @@
 
 package org.spazzinq.flightcontrol.util;
 
-public class MathUtil {
+public final class MathUtil {
     public static float calcConvertedSpeed(float unconvertedSpeed) {
         float actualSpeed;
         float defaultSpeed = 0.1f;

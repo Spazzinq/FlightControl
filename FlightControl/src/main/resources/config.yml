@@ -9,17 +9,12 @@
 # Spigot Page: https://www.spigotmc.org/resources/flightcontrol.55168/
 # Wiki/Permissions: https://spazzinq.org/flightcontrol/
 
-# Before you leave a negative review:
-# ✓ Read through ALL the information in this configuration
-# ✓ Contact me on Discord (if the config does not solve your problem)
-# ✓ Create an official bug report or feature request on GitHub
-
 settings:
   # Updates the config automatically and adds new features
   auto_update: true
   # Enables flight automatically (no command necessary)
   auto_enable_flight: true
-  # The default speed is 1.0 and matches Essential's /flyspeed values (decimal from 0-10)
+  # The default speed is 1.0 and matches Essentials's /flyspeed values (0-10)
   flight_speed: 1.0
   # Supports: CombatTagPlus, CombatLogX, CombatLogPro, AntiCombatLogging, DeluxeCombat
   # NOTE: disable flight disabling/enabling in the combat plugin's config to prevent issues
@@ -34,26 +29,9 @@ settings:
 nearby_disable:
   # Disables flight when a player is within a certain block range (set to -1 to disable)
   range: -1
-  # Officially Supports: Factions by MassiveCraft, FactionsUUID, SavageFactions
+  # Supports: Factions by MassiveCraft, FactionsUUID, SavageFactions
   # Makes the "range" setting only for faction enemies
   factions_enemy: true
-
-territory:
-  # Requires Towny plugin
-  towny:
-    enable_own_town: false
-    # Ignores above setting if in a war
-    negate_during_war: false
-  # Requires Lands plugin
-  lands:
-    enable_own_land: false
-    # Includes trusted people for "enable_own_land"
-    include_trusted: false
-  # Requires GriefPrevention plugin
-  griefprevention:
-    enable_own_claim: false
-    # Includes trusted people for "enable_own_claim"
-    include_trusted: false
 
 trail:
   enabled: false

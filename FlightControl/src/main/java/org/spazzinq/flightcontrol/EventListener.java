@@ -32,6 +32,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.objects.Sound;
@@ -54,7 +55,7 @@ final class EventListener implements org.bukkit.event.Listener {
         if (e.getFrom().getBlockX() != e.getTo().getBlockX()
                 || e.getFrom().getBlockY() != e.getTo().getBlockY()
                 || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
-            pl.getFlightManager().check(e.getPlayer(), e.getTo());
+            pl.getFlightManager().check(e.getPlayer());
         }
     }
 
@@ -65,12 +66,12 @@ final class EventListener implements org.bukkit.event.Listener {
         if (e.isFlying()) {
             pl.getTrailManager().trailCheck(p);
             if (pl.getConfManager().isEveryEnable()) {
-                Sound.play(p, pl.getConfManager().getESound());
+                Sound.play(p, pl.getConfManager().getEnableSound());
             }
         } else {
             pl.getTrailManager().trailRemove(p);
             if (pl.getConfManager().isEveryDisable()) {
-                Sound.play(p, pl.getConfManager().getDSound());
+                Sound.play(p, pl.getConfManager().getDisableSound());
             }
         }
     }
@@ -81,7 +82,7 @@ final class EventListener implements org.bukkit.event.Listener {
         if (e.getCause() != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
             Player p = e.getPlayer();
 
-            pl.getFlightManager().check(p, e.getTo());
+            pl.getFlightManager().check(p);
 
             // Fixes bug where particles remain when not supposed so
             if (!p.getAllowFlight()) {
@@ -102,7 +103,7 @@ final class EventListener implements org.bukkit.event.Listener {
             new BukkitRunnable() {
                 @Override public void run() {
                     msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently" +
-                            " running on this server. " + pl.getHookManager().getHookedMsg());
+                            " running on this server. " + pl.getHookManager().getHookedMsg() + " " + pl.getCheckManager().getChecksMsg());
                 }
             }.runTaskLater(pl, 40);
         }
@@ -161,14 +162,9 @@ final class EventListener implements org.bukkit.event.Listener {
         }
     }
 
-    // On-the-fly permission management
-    @EventHandler private void onWorldLoad(WorldLoadEvent e) {
-        World world = e.getWorld();
-        String worldName = world.getName();
-
-        pl.registerDefaultPerms(worldName);
-        for (String regionName : pl.getHookManager().getWorldGuardHook().getRegionNames(world)) {
-            pl.registerDefaultPerms(worldName + "." + regionName);
-        }
+    // On-the-fly world permission management
+    // Note: does not take care of initial server start because of "load: POSTWORLD" in plugin.yml
+    @EventHandler private void onWorldInit(WorldInitEvent e) {
+        pl.registerDefaultPerms(e.getWorld().getName());
     }
 }
