@@ -34,10 +34,7 @@ import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class ConfManager {
     private final FlightControl pl;
@@ -65,6 +62,8 @@ public class ConfManager {
     @Getter @Setter private boolean nearbyCheck;
     @Getter @Setter private boolean isNearbyCheckEnemies;
     @Getter @Setter private double nearbyRangeSquared;
+
+    @Getter @Setter private String aeEnchantName;
 
     public ConfManager(FlightControl pl) {
         this.pl = pl;
@@ -102,6 +101,9 @@ public class ConfManager {
 
             // floats
             defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed"));
+
+            // Strings
+            aeEnchantName = conf.getString("settings.ae_enchant_name");
 
             // Load other stuff that have separate methods
             loadSounds();
@@ -159,6 +161,13 @@ public class ConfManager {
         if (conf.isConfigurationSection("territory")) {
             pl.getLogger().info("Territories have migrated to the categories.yml!");
             conf.deleteNode("territory");
+
+            modified = true;
+        }
+
+        if (conf.isString("settings.ae_enchant_name")){
+            pl.getLogger().info("Added AdvancedEnchantments custom enchant name setting!");
+            conf.addSubnodes(Collections.singleton("ae_enchant_name: \"Flight\""), "vanish_bypass");
 
             modified = true;
         }

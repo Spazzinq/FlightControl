@@ -112,6 +112,10 @@ public class CheckManager {
         if (pluginLoading("CrazyEnchantments") && pm.getPlugin("CrazyEnchantments").getDescription().getVersion().startsWith("1.8")) {
             alwaysChecks.addEnabled(new CrazyEnchantmentsCheck());
         }
+        // AdvancedEnchantments Check
+        if (pluginLoading("AdvancedEnchantments")) {
+            alwaysChecks.addEnabled(new AdvancedEnchantmentsCheck(pl));
+        }
 
         /* DISABLE */
         // Combat Checks

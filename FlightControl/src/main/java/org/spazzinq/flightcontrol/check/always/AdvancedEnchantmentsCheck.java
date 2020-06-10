@@ -24,15 +24,21 @@
 
 package org.spazzinq.flightcontrol.check.always;
 
-import me.badbones69.crazyenchantments.api.CrazyEnchantments;
-import me.badbones69.crazyenchantments.api.enums.CEnchantments;
+import n3kas.ae.api.AEAPI;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.object.Cause;
 
 public class AdvancedEnchantmentsCheck extends Check {
+    private FlightControl pl;
+
+    public AdvancedEnchantmentsCheck(FlightControl pl) {
+        this.pl = pl;
+    }
+
     @Override public boolean check(Player p) {
-        return AEAPI.getEnchantmentsOnItem(p.getInventory().getBoots()).containsKey();
+        return AEAPI.getEnchantmentsOnItem(p.getInventory().getBoots()).containsKey(pl.getConfManager().getAeEnchantName());
     }
 
     @Override public Cause getCause() {
