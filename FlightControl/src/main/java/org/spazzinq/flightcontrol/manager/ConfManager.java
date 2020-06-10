@@ -167,7 +167,7 @@ public class ConfManager {
 
         if (conf.isString("settings.ae_enchant_name")){
             pl.getLogger().info("Added AdvancedEnchantments custom enchant name setting!");
-            conf.addSubnodes(Collections.singleton("ae_enchant_name: \"Flight\""), "vanish_bypass");
+            conf.addSubnodes(Collections.singleton("ae_enchant_name: \"Flight\""), "settings.vanish_bypass");
 
             modified = true;
         }

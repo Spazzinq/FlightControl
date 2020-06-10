@@ -201,15 +201,7 @@ public class CheckManager {
         checks.addAll(ownTerritoryChecks.values());
         checks.addAll(trustedTerritoryChecks.values());
 
-        StringBuilder loadedChecksMsg = new StringBuilder("Loaded the following checks: ");
-
-        for (Check check : checks) {
-            loadedChecksMsg.append(check).append(", ");
-        }
-        loadedChecksMsg.delete(loadedChecksMsg.length() - 2, loadedChecksMsg.length());
-        loadedChecksMsg.append(".");
-
-        pl.getLogger().info(checksMsg = loadedChecksMsg.toString());
+        pl.getLogger().info(checksMsg = checks.toString());
     }
 
     private boolean pluginLoading(String pluginName) {
