@@ -104,10 +104,7 @@ public class CheckManager {
     private void loadAlwaysChecks() {
         /* ENABLE */
         // Flyall perm Check, Tempfly Check
-        alwaysChecks.addEnabled(
-                new FlyAllCheck(),
-                new TempFlyCheck(pl.getPlayerManager())
-        );
+        alwaysChecks.addEnabled(new FlyAllCheck());
         // CrazyEnchants Check
         if (pluginLoading("CrazyEnchantments") && pm.getPlugin("CrazyEnchantments").getDescription().getVersion().startsWith("1.8")) {
             alwaysChecks.addEnabled(new CrazyEnchantmentsCheck());

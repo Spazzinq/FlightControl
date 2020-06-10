@@ -44,6 +44,7 @@ import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.DualStore;
+import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.io.File;
@@ -93,8 +94,11 @@ public class CategoryManager {
 
     private Category loadCategory(String name, ConfigurationSection category) {
         // Prevent permission auto-granting from "*" permission
-        if (pm.getPermission("flightcontrol.category." + name) == null) {
-            pm.addPermission(new Permission("flightcontrol.category." + name, PermissionDefault.FALSE));
+        if (pm.getPermission(FlyPermission.CATEGORY_STUB + name) == null) {
+            pm.addPermission(new Permission(FlyPermission.CATEGORY_STUB + name, PermissionDefault.FALSE));
+        }
+        if (pm.getPermission(FlyPermission.TEMP_FLY_STUB + name) == null) {
+            pm.addPermission(new Permission(FlyPermission.TEMP_FLY_STUB + name, PermissionDefault.FALSE));
         }
 
         DualStore<Check> checks = new DualStore<>();
@@ -280,7 +284,8 @@ public class CategoryManager {
     // TODO Cached category grabbing - use FlightPlayer?
     public Category getCategory(Player p) {
         for (Category category : getCategories()) {
-            if (PlayerUtil.hasPermissionCategory(p, category)) {
+            if (PlayerUtil.hasPermissionCategory(p, category)
+                    || PlayerUtil.hasPermissionTempfly(p, category) && pl.getPlayerManager().getFlightPlayer(p).hasTempFly()) {
                 return category;
             }
         }

@@ -32,6 +32,7 @@ public enum FlyPermission {
     FLY_ALL("flightcontrol.flyall"),
 
     CATEGORY_STUB("flightcontrol.category."),
+    TEMP_FLY_STUB("flightcontrol.tempfly."),
     FLY_STUB("flightcontrol.fly."),
     NO_FLY_STUB("flightcontrol.nofly."),
 

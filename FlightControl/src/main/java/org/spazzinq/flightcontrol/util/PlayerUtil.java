@@ -52,6 +52,10 @@ public final class PlayerUtil {
         return p.hasPermission(FlyPermission.CATEGORY_STUB + category.getName());
     }
 
+    public static boolean hasPermissionTempfly(Player p, Category category) {
+        return p.hasPermission(FlyPermission.TEMP_FLY_STUB + category.getName());
+    }
+
     public static String shortPlaceholder(FlightPlayer flightPlayer) {
         long length = formatLength(flightPlayer.getTempFlyEnd());
 
