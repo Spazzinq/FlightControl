@@ -165,7 +165,8 @@ public class ConfManager {
             modified = true;
         }
 
-        if (conf.isString("settings.ae_enchant_name")){
+        // 4.5.8 - add AdvancedEnchantments custom enchant support
+        if (!conf.isString("settings.ae_enchant_name")){
             pl.getLogger().info("Added AdvancedEnchantments custom enchant name setting!");
             conf.addSubnodes(Collections.singleton("ae_enchant_name: \"Flight\""), "settings.vanish_bypass");
 
