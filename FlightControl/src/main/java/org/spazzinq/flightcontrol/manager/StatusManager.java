@@ -46,15 +46,15 @@ public class StatusManager {
         this.pl = pl;
     }
 
-    public boolean checkEnable(Player p) {
+    public HashSet<Check> checkEnable(Player p) {
         return checkEnable(p, null);
     }
 
-    public boolean checkDisable(Player p) {
+    public HashSet<Check> checkDisable(Player p) {
         return checkDisable(p, null);
     }
 
-    public boolean checkEnable(Player p, CommandSender s) {
+    public HashSet<Check> checkEnable(Player p, CommandSender s) {
         boolean debug = s != null;
 
         // Eval always CheckSet
@@ -100,10 +100,10 @@ public class StatusManager {
             MessageUtil.msg(s, "&e&lEnable\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
         }
 
-        return !trueChecks.isEmpty();
+        return trueChecks;
     }
 
-    public boolean checkDisable(Player p, CommandSender s) {
+    public HashSet<Check> checkDisable(Player p, CommandSender s) {
         boolean debug = s != null;
 
         // Eval always CheckSet
@@ -144,6 +144,6 @@ public class StatusManager {
             MessageUtil.msg(s, "&e&lOverride\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
         }
 
-        return !trueChecks.isEmpty();
+        return trueChecks;
     }
 }

@@ -33,6 +33,7 @@ import org.spazzinq.flightcontrol.api.event.FlightCanEnableEvent;
 import org.spazzinq.flightcontrol.api.event.FlightCannotEnableEvent;
 import org.spazzinq.flightcontrol.api.event.FlightDisableEvent;
 import org.spazzinq.flightcontrol.api.event.FlightEnableEvent;
+import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.api.object.Sound;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.util.CheckUtil;
@@ -58,43 +59,49 @@ public class FlightManager {
     }
 
     public void check(Player p, boolean usingCMD) {
-        HashSet<Check> bypassCheck = CheckUtil.checkAll(pl.getCheckManager().getBypassChecks(), p);
+        HashSet<Check> bypassChecks = CheckUtil.checkAll(pl.getCheckManager().getBypassChecks(), p);
         // If has bypass
-        if (bypassCheck.isEmpty()) {
-            boolean enable = pl.getStatusManager().checkEnable(p),
-                    disable = pl.getStatusManager().checkDisable(p);
+        if (bypassChecks.isEmpty()) {
+            HashSet<Check> enableChecks = pl.getStatusManager().checkEnable(p);
+            HashSet<Check> disableChecks = pl.getStatusManager().checkDisable(p);
+            boolean enable = !enableChecks.isEmpty();
+            boolean disable = !disableChecks.isEmpty();
+            Cause enableCause = enable ? enableChecks.iterator().next().getCause() : null;
+            Cause disableCause = enable ? disableChecks.iterator().next().getCause() : null;
 
             if (p.getAllowFlight()) {
                 // If override or not enabled
                 if (disable || !enable) {
-                    disableFlight(p, false);
+                    disableFlight(p, disableCause,false);
                 }
             // If all clear to enable
             } else if (enable && !disable) {
                 // If directly enabled or auto-enable is enabled
                 if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
-                    enableFlight(p, usingCMD);
+                    enableFlight(p, enableCause, usingCMD);
                 } else {
-                    canEnable(p);
+                    canEnable(p, enableCause);
                 }
             // If now denied
             } else if (usingCMD || alreadyCanMsg.contains(p)) {
-                cannotEnable(p);
+                cannotEnable(p, disableCause);
             }
         // If bypassing checks
         } else if (!p.getAllowFlight()) {
+            Cause bypassCause = !bypassChecks.isEmpty() ? bypassChecks.iterator().next().getCause() : null;
+
             if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
-                enableFlight(p, usingCMD);
+                enableFlight(p, bypassCause, usingCMD);
             } else {
-                canEnable(p);
+                canEnable(p, bypassCause);
             }
         }
     }
 
-    private void canEnable(Player p) {
+    private void canEnable(Player p, Cause cause) {
         if (!alreadyCanMsg.contains(p)) {
             alreadyCanMsg.add(p);
-            FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(),
+            FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), cause,
                     pl.getLangManager().getCanEnableFlight(),
                     pl.getConfManager().getCanEnableSound(), pl.getLangManager().useActionBar());
 
@@ -108,8 +115,8 @@ public class FlightManager {
 
     }
 
-    private void cannotEnable(Player p) {
-        FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(),
+    private void cannotEnable(Player p, Cause cause) {
+        FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), cause,
                 pl.getLangManager().getCannotEnableFlight(),
                 pl.getConfManager().getCannotEnableSound(), pl.getLangManager().useActionBar());
 
@@ -122,8 +129,8 @@ public class FlightManager {
         }
     }
 
-    private void enableFlight(Player p, boolean isCommand) {
-        FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), pl.getLangManager().getEnableFlight(),
+    private void enableFlight(Player p, Cause cause, boolean isCommand) {
+        FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), cause, pl.getLangManager().getEnableFlight(),
                 pl.getConfManager().getEnableSound(), pl.getLangManager().useActionBar(), isCommand);
 
         pl.getApiManager().callEvent(e);
@@ -140,8 +147,8 @@ public class FlightManager {
         }
     }
 
-    public void disableFlight(Player p, boolean isCommand) {
-        FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), pl.getLangManager().getDisableFlight(),
+    public void disableFlight(Player p, Cause cause, boolean isCommand) {
+        FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), cause, pl.getLangManager().getDisableFlight(),
                 pl.getConfManager().getDisableSound(), pl.getLangManager().useActionBar(), isCommand);
 
         pl.getApiManager().callEvent(e);
