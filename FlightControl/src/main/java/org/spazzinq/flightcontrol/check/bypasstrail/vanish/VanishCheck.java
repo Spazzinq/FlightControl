@@ -25,7 +25,7 @@
 package org.spazzinq.flightcontrol.check.bypasstrail.vanish;
 
 import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.object.Cause;
+import org.spazzinq.flightcontrol.api.object.Cause;
 
 public abstract class VanishCheck extends Check {
     @Override public Cause getCause() {

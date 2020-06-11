@@ -26,7 +26,7 @@ package org.spazzinq.flightcontrol.check.always;
 
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.object.Cause;
+import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 

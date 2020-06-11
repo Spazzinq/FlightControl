@@ -27,7 +27,7 @@ package org.spazzinq.flightcontrol.check.bypasstrail;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.object.Cause;
+import org.spazzinq.flightcontrol.api.object.Cause;
 
 public class SpectatorModeCheck extends Check {
     @Override public boolean check(Player p) {

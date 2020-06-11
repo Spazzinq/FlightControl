@@ -22,17 +22,35 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check;
+package org.spazzinq.flightcontrol.api.event.interfaces;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.object.Cause;
+@SuppressWarnings("unused")
+public interface MessageFlightEvent extends FlightEvent {
+    /**
+     * Returns the tentative message.
+     *
+     * @return the tentative message
+     */
+    String getMessage();
 
-public abstract class Check {
-    public abstract boolean check(Player p);
+    /**
+     * Sets the message to send.
+     *
+     * @param message the message to send
+     */
+    void setMessage(String message);
 
-    public abstract Cause getCause();
+    /**
+     * Returns true if the message will be sent at the action bar (the area above the hotbar).
+     *
+     * @return true if the message will be sent at the action bar, false otherwise
+     */
+    boolean isByActionbar();
 
-    @Override public String toString() {
-        return getClass().getSimpleName();
-    }
+    /**
+     * Sets if the message will be sent at the action bar (the area above the hotbar).
+     *
+     * @param byActionbar a boolean to set if the message will be sent at the action bar
+     */
+    void setByActionbar(boolean byActionbar);
 }

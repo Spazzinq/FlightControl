@@ -28,7 +28,7 @@ import me.badbones69.crazyenchantments.api.CrazyEnchantments;
 import me.badbones69.crazyenchantments.api.enums.CEnchantments;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.object.Cause;
+import org.spazzinq.flightcontrol.api.object.Cause;
 
 public final class CrazyEnchantmentsCheck extends Check {
     @Override public boolean check(Player p) {

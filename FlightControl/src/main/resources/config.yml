@@ -24,6 +24,9 @@ settings:
   # Supports: EssentialsX, PremiumVanish, SuperVanish
   # Prevents flight disabling while in vanish
   vanish_bypass: true
+  # Supports: AdvancedEnchantments
+  # Set as the enchant name to support custom flight enchantments
+  ae_enchant_name: "Flight"
 
 # NOTE: this feature is resource intensive and may cause performance issues
 nearby_disable:

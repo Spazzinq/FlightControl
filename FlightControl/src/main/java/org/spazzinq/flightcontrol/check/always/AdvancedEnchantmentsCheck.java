@@ -22,17 +22,26 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check;
+package org.spazzinq.flightcontrol.check.always;
 
+import n3kas.ae.api.AEAPI;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.api.object.Cause;
 
-public abstract class Check {
-    public abstract boolean check(Player p);
+public class AdvancedEnchantmentsCheck extends Check {
+    private FlightControl pl;
 
-    public abstract Cause getCause();
+    public AdvancedEnchantmentsCheck(FlightControl pl) {
+        this.pl = pl;
+    }
 
-    @Override public String toString() {
-        return getClass().getSimpleName();
+    @Override public boolean check(Player p) {
+        return AEAPI.getEnchantmentsOnItem(p.getInventory().getBoots()).containsKey(pl.getConfManager().getAeEnchantName());
+    }
+
+    @Override public Cause getCause() {
+        return Cause.ENCHANT;
     }
 }

@@ -22,17 +22,22 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check;
+package org.spazzinq.flightcontrol.api.event.interfaces;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.object.Cause;
+@SuppressWarnings("unused")
+public interface Cancellable {
+    /**
+     * Returns true if the event is cancelled.
+     *
+     * @return true if the event is cancelled
+     */
+    boolean isCancelled();
 
-public abstract class Check {
-    public abstract boolean check(Player p);
-
-    public abstract Cause getCause();
-
-    @Override public String toString() {
-        return getClass().getSimpleName();
-    }
+    /**
+     * Sets if the event is cancelled. If the event is cancelled, it will not execute the HandlerMethods assigned to
+     * itself.
+     *
+     * @param cancel a boolean to set if the event is cancelled
+     */
+    void setCancelled(boolean cancel);
 }

@@ -104,13 +104,14 @@ public class CheckManager {
     private void loadAlwaysChecks() {
         /* ENABLE */
         // Flyall perm Check, Tempfly Check
-        alwaysChecks.addEnabled(
-                new FlyAllCheck(),
-                new TempFlyCheck(pl.getPlayerManager())
-        );
+        alwaysChecks.addEnabled(new FlyAllCheck());
         // CrazyEnchants Check
         if (pluginLoading("CrazyEnchantments") && pm.getPlugin("CrazyEnchantments").getDescription().getVersion().startsWith("1.8")) {
             alwaysChecks.addEnabled(new CrazyEnchantmentsCheck());
+        }
+        // AdvancedEnchantments Check
+        if (pluginLoading("AdvancedEnchantments")) {
+            alwaysChecks.addEnabled(new AdvancedEnchantmentsCheck(pl));
         }
 
         /* DISABLE */
@@ -197,15 +198,7 @@ public class CheckManager {
         checks.addAll(ownTerritoryChecks.values());
         checks.addAll(trustedTerritoryChecks.values());
 
-        StringBuilder loadedChecksMsg = new StringBuilder("Loaded the following checks: ");
-
-        for (Check check : checks) {
-            loadedChecksMsg.append(check).append(", ");
-        }
-        loadedChecksMsg.delete(loadedChecksMsg.length() - 2, loadedChecksMsg.length());
-        loadedChecksMsg.append(".");
-
-        pl.getLogger().info(checksMsg = loadedChecksMsg.toString());
+        pl.getLogger().info(checksMsg = checks.toString());
     }
 
     private boolean pluginLoading(String pluginName) {

@@ -22,25 +22,47 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.always;
+package org.spazzinq.flightcontrol.api.object;
 
+import lombok.Getter;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.check.Check;
-import org.spazzinq.flightcontrol.manager.PlayerManager;
-import org.spazzinq.flightcontrol.object.Cause;
 
-public class TempFlyCheck extends Check {
-    private final PlayerManager playerManager;
+@SuppressWarnings({"WeakerAccess", "unused"})
+public final class Sound {
+    @Getter private final org.bukkit.Sound sound;
+    @Getter private final float volume;
+    @Getter private final float pitch;
 
-    public TempFlyCheck(PlayerManager playerManager) {
-        this.playerManager = playerManager;
+    public Sound(org.bukkit.Sound sound) {
+        this(sound, 1, 1);
     }
 
-    @Override public boolean check(Player p) {
-        return playerManager.getFlightPlayer(p).hasTempFly();
+    public Sound(String name) {
+        this(name, 1, 1);
     }
 
-    @Override public Cause getCause() {
-        return Cause.TEMP_FLY;
+    public Sound(org.bukkit.Sound sound, float volume, float pitch) {
+        this.sound = sound;
+        this.volume = volume;
+        this.pitch = pitch;
+    }
+
+    public Sound(String name, float volume, float pitch) {
+        this(org.bukkit.Sound.valueOf(name), volume, pitch);
+    }
+
+    public static void play(Player p, Sound s) {
+        if (s != null) {
+            p.playSound(p.getLocation(), s.sound, s.volume, s.pitch);
+        }
+    }
+
+    public static boolean is(String s) {
+        try {
+            org.bukkit.Sound.valueOf(s);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

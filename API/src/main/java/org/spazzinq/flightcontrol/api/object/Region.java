@@ -22,15 +22,41 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.api.object;
 
-public enum Cause {
-    // Bypass and trail Checks
-    BYPASS_PERMISSION, INVISIBILITY_POTION, SPECTATOR_MODE, VANISH,
-    // Always enable Checks
-    ENCHANT, FLY_ALL, TEMP_FLY, PERMISSION_REGION, PERMISSION_WORLD,
-    // Always disable Checks
-    COMBAT, NEARBY,
-    // Category specific Checks
-    CATEGORY, TERRITORY;
+import lombok.Getter;
+import org.bukkit.World;
+
+import java.util.Objects;
+
+public class Region {
+    @Getter private final World world;
+    @Getter private final String regionName;
+
+    public Region(World world, String regionName) {
+        this.world = world;
+        this.regionName = regionName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Region)) {
+            return false;
+        }
+        Region region = (Region) o;
+        return world.equals(region.world) &&
+                regionName.equals(region.regionName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(world, regionName);
+    }
+
+    @Override public String toString() {
+        return world + "." + regionName;
+    }
 }
