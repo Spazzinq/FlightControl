@@ -34,7 +34,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.api.objects.Region;
+import org.spazzinq.flightcontrol.api.object.Region;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.category.CategoryRegionCheck;
 import org.spazzinq.flightcontrol.check.category.CategoryRelationCheck;

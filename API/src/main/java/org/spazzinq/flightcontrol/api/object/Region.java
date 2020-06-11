@@ -22,17 +22,41 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check;
+package org.spazzinq.flightcontrol.api.object;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.object.Cause;
+import lombok.Getter;
+import org.bukkit.World;
 
-public abstract class Check {
-    public abstract boolean check(Player p);
+import java.util.Objects;
 
-    public abstract Cause getCause();
+public class Region {
+    @Getter private final World world;
+    @Getter private final String regionName;
+
+    public Region(World world, String regionName) {
+        this.world = world;
+        this.regionName = regionName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Region)) {
+            return false;
+        }
+        Region region = (Region) o;
+        return world.equals(region.world) &&
+                regionName.equals(region.regionName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(world, regionName);
+    }
 
     @Override public String toString() {
-        return getClass().getSimpleName();
+        return world + "." + regionName;
     }
 }

@@ -25,7 +25,7 @@
 package org.spazzinq.flightcontrol.check.category;
 
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.objects.Region;
+import org.spazzinq.flightcontrol.api.object.Region;
 import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 
 import java.util.HashSet;

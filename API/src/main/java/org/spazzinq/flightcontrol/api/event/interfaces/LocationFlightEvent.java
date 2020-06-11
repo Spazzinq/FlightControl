@@ -22,17 +22,16 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check;
+package org.spazzinq.flightcontrol.api.event.interfaces;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.object.Cause;
+import org.bukkit.Location;
 
-public abstract class Check {
-    public abstract boolean check(Player p);
-
-    public abstract Cause getCause();
-
-    @Override public String toString() {
-        return getClass().getSimpleName();
-    }
+@SuppressWarnings("unused")
+public interface LocationFlightEvent extends FlightEvent {
+    /**
+     * Returns the event's Location.
+     *
+     * @return the event's location
+     */
+    Location getLocation();
 }

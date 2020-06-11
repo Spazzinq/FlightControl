@@ -24,13 +24,13 @@
 
 package org.spazzinq.flightcontrol.api;
 
-import org.spazzinq.flightcontrol.api.events.FlightCanEnableEvent;
-import org.spazzinq.flightcontrol.api.events.FlightCannotEnableEvent;
-import org.spazzinq.flightcontrol.api.events.FlightDisableEvent;
-import org.spazzinq.flightcontrol.api.events.FlightEnableEvent;
-import org.spazzinq.flightcontrol.api.events.interfaces.FlightEvent;
-import org.spazzinq.flightcontrol.api.objects.FlightListener;
-import org.spazzinq.flightcontrol.api.objects.HandlerMethod;
+import org.spazzinq.flightcontrol.api.event.FlightCanEnableEvent;
+import org.spazzinq.flightcontrol.api.event.FlightCannotEnableEvent;
+import org.spazzinq.flightcontrol.api.event.FlightDisableEvent;
+import org.spazzinq.flightcontrol.api.event.FlightEnableEvent;
+import org.spazzinq.flightcontrol.api.event.interfaces.FlightEvent;
+import org.spazzinq.flightcontrol.api.object.FlightListener;
+import org.spazzinq.flightcontrol.api.object.HandlerMethod;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;

@@ -28,7 +28,7 @@ import com.google.common.io.Files;
 import lombok.Getter;
 import lombok.Setter;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.api.objects.Sound;
+import org.spazzinq.flightcontrol.api.object.Sound;
 import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.util.MathUtil;
 

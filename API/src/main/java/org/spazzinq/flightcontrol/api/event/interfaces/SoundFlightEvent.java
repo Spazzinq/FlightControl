@@ -22,17 +22,19 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check;
+package org.spazzinq.flightcontrol.api.event.interfaces;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.object.Cause;
 
-public abstract class Check {
-    public abstract boolean check(Player p);
+import org.spazzinq.flightcontrol.api.object.Sound;
 
-    public abstract Cause getCause();
+@SuppressWarnings("unused")
+public interface SoundFlightEvent {
+    /**
+     * Returns the Sound that will be played on the event's execution.
+     *
+     * @return the Sound that will be played on the event's execution
+     */
+    Sound getSound();
 
-    @Override public String toString() {
-        return getClass().getSimpleName();
-    }
+    void setSound(Sound sound);
 }

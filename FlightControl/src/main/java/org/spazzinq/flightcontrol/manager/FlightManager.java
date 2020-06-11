@@ -29,11 +29,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.api.events.FlightCanEnableEvent;
-import org.spazzinq.flightcontrol.api.events.FlightCannotEnableEvent;
-import org.spazzinq.flightcontrol.api.events.FlightDisableEvent;
-import org.spazzinq.flightcontrol.api.events.FlightEnableEvent;
-import org.spazzinq.flightcontrol.api.objects.Sound;
+import org.spazzinq.flightcontrol.api.event.FlightCanEnableEvent;
+import org.spazzinq.flightcontrol.api.event.FlightCannotEnableEvent;
+import org.spazzinq.flightcontrol.api.event.FlightDisableEvent;
+import org.spazzinq.flightcontrol.api.event.FlightEnableEvent;
+import org.spazzinq.flightcontrol.api.object.Sound;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.util.CheckUtil;
 
@@ -99,6 +99,7 @@ public class FlightManager {
                     pl.getConfManager().getCanEnableSound(), pl.getLangManager().useActionBar());
 
             pl.getApiManager().callEvent(e);
+
             if (!e.isCancelled()) {
                 Sound.play(p, e.getSound());
                 msg(p, e.getMessage(), e.isByActionbar());
@@ -113,6 +114,7 @@ public class FlightManager {
                 pl.getConfManager().getCannotEnableSound(), pl.getLangManager().useActionBar());
 
         pl.getApiManager().callEvent(e);
+
         if (!e.isCancelled()) {
             alreadyCanMsg.remove(p);
             Sound.play(p, pl.getConfManager().getCannotEnableSound());
@@ -125,6 +127,7 @@ public class FlightManager {
                 pl.getConfManager().getEnableSound(), pl.getLangManager().useActionBar(), isCommand);
 
         pl.getApiManager().callEvent(e);
+
         if (!e.isCancelled()) {
             if (isCommand) {
                 disabledByPlayer.remove(p);
@@ -142,6 +145,7 @@ public class FlightManager {
                 pl.getConfManager().getDisableSound(), pl.getLangManager().useActionBar(), isCommand);
 
         pl.getApiManager().callEvent(e);
+
         if (!e.isCancelled()) {
             if (isCommand) {
                 disabledByPlayer.add(p);

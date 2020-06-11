@@ -22,15 +22,47 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.api.object;
 
-public enum Cause {
-    // Bypass and trail Checks
-    BYPASS_PERMISSION, INVISIBILITY_POTION, SPECTATOR_MODE, VANISH,
-    // Always enable Checks
-    ENCHANT, FLY_ALL, TEMP_FLY, PERMISSION_REGION, PERMISSION_WORLD,
-    // Always disable Checks
-    COMBAT, NEARBY,
-    // Category specific Checks
-    CATEGORY, TERRITORY;
+import lombok.Getter;
+import org.bukkit.entity.Player;
+
+@SuppressWarnings({"WeakerAccess", "unused"})
+public final class Sound {
+    @Getter private final org.bukkit.Sound sound;
+    @Getter private final float volume;
+    @Getter private final float pitch;
+
+    public Sound(org.bukkit.Sound sound) {
+        this(sound, 1, 1);
+    }
+
+    public Sound(String name) {
+        this(name, 1, 1);
+    }
+
+    public Sound(org.bukkit.Sound sound, float volume, float pitch) {
+        this.sound = sound;
+        this.volume = volume;
+        this.pitch = pitch;
+    }
+
+    public Sound(String name, float volume, float pitch) {
+        this(org.bukkit.Sound.valueOf(name), volume, pitch);
+    }
+
+    public static void play(Player p, Sound s) {
+        if (s != null) {
+            p.playSound(p.getLocation(), s.sound, s.volume, s.pitch);
+        }
+    }
+
+    public static boolean is(String s) {
+        try {
+            org.bukkit.Sound.valueOf(s);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

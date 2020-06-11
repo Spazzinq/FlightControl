@@ -26,7 +26,7 @@ package org.spazzinq.flightcontrol.object;
 
 import lombok.Getter;
 import org.bukkit.World;
-import org.spazzinq.flightcontrol.api.objects.Region;
+import org.spazzinq.flightcontrol.api.object.Region;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
 

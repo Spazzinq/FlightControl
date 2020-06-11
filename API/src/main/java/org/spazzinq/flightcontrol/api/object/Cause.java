@@ -22,17 +22,15 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check;
+package org.spazzinq.flightcontrol.api.object;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.object.Cause;
-
-public abstract class Check {
-    public abstract boolean check(Player p);
-
-    public abstract Cause getCause();
-
-    @Override public String toString() {
-        return getClass().getSimpleName();
-    }
+public enum Cause {
+    // Bypass and trail Checks
+    BYPASS_PERMISSION, INVISIBILITY_POTION, SPECTATOR_MODE, VANISH,
+    // Always enable Checks
+    ENCHANT, FLY_ALL, TEMP_FLY, PERMISSION_REGION, PERMISSION_WORLD,
+    // Always disable Checks
+    COMBAT, NEARBY,
+    // Category specific Checks
+    CATEGORY, TERRITORY;
 }

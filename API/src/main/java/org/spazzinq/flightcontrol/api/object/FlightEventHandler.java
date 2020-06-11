@@ -22,17 +22,20 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check;
+package org.spazzinq.flightcontrol.api.object;
 
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.object.Cause;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public abstract class Check {
-    public abstract boolean check(Player p);
-
-    public abstract Cause getCause();
-
-    @Override public String toString() {
-        return getClass().getSimpleName();
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface FlightEventHandler {
+    @SuppressWarnings("unused")
+    enum Priority implements Comparable<Priority> {
+        HIGH, NORMAL, LOW
     }
+
+    Priority priority() default Priority.NORMAL;
 }

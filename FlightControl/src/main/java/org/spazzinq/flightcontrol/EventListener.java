@@ -33,7 +33,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.spazzinq.flightcontrol.api.objects.Sound;
+import org.spazzinq.flightcontrol.api.object.Sound;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 

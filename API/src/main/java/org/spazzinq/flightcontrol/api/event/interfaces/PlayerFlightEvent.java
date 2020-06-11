@@ -22,17 +22,15 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check;
+package org.spazzinq.flightcontrol.api.event.interfaces;
 
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.object.Cause;
 
-public abstract class Check {
-    public abstract boolean check(Player p);
-
-    public abstract Cause getCause();
-
-    @Override public String toString() {
-        return getClass().getSimpleName();
-    }
+public interface PlayerFlightEvent extends FlightEvent {
+    /**
+     * Returns the player that caused the event's calling.
+     *
+     * @return the player that caused the event's calling
+     */
+    @SuppressWarnings("unused") Player getPlayer();
 }
