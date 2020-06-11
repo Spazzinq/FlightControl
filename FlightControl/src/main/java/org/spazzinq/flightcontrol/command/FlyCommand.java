@@ -31,6 +31,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.manager.FlightManager;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
@@ -53,7 +54,7 @@ public final class FlyCommand implements CommandExecutor {
                 Player p = (Player) s;
 
                 if (p.getAllowFlight()) {
-                    flightManager.disableFlight(p, true);
+                    flightManager.disableFlight(p, Cause.DISABLE_COMMAND, true);
                 } else {
                     flightManager.check(p, true);
                 }
@@ -71,7 +72,7 @@ public final class FlyCommand implements CommandExecutor {
                     msgVar(s, msg, false, "player", p.getName());
 
                     if (p.getAllowFlight()) {
-                        flightManager.disableFlight(p, true);
+                        flightManager.disableFlight(p, Cause.DISABLE_COMMAND, true);
                     } else {
                         flightManager.check(p, true);
                     }

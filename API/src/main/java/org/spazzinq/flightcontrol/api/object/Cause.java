@@ -32,5 +32,8 @@ public enum Cause {
     // Always disable Checks
     COMBAT, NEARBY,
     // Category specific Checks
-    CATEGORY, TERRITORY;
+    CATEGORY, TERRITORY,
+
+    // Player-induced
+    DISABLE_COMMAND
 }
