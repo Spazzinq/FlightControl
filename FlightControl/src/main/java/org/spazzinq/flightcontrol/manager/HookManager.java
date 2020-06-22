@@ -29,6 +29,7 @@ import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
 import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
+import org.spazzinq.flightcontrol.multiversion.current.FactionsXHook;
 import org.spazzinq.flightcontrol.multiversion.current.MassiveFactionsHook;
 import org.spazzinq.flightcontrol.multiversion.current.SavageFactionsHook;
 import org.spazzinq.flightcontrol.multiversion.current.WorldGuardHook7;
@@ -69,7 +70,9 @@ public class HookManager {
     }
 
     private void loadFactionsHook() {
-        if (pluginLoading("Factions")) {
+        if (pluginLoading("FactionsX")) {
+            factionsHook = new FactionsXHook();
+        } else if (pluginLoading("Factions")) {
             if (pm.isPluginEnabled("MassiveCore")) {
                 factionsHook = new MassiveFactionsHook();
             } else if (pm.getPlugin("Factions").getDescription().getAuthors().contains("ProSavage")) {
