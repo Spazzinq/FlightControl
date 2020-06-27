@@ -51,6 +51,7 @@ import java.util.UUID;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
+    @Getter private static FlightControl instance;
     @Getter private final APIManager apiManager = APIManager.getInstance();
     // Storage management
     @Getter private final File storageFolder = new File(getDataFolder() + File.separator + "data");
@@ -74,6 +75,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
 
     public void onEnable() {
+        instance = this;
         // Create storage folder
         //noinspection ResultOfMethodCallIgnored
         storageFolder.mkdirs();

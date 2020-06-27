@@ -57,7 +57,7 @@ public final class PlayerUtil {
     }
 
     public static String shortPlaceholder(FlightPlayer flightPlayer) {
-        long length = formatLength(flightPlayer.getTempFlyEnd());
+        long length = formatLength(flightPlayer.getTempFlyLength());
 
         if (length > 0) {
             StringBuilder builder = new StringBuilder();
@@ -79,7 +79,7 @@ public final class PlayerUtil {
     }
 
     public static String longPlaceholder(FlightPlayer flightPlayer) {
-        long length = formatLength(flightPlayer.getTempFlyEnd());
+        long length = formatLength(flightPlayer.getTempFlyLength());
 
         if (length > 0) {
             StringBuilder builder = new StringBuilder();

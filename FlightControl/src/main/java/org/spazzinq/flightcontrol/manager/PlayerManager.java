@@ -102,8 +102,9 @@ public class PlayerManager {
         YamlConfiguration tempflyConf = YamlConfiguration.loadConfiguration(tempfly);
 
         for (String uuid : tempflyConf.getKeys(false)) {
-            FlightPlayer flightPlayer = migrateStorage.getOrDefault(uuid, new FlightPlayer(null, null, null, -1, true, null));
-            flightPlayer.setTempFly(tempflyConf.getLong(uuid));
+            FlightPlayer flightPlayer = migrateStorage.getOrDefault(uuid, new FlightPlayer(
+                    null, null, null, -1, true, System.currentTimeMillis() - tempflyConf.getLong(uuid))
+            );
         }
         tempfly.delete();
 
@@ -115,7 +116,7 @@ public class PlayerManager {
 
             dataConf.set("trail", tempData.trailWanted());
 
-            Long tempFlyLength = tempData.getTempFlyEnd();
+            Long tempFlyLength = tempData.getTempFlyLength();
             dataConf.set("temp_fly", tempFlyLength);
 
             dataConf.save();

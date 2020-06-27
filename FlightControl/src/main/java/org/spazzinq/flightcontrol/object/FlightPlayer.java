@@ -29,6 +29,8 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.spazzinq.flightcontrol.FlightControl;
 
 import java.io.File;
 
@@ -37,18 +39,27 @@ public class FlightPlayer {
     @Getter private final YamlConfiguration data;
     private final Player player;
 
+    private Timer tempflyTimer;
     @Getter private float actualFlightSpeed;
     @Setter private boolean trail;
-    @Getter private Long tempFlyEnd;
+    @Getter private Long tempFlyLength;
 
-    public FlightPlayer(File dataFile, YamlConfiguration data, Player player, float actualFlightSpeed, boolean trail, Long tempFlyEnd) {
+    public FlightPlayer(File dataFile, YamlConfiguration data, Player player, float actualFlightSpeed, boolean trail, Long tempFlyLength) {
         this.dataFile = dataFile;
         this.data = data;
         this.player = player;
         // Don't store speed in data conf if not personal for player
         this.actualFlightSpeed = actualFlightSpeed;
         this.trail = trail;
-        setTempFly(tempFlyEnd);
+        setTempFlyLength(tempFlyLength);
+
+        // Auto-save
+        new BukkitRunnable() {
+            @SneakyThrows @Override public void run() {
+                data.save(dataFile);
+            }
+            // 6000 ticks = 20 ticks * 300 = 5 minutes
+        }.runTaskTimerAsynchronously(FlightControl.getInstance(), 6000, 6000);
     }
 
     public boolean trailWanted() {
@@ -59,31 +70,44 @@ public class FlightPlayer {
         trail = !trail;
 
         data.set("trail", trail);
-        data.save(dataFile);
 
         return trail;
     }
 
     public boolean hasTempFly() {
-        if (tempFlyEnd != null && tempFlyEnd <= System.currentTimeMillis()) {
-            setTempFly(null);
+        if (tempFlyLength != null && tempFlyLength <= System.currentTimeMillis()) {
+            setTempFlyLength(null);
         }
 
-        return tempFlyEnd != null;
+        return tempFlyLength != null;
     }
 
-    @SneakyThrows public void setTempFly(Long tempFlyEnd) {
-        Long finalTempFlyEnd = tempFlyEnd;
+    @SneakyThrows public void setTempFlyLength(Long tempFlyLength) {
+        setTempFlyLength(tempFlyLength, false);
+    }
 
-        if (finalTempFlyEnd != null && finalTempFlyEnd <= System.currentTimeMillis()) {
-            finalTempFlyEnd = null;
+    @SneakyThrows public void setTempFlyLength(Long tempFlyLength, boolean addTime) {
+        // Null if not long enough
+        if (tempFlyLength != null && tempFlyLength < 1) {
+            tempFlyLength = null;
         }
-        this.tempFlyEnd = finalTempFlyEnd;
+
+            // Add if not null and addTime
+        if (tempFlyLength == null || !addTime) {
+            this.tempFlyLength = tempFlyLength;
+        } else {
+            this.tempFlyLength += tempFlyLength;
+        }
+
 
         // Prevent NPE for data migration
         if (data != null) {
-            data.set("temp_fly", finalTempFlyEnd);
-            data.save(dataFile);
+            data.set("temp_fly", tempFlyLength);
+
+            // Don't force save unless new time
+           if (tempFlyLength != null) {
+               data.save(dataFile);
+           }
         }
     }
 
@@ -91,7 +115,6 @@ public class FlightPlayer {
         this.actualFlightSpeed = actualFlightSpeed;
 
         data.set("flight_speed", actualFlightSpeed);
-        data.save(dataFile);
 
         player.setFlySpeed(actualFlightSpeed);
     }

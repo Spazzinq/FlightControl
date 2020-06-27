@@ -60,7 +60,7 @@ public class MVdWPlaceholder {
                 return "";
             }
 
-            return String.valueOf(MathUtil.seconds(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyEnd())));
+            return String.valueOf(MathUtil.seconds(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyLength())));
         });
 
         PlaceholderAPI.registerPlaceholder(pl, "flightcontrol_tempfly_m", e -> {
@@ -68,7 +68,7 @@ public class MVdWPlaceholder {
                 return "";
             }
 
-            return String.valueOf(MathUtil.minutes(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyEnd())));
+            return String.valueOf(MathUtil.minutes(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyLength())));
         });
 
         PlaceholderAPI.registerPlaceholder(pl, "flightcontrol_tempfly_h", e -> {
@@ -76,7 +76,7 @@ public class MVdWPlaceholder {
                 return "";
             }
 
-            return String.valueOf(MathUtil.hours(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyEnd())));
+            return String.valueOf(MathUtil.hours(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyLength())));
         });
 
         PlaceholderAPI.registerPlaceholder(pl, "flightcontrol_tempfly_d", e -> {
@@ -84,7 +84,7 @@ public class MVdWPlaceholder {
                 return "";
             }
 
-            return String.valueOf(MathUtil.days(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyEnd())));
+            return String.valueOf(MathUtil.days(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyLength())));
         });
     }
 }
