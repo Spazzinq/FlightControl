@@ -67,7 +67,7 @@ public class FlightManager {
             boolean enable = !enableChecks.isEmpty();
             boolean disable = !disableChecks.isEmpty();
             Cause enableCause = enable ? enableChecks.iterator().next().getCause() : null;
-            Cause disableCause = enable ? disableChecks.iterator().next().getCause() : null;
+            Cause disableCause = disable ? disableChecks.iterator().next().getCause() : null;
 
             if (p.getAllowFlight()) {
                 // If override or not enabled
@@ -154,6 +154,11 @@ public class FlightManager {
         pl.getApiManager().callEvent(e);
 
         if (!e.isCancelled()) {
+            // Don't pause if always decreasing
+            if (!pl.getConfManager().isTempflyAlwaysDecrease()) {
+                pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
+            }
+
             if (isCommand) {
                 disabledByPlayer.add(p);
                 alreadyCanMsg.add(p);
