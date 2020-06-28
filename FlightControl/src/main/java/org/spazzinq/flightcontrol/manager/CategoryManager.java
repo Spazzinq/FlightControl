@@ -285,7 +285,7 @@ public class CategoryManager {
     public Category getCategory(Player p) {
         for (Category category : getCategories()) {
             if (PlayerUtil.hasPermissionCategory(p, category)
-                    || PlayerUtil.hasPermissionTempfly(p, category) && pl.getPlayerManager().getFlightPlayer(p).hasTempFly()) {
+                    || PlayerUtil.hasPermissionTempfly(p, category) && pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().hasTimeLeft()) {
                 return category;
             }
         }

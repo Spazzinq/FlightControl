@@ -58,7 +58,7 @@ public final class TempFlyCommand implements CommandExecutor {
                 if (argPlayer != null) {
                     FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(argPlayer);
 
-                    if (flightPlayer.getTempFlyLength() == null) {
+                    if (flightPlayer.getTempflyTimer().getTimeLeft() == null) {
                         msgVar(s, pl.getLangManager().getTempFlyDisabled(), false, "player", argPlayer.getName());
                     } else {
                         msgVar(s, pl.getLangManager().getTempFlyCheck(), false, new HashMap<String, String>() {{
@@ -106,7 +106,7 @@ public final class TempFlyCommand implements CommandExecutor {
                 || length.equalsIgnoreCase("stop")
                 || length.equalsIgnoreCase("end")
                 || length.equalsIgnoreCase("off")) {
-            flightPlayer.setTempFlyLength(null);
+            flightPlayer.getTempflyTimer().reset();
             msgVar(s, pl.getLangManager().getTempFlyDisable(), false, "player", p.getName());
         } else if (length.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
             char unit = findUnit(length);
@@ -139,21 +139,8 @@ public final class TempFlyCommand implements CommandExecutor {
                 lengthFormatted.append("s");
             }
 
-            // Add on if the player already has tempfly
-            flightPlayer.setTempFlyLength(time, flightPlayer.hasTempFly());
-
-            // Listener after command will auto check
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    pl.getFlightManager().check(p);
-                    // Checks when tempfly is expected to expire (50 = ms to ticks = 1000ms / 20ticks)
-                }
-                // Convert to ticks then add 4 for good measure
-            }.runTaskLater(pl, time / 50 + 4);
-
             if (!silent) {
-                String msg = flightPlayer.hasTempFly() ? pl.getLangManager().getTempFlyAdd()
+                String msg = flightPlayer.getTempflyTimer().hasTimeLeft() ? pl.getLangManager().getTempFlyAdd()
                         : pl.getLangManager().getTempFlyEnable();
 
                 msgVar(s, msg, false, new HashMap<String, String>() {{
@@ -161,6 +148,9 @@ public final class TempFlyCommand implements CommandExecutor {
                     put("duration", lengthFormatted.toString());
                 }});
             }
+
+            // Add on if the player already has tempfly
+            flightPlayer.setTempFlyLength(time, flightPlayer.getTempflyTimer().hasTimeLeft());
         } else {
             msg(s, pl.getLangManager().getTempFlyUsage());
         }

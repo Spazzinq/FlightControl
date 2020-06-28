@@ -39,23 +39,29 @@ public class FlightPlayer {
     @Getter private final YamlConfiguration data;
     private final Player player;
 
-    private Timer tempflyTimer;
+    @Getter private final Timer tempflyTimer;
     @Getter private float actualFlightSpeed;
     @Setter private boolean trail;
-    @Getter private Long tempFlyLength;
 
-    public FlightPlayer(File dataFile, YamlConfiguration data, Player player, float actualFlightSpeed, boolean trail, Long tempFlyLength) {
+    public FlightPlayer(File dataFile, YamlConfiguration data, Player player, float actualFlightSpeed, boolean trail, long tempFlyLength) {
         this.dataFile = dataFile;
         this.data = data;
         this.player = player;
         // Don't store speed in data conf if not personal for player
         this.actualFlightSpeed = actualFlightSpeed;
         this.trail = trail;
-        setTempFlyLength(tempFlyLength);
+        this.tempflyTimer = new Timer(tempFlyLength) {
+            @SneakyThrows @Override public void onFinish() {
+                FlightControl.getInstance().getFlightManager().check(player);
+                data.set("tempfly", null);
+                data.save(dataFile);
+            }
+        };
 
         // Auto-save
         new BukkitRunnable() {
             @SneakyThrows @Override public void run() {
+                data.set("tempfly", tempflyTimer.getTimeLeft() == 0 ? null : tempflyTimer.getTimeLeft());
                 data.save(dataFile);
             }
             // 6000 ticks = 20 ticks * 300 = 5 minutes
@@ -74,40 +80,17 @@ public class FlightPlayer {
         return trail;
     }
 
-    public boolean hasTempFly() {
-        if (tempFlyLength != null && tempFlyLength <= System.currentTimeMillis()) {
-            setTempFlyLength(null);
-        }
-
-        return tempFlyLength != null;
-    }
-
-    @SneakyThrows public void setTempFlyLength(Long tempFlyLength) {
-        setTempFlyLength(tempFlyLength, false);
-    }
-
-    @SneakyThrows public void setTempFlyLength(Long tempFlyLength, boolean addTime) {
-        // Null if not long enough
-        if (tempFlyLength != null && tempFlyLength < 1) {
-            tempFlyLength = null;
-        }
-
-            // Add if not null and addTime
-        if (tempFlyLength == null || !addTime) {
-            this.tempFlyLength = tempFlyLength;
+    @SneakyThrows public void setTempFlyLength(long tempFlyLength, boolean addTime) {
+        if (addTime) {
+            tempflyTimer.addTimeLeft(tempFlyLength);
         } else {
-            this.tempFlyLength += tempFlyLength;
+            tempflyTimer.setTotalTime(tempFlyLength);
         }
-
 
         // Prevent NPE for data migration
         if (data != null) {
-            data.set("temp_fly", tempFlyLength);
-
-            // Don't force save unless new time
-           if (tempFlyLength != null) {
-               data.save(dataFile);
-           }
+            data.set("tempfly", tempflyTimer.getTimeLeft());
+            data.save(dataFile);
         }
     }
 

@@ -58,6 +58,7 @@ public class ConfManager {
     @Getter @Setter private boolean trail;
     @Getter @Setter private boolean everyEnable;
     @Getter @Setter private boolean everyDisable;
+    @Getter @Setter private boolean tempflyAlwaysDecrease;
 
     @Getter @Setter private boolean nearbyCheck;
     @Getter @Setter private boolean isNearbyCheckEnemies;
@@ -89,6 +90,8 @@ public class ConfManager {
             combatChecked = conf.getBoolean("settings.disable_flight_in_combat");
             cancelFall = conf.getBoolean("settings.prevent_fall_damage");
             vanishBypass = conf.getBoolean("settings.vanish_bypass");
+            isNearbyCheckEnemies = conf.getBoolean("nearby_disable.factions_enemy");
+            tempflyAlwaysDecrease = conf.getBoolean("tempfly.always_decrease");
 
             // ints
             int range = conf.getInt("nearby_disable.range");
@@ -96,8 +99,6 @@ public class ConfManager {
             if (nearbyCheck = (range != -1)) {
                 nearbyRangeSquared = range * range;
             }
-
-            isNearbyCheckEnemies = conf.getBoolean("nearby_disable.factions_enemy");
 
             // floats
             defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed"));
@@ -169,6 +170,14 @@ public class ConfManager {
         if (!conf.isString("settings.ae_enchant_name")){
             pl.getLogger().info("Added AdvancedEnchantments custom enchant name setting!");
             conf.addSubnodes(Collections.singleton("ae_enchant_name: \"Flight\""), "settings.vanish_bypass");
+
+            modified = true;
+        }
+
+        // 4.6.0 - add tempfly setting
+        if (!conf.isConfigurationSection("tempfly")) {
+            conf.addNode("tempfly","nearby_disable");
+            conf.addIndentedSubnodes(Collections.singleton("always_decrease: true"), "tempfly");
 
             modified = true;
         }

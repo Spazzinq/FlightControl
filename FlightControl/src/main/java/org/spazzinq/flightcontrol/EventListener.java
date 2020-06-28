@@ -34,6 +34,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.object.Sound;
+import org.spazzinq.flightcontrol.object.FlightPlayer;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
@@ -66,11 +67,17 @@ final class EventListener implements org.bukkit.event.Listener {
         Player p = e.getPlayer();
 
         if (e.isFlying()) {
+            pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().start();
+
             pl.getTrailManager().trailCheck(p);
             if (pl.getConfManager().isEveryEnable()) {
                 Sound.play(p, pl.getConfManager().getEnableSound());
             }
         } else {
+            if (!pl.getConfManager().isTempflyAlwaysDecrease()) {
+                pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
+            }
+
             pl.getTrailManager().trailRemove(p);
             if (pl.getConfManager().isEveryDisable()) {
                 Sound.play(p, pl.getConfManager().getDisableSound());
@@ -94,6 +101,8 @@ final class EventListener implements org.bukkit.event.Listener {
     }
 
     @EventHandler private void onQuit(PlayerQuitEvent e) {
+        pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempflyTimer().pause();
+
         pl.getTrailManager().trailRemove(e.getPlayer());
     }
 
@@ -105,7 +114,7 @@ final class EventListener implements org.bukkit.event.Listener {
             new BukkitRunnable() {
                 @Override public void run() {
                     msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently" +
-                            " running on this server. " + pl.getHookManager().getHookedMsg() + " " + pl.getCheckManager().getChecksMsg());
+                            " running on this server.\n \n" + pl.getHookManager().getHookedMsg() + "\n \n" + pl.getCheckManager().getChecksMsg() + "\n");
                 }
             }.runTaskLater(pl, 40);
         }

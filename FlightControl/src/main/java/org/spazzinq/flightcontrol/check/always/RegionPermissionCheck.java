@@ -25,8 +25,8 @@
 package org.spazzinq.flightcontrol.check.always;
 
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.api.object.Cause;
+import org.spazzinq.flightcontrol.check.Check;
 
 public class RegionPermissionCheck extends Check {
     private static RegionPermissionCheck instance;

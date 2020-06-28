@@ -25,12 +25,17 @@
 package org.spazzinq.flightcontrol.placeholder;
 
 import be.maximvdw.placeholderapi.PlaceholderAPI;
+import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.util.MathUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 public class MVdWPlaceholder {
+    private FlightControl pl;
+
     public MVdWPlaceholder(FlightControl pl) {
+        this.pl = pl;
+
         PlaceholderAPI.registerPlaceholder(pl, "flightcontrol_flying", e -> {
             if (e.getPlayer() == null) {
                 return "";
@@ -60,7 +65,7 @@ public class MVdWPlaceholder {
                 return "";
             }
 
-            return String.valueOf(MathUtil.seconds(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyLength())));
+            return String.valueOf(MathUtil.seconds(getTimeLeft(e.getPlayer())));
         });
 
         PlaceholderAPI.registerPlaceholder(pl, "flightcontrol_tempfly_m", e -> {
@@ -68,7 +73,7 @@ public class MVdWPlaceholder {
                 return "";
             }
 
-            return String.valueOf(MathUtil.minutes(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyLength())));
+            return String.valueOf(MathUtil.minutes(getTimeLeft(e.getPlayer())));
         });
 
         PlaceholderAPI.registerPlaceholder(pl, "flightcontrol_tempfly_h", e -> {
@@ -76,7 +81,7 @@ public class MVdWPlaceholder {
                 return "";
             }
 
-            return String.valueOf(MathUtil.hours(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyLength())));
+            return String.valueOf(MathUtil.hours(PlayerUtil.formatLength(getTimeLeft(e.getPlayer()))));
         });
 
         PlaceholderAPI.registerPlaceholder(pl, "flightcontrol_tempfly_d", e -> {
@@ -84,7 +89,11 @@ public class MVdWPlaceholder {
                 return "";
             }
 
-            return String.valueOf(MathUtil.days(PlayerUtil.formatLength(pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempFlyLength())));
+            return String.valueOf(MathUtil.days(getTimeLeft(e.getPlayer())));
         });
+    }
+
+    private long getTimeLeft(Player p) {
+        return pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().getTimeLeft();
     }
 }

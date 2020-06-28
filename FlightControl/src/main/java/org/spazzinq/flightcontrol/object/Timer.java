@@ -24,21 +24,23 @@
 
 package org.spazzinq.flightcontrol.object;
 
-import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 
-public class Timer {
+public abstract class Timer {
     private long startTime;
-    private long timeLeft;
-    private BukkitRunnable endTask;
+    private long totalTime;
+    private long elapsedTime;
 
-    public Timer(long timeLeft) {
-        this.timeLeft = timeLeft;
-        start();
+    public Timer(long totalTime) {
+        this.totalTime = totalTime;
     }
 
-    public void setTimeLeft(long timeLeft) {
-        this.timeLeft = timeLeft;
+    public void setTotalTime(long totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public void addTimeLeft(long timeLeft) {
+        this.totalTime += timeLeft;
     }
 
     public void start() {
@@ -46,20 +48,36 @@ public class Timer {
     }
 
     public void pause() {
-        timeLeft -= System.currentTimeMillis() - startTime;
-        startTime = -1;
+        if (startTime != 0) {
+            elapsedTime += System.currentTimeMillis() - startTime;
+            startTime = 0;
+        }
     }
 
-    public long getTimeLeft() {
-        if (startTime != -1) {
-            timeLeft -= System.currentTimeMillis() - startTime;
+    public void reset() {
+        totalTime = 0;
+        startTime = 0;
+        elapsedTime = 0;
+    }
+
+    public Long getTimeLeft() {
+        if (startTime != 0 && totalTime != 0) {
+            elapsedTime += System.currentTimeMillis() - startTime;
             startTime = System.currentTimeMillis();
+
+            // Assurance that flight is cancelled
+            if (totalTime <= elapsedTime) {
+                reset();
+                onFinish();
+            }
         }
 
-        if (timeLeft < 0) {
-            endTask.runTask(FlightControl.getInstance());
-        }
-
-        return timeLeft;
+        return totalTime - elapsedTime;
     }
+
+    public boolean hasTimeLeft() {
+        return getTimeLeft() != 0;
+    }
+
+    public abstract void onFinish();
 }

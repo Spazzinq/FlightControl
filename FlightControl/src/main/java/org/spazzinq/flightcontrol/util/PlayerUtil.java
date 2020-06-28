@@ -57,7 +57,7 @@ public final class PlayerUtil {
     }
 
     public static String shortPlaceholder(FlightPlayer flightPlayer) {
-        long length = formatLength(flightPlayer.getTempFlyLength());
+        long length = formatLength(flightPlayer.getTempflyTimer().getTimeLeft());
 
         if (length > 0) {
             StringBuilder builder = new StringBuilder();
@@ -79,7 +79,7 @@ public final class PlayerUtil {
     }
 
     public static String longPlaceholder(FlightPlayer flightPlayer) {
-        long length = formatLength(flightPlayer.getTempFlyLength());
+        long length = formatLength(flightPlayer.getTempflyTimer().getTimeLeft());
 
         if (length > 0) {
             StringBuilder builder = new StringBuilder();
@@ -103,6 +103,6 @@ public final class PlayerUtil {
     }
 
     public static long formatLength(Long length) {
-        return length == null ? 0 : (length - System.currentTimeMillis()) / 1000;
+        return length == null ? 0 : length / 1000;
     }
 }

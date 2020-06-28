@@ -24,7 +24,6 @@
 
 package org.spazzinq.flightcontrol.multiversion.current;
 
-import net.prosavage.factionsx.core.FPlayer;
 import net.prosavage.factionsx.core.Faction;
 import net.prosavage.factionsx.manager.PlayerManager;
 import net.prosavage.factionsx.persist.data.FactionsKt;

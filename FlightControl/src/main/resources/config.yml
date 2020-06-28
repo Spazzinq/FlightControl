@@ -28,6 +28,10 @@ settings:
   # Set as the enchant name to support custom flight enchantments
   ae_enchant_name: "Flight"
 
+tempfly:
+  # Should tempfly decrease even when the player isn't flying?
+  always_decrease: true
+
 # NOTE: this feature is resource intensive and may cause performance issues
 nearby_disable:
   # Disables flight when a player is within a certain block range (set to -1 to disable)
