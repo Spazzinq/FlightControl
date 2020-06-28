@@ -27,8 +27,8 @@ package org.spazzinq.flightcontrol.check.always;
 import n3kas.ae.api.AEAPI;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.api.object.Cause;
+import org.spazzinq.flightcontrol.check.Check;
 
 public class AdvancedEnchantmentsCheck extends Check {
     private FlightControl pl;
@@ -38,7 +38,7 @@ public class AdvancedEnchantmentsCheck extends Check {
     }
 
     @Override public boolean check(Player p) {
-        return AEAPI.getEnchantmentsOnItem(p.getInventory().getBoots()).containsKey(pl.getConfManager().getAeEnchantName());
+        return p.getInventory().getBoots() != null && AEAPI.getEnchantmentsOnItem(p.getInventory().getBoots()).containsKey(pl.getConfManager().getAeEnchantName());
     }
 
     @Override public Cause getCause() {
