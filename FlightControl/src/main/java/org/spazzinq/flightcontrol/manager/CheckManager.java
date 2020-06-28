@@ -198,7 +198,7 @@ public class CheckManager {
         checks.addAll(ownTerritoryChecks.values());
         checks.addAll(trustedTerritoryChecks.values());
 
-        pl.getLogger().info(checksMsg = checks.toString());
+        pl.getLogger().info(checksMsg = "Loaded checks: " + checks.toString());
     }
 
     private boolean pluginLoading(String pluginName) {

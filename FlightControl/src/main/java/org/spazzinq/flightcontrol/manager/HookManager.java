@@ -93,24 +93,9 @@ public class HookManager {
     }
 
     private void printLoadedHooks() {
-        // Prepare hooked msg
-        StringBuilder hookMsg = new StringBuilder("Hooked with ");
-        if (hooked.isEmpty()) {
-            hookMsg.append("no plugins.");
-        } else {
-            for (int i = 0; i < hooked.size(); i++) {
-                if (i != 0) {
-                    hookMsg.append(", ");
-                }
-                if (i == hooked.size() - 1) {
-                    hookMsg.append("and ");
-                }
-                hookMsg.append(hooked.get(i));
-            }
-            hookMsg.append(".");
-        }
+        hookedMsg = hooked.isEmpty() ? "Hooked with no plugins." : "Loaded hooks: " + hooked;
 
-        pl.getLogger().info(hookedMsg = hookMsg.toString());
+        pl.getLogger().info(hookedMsg);
     }
 
     private boolean pluginLoading(String pluginName) {
