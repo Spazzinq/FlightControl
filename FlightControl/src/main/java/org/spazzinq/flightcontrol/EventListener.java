@@ -113,7 +113,7 @@ final class EventListener implements org.bukkit.event.Listener {
         if (FlightControl.spazzinqUUID.equals(p.getUniqueId())) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    msg(p, "&e&lFlightControl &7» &eVersion &f" + pl.getDescription().getVersion() + " &eis currently" +
+                    msg(p, " \n&a&lFlightControl &7» &aVersion &f" + pl.getDescription().getVersion() + " &ais currently" +
                             " running on this server.\n \n" + pl.getHookManager().getHookedMsg() + "\n \n" + pl.getCheckManager().getChecksMsg() + "\n");
                 }
             }.runTaskLater(pl, 40);
@@ -128,16 +128,23 @@ final class EventListener implements org.bukkit.event.Listener {
             }.runTaskLater(pl, 40);
         }
 
-        // Load FlightPlayer data
-        p.setFlySpeed(pl.getPlayerManager().getFlightPlayer(p).getActualFlightSpeed());
-
         // Check flight then trail, allowing time for other plugins to load data
         new BukkitRunnable() {
             @Override public void run() {
+                FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(p);
+
                 pl.getFlightManager().check(p);
                 if (p.isFlying()) {
                     pl.getTrailManager().trailCheck(p);
                 }
+
+                // Start if always running or flying on login
+                if (pl.getConfManager().isTempflyAlwaysDecrease() || p.isFlying()) {
+                    flightPlayer.getTempflyTimer().start();
+                }
+
+                // Load FlightPlayer data
+                p.setFlySpeed(flightPlayer.getActualFlightSpeed());
             }
         }.runTaskLater(pl, 10);
     }

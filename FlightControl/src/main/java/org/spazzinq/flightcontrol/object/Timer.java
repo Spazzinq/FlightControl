@@ -44,7 +44,9 @@ public abstract class Timer {
     }
 
     public void start() {
-        startTime = System.currentTimeMillis();
+        if (totalTime != 0) {
+            startTime = System.currentTimeMillis();
+        }
     }
 
     public void pause() {

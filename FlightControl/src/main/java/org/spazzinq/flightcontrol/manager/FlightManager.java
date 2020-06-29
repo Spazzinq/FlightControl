@@ -36,6 +36,7 @@ import org.spazzinq.flightcontrol.api.event.FlightEnableEvent;
 import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.api.object.Sound;
 import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.util.CheckUtil;
 
 import java.util.ArrayList;

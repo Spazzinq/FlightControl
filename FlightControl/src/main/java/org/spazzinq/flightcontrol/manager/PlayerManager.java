@@ -57,19 +57,21 @@ public class PlayerManager {
                     ? (float) dataConf.getDouble("flight_speed")
                     : pl.getConfManager().getDefaultFlightSpeed();
 
-            long tempFlyLength = dataConf.isLong("tempfly") ? dataConf.getLong("tempfly") : 0;
+            long tempFlyLength;
 
-            if (dataConf.isLong("tempfly")) {
-                tempFlyLength = dataConf.getLong("tempfly");
+            if (dataConf.isInt("tempfly")) {
+                tempFlyLength = dataConf.getInt("tempfly");
                 // Migrate from 4.3.11 - old key
-            } else if (dataConf.isLong("temp_fly")) {
-                tempFlyLength = System.currentTimeMillis() - dataConf.getLong("temp_fly");
+            } else if (dataConf.isInt("temp_fly")) {
+                tempFlyLength = System.currentTimeMillis() - dataConf.getInt("temp_fly");
 
                 dataConf.set("temp_fly", null);
                 dataConf.set("tempfly", tempFlyLength);
+            } else {
+                tempFlyLength = 0;
             }
 
-            FlightPlayer flightPlayer = new FlightPlayer(dataFile, dataConf, p, speed, dataConf.getBoolean("trail"),
+            FlightPlayer flightPlayer = new FlightPlayer(dataFile, dataConf, p.getUniqueId(), speed, dataConf.getBoolean("trail", true),
                     tempFlyLength);
 
             playerCache.put(p.getUniqueId(), flightPlayer);
@@ -88,6 +90,12 @@ public class PlayerManager {
             if (!flightPlayer.trailWanted()) {
                 pl.getTrailManager().trailRemove(p);
             }
+        }
+    }
+
+    public void savePlayerData() {
+        for (FlightPlayer flightPlayer : playerCache.values()) {
+            flightPlayer.saveData();
         }
     }
 }

@@ -112,8 +112,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         new MetricsLite(this, 4704);
     }
 
-    // Just in case the task isn't automatically cancelled
     @Override public void onDisable() {
+        playerManager.savePlayerData();
+        // Just in case the task isn't automatically cancelled
         for (Player p : Bukkit.getOnlinePlayers()) {
             trailManager.trailRemove(p);
         }

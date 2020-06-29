@@ -48,7 +48,7 @@ admin:
     add: "&e&lFlightControl &7» &f%player%&e a maintenant un vol temporaire pendant &f%duration%&e de plus."
     disable: "&e&lFlightControl &7» &eDésactivé le vol temporaire de &f%player%&e !"
     disabled: "&c&lFlightControl &7» Le vol temporaire de &f%player%&c est déjà désactivé !"
-    check: "&e&lFlightControl &7» Temps de vol restant pour &f%player%&e : &f%duration%&e."
+    check: "&e&lFlightControl &7» Temps de vol restant pour &f%player%&e &7: &f%duration%&e."
     usage: "&c&lFlightControl &7» &cUsage incorrect ! Usage : /tempfly (durée) [joueur]. Une unité de temps anglaise
               doit suivre la durée. Les exemples de durées :
               &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c."

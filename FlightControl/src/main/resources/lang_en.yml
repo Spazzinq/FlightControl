@@ -23,7 +23,7 @@ player:
 # e.g. %speed% could be the new global flight speed
 admin:
   ## Config editing messages ##
-  # Prefix applied to messages that cannot be modified (e.g. /fc actionbar)
+  # Prefix applied to messages that cannot be changed (e.g. /fc actionbar)
   prefix: "&a&lFlightControl &a"
   # The prefixes are written out because the different colors have different meanings
   reloaded: "&a&lFlightControl &7» &aAll configurations were successfully reloaded!"
