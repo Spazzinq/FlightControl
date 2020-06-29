@@ -227,6 +227,9 @@ public class LangManager {
 
         lang.save();
 
+        conf.deleteNode("messages");
+        conf.save();
+
         pl.getLogger().info("Successfully migrated the messages from config.yml to lang.yml!");
     }
 

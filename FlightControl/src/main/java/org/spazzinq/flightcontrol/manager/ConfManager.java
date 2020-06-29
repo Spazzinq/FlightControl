@@ -110,13 +110,13 @@ public class ConfManager {
             loadSounds();
             loadTrail();
 
-            // Prevent reloading for the next 250ms
+            // Prevent reloading for the next 500ms
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
                     ignoreReload = false;
                 }
-            }, 250);
+            }, 500);
 
             reloaded = true;
         }
@@ -126,14 +126,6 @@ public class ConfManager {
     // TODO Continue to add!
     public void updateConf() {
         boolean modified = false;
-
-        // 4.1.0 - moved to lang.yml
-        if (conf.isConfigurationSection("messages")) {
-            pl.getLogger().info("Removed the messages section from config.yml!");
-            conf.deleteNode("messages");
-
-            modified = true;
-        }
 
         // 4.2.5 - relocate lands, towny; add griefprevention
         if (conf.isConfigurationSection("towny") || conf.isConfigurationSection("lands")) {
@@ -149,7 +141,7 @@ public class ConfManager {
             pl.getLogger().info("Migrated the factions disable enemy range section of the configuration!");
 
             conf.addNode("nearby_disable:", "trail");
-            conf.addSubnodes(new HashSet<>(Arrays.asList(
+            conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
                     "range: " + conf.getInt("factions.disable_enemy_range"),
                     "factions_enemy: " + (conf.getInt("factions.disable_enemy_range") != -1))), "nearby_disable");
 
@@ -176,7 +168,8 @@ public class ConfManager {
 
         // 4.6.0 - add tempfly setting
         if (!conf.isConfigurationSection("tempfly")) {
-            conf.addNode("tempfly","nearby_disable");
+            pl.getLogger().info("Added \"tempfly\" section to config!");
+            conf.addNode("tempfly:","nearby_disable");
             conf.addIndentedSubnodes(Collections.singleton("always_decrease: true"), "tempfly");
 
             modified = true;
