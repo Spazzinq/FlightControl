@@ -24,8 +24,6 @@
 
 package org.spazzinq.flightcontrol.object;
 
-import org.spazzinq.flightcontrol.FlightControl;
-
 public abstract class Timer {
     private long startTime;
     private long totalTime;
