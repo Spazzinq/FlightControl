@@ -50,7 +50,7 @@ public class ClipPlaceholder extends PlaceholderExpansion {
 
         // %flightcontrol_<identifier>%
 
-        if (identifier.equals("flying")) {
+        if ("flying".equals(identifier)) {
             return String.valueOf(player.isFlying());
         }
 
@@ -64,6 +64,7 @@ public class ClipPlaceholder extends PlaceholderExpansion {
             case "tempfly_m": return String.valueOf(minutes(time));
             case "tempfly_h": return String.valueOf(hours(time));
             case "tempfly_d": return String.valueOf(days(time));
+            default: break;
         }
 
         // If invalid placeholder

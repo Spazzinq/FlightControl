@@ -50,11 +50,12 @@ public final class MessageUtil {
     }
 
     public static void msgVar(CommandSender s, String msg, boolean actionBar, HashMap<String, String> toReplace) {
+        String finalMsg = msg;
         for (Map.Entry<String, String> entry : toReplace.entrySet()) {
-            msg = msg.replaceAll("%" + entry.getKey() + "%", entry.getValue());
+            finalMsg = finalMsg.replaceAll("%" + entry.getKey() + "%", entry.getValue());
         }
 
-        msg(s, msg, actionBar);
+        msg(s, finalMsg, actionBar);
     }
 
     public static void msgVar(CommandSender s, String msg, boolean actionBar, String var, String value) {
