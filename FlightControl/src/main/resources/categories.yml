@@ -27,9 +27,9 @@ global:
   territory:
     enable:
       # Enable/Disable in player's own territory
-      own: [GriefPrevention, Lands, PlotSquared, Towny, RedProtect, BentoBox]
+      own: [Lands, Towny]
       # Enable/Disable in territory that player is a member of
-      trusted: [GriefPrevention]
+      trusted: [Towny]
     disable: []
 
 #    ___      _                    _
