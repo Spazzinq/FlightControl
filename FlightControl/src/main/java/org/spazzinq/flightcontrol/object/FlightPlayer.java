@@ -27,32 +27,34 @@ package org.spazzinq.flightcontrol.object;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 
 import java.io.File;
+import java.util.UUID;
 
 public class FlightPlayer {
     private final File dataFile;
     @Getter private final YamlConfiguration data;
-    private final Player player;
+    private final UUID uuid;
 
     @Getter private final Timer tempflyTimer;
     @Getter private float actualFlightSpeed;
     @Setter private boolean trail;
 
-    public FlightPlayer(File dataFile, YamlConfiguration data, Player player, float actualFlightSpeed, boolean trail, long tempFlyLength) {
+    public FlightPlayer(File dataFile, YamlConfiguration data, UUID uuid, float actualFlightSpeed, boolean trail, long tempFlyLength) {
         this.dataFile = dataFile;
         this.data = data;
-        this.player = player;
+        this.uuid = uuid;
         // Don't store speed in data conf if not personal for player
         this.actualFlightSpeed = actualFlightSpeed;
         this.trail = trail;
         this.tempflyTimer = new Timer(tempFlyLength) {
             @SneakyThrows @Override public void onFinish() {
-                FlightControl.getInstance().getFlightManager().check(player);
+                FlightControl.getInstance().getFlightManager().check(getPlayer());
                 data.set("tempfly", null);
                 data.save(dataFile);
             }
@@ -61,8 +63,7 @@ public class FlightPlayer {
         // Auto-save
         new BukkitRunnable() {
             @SneakyThrows @Override public void run() {
-                data.set("tempfly", tempflyTimer.getTimeLeft() == 0 ? null : tempflyTimer.getTimeLeft());
-                data.save(dataFile);
+                saveData();
             }
             // 6000 ticks = 20 ticks * 300 = 5 minutes
         }.runTaskTimerAsynchronously(FlightControl.getInstance(), 6000, 6000);
@@ -87,6 +88,11 @@ public class FlightPlayer {
             tempflyTimer.setTotalTime(tempFlyLength);
         }
 
+        // Start if always running
+        if (FlightControl.getInstance().getConfManager().isTempflyAlwaysDecrease()) {
+            tempflyTimer.start();
+        }
+
         // Prevent NPE for data migration
         if (data != null) {
             data.set("tempfly", tempflyTimer.getTimeLeft());
@@ -96,9 +102,17 @@ public class FlightPlayer {
 
     @SneakyThrows public void setActualFlightSpeed(float actualFlightSpeed) {
         this.actualFlightSpeed = actualFlightSpeed;
+        getPlayer().setFlySpeed(actualFlightSpeed);
 
         data.set("flight_speed", actualFlightSpeed);
+    }
 
-        player.setFlySpeed(actualFlightSpeed);
+    @SneakyThrows public void saveData() {
+        data.set("tempfly", tempflyTimer.getTimeLeft() == 0 ? null : tempflyTimer.getTimeLeft());
+        data.save(dataFile);
+    }
+
+    private Player getPlayer() {
+        return Bukkit.getPlayer(uuid);
     }
 }

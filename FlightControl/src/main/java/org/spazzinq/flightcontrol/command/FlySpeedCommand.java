@@ -100,7 +100,6 @@ public class FlySpeedCommand implements CommandExecutor {
                 }});
             } else {
                 playerManager.getFlightPlayer(p).setActualFlightSpeed(speed);
-                p.setFlySpeed(flightPlayer.getActualFlightSpeed());
 
                 msgVar(s, pl.getLangManager().getFlySpeedSet(), false, new HashMap<String, String>() {{
                     put("speed", String.valueOf(wrongSpeed));
