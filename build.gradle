@@ -54,6 +54,6 @@ subprojects {
         // MVdWPlaceholderAPI
         maven { url = 'https://repo.mvdw-software.com/content/groups/public/' }
         // FactionsX
-        maven { url = 'https://nexus.savagelabs.net/repository/maven-public/' }
+        maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
     }
 }
