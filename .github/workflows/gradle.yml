@@ -23,5 +23,6 @@ jobs:
       run: ./gradlew clean shadowJar
     - uses: actions/upload-artifact@v2
       with:
+        name: FlightControl-build
         path: FlightControl/build/libs/FlightControl.jar
 
