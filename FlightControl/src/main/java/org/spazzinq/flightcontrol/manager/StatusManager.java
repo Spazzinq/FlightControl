@@ -63,7 +63,11 @@ public class StatusManager {
         // Eval category CheckSet
         if (trueChecks.isEmpty() || debug) {
             Category category = pl.getCategoryManager().getCategory(p);
-            trueChecks.addAll(CheckUtil.checkAll(category.getChecks().getEnabled(), p, debug));
+            // Add extra variables to pinpoint NPE
+            HashSet<Check> catChecks = category.getChecks().getEnabled();
+            HashSet<Check> enabledCatChecks = CheckUtil.checkAll(catChecks, p, debug);
+
+            trueChecks.addAll(enabledCatChecks);
         }
 
         // Eval permissions
