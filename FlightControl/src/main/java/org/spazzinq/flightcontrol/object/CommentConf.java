@@ -58,7 +58,6 @@ public class CommentConf extends YamlConfiguration {
     private final HashMap<String, Set<String>> addNodes = new HashMap<>();
     private final HashMap<String, Set<String>> addSubnodes = new HashMap<>();
     private final HashMap<String, Set<String>> addIndentedSubnodes = new HashMap<>();
-    private final Set<String> deleteNodes = new HashSet<>();
 
     private CommentConf() {
         // From saveToString in YamlConfiguration
@@ -211,8 +210,6 @@ public class CommentConf extends YamlConfiguration {
         addSubnodes.clear();
         runTask(configBuilder, addIndentedSubnodes, WRITE_INDENTED_SUBNODES);
         addIndentedSubnodes.clear();
-        runTask(configBuilder, deleteNodes, DELETE_NODES);
-        deleteNodes.clear();
         runTask(configBuilder, defaultComments, WRITE_COMMENTS);
 
         return configBuilder.toString();

@@ -53,10 +53,6 @@ public final class ConfUtil {
         int separatorLength = NEW_LINE.length();
         // Current comment if SAVE_COMMENTS
         StringBuilder currentComment = task == SAVE_COMMENTS ? new StringBuilder() : null;
-        // Where to start if DELETE_NODES
-        int deleteStart = -1;
-        // Node to delete if DELETE_NODES
-        String deletingNode = null;
 
         for (String line : lines) {
             // Remove leading spaces
@@ -132,25 +128,6 @@ public final class ConfUtil {
                                 line.length() : 0), insert);
                         // Account for insertion in pos
                         pos += insert.length();
-                    }
-                }
-
-                if (task == DELETE_NODES) {
-                    // '' && (ensure the node isn't a part of a later node before deleting || '')
-                    if (deletingNode != null && (!node.matches("(\\S+\\.)*" + deletingNode + "(\\.\\S+)*") || endOfConfig)) {
-                        int deleteEnd = pos + (endOfConfig ? line.length() : 0);
-
-                        deletingNode = null;
-                        // Account for deleted section in pos
-                        pos -= deleteEnd - deleteStart;
-
-                        config.delete(deleteStart, deleteEnd);
-                    }
-                    if (((Set<String>) list).contains(node)) {
-                        // Set deletingNode and delete start (on next iteration, the code will first check if
-                        // deletingNode exists)
-                        deletingNode = node;
-                        deleteStart = pos;
                     }
                 }
             }
