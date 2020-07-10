@@ -24,8 +24,10 @@
 
 package org.spazzinq.flightcontrol.manager;
 
+import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.always.RegionPermissionCheck;
@@ -63,11 +65,12 @@ public class StatusManager {
         // Eval category CheckSet
         if (trueChecks.isEmpty() || debug) {
             Category category = pl.getCategoryManager().getCategory(p);
-            // Add extra variables to pinpoint NPE
-            HashSet<Check> catChecks = category.getChecks().getEnabled();
-            HashSet<Check> enabledCatChecks = CheckUtil.checkAll(catChecks, p, debug);
 
-            trueChecks.addAll(enabledCatChecks);
+            if (category != null) {
+                HashSet<Check> enabledCatChecks = CheckUtil.checkAll(category.getChecks().getEnabled(), p, debug);
+
+                trueChecks.addAll(enabledCatChecks);
+            }
         }
 
         // Eval permissions
