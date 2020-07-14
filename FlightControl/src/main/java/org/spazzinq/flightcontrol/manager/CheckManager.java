@@ -164,6 +164,10 @@ public class CheckManager {
             ownTerritoryChecks.put("BentoBox", new BentoBoxOwnCheck());
             trustedTerritoryChecks.put("BentoBox", new BentoBoxTrustedCheck());
         }
+        if (pluginLoading("WorldGuard")) {
+            ownTerritoryChecks.put("WorldGuard", new WorldGuardOwnCheck());
+            trustedTerritoryChecks.put("WorldGuard", new WorldGuardTrustedCheck());
+        }
     }
 
     private void loadCombatChecks() {

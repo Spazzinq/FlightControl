@@ -22,11 +22,12 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion.old;
+package org.spazzinq.flightcontrol.multiversion.legacy;
 
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 
 import java.util.Iterator;
@@ -38,6 +39,29 @@ public class WorldGuardHook6 extends WorldGuardHookBase {
         if (iter.hasNext()) {
             return iter.next().getId();
         }
+
         return "none";
+    }
+
+    public boolean isMember(Player p) {
+        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(p.getWorld()).getApplicableRegions(p.getLocation()).iterator();
+
+        if (iter.hasNext()) {
+            ProtectedRegion region = iter.next();
+            return region.hasMembersOrOwners() && region.isMember(WGBukkit.getPlugin().wrapPlayer(p));
+        }
+
+        return false;
+    }
+
+    public boolean isOwner(Player p) {
+        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(p.getWorld()).getApplicableRegions(p.getLocation()).iterator();
+
+        if (iter.hasNext()) {
+            ProtectedRegion region = iter.next();
+            return region.hasMembersOrOwners() && region.isOwner(WGBukkit.getPlugin().wrapPlayer(p));
+        }
+
+        return false;
     }
 }

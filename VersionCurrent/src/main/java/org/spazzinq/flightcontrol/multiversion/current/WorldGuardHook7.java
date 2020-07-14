@@ -26,10 +26,12 @@ package org.spazzinq.flightcontrol.multiversion.current;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 
 import java.util.Iterator;
@@ -45,7 +47,34 @@ public class WorldGuardHook7 extends WorldGuardHookBase {
         if (iter.hasNext()) {
             return iter.next().getId();
         }
+
         return "none";
+    }
+
+    public boolean isMember(Player p) {
+        Iterator<ProtectedRegion> iter = getRegionContainer().createQuery()
+                .getApplicableRegions(BukkitAdapter.adapt(p.getLocation())).iterator();
+
+        if (iter.hasNext()) {
+            ProtectedRegion region = iter.next();
+
+            return region.hasMembersOrOwners() && region.isMember(WorldGuardPlugin.inst().wrapPlayer(p));
+        }
+
+        return false;
+    }
+
+    public boolean isOwner(Player p) {
+        Iterator<ProtectedRegion> iter = getRegionContainer().createQuery()
+                .getApplicableRegions(BukkitAdapter.adapt(p.getLocation())).iterator();
+
+        if (iter.hasNext()) {
+            ProtectedRegion region = iter.next();
+
+            return region.hasMembersOrOwners() && region.isOwner(WorldGuardPlugin.inst().wrapPlayer(p));
+        }
+
+        return false;
     }
 
     private RegionContainer getRegionContainer() {

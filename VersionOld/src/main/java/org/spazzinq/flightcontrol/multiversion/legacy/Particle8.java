@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion.old;
+package org.spazzinq.flightcontrol.multiversion.legacy;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;

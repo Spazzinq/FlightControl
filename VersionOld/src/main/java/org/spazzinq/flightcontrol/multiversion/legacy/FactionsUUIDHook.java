@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion.old;
+package org.spazzinq.flightcontrol.multiversion.legacy;
 
 import com.massivecraft.factions.*;
 import com.massivecraft.factions.perms.Relation;

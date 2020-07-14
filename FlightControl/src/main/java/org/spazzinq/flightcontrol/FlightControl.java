@@ -40,7 +40,7 @@ import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
 import org.spazzinq.flightcontrol.multiversion.Particle;
 import org.spazzinq.flightcontrol.multiversion.current.Particle13;
-import org.spazzinq.flightcontrol.multiversion.old.Particle8;
+import org.spazzinq.flightcontrol.multiversion.legacy.Particle8;
 import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.util.CheckUtil;
 

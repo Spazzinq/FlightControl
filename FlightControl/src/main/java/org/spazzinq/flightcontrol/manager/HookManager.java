@@ -33,8 +33,8 @@ import org.spazzinq.flightcontrol.multiversion.current.FactionsXHook;
 import org.spazzinq.flightcontrol.multiversion.current.MassiveFactionsHook;
 import org.spazzinq.flightcontrol.multiversion.current.SavageFactionsHook;
 import org.spazzinq.flightcontrol.multiversion.current.WorldGuardHook7;
-import org.spazzinq.flightcontrol.multiversion.old.FactionsUUIDHook;
-import org.spazzinq.flightcontrol.multiversion.old.WorldGuardHook6;
+import org.spazzinq.flightcontrol.multiversion.legacy.FactionsUUIDHook;
+import org.spazzinq.flightcontrol.multiversion.legacy.WorldGuardHook6;
 import org.spazzinq.flightcontrol.placeholder.ClipPlaceholder;
 import org.spazzinq.flightcontrol.placeholder.MVdWPlaceholder;
 

@@ -22,22 +22,14 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.multiversion;
+package org.spazzinq.flightcontrol.check.territory.own;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
-@SuppressWarnings("unused")
-public class WorldGuardHookBase extends Hook {
-    public String getRegionName(Location l) {
-        return null;
-    }
-
-    public boolean isMember(Player p) {
-        return false;
-    }
-
-    public boolean isOwner(Player p) {
-        return false;
+public class WorldGuardOwnCheck extends TerritoryCheck {
+    @Override public boolean check(Player p) {
+        return FlightControl.getInstance().getHookManager().getWorldGuardHook().isOwner(p);
     }
 }
