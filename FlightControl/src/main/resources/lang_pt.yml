@@ -1,0 +1,57 @@
+# Translations: English (en), French (fr), Mandarin (zh), Portuguese (pt)
+# To change the language, remove the # below and set "locale" to its abbreviation (en, fr, zh)
+#locale: pt
+
+# If you don't want a message to be sent, set it to ""
+player:
+  # Use the actionbar (area above hotbar) instead of chat
+  actionbar: false
+  flight:
+    enabled: "&aO seu modo voar foi ativado."
+    disabled: "&cO seu modo voar foi desativado."
+    # "can_enable" and "cannot_enable" are used when "auto_enable" is false
+    # or if the player disables their own flight with /fly
+    can_enable: "&bVocê pode usar o /fly agora."
+    cannot_enable: "&cVocê não pode voar agora."
+    height_denied: "&cVocê não pode voar tão alto!"
+  trail:
+    enabled: "&aVocê ativou o rastro ao voar!"
+    disabled: "&cVocê desativou o rastro ao voar!"
+  permission_denied: "&cVocê não tem permissão para usar este comando."
+
+# %VARIABLENAME% is the placeholder for the message's information
+# e.g. %speed% could be the new global flight speed
+admin:
+  ## Config editing messages ##
+  # Prefix applied to messages that cannot be modified (e.g. /fc actionbar)
+  prefix: "&6&lFlightControl &a"
+  # The prefixes are written out because the different colors have different meanings
+  reloaded: "&a&lFlightControl &7» &aAs configurações foram recarregadas com sucesso!"
+  global_flight_speed:
+    set: "&e&lFlightControl &7» &eA velocidade do voo foi setada para &f%speed%&e!"
+    same: "&e&lFlightControl &7» &eBoas Notícias! A velocidade do voo já é
+      &f%speed%&e!"
+    usage: "&c&lFlightControl &7» &cUso incorreto! Use: /fc speed (0-10)"
+  enemy_range:
+    set: "&e&lFlightControl &7» &eO alcance de inimigo foi setado para &f%range%&e!"
+    same: "&e&lFlightControl &7» &eBoas Notícias! O alcance de inimigo já é
+      &f%range%&e!"
+    usage: "&c&lFlightControl &7» &cUso incorreto! Use: /fc enemyrange (alcance)"
+  ## Command messages ##
+  fly:
+    enable: "&e&lFlightControl &7» &eAtivou o fly de &f%player%&e!"
+    disable: "&e&lFlightControl &7» &eDesativou o fly de &f%player%&e!"
+    usage: "&c&lFlightControl &7» &cNick inválido!"
+  flyspeed:
+    set: "&a&lFlightControl &7» &aSua velocidade de voo foi setada para &f%speed%&a!"
+    same: "&a&lFlightControl &7» &aBoas Notícias! Sua velocidade de voo já é de &f%speed%&a!"
+    usage: "&c&lFlightControl &7» &cUso inválido! Use /flyspeed (velocidade) [jogador]!"
+  tempfly:
+    enable: "&e&lFlightControl &7» &f%player%&e agora tem fly temporário por &f%duration%&e."
+    add: "&e&lFlightControl &7» &f%player%&e agora tem um fly temporário por mais
+      &f%duration%&e."
+    disable: "&e&lFlightControl &7» &eDesativou o fly temporário de %player%!"
+    disabled: "&c&lFlightControl &7» O fly temporário de &f%player%&c já foi desativado!"
+    usage: "&c&lFlightControl &7» &cFormato inválido! Por favor, use /tempfly (duração)
+      [jogador] e coloque a duração com uma unidade de tempo. Exemplos de duração: &f1d,
+      4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c."
