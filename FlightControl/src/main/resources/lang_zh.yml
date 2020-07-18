@@ -5,39 +5,40 @@
 player:
   actionbar: false
   flight:
-    enabled: '&a已启用飞行'
-    disabled: '&c已关闭飞行'
-    can_enable: '&b你现在可以使用/fly指令'
-    cannot_enable: '&c你现在不能飞行'
+    enabled: "&a已启用飞行"
+    disabled: "&c已关闭飞行"
+    can_enable: "&b你现在可以使用/fly指令"
+    cannot_enable: "&c你现在不能飞行"
+    height_denied: "&c你不能飞这么高"
   trail:
-    enabled: '&a已启用flight trail!'
-    disabled: '&c已关闭flight trail!'
-  permission_denied: '&c你没有权限使用此指令'
+    enabled: "&a已启用flight trail!"
+    disabled: "&c已关闭flight trail!"
+  permission_denied: "&c你没有权限使用此指令"
 admin:
-  prefix: '&a&lFlightControl &a'
-  reloaded: '&a&lFlightControl &7» &a已成功重载配置!'
+  prefix: "&a&lFlightControl &a"
+  reloaded: "&a&lFlightControl &7» &a已成功重载配置!"
   global_flight_speed:
-    set: '&e&lFlightControl &7» &e已设置全局飞行速度为&f%speed%&e!'
-    same: '&e&lFlightControl &7» &e飞行速度已经是&f%speed%&e了!'
-    usage: '&c&lFlightControl &7» &c错误的用法! 用法: /fc speed (0-10)'
+    set: "&e&lFlightControl &7» &e已设置全局飞行速度为&f%speed%&e!"
+    same: "&e&lFlightControl &7» &e飞行速度已经是&f%speed%&e了!"
+    usage: "&c&lFlightControl &7» &c错误的用法! 用法: /fc speed (0-10)"
   enemy_range:
-    set: '&e&lFlightControl &7» &e已设置怪物范围内禁止飞行的距离为&f%range%&e!'
-    same: '&e&lFlightControl &7» &e怪物范围内禁止飞行的距离已经是&f%range%&e了!'
-    usage: '&c&lFlightControl &7» &c错误的用法! 用法: /fc enemyrange (range)'
+    set: "&e&lFlightControl &7» &e已设置怪物范围内禁止飞行的距离为&f%range%&e!"
+    same: "&e&lFlightControl &7» &e怪物范围内禁止飞行的距离已经是&f%range%&e了!"
+    usage: "&c&lFlightControl &7» &c错误的用法! 用法: /fc enemyrange (range)"
   fly:
-    enable: '&e&lFlightControl &7» &e已为&f%player%&e启用飞行!'
-    disable: '&e&lFlightControl &7» &e已为&f%player%&e关闭飞行!'
-    usage: '&c&lFlightControl &7» &c请提供一个有效的玩家名!'
+    enable: "&e&lFlightControl &7» &e已为&f%player%&e启用飞行!"
+    disable: "&e&lFlightControl &7» &e已为&f%player%&e关闭飞行!"
+    usage: "&c&lFlightControl &7» &c请提供一个有效的玩家名!"
   flyspeed:
-    set: '&a&lFlightControl &7» &a已设置你的飞行速度为&f%speed%&a!'
-    same: '&a&lFlightControl &7» &a你的飞行速度已经是&f%speed%&a了!'
-    usage: '&c&lFlightControl &7» &c错误的用法! 用法: /flyspeed (speed) [player]!'
+    set: "&a&lFlightControl &7» &a已设置你的飞行速度为&f%speed%&a!"
+    same: "&a&lFlightControl &7» &a你的飞行速度已经是&f%speed%&a了!"
+    usage: "&c&lFlightControl &7» &c错误的用法! 用法: /flyspeed (speed) [player]!"
   tempfly:
-    enable: '&e&lFlightControl &7» 已为&f%player%&e启用了&f%duration%&e的临时飞行'
-    add: '&e&lFlightControl &7» &f%player%&e获得了额外&f%duration%&e的临时飞行时间'
-    disable: '&e&lFlightControl &7» &e已为%player%关闭临时飞行!'
-    disabled: '&c&lFlightControl &7» &f%player%&c的临时飞行已经是关闭状态'
-    check: "&e&lFlightControl &7» &f%player%&e has &f%duration%&e of flight remaining."
-    usage: '&c&lFlightControl &7» &c错误的用法! 用法: /tempfly (时间)
+    enable: "&e&lFlightControl &7» 已为&f%player%&e启用了&f%duration%&e的临时飞行"
+    add: "&e&lFlightControl &7» &f%player%&e获得了额外&f%duration%&e的临时飞行时间"
+    disable: "&e&lFlightControl &7» &e已为%player%关闭临时飞行!"
+    disabled: "&c&lFlightControl &7» &f%player%&c的临时飞行已经是关闭状态"
+    check: "&e&lFlightControl &7» &f%player%&e还有&f%duration%&e of flight remaining."
+    usage: "&c&lFlightControl &7» &c错误的用法! 用法: /tempfly (时间)
       [player] 后加时间. 时间示例: &f1d,
-      4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c'
+      4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c"

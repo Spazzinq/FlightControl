@@ -1,4 +1,4 @@
-# Translations: français (fr), English (en), 中文 (zh)
+# Translations: English (en), French (fr), Mandarin (zh), Portuguese (pt)
 # Pour changer la langue, veuillez supprimer le # ci-dessous et mettre "locale" à son abréviation (en, fr, zh)
 #locale: fr
 
@@ -13,6 +13,7 @@ player:
     # ou quand le joueur désactive son vol avec /fly
     can_enable: "&bVous pouvez utiliser /fly maintenant."
     cannot_enable: "&cVous ne pouvez pas utiliser /fly maintenant."
+    height_denied: "&cVous ne pouvez pas voler aussi haut !"
   trail:
     enabled: "&aVouz avez activé les particules de vol !"
     disabled: "&cVous avez désactivé les particules de vol !"
