@@ -31,7 +31,7 @@ import org.spazzinq.flightcontrol.util.MathUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 public class MVdWPlaceholder {
-    private FlightControl pl;
+    private final FlightControl pl;
 
     public MVdWPlaceholder(FlightControl pl) {
         this.pl = pl;
