@@ -117,7 +117,12 @@ public class StatusManager {
         // Eval category CheckSet
         if (trueChecks.isEmpty() || debug) {
             Category category = pl.getCategoryManager().getCategory(p);
-            trueChecks.addAll(CheckUtil.checkAll(category.getChecks().getDisabled(), p, debug));
+
+            if (category != null) {
+                HashSet<Check> disabledCatChecks = CheckUtil.checkAll(category.getChecks().getDisabled(), p, debug);
+
+                trueChecks.addAll(disabledCatChecks);
+            }
         }
 
         // Eval permissions
