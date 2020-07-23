@@ -50,6 +50,9 @@ import java.util.UUID;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
+/**
+ * The main singleton class for FlightControl, a {@link org.bukkit.plugin.java.JavaPlugin JavaPlugin}.
+ */
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private static FlightControl instance;
     @Getter private final APIManager apiManager = APIManager.getInstance();
@@ -97,9 +100,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             new BukkitRunnable() {
                 @Override public void run() {
                     if (updateManager.updateExists()) {
-                        getLogger().info("Yay! Version " + updateManager.getNewVersion() + " is available for update." +
+                        getLogger().info("Hooray! Version " + updateManager.getNewVersion() + " is available for update." +
                                 " Perform \"/fc update\" to update and visit https://www.spigotmc" +
-                                ".org/resources/55168/ to view the feature changes (the configs automatically update)" +
+                                ".org/resources/55168/ to view the feature changes!" +
                                 ".");
                     }
                 }
@@ -129,18 +132,18 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         langManager = new LangManager(this);
         updateManager = new UpdateManager(this, getDescription().getVersion());
 
-        boolean is1_13 = false;
+        boolean v1_13 = false;
 
         for (int i = 13; i < 18; i++) {
             if (getServer().getBukkitVersion().contains("1." + i)) {
-                is1_13 = true;
+                v1_13 = true;
                 break;
             }
         }
 
         checkManager = new CheckManager(this);
-        hookManager = new HookManager(this, is1_13);
-        particle = is1_13 ? new Particle13() : new Particle8();
+        hookManager = new HookManager(this, v1_13);
+        particle = v1_13 ? new Particle13() : new Particle8();
 
         flightManager = new FlightManager(this);
         playerManager = new PlayerManager(this);
@@ -231,6 +234,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
     }
 
+    /**
+     * Registers or re-registers the permission. See {@link #registerDefaultPerms(String)} for more info.
+     * @param permString the entire permission String
+     */
     private void registerPerm(String permString) {
         Permission perm = pm.getPermission(permString);
 

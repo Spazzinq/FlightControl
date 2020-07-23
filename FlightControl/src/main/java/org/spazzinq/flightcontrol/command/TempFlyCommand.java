@@ -62,7 +62,7 @@ public final class TempFlyCommand implements CommandExecutor {
                     } else {
                         msgVar(s, pl.getLangManager().getTempFlyCheck(), false, new HashMap<String, String>() {{
                             put("player", argPlayer.getName());
-                            put("duration", PlayerUtil.longPlaceholder(flightPlayer));
+                            put("duration", PlayerUtil.longTempflyPlaceholder(flightPlayer));
                         }});
                     }
                 } else {

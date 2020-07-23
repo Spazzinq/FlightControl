@@ -56,7 +56,7 @@ public final class PlayerUtil {
         return p.hasPermission(FlyPermission.TEMP_FLY_STUB + category.getName());
     }
 
-    public static String shortPlaceholder(FlightPlayer flightPlayer) {
+    public static String shortTempflyPlaceholder(FlightPlayer flightPlayer) {
         long length = formatLength(flightPlayer.getTempflyTimer().getTimeLeft());
 
         if (length > 0) {
@@ -78,7 +78,7 @@ public final class PlayerUtil {
         }
     }
 
-    public static String longPlaceholder(FlightPlayer flightPlayer) {
+    public static String longTempflyPlaceholder(FlightPlayer flightPlayer) {
         long length = formatLength(flightPlayer.getTempflyTimer().getTimeLeft());
 
         if (length > 0) {

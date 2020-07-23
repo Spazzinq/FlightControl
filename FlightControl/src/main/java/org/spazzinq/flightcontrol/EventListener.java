@@ -38,7 +38,9 @@ import org.spazzinq.flightcontrol.object.FlightPlayer;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
-@SuppressWarnings("unused")
+/**
+ * Listens for {@link org.bukkit.event.Event Bukkit events} and acts accordingly.
+ */
 final class EventListener implements org.bukkit.event.Listener {
     private final FlightControl pl;
 
@@ -47,7 +49,9 @@ final class EventListener implements org.bukkit.event.Listener {
         Bukkit.getPluginManager().registerEvents(this, pl);
     }
 
-    // Check fly status
+    /**
+     * Checks a player's flight status when they cross a block.
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onMove(PlayerMoveEvent e) {
         // Save performance
@@ -62,7 +66,9 @@ final class EventListener implements org.bukkit.event.Listener {
         }
     }
 
-    // Fly particles
+    /**
+     * Manages flight particles and temporary flight timers on flight toggle (double tap of the space bar).
+     */
     @EventHandler private void onToggleFly(PlayerToggleFlightEvent e) {
         Player p = e.getPlayer();
 
@@ -85,7 +91,9 @@ final class EventListener implements org.bukkit.event.Listener {
         }
     }
 
-    // Because onMove doesn't trigger right after a TP
+    /**
+     * Checks a player's flight status when they teleport, and disables the trail if necessary.
+     */
     @EventHandler private void onTP(PlayerTeleportEvent e) {
         // Prevent calling on login because another handler takes care of that
         if (e.getCause() != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
@@ -93,19 +101,27 @@ final class EventListener implements org.bukkit.event.Listener {
 
             pl.getFlightManager().check(p);
 
-            // Fixes bug where particles remain when not supposed so
+            // Fixes a bug where particles remain when not supposed so
             if (!p.getAllowFlight()) {
                 pl.getTrailManager().trailRemove(p);
             }
         }
     }
 
+    /**
+     * Pauses temporary flight timer and removes trail on player disconnect.
+     */
     @EventHandler private void onQuit(PlayerQuitEvent e) {
         pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempflyTimer().pause();
 
         pl.getTrailManager().trailRemove(e.getPlayer());
     }
 
+    /**
+     * For normal players, this player join handler checks
+     * flight status & trail, starts temporary flight timers,
+     * and sets fly speed. It also notifies server operators about updates.
+     */
     @EventHandler private void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
@@ -149,7 +165,11 @@ final class EventListener implements org.bukkit.event.Listener {
         }.runTaskLater(pl, 10);
     }
 
-    // Because commands might affect permissions/fly
+    /**
+     * Checks flight and trail when a player
+     * executes a command because commands
+     * might affect permissions/flight status.
+     */
     @EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
 
@@ -172,7 +192,9 @@ final class EventListener implements org.bukkit.event.Listener {
         }.runTask(pl);
     }
 
-    // Fall damage prevention
+    /**
+     * Prevents fall damaged if enabled in the configuration settings.
+     */
     @EventHandler private void onFallDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player && e.getCause() == DamageCause.FALL
                 && pl.getFlightManager().getNoFallDmg().remove(e.getEntity())) {
@@ -180,8 +202,9 @@ final class EventListener implements org.bukkit.event.Listener {
         }
     }
 
-    // On-the-fly world permission management
-    // Note: does not take care of initial server start because of "load: POSTWORLD" in plugin.yml
+    /**
+     * Manages world permissions on-the-fly. Note: this does not take care of initial server start because of "load: POSTWORLD" in the plugin.yml.
+     */
     @EventHandler private void onWorldInit(WorldInitEvent e) {
         pl.registerDefaultPerms(e.getWorld().getName());
     }

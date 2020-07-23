@@ -49,7 +49,7 @@ public class MVdWPlaceholder {
                 return "";
             }
 
-            return PlayerUtil.shortPlaceholder(pl.getPlayerManager().getFlightPlayer(e.getPlayer()));
+            return PlayerUtil.shortTempflyPlaceholder(pl.getPlayerManager().getFlightPlayer(e.getPlayer()));
         });
 
         PlaceholderAPI.registerPlaceholder(pl, "flightcontrol_tempfly_long", e -> {
@@ -57,7 +57,7 @@ public class MVdWPlaceholder {
                 return "";
             }
 
-            return PlayerUtil.longPlaceholder(pl.getPlayerManager().getFlightPlayer(e.getPlayer()));
+            return PlayerUtil.longTempflyPlaceholder(pl.getPlayerManager().getFlightPlayer(e.getPlayer()));
         });
 
         PlaceholderAPI.registerPlaceholder(pl, "flightcontrol_tempfly_s", e -> {

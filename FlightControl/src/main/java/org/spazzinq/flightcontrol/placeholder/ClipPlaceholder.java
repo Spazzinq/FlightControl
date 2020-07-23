@@ -58,8 +58,8 @@ public class ClipPlaceholder extends PlaceholderExpansion {
         long time = PlayerUtil.formatLength(flightPlayer.getTempflyTimer().getTimeLeft());
 
         switch (identifier) {
-            case "tempfly_short": return PlayerUtil.shortPlaceholder(flightPlayer);
-            case "tempfly_long": return PlayerUtil.longPlaceholder(flightPlayer);
+            case "tempfly_short": return PlayerUtil.shortTempflyPlaceholder(flightPlayer);
+            case "tempfly_long": return PlayerUtil.longTempflyPlaceholder(flightPlayer);
             case "tempfly_s": return String.valueOf(seconds(time));
             case "tempfly_m": return String.valueOf(minutes(time));
             case "tempfly_h": return String.valueOf(hours(time));

@@ -31,6 +31,9 @@ import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
+/**
+ * Listens for changes in the configurations and reloads them if they are created or modified.
+ */
 class PathWatcher extends BukkitRunnable {
     private final FlightControl pl;
     private WatchService watcher;

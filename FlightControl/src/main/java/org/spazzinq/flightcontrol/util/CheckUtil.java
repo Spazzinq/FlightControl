@@ -42,11 +42,11 @@ public final class CheckUtil {
     }
 
     /**
-     * Returns the first true check or if debugging all true checks.
+     * Returns the first true check or all true checks if debugging.
      *
      * @param checks the set of checks to check
      * @param p the player to check
-     * @return returns the first true check or if debugging all true checks
+     * @return returns the first true check or all true checks if debugging
      */
     public static HashSet<Check> checkAll(HashSet<Check> checks, Player p, boolean debug) {
         HashSet<Check> trueChecks = new HashSet<>();
