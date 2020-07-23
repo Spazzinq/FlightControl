@@ -38,37 +38,46 @@ public class ActionbarUtil {
         nmsPackage = nmsPackage.substring(nmsPackage.lastIndexOf(".") + 1);
     }
 
-    public static void sendActionBar(Player p, String msg) {
+    @SuppressWarnings("ConstantConditions")
+    public static void sendActionbar(Player p, String msg) {
         try {
             Class<?> packetPlayOutChatClass = getNMSClass("PacketPlayOutChat");
             Class<?> iChatBaseComponentClass = getNMSClass("IChatBaseComponent");
             Class<?> chatComponentTextClass = getNMSClass("ChatComponentText");
 
-            Object packetPlayOutChat;
             Object chatComponentText = chatComponentTextClass.getConstructor(new Class[]{String.class}).newInstance(msg);
+            Object packetPlayOutChat;
 
             Class<?> chatMessageTypeClass = getNMSClass("ChatMessageType");
 
             if (chatMessageTypeClass == null) {
-                packetPlayOutChat = packetPlayOutChatClass.getConstructor(new Class<?>[]{iChatBaseComponentClass,
-                        byte.class}).newInstance(chatComponentText, (byte) 2);
+                // Probably 1.8
+                packetPlayOutChat = packetPlayOutChatClass.getConstructor(
+                        new Class[]{iChatBaseComponentClass, byte.class})
+                        .newInstance(chatComponentText, (byte) 2);
             } else {
                 Object chatMessageType = chatMessageTypeClass.getField("GAME_INFO").get(null);
 
                 try {
-                    packetPlayOutChat = packetPlayOutChatClass.getConstructor(new Class<?>[]{iChatBaseComponentClass,
-                            chatMessageTypeClass}).newInstance(chatComponentText, chatMessageType);
-                } catch (NoSuchMethodException e) {
+                    // Everything after above version and before 1.16
                     packetPlayOutChat = packetPlayOutChatClass.getConstructor(
-                            new Class[] {iChatBaseComponentClass, chatMessageTypeClass, UUID.class}).newInstance(chatComponentText, chatMessageType, p.getUniqueId());
+                            new Class[]{iChatBaseComponentClass, chatMessageTypeClass})
+                            .newInstance(chatComponentText, chatMessageType);
+                } catch (NoSuchMethodException e) {
+                    // 1.16 and later
+                    packetPlayOutChat = packetPlayOutChatClass.getConstructor(
+                            new Class[]{iChatBaseComponentClass, chatMessageTypeClass, UUID.class})
+                            .newInstance(chatComponentText, chatMessageType, p.getUniqueId());
                 }
             }
 
-            Object getHandle = p.getClass().getMethod("getHandle", new Class[0]).invoke(p);
-            Object playerConnection = getHandle.getClass().getField("playerConnection").get(getHandle);
+            Object handle = p.getClass().getMethod("getHandle", new Class[0]).invoke(p);
+            Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
 
-            playerConnection.getClass().getMethod("sendPacket", new Class[]{getNMSClass("Packet")}).invoke(playerConnection, packetPlayOutChat);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e) {
+            playerConnection.getClass()
+                    .getMethod("sendPacket", new Class[]{getNMSClass("Packet")})
+                    .invoke(playerConnection, packetPlayOutChat);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
