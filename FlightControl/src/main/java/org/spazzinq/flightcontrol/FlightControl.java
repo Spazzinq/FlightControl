@@ -153,7 +153,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("tempfly").setExecutor(new TempFlyCommand(this));
+        getCommand("tempfly").setExecutor(new TempflyCommand(this));
         getCommand("fly").setExecutor(new FlyCommand(this));
         getCommand("flightcontrol").setExecutor(new FlightControlCommand(this));
         getCommand("toggletrail").setExecutor(new ToggleTrailCommand(this));
