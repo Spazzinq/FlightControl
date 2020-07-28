@@ -73,7 +73,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
             buildDefaultHelp.append("&a").append(c.getKey()).append(" &7» &f").append(c.getValue()).append("\n");
         }
         buildDefaultHelp.append(" \n&a/tt &7» &fPersonal trail toggle");
-        buildDefaultHelp.append("\n&a/tempfly (duration) [player] &7» &fActivate temporary flight");
+        buildDefaultHelp.append("\n&a/tempfly (check/add/remove/set/disable) (player) [duration] &7» &fActivate temporary flight");
         defaultHelp = " \n" + buildDefaultHelp.toString();
     }
 

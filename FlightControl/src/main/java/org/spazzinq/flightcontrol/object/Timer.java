@@ -34,7 +34,11 @@ public abstract class Timer {
     }
 
     public void setTotalTime(long totalTime) {
-        this.totalTime = totalTime;
+        if (totalTime > 0) {
+            this.totalTime = totalTime;
+        } else {
+            reset();
+        }
     }
 
     public void addTimeLeft(long timeLeft) {

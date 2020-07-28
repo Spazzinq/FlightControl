@@ -52,6 +52,6 @@ admin:
       &f%duration%&e."
     disable: "&e&lFlightControl &7» &eDesativou o fly temporário de %player%!"
     disabled: "&c&lFlightControl &7» O fly temporário de &f%player%&c já foi desativado!"
-    usage: "&c&lFlightControl &7» &cFormato inválido! Por favor, use /tempfly (duração)
-      [jogador] e coloque a duração com uma unidade de tempo. Exemplos de duração: &f1d,
+    usage: "&c&lFlightControl &7» &cFormato inválido! Por favor, use /tempfly (check/add/remove/set/disable) (jogador) [duração]
+      e coloque a duração com uma unidade de tempo. Exemplos de duração: &f1d,
       4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c."

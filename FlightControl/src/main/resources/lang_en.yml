@@ -50,6 +50,6 @@ admin:
     disable: "&e&lFlightControl &7» &eDisabled %player%'s temporary flight!"
     disabled: "&c&lFlightControl &7» &f%player%&c's temporary flight is already disabled!"
     check: "&e&lFlightControl &7» &f%player%&e has &f%duration%&e of flight remaining."
-    usage: "&c&lFlightControl &7» &cInvalid format! Please use /tempfly (duration) [player] and
+    usage: "&c&lFlightControl &7» &cInvalid format! Please use /tempfly (check/add/remove/set/disable) (player) [duration] and
             follow the duration with a unit of time. Example durations:
             &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c."

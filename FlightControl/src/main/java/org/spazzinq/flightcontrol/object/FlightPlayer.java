@@ -45,14 +45,14 @@ public class FlightPlayer {
     @Getter private float actualFlightSpeed;
     @Setter private boolean trail;
 
-    public FlightPlayer(File dataFile, YamlConfiguration data, UUID uuid, float actualFlightSpeed, boolean trail, long tempFlyLength) {
+    public FlightPlayer(File dataFile, YamlConfiguration data, UUID uuid, float actualFlightSpeed, boolean trail, long tempflyDuration) {
         this.dataFile = dataFile;
         this.data = data;
         this.uuid = uuid;
         // Don't store speed in data conf if not personal for player
         this.actualFlightSpeed = actualFlightSpeed;
         this.trail = trail;
-        this.tempflyTimer = new Timer(tempFlyLength) {
+        this.tempflyTimer = new Timer(tempflyDuration) {
             @SneakyThrows @Override public void onFinish() {
                 FlightControl.getInstance().getFlightManager().check(getPlayer());
                 data.set("tempfly", null);
@@ -81,15 +81,26 @@ public class FlightPlayer {
         return trail;
     }
 
-    @SneakyThrows public void setTempFlyLength(long tempFlyLength, boolean addTime) {
-        if (addTime) {
-            tempflyTimer.addTimeLeft(tempFlyLength);
-        } else {
-            tempflyTimer.setTotalTime(tempFlyLength);
+    @SneakyThrows public void modifyTempflyDuration(TempflyType type, long duration) {
+        switch (type) {
+            case ADD:
+                tempflyTimer.addTimeLeft(duration);
+                break;
+            case REMOVE:
+                tempflyTimer.setTotalTime(tempflyTimer.getTimeLeft() - duration);
+                break;
+            case SET:
+                tempflyTimer.setTotalTime(duration);
+                break;
+            case DISABLE:
+                tempflyTimer.reset();
+                break;
+            default:
+                break;
         }
 
         // Start if always running
-        if (FlightControl.getInstance().getConfManager().isTempflyAlwaysDecrease()) {
+        if (type != TempflyType.REMOVE && FlightControl.getInstance().getConfManager().isTempflyAlwaysDecrease()) {
             tempflyTimer.start();
         }
 
