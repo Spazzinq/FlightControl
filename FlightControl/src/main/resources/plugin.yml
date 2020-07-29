@@ -5,7 +5,7 @@ api-version: "1.13"
 author: Spazzinq
 description: "An elegant solution for controlling player flight"
 load: POSTWORLD
-softdepend: [Essentials, Lands, MVdWPlaceholderAPI]
+softdepend: [Essentials, Lands, MVdWPlaceholderAPI, WorldEdit, WorldGuard]
 
 commands:
   flightcontrol:
