@@ -34,7 +34,6 @@ import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.object.TempflyType;
-import org.spazzinq.flightcontrol.util.MessageUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.util.HashMap;
@@ -97,6 +96,7 @@ public class TempflyCommand implements CommandExecutor {
 
     private void modifyTempfly(CommandSender sender, Player targetPlayer, TempflyType type, long duration, boolean silent) {
         FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(targetPlayer);
+        boolean hasTimeLeft = flightPlayer.getTempflyTimer().hasTimeLeft();
 
         if (type != TempflyType.CHECK) {
             flightPlayer.modifyTempflyDuration(type, duration);
@@ -109,14 +109,11 @@ public class TempflyCommand implements CommandExecutor {
                 case CHECK:
                     msg = pl.getLangManager().getTempFlyCheck();
                     break;
-                case ADD:
-                    msg = pl.getLangManager().getTempFlyAdd();
-                    break;
-                case SET: case REMOVE: default:
-                    msg = pl.getLangManager().getTempFlyEnable();
+                case SET: case ADD: case REMOVE: default:
+                    msg = pl.getLangManager().getTempFlySet();
                     break;
                 case DISABLE:
-                    msg = flightPlayer.getTempflyTimer().hasTimeLeft()
+                    msg = hasTimeLeft
                             ? pl.getLangManager().getTempFlyDisable() : pl.getLangManager().getTempFlyDisabled();
                     break;
             }

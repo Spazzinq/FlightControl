@@ -47,9 +47,7 @@ admin:
     same: "&a&lFlightControl &7» &aBoas Notícias! Sua velocidade de voo já é de &f%speed%&a!"
     usage: "&c&lFlightControl &7» &cUso inválido! Use /flyspeed (velocidade) [jogador]!"
   tempfly:
-    enable: "&e&lFlightControl &7» &f%player%&e agora tem fly temporário por &f%duration%&e."
-    add: "&e&lFlightControl &7» &f%player%&e agora tem um fly temporário por mais
-      &f%duration%&e."
+    set: "&e&lFlightControl &7» &f%player%&e agora tem fly temporário por &f%duration%&e."
     disable: "&e&lFlightControl &7» &eDesativou o fly temporário de %player%!"
     disabled: "&c&lFlightControl &7» O fly temporário de &f%player%&c já foi desativado!"
     usage: "&c&lFlightControl &7» &cFormato inválido! Por favor, use /tempfly (check/add/remove/set/disable) (jogador) [duração]

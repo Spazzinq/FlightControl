@@ -194,29 +194,28 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     /**
      * Sends debug information about a player's flight status.
      *
-     * @param s the recipient of the debug message
-     * @param p the target of the debug check
+     * @param sender the recipient of the debug message
+     * @param targetPlayer the target of the debug check
      */
-    public void debug(CommandSender s, Player p) {
-        Location l = p.getLocation();
+    public void debug(CommandSender sender, Player targetPlayer) {
+        Location l = targetPlayer.getLocation();
         World world = l.getWorld();
-        String worldName = world.getName(),
-                regionName = getHookManager().getWorldGuardHook().getRegionName(l);
-        Category category = categoryManager.getCategory(p);
+        String regionName = getHookManager().getWorldGuardHook().getRegionName(l);
+        Category category = categoryManager.getCategory(targetPlayer);
 
         // config options (settings) and permissions that act upon the same function are listed as
         // setting boolean (space) permission boolean
-        msg(s, "&a&lFlightControl &f" + getDescription().getVersion() +
-                "\n&eTarget &7» &f" + p.getName() +
+        msg(sender, "&a&lFlightControl &f" + getDescription().getVersion() +
+                "\n&eTarget &7» &f" + targetPlayer.getName() +
                 "\n&eCategory &7» &f" + category.getName() +
-                (hookManager.getWorldGuardHook().isHooked() ? "\n&eW.RG &7» &f" + worldName + "." + regionName : "") +
+                (hookManager.getWorldGuardHook().isHooked() ? "\n&eW.RG &7» &f" + world.getName() + "." + regionName : "") +
                 (hookManager.getFactionsHook().isHooked() ? "\n&eFac &7» &f" + category.getFactions() : "") +
                 "\n&eWRLDs &7» &f" + category.getWorlds() +
                 (hookManager.getWorldGuardHook().isHooked() ? "\n&eRGs &7» &f" + category.getRegions() : "") +
-                ("\n&eBypass &7» &f" + CheckUtil.checkAll(checkManager.getBypassChecks(), p, true)));
+                ("\n&eBypass &7» &f" + CheckUtil.checkAll(checkManager.getBypassChecks(), targetPlayer, true)));
 
-        statusManager.checkEnable(p, s);
-        statusManager.checkDisable(p, s);
+        statusManager.checkEnable(targetPlayer, sender);
+        statusManager.checkDisable(targetPlayer, sender);
     }
 
     /**

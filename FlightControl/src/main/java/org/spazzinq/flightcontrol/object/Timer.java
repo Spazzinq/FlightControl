@@ -72,6 +72,7 @@ public abstract class Timer {
             // Assurance that flight is cancelled
             if (totalTime <= elapsedTime) {
                 reset();
+                // TODO Hanging (not moving) check
                 onFinish();
             }
         }

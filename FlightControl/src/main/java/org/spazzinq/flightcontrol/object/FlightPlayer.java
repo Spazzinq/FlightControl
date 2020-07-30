@@ -82,6 +82,7 @@ public class FlightPlayer {
     }
 
     @SneakyThrows public void modifyTempflyDuration(TempflyType type, long duration) {
+        // TODO Fix subtraction calculation
         switch (type) {
             case ADD:
                 tempflyTimer.addTimeLeft(duration);

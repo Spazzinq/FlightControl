@@ -45,8 +45,7 @@ admin:
     same: "&a&lFlightControl &7» &aRien ne s'est passé ! Votre vitesse de vol est déjà à &f%speed%&a !"
     usage: "&c&lFlightControl &7» &cPas correct ! Usage correct : /flyspeed (vitesse) [joueur] !"
   tempfly:
-    enable: "&e&lFlightControl &7» &f%player%&e a maintenant un vol temporaire pendant &f%duration%&e."
-    add: "&e&lFlightControl &7» &f%player%&e a maintenant un vol temporaire pendant &f%duration%&e de plus."
+    set: "&e&lFlightControl &7» &f%player%&e a maintenant un vol temporaire pendant &f%duration%&e."
     disable: "&e&lFlightControl &7» &eDésactivé le vol temporaire de &f%player%&e !"
     disabled: "&c&lFlightControl &7» Le vol temporaire de &f%player%&c est déjà désactivé !"
     check: "&e&lFlightControl &7» Temps de vol restant pour &f%player%&e &7: &f%duration%&e."

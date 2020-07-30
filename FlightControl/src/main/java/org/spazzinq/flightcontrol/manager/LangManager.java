@@ -76,8 +76,7 @@ public class LangManager {
     @Getter private String flySpeedSet;
     @Getter private String flySpeedSame;
     @Getter private String flySpeedUsage;
-    @Getter private String tempFlyEnable;
-    @Getter private String tempFlyAdd;
+    @Getter private String tempFlySet;
     @Getter private String tempFlyDisable;
     @Getter private String tempFlyDisabled;
     @Getter private String tempFlyCheck;
@@ -160,8 +159,7 @@ public class LangManager {
             flySpeedSet = lang.getString("admin.flyspeed.set");
             flySpeedSame = lang.getString("admin.flyspeed.same");
             flySpeedUsage = lang.getString("admin.flyspeed.usage");
-            tempFlyEnable = lang.getString("admin.tempfly.enable");
-            tempFlyAdd = lang.getString("admin.tempfly.add");
+            tempFlySet = lang.getString("admin.tempfly.set");
             tempFlyDisable = lang.getString("admin.tempfly.disable");
             tempFlyDisabled = lang.getString("admin.tempfly.disabled");
             tempFlyCheck = lang.getString("admin.tempfly.check");
@@ -186,6 +184,21 @@ public class LangManager {
         if (!lang.isString("admin.tempfly.check")) {
             lang.addSubnodes(Collections.singleton("check: \"&e&lFlightControl &7» &f%player%&e has &f%duration%&e of" +
                     " flight remaining.\""), "admin.tempfly.disabled");
+
+            modified = true;
+        }
+
+        // 4.6.10
+        if (lang.isString("admin.tempfly.add")) {
+            lang.deleteNode("admin.tempfly.add");
+
+            modified = true;
+        }
+
+        // 4.6.10
+        if (lang.isString("admin.tempfly.enable")) {
+            lang.addIndentedSubnodes(Collections.singleton("set: \"" + lang.getString("admin.tempfly.enable") + "\""), "admin.tempfly");
+            lang.deleteNode("admin.tempfly.enable");
 
             modified = true;
         }
