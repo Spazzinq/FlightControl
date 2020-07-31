@@ -58,6 +58,14 @@ public class FlightPlayer {
                 data.set("tempfly", null);
                 data.save(dataFile);
             }
+
+            @Override public void onStart() {
+                finishTask = new BukkitRunnable() {
+                    @Override public void run() {
+                        FlightControl.getInstance().getFlightManager().check(getPlayer());
+                    }
+                }.runTaskLater(FlightControl.getInstance(), getTimeLeft() / 50 + 4);
+            }
         };
 
         // Auto-save
@@ -88,7 +96,7 @@ public class FlightPlayer {
                 tempflyTimer.addTimeLeft(duration);
                 break;
             case REMOVE:
-                tempflyTimer.setTotalTime(tempflyTimer.getTimeLeft() - duration);
+                tempflyTimer.addElapsedTime(duration);
                 break;
             case SET:
                 tempflyTimer.setTotalTime(duration);
@@ -100,8 +108,10 @@ public class FlightPlayer {
                 break;
         }
 
-        // Start if always running
-        if (type != TempflyType.REMOVE && FlightControl.getInstance().getConfManager().isTempflyAlwaysDecrease()) {
+        // Start if always running/currently flying
+        if (type != TempflyType.REMOVE
+                && (FlightControl.getInstance().getConfManager().isTempflyAlwaysDecrease()
+                    || getPlayer().isFlying())) {
             tempflyTimer.start();
         }
 
