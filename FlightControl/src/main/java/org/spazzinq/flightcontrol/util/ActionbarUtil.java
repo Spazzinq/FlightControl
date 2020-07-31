@@ -27,7 +27,6 @@ package org.spazzinq.flightcontrol.util;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 public class ActionbarUtil {

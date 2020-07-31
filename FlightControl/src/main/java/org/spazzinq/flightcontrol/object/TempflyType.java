@@ -24,6 +24,18 @@
 
 package org.spazzinq.flightcontrol.object;
 
+import java.util.ArrayList;
+
 public enum TempflyType {
     CHECK, ADD, REMOVE, SET, DISABLE;
+
+    public static final ArrayList<String> types = new ArrayList<>();
+
+    static {
+        for (TempflyType type : values()) {
+            String name = type.name().toLowerCase();
+
+            types.add(name);
+        }
+    }
 }

@@ -25,24 +25,27 @@
 package org.spazzinq.flightcontrol.command;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.object.TempflyType;
+import org.spazzinq.flightcontrol.util.CommandUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
-public class TempflyCommand implements CommandExecutor {
+public class TempflyCommand implements CommandExecutor, TabCompleter {
     private final FlightControl pl;
+
+    private final List<String> exampleDurations = Arrays.asList("30minutes", "1hour", "3hours", "6hours", "12hours", "1day");
 
     public TempflyCommand(FlightControl pl) {
         this.pl = pl;
@@ -157,5 +160,30 @@ public class TempflyCommand implements CommandExecutor {
             }
         }
         return 's';
+    }
+
+    @Override public List<String> onTabComplete(CommandSender s, Command cmd, String label, String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            // Ignore player case
+            if (i != 1) {
+                args[i] = args[i].toLowerCase();
+            }
+        }
+
+        if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS)) {
+            // /tempfly (check, add, remove, set, disable)
+            if (args.length == 1) {
+                return CommandUtil.autoComplete(TempflyType.types, args[0]);
+            // /tempfly (check, add, remove, set, disable) (player)
+            } else if (args.length == 2) {
+                // Default auto-complete for player
+                return null;
+            // /tempfly (check, add, remove, set, disable) (player) [duration]
+            } else if (args.length == 3) {
+                return CommandUtil.autoComplete(exampleDurations, args[2]);
+            }
+        }
+
+        return Collections.emptyList();
     }
 }

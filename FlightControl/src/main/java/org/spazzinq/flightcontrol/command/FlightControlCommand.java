@@ -31,6 +31,7 @@ import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.ConfManager;
 import org.spazzinq.flightcontrol.manager.LangManager;
 import org.spazzinq.flightcontrol.object.FlyPermission;
+import org.spazzinq.flightcontrol.util.CommandUtil;
 import org.spazzinq.flightcontrol.util.MathUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
@@ -104,9 +105,10 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
 
         if (s instanceof ConsoleCommandSender || PlayerUtil.hasPermission(s, FlyPermission.ADMIN)) {
             if (args.length > 0) {
-                List<String> autoComplete = autoComplete(args[0]);
+                List<String> autoComplete = CommandUtil.autoComplete(commands.keySet(), args[0]);
 
-                switch (autoComplete.isEmpty() ? args[0] : (autoComplete.size() == 1 ? autoComplete.get(0) : "")) {
+                switch (autoComplete.isEmpty()
+                        ? args[0] : (autoComplete.size() == 1 ? autoComplete.get(0) : "")) {
                     case "reload":
                         pl.load();
                         msg(s, pl.getLangManager().getPluginReloaded());
@@ -273,7 +275,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
         }
 
         if (args.length == 1) {
-            List<String> autoComplete = autoComplete(args[0]);
+            List<String> autoComplete = CommandUtil.autoComplete(commands.keySet(), args[0]);
             return autoComplete.isEmpty() ? new ArrayList<>(commands.keySet()) : autoComplete;
         } else if (args.length == 2) {
             if (args[0].equals("speed")) {
@@ -288,16 +290,5 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
     private void msgToggle(CommandSender s, boolean toggle, String subPrefix) {
         msg(s, pl.getLangManager().getPrefix() + subPrefix + " &7» "
                 + (toggle ? "&aEnabled" : "&cDisabled"));
-    }
-
-    private List<String> autoComplete(String query) {
-        List<String> matches = new ArrayList<>();
-
-        for (String cmd : commands.keySet()) {
-            if (cmd.startsWith(query)) {
-                matches.add(cmd);
-            }
-        }
-        return matches;
     }
 }
