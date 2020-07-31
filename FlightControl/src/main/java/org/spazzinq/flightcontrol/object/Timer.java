@@ -24,10 +24,13 @@
 
 package org.spazzinq.flightcontrol.object;
 
+import org.bukkit.scheduler.BukkitTask;
+
 public abstract class Timer {
     private long startTime;
     private long totalTime;
     private long elapsedTime;
+    protected BukkitTask finishTask;
 
     public Timer(long totalTime) {
         this.totalTime = totalTime;
@@ -45,9 +48,14 @@ public abstract class Timer {
         this.totalTime += timeLeft;
     }
 
+    public void addElapsedTime(long duration) {
+        elapsedTime += duration;
+    }
+
     public void start() {
         if (totalTime != 0) {
             startTime = System.currentTimeMillis();
+            onStart();
         }
     }
 
@@ -72,7 +80,6 @@ public abstract class Timer {
             // Assurance that flight is cancelled
             if (totalTime <= elapsedTime) {
                 reset();
-                // TODO Hanging (not moving) check
                 onFinish();
             }
         }
@@ -85,4 +92,5 @@ public abstract class Timer {
     }
 
     public abstract void onFinish();
+    public abstract void onStart();
 }
