@@ -2,11 +2,16 @@
 # To change the language, remove the # below and set "locale" to its abbreviation (en, fr, zh)
 #locale: pt
 
-# If you don't want a message to be sent, set it to ""
+# Notes:
+# 1. If you don't want a message to be sent, set it to ""
+# 2. %VARIABLENAME% is the placeholder for the message's information
+#    e.g. %speed% could be the new global flight speed
 player:
   # Use the actionbar (area above hotbar) instead of chat
   actionbar: false
   flight:
+    # Shows remaining tempfly duration in actionbar if the "actionbar" setting is true
+    tempfly_actionbar: "&aYou have &f%duration% &aof flight remaining."
     enabled: "&aO seu modo voar foi ativado."
     disabled: "&cO seu modo voar foi desativado."
     # "can_enable" and "cannot_enable" are used when "auto_enable" is false
@@ -19,10 +24,7 @@ player:
     disabled: "&cVocê desativou o rastro ao voar!"
   permission_denied: "&cVocê não tem permissão para usar este comando."
 
-# %VARIABLENAME% is the placeholder for the message's information
-# e.g. %speed% could be the new global flight speed
 admin:
-  ## Config editing messages ##
   # Prefix applied to messages that cannot be modified (e.g. /fc actionbar)
   prefix: "&6&lFlightControl &a"
   # The prefixes are written out because the different colors have different meanings
@@ -37,7 +39,6 @@ admin:
     same: "&e&lFlightControl &7» &eBoas Notícias! O alcance de inimigo já é
       &f%range%&e!"
     usage: "&c&lFlightControl &7» &cUso incorreto! Use: /fc enemyrange (alcance)"
-  ## Command messages ##
   fly:
     enable: "&e&lFlightControl &7» &eAtivou o fly de &f%player%&e!"
     disable: "&e&lFlightControl &7» &eDesativou o fly de &f%player%&e!"

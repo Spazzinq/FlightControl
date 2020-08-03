@@ -2,11 +2,16 @@
 # Pour changer la langue, veuillez supprimer le # ci-dessous et mettre "locale" à son abréviation (en, fr, zh)
 #locale: fr
 
-# Si vous ne voulez pas de message, veuillez mettre ""
+# Attention :
+# 1. Si vous ne voulez pas de message, veuillez mettre ""
+# 2. %VARIABLENAME% est le bouche-trou pour l’information de message
+#    Par exemple, %speed% veut peut-être dire la nouvelle vitesse de vol globale
 player:
   # Utiliser l'actionbar (la région au-dessus de la barre d'action) pour ces messages
   actionbar: false
   flight:
+    # Shows remaining tempfly duration in actionbar if the "actionbar" setting is true
+    tempfly_actionbar: "&fTemps de vol restant &7: &a&f%duration%"
     enabled: "&aVotre vol a été activé."
     disabled: "&cVotre vol a été désactivé."
     # "can_enable" et "cannot_enable" sont utilisés quand "auto_enable" est faux
@@ -19,10 +24,7 @@ player:
     disabled: "&cVous avez désactivé les particules de vol !"
   permission_denied: "&cVous n''êtes pas autorisé(e) à utiliser cette commande."
 
-# %VARIABLENAME% est le bouche-trou pour l’information de message
-# Par exemple, %speed% veut peut-être dire la nouvelle vitesse de vol globale
 admin:
-  ## Les messages d’édition de config ##
   # Le préfixe appliqué aux messages qui ne peuvent pas être modifiés (par ex. /fc actionbar)
   prefix: "&a&lFlightControl &a"
   # Les préfixes sont écrits parce que les couleurs différentes des messages signifient les choses différentes
@@ -35,7 +37,6 @@ admin:
     set: "&e&lFlightControl &7» &eDéfinir la portée de l'ennemi afin de désactiver le vol à &f%range%&e !"
     same: "&e&lFlightControl &7» &eRien ne s'est passé ! La désactivation du vol à la portée de l'ennemi est déjà à &f%range%&e !"
     usage: "&c&lFlightControl &7» &cPas correct ! Usage correct : /fc enemyrange (gamme)"
-  ## Command messages ##
   fly:
     enable: "&e&lFlightControl &7» &eTentative d’activer le vol de &f%player%&e !"
     disable: "&e&lFlightControl &7» &eLe vol de &f%player%&e a été désactivé !"
@@ -47,8 +48,8 @@ admin:
   tempfly:
     set: "&e&lFlightControl &7» &f%player%&e a maintenant un vol temporaire pendant &f%duration%&e."
     disable: "&e&lFlightControl &7» &eDésactivé le vol temporaire de &f%player%&e !"
-    disabled: "&c&lFlightControl &7» Le vol temporaire de &f%player%&c est déjà désactivé !"
-    check: "&e&lFlightControl &7» Temps de vol restant pour &f%player%&e &7: &f%duration%&e."
+    disabled: "&c&lFlightControl &7» &eLe vol temporaire de &f%player%&c est déjà désactivé !"
+    check: "&e&lFlightControl &7» &eTemps de vol restant pour &f%player%&e &7: &f%duration%&e."
     usage: "&c&lFlightControl &7» &cUsage incorrect ! Usage : /tempfly (check/add/remove/set/disable) (joueur) [durée]. Une unité de temps anglaise
               doit suivre la durée. Les exemples de durées :
               &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c."

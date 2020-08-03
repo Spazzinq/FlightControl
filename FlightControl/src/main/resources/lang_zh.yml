@@ -2,11 +2,20 @@
 # 要更改语言，删除下面的＃并将 “locale” 设置为其缩写
 #locale: zh
 
+# Notes:
+# 1. If you don't want a message to be sent, set it to ""
+# 2. %VARIABLENAME% is the placeholder for the message's information
+#    e.g. %speed% could be the new global flight speed
 player:
+  # Use the actionbar (area above hotbar) instead of chat
   actionbar: false
   flight:
+    # Shows remaining tempfly duration in actionbar if the "actionbar" setting is true
+    tempfly_actionbar: "&aYou have &f%duration% &aof flight remaining."
     enabled: "&a已启用飞行"
     disabled: "&c已关闭飞行"
+    # "can_enable" and "cannot_enable" are used when "auto_enable" is false
+    # or if the player disables their own flight with /fly
     can_enable: "&b你现在可以使用/fly指令"
     cannot_enable: "&c你现在不能飞行"
     height_denied: "&c你不能飞这么高"
@@ -14,8 +23,11 @@ player:
     enabled: "&a已启用flight trail!"
     disabled: "&c已关闭flight trail!"
   permission_denied: "&c你没有权限使用此指令"
+
 admin:
+  # Prefix applied to messages that cannot be changed (e.g. /fc actionbar)
   prefix: "&a&lFlightControl &a"
+  # The prefixes are written out because the different colors have different meanings
   reloaded: "&a&lFlightControl &7» &a已成功重载配置!"
   global_flight_speed:
     set: "&e&lFlightControl &7» &e已设置全局飞行速度为&f%speed%&e!"
