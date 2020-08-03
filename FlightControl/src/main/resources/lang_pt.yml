@@ -1,21 +1,21 @@
-# Translations: English (en), French (fr), Mandarin (zh), Portuguese (pt)
-# To change the language, remove the # below and set "locale" to its abbreviation (en, fr, zh)
+# Traduções: Inglês (en), Frânces (fr), Mandarim (zh), Português (pt)
+# Para mudar o idioma, remova o # abaixo e sete o "locale" para a abreviação correspondente (en, fr, zh, pt)
 #locale: pt
 
-# Notes:
-# 1. If you don't want a message to be sent, set it to ""
-# 2. %VARIABLENAME% is the placeholder for the message's information
-#    e.g. %speed% could be the new global flight speed
+# Notas:
+# 1. Se você não quiser que a mensagem seja enviada, mude para ""
+# 2. %VARIABLENAME% é o nome do placeholder para a informação da mensagem
+#    ex: %speed% poderia ser a nova velocidade global
 player:
-  # Use the actionbar (area above hotbar) instead of chat
+  # Usar a actionbar (área acima da hotbar) em vez do chat
   actionbar: false
   flight:
-    # Shows remaining tempfly duration in actionbar if the "actionbar" setting is true
-    tempfly_actionbar: "&aYou have &f%duration% &aof flight remaining."
+    # Mostra o tempo restante disponível para voar na action se a config. "actionbar" estiver setada para "true"
+    tempfly_actionbar: "&aVocê tem &f%duration% &apara voar restantes."
     enabled: "&aO seu modo voar foi ativado."
     disabled: "&cO seu modo voar foi desativado."
-    # "can_enable" and "cannot_enable" are used when "auto_enable" is false
-    # or if the player disables their own flight with /fly
+    # "can_enable" e "cannot_enable" são usados quando "auto_enable" está "false"
+    # ou se o jogador desativa seu próprio fly com /fly
     can_enable: "&bVocê pode usar o /fly agora."
     cannot_enable: "&cVocê não pode voar agora."
     height_denied: "&cVocê não pode voar tão alto!"
@@ -25,9 +25,9 @@ player:
   permission_denied: "&cVocê não tem permissão para usar este comando."
 
 admin:
-  # Prefix applied to messages that cannot be modified (e.g. /fc actionbar)
+  # Prefixo aplicado as mensagens que não podem ser modificadas (ex: /fc actionbar) 
   prefix: "&6&lFlightControl &a"
-  # The prefixes are written out because the different colors have different meanings
+  # Os prefixos são escritos abaixo por causa das cores que significados diferentes
   reloaded: "&a&lFlightControl &7» &aAs configurações foram recarregadas com sucesso!"
   global_flight_speed:
     set: "&e&lFlightControl &7» &eA velocidade do voo foi setada para &f%speed%&e!"
