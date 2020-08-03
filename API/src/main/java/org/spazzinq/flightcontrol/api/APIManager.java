@@ -35,19 +35,18 @@ import org.spazzinq.flightcontrol.api.object.HandlerMethod;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("unused")
 public class APIManager {
     private static APIManager instance;
-    private Map<Class, List<HandlerMethod>> handlers = new HashMap<>();
 
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private List<FlightListener> listeners = new ArrayList<>();
+    private final Map<Class<?>, List<HandlerMethod>> handlers = new HashMap<>();
+    private final List<FlightListener> listeners = new ArrayList<>();
 
     private APIManager() {
-        Set<Class> events = new HashSet<>(Arrays.asList(FlightCanEnableEvent.class, FlightCannotEnableEvent.class,
+        Set<Class<?>> events = new HashSet<>(Arrays.asList(FlightCanEnableEvent.class, FlightCannotEnableEvent.class,
                 FlightDisableEvent.class, FlightEnableEvent.class));
 
-        for (Class event : events) {
+        for (Class<?> event : events) {
             handlers.put(event, new ArrayList<>());
         }
     }
@@ -118,16 +117,14 @@ public class APIManager {
      * @param event the FlightEvent instance
      * @throws InvocationTargetException
      * @throws IllegalAccessException
-     * @throws InstantiationException
      */
-    private void callMethods(FlightEvent e) throws InvocationTargetException, IllegalAccessException,
-            InstantiationException {
+    private void callMethods(FlightEvent event) throws InvocationTargetException, IllegalAccessException {
         // Prevent CME by cloning List
-        List<HandlerMethod> handlersCopy = new ArrayList<>(handlers.get(e.getClass()));
+        List<HandlerMethod> handlersCopy = new ArrayList<>(handlers.get(event.getClass()));
 
         for (HandlerMethod m : handlersCopy) {
             if (m.getPlugin().isEnabled()) {
-                m.getMethod().invoke(m.getListener(), e);
+                m.getMethod().invoke(m.getListener(), event);
             } else if (containsListener(m.getListener())) {
                 removeListener(m.getListener());
             }
@@ -169,7 +166,7 @@ public class APIManager {
      *
      * @return All registered events
      */
-    public Set<Class> getEvents() {
+    public Set<Class<?>> getEvents() {
         return handlers.keySet();
     }
 

@@ -27,7 +27,6 @@ package org.spazzinq.flightcontrol.command;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;

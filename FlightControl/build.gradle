@@ -47,10 +47,11 @@ dependencies {
     compileOnly 'com.plotsquared:plotsquared-api:3.1'
     compileOnly 'com.github.intellectualsites.plotsquared:PlotSquared-API:4.514'
     compileOnly 'com.plotsquared:PlotSquared:5.1'
+    compileOnly 'com.github.TownyAdvanced:Towny:0.96.2.8'
     compileOnly 'com.github.Angeschossen:LandsAPI:4.5.9.9'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.13.0'
     compileOnly 'com.SirBlobman.combatlogx:CombatLogX-API:10.0.0.0-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.10.6'
+    compileOnly 'me.clip:placeholderapi:2.10.8'
     compileOnly ('be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT') {
         exclude group: 'org.spigotmc', module: 'spigot'
     }
@@ -63,7 +64,6 @@ dependencies {
     compileOnly files('../lib/DummyCombatTagPlus.jar')
     compileOnly files('../lib/CombatLogPro-v1.5.9.jar')
     compileOnly files('../lib/AntiCombatLoggingAPI.jar')
-    compileOnly files('../lib/Towny-0.93.0.0.jar')
     compileOnly files('../lib/AdvancedEnchantmentsAPI.jar')
 }
 

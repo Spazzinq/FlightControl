@@ -2,13 +2,13 @@
 An elegant solution for controlling player flight
 
 ## Show your support
-Like my work? Leave a :star: or a :eye: in the top right corner :)
+Like my work? Leave a :star: or an :eye: in the top right corner :)
 
 ## Build
 To build/have the latest functional version of FlightControl, clone the [beta](https://github.com/Spazzinq/FlightControl/tree/beta) branch and build the jar using `gradle clean shadowJar`. Website development builds are coming soon.
 
 ## Information
-The **[Wiki](https://spazzinq.org/flightcontrol/)** contains all of the information you need, whether it be [permissions](https://spazzinq.org/flightcontrol/permissions), [placeholders](https://spazzinq.org/flightcontrol/placeholders), or almost anything else (the rest coming soon).
+The **[Wiki](https://spazzinq.org/flightcontrol/)** contains all the information you need, whether it be [permissions](https://spazzinq.org/flightcontrol/permissions), [placeholders](https://spazzinq.org/flightcontrol/placeholders), or almost anything else (the rest coming soon).
 
 ## Temporary links
 Donate: https://spazzinq.org/donate

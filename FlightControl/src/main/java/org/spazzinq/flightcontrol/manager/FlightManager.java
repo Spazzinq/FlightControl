@@ -38,7 +38,6 @@ import org.spazzinq.flightcontrol.api.object.Sound;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.util.CheckUtil;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
@@ -46,9 +45,9 @@ import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 public class FlightManager {
     private final FlightControl pl;
 
-    @Getter private final ArrayList<Player> alreadyCanMsg = new ArrayList<>();
-    @Getter private final ArrayList<Player> disabledByPlayer = new ArrayList<>();
-    @Getter private final ArrayList<Entity> noFallDmg = new ArrayList<>();
+    @Getter private final HashSet<Player> alreadyCanMsg = new HashSet<>();
+    @Getter private final HashSet<Player> disabledByPlayer = new HashSet<>();
+    @Getter private final HashSet<Entity> noFallDmg = new HashSet<>();
 
     public FlightManager(FlightControl pl) {
         this.pl = pl;

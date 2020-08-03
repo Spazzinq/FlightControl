@@ -31,7 +31,7 @@ import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.check.Check;
 
 public class AdvancedEnchantmentsCheck extends Check {
-    private FlightControl pl;
+    private final FlightControl pl;
 
     public AdvancedEnchantmentsCheck(FlightControl pl) {
         this.pl = pl;

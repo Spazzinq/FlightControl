@@ -40,7 +40,7 @@ import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionFly;
 import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionNoFly;
 
 public class StatusManager {
-    FlightControl pl;
+    final FlightControl pl;
 
     public StatusManager(FlightControl pl) {
         this.pl = pl;
