@@ -28,11 +28,11 @@ plugins {
 }
 
 dependencies {
-    implementation 'org.bstats:bstats-bukkit-lite:1.7'
     implementation project(':API')
     implementation project(':Multiversion')
     implementation project(':VersionOld')
     implementation project(':VersionCurrent')
+    implementation 'org.bstats:bstats-bukkit-lite:1.7'
 
     compileOnly 'org.jetbrains:annotations:19.0.0'
     compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {

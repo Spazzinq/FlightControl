@@ -25,7 +25,9 @@
 package org.spazzinq.flightcontrol.placeholder;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
@@ -39,11 +41,13 @@ public class ClipPlaceholder extends PlaceholderExpansion {
         this.pl = pl;
     }
 
-    @Override public String getIdentifier() {
+    @Override public @NotNull String getIdentifier() {
         return "flightcontrol";
     }
 
-    @Override public String onPlaceholderRequest(Player player, String identifier){
+    @Override public String onRequest(OfflinePlayer offlinePlayer, @NotNull String identifier) {
+        Player player = offlinePlayer == null ? null : offlinePlayer.getPlayer();
+
         if (player == null) {
             return "";
         }
@@ -71,15 +75,15 @@ public class ClipPlaceholder extends PlaceholderExpansion {
         return null;
     }
 
-    @Override public boolean canRegister(){
+    @Override public boolean canRegister() {
         return true;
     }
 
-    @Override public String getAuthor(){
-        return pl.getDescription().getAuthors().toString();
+    @Override public @NotNull String getAuthor() {
+        return pl.getDescription().getAuthors().get(0);
     }
 
-    @Override public String getVersion(){
+    @Override public @NotNull String getVersion() {
         return pl.getDescription().getVersion();
     }
 
