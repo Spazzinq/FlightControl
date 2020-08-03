@@ -47,9 +47,11 @@ public class LangManager {
     private boolean ignoreReload;
 
     // Bool
+    // TODO Fix caps
     @Setter private boolean useActionBar;
 
     // Player messages
+    @Getter private String tempflyActionbar;
     @Getter private String disableFlight;
     @Getter private String enableFlight;
     @Getter private String canEnableFlight;
@@ -134,6 +136,7 @@ public class LangManager {
             useActionBar = lang.getBoolean("player.actionbar");
 
             // Strings
+            tempflyActionbar = lang.getString("player.flight.tempfly_actionbar");
             disableFlight = lang.getString("player.flight.disabled");
             enableFlight = lang.getString("player.flight.enabled");
             canEnableFlight = lang.getString("player.flight.can_enable");
@@ -182,6 +185,7 @@ public class LangManager {
         boolean modified = false;
 
         if (!lang.isString("admin.tempfly.check")) {
+            // TODO Add depending on locale
             lang.addSubnodes(Collections.singleton("check: \"&e&lFlightControl &7» &f%player%&e has &f%duration%&e of" +
                     " flight remaining.\""), "admin.tempfly.disabled");
 
@@ -199,6 +203,14 @@ public class LangManager {
         if (lang.isString("admin.tempfly.enable")) {
             lang.addIndentedSubnodes(Collections.singleton("set: \"" + lang.getString("admin.tempfly.enable") + "\""), "admin.tempfly");
             lang.deleteNode("admin.tempfly.enable");
+
+            modified = true;
+        }
+
+        // 4.7.0
+        if (!lang.isString("player.flight.tempfly_actionbar")) {
+            // TODO Add depending on locale
+            lang.addIndentedSubnodes(Collections.singleton("&7You have &a%duration% &7of flight remaining."), "player.flight");
 
             modified = true;
         }
