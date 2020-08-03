@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 public class CommandUtil {
-    public static List<String> autoComplete(Set<String> data, String query) {
+    public static List<String> autoComplete(Set<String> data, String query, boolean autoFill) {
         List<String> matches = new ArrayList<>();
 
         for (String entry : data) {
@@ -37,7 +37,8 @@ public class CommandUtil {
                 matches.add(entry);
             }
         }
-        return matches;
+
+        return autoFill && matches.isEmpty() ? new ArrayList<>(data) : matches;
     }
 
     public static List<String> autoComplete(List<String> data, String query) {

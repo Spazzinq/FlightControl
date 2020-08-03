@@ -82,12 +82,15 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
         if (args.length > 0 && !args[0].isEmpty()) {
             StringBuilder help = new StringBuilder(buildHelp.replaceAll("\\.\\.\\.", args[0] + "..."));
 
-            for (Map.Entry<String, String> c : commands.entrySet()) {
-                if (c.getKey().startsWith(args[0])) {
-                    help.append("&a").append(c.getKey()).append(" &7» &f").append(c.getValue()).append("\n");
+            for (Map.Entry<String, String> commandEntry : commands.entrySet()) {
+                // If command starts with query
+                if (commandEntry.getKey().startsWith(args[0])) {
+                    // Add to displayed list
+                    help.append("&a").append(commandEntry.getKey()).append(" &7» &f").append(commandEntry.getValue()).append("\n");
                 }
             }
 
+            // FIXME Is this really necessary?
             if (help.length() == buildHelp.length() + args[0].length()) {
                 return defaultHelp;
             }
@@ -105,7 +108,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
 
         if (s instanceof ConsoleCommandSender || PlayerUtil.hasPermission(s, FlyPermission.ADMIN)) {
             if (args.length > 0) {
-                List<String> autoComplete = CommandUtil.autoComplete(commands.keySet(), args[0]);
+                List<String> autoComplete = CommandUtil.autoComplete(commands.keySet(), args[0], false);
 
                 switch (autoComplete.isEmpty()
                         ? args[0] : (autoComplete.size() == 1 ? autoComplete.get(0) : "")) {
@@ -275,8 +278,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
         }
 
         if (args.length == 1) {
-            List<String> autoComplete = CommandUtil.autoComplete(commands.keySet(), args[0]);
-            return autoComplete.isEmpty() ? new ArrayList<>(commands.keySet()) : autoComplete;
+            return CommandUtil.autoComplete(commands.keySet(), args[0], true);
         } else if (args.length == 2) {
             if (args[0].equals("speed")) {
                 return Collections.singletonList("1");

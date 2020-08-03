@@ -27,10 +27,11 @@ package org.spazzinq.flightcontrol.command;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
-import org.spazzinq.flightcontrol.object.TempflyType;
+import org.spazzinq.flightcontrol.object.TempflyTaskType;
 import org.spazzinq.flightcontrol.util.CommandUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
@@ -55,31 +56,22 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
         boolean console = sender instanceof ConsoleCommandSender;
         Player targetPlayer = null;
 
-        // /tempfly (duration)
-        if (args.length == 2) {
+        // /tempfly (check, disable)
+        if (args.length < 2) {
             if (console) {
                 msg(sender, pl.getLangManager().getTempFlyUsage());
-            } else if (PlayerUtil.hasPermission(sender, FlyPermission.TEMP_FLY)) {
+            } else {
                 targetPlayer = (Player) sender;
             }
         // /tempfly (check, add, remove, set, disable) (player) [duration]
-        } else if (args.length > 1 && (console || PlayerUtil.hasPermission(sender, FlyPermission.TEMP_FLY_OTHERS))) {
+        } else if (console || PlayerUtil.hasPermission(sender, FlyPermission.TEMP_FLY_OTHERS)) {
             targetPlayer = Bukkit.getPlayer(args[1]);
         }
 
         if (targetPlayer == null) {
             msg(sender, pl.getLangManager().getTempFlyUsage());
         } else {
-            // Enum
-            String typeStr = args[0].toUpperCase();
-
-            TempflyType type;
-            try {
-                type = TempflyType.valueOf(typeStr);
-            } catch (IllegalArgumentException e) {
-                msg(sender, pl.getLangManager().getTempFlyUsage());
-                return true;
-            }
+            TempflyTaskType type = getTaskType(args[0].toUpperCase());
 
             long duration = 0;
             if (args.length == 3) {
@@ -91,17 +83,46 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
-            modifyTempfly(sender, targetPlayer, type, duration, "silenttempfly".equals(label.toLowerCase()));
+            runTempflyTask(sender, targetPlayer, type, duration, "silenttempfly".equals(label.toLowerCase()));
         }
 
         return true;
     }
 
-    private void modifyTempfly(CommandSender sender, Player targetPlayer, TempflyType type, long duration, boolean silent) {
-        FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(targetPlayer);
-        boolean hasTimeLeft = flightPlayer.getTempflyTimer().hasTimeLeft();
+    @Override public List<String> onTabComplete(CommandSender s, Command cmd, String label, String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            // Ignore player case
+            if (i != 1) {
+                args[i] = args[i].toLowerCase();
+            }
+        }
 
-        if (type != TempflyType.CHECK) {
+        if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS)) {
+            // /tempfly (check, add, remove, set, disable)
+            if (args.length == 1) {
+                return CommandUtil.autoComplete(TempflyTaskType.types, args[0]);
+                // /tempfly (check, add, remove, set, disable) (player)
+            } else if (args.length == 2) {
+                // Default auto-complete for player
+                return null;
+                // /tempfly (check, add, remove, set, disable) (player) [duration]
+            } else if (args.length == 3) {
+                return CommandUtil.autoComplete(exampleDurations, args[2]);
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
+    private void runTempflyTask(CommandSender sender, Player targetPlayer, TempflyTaskType type) {
+        runTempflyTask(sender, targetPlayer, type, 0, false);
+    }
+
+    private void runTempflyTask(CommandSender sender, Player targetPlayer, TempflyTaskType type, long duration, boolean silent) {
+        FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(targetPlayer);
+        boolean hasTimeLeft = type == TempflyTaskType.DISABLE && flightPlayer.getTempflyTimer().hasTimeLeft();
+
+        if (type != TempflyTaskType.CHECK) {
             flightPlayer.modifyTempflyDuration(type, duration);
         }
 
@@ -162,28 +183,15 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
         return 's';
     }
 
-    @Override public List<String> onTabComplete(CommandSender s, Command cmd, String label, String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            // Ignore player case
-            if (i != 1) {
-                args[i] = args[i].toLowerCase();
-            }
+    private TempflyTaskType getTaskType(String name) {
+        TempflyTaskType type;
+
+        try {
+            type = TempflyTaskType.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            type = TempflyTaskType.CHECK;
         }
 
-        if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS)) {
-            // /tempfly (check, add, remove, set, disable)
-            if (args.length == 1) {
-                return CommandUtil.autoComplete(TempflyType.types, args[0]);
-            // /tempfly (check, add, remove, set, disable) (player)
-            } else if (args.length == 2) {
-                // Default auto-complete for player
-                return null;
-            // /tempfly (check, add, remove, set, disable) (player) [duration]
-            } else if (args.length == 3) {
-                return CommandUtil.autoComplete(exampleDurations, args[2]);
-            }
-        }
-
-        return Collections.emptyList();
+        return type;
     }
 }
