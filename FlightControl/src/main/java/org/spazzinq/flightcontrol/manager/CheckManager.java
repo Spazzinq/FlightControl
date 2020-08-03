@@ -145,8 +145,13 @@ public class CheckManager {
         }
         if (pluginLoading("Towny")) {
             // trusted == own
-            ownTerritoryChecks.put("Towny", new TownyCheck());
-            trustedTerritoryChecks.put("Towny", new TownyCheck());
+            ownTerritoryChecks.put("Towny", new TownyTownCheck());
+            trustedTerritoryChecks.put("Towny", new TownyTownCheck());
+            ownTerritoryChecks.put("TownyTown", new TownyTownCheck());
+            trustedTerritoryChecks.put("TownyTown", new TownyTownCheck());
+
+            ownTerritoryChecks.put("TownyNation", new TownyNationCheck());
+            trustedTerritoryChecks.put("TownyNation", new TownyNationCheck());
         }
         if (pluginLoading("Lands")) {
             ownTerritoryChecks.put("Lands", new LandsOwnCheck(pl));
