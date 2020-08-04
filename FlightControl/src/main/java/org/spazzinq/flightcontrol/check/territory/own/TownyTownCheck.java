@@ -28,7 +28,6 @@ import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
@@ -38,7 +37,7 @@ public final class TownyTownCheck extends TerritoryCheck {
             Resident resident = TownyAPI.getInstance().getDataSource().getResident(p.getName());
             Town townAtLoc = TownyAPI.getInstance().getTownBlock(p.getLocation()).getTown();
 
-            if (resident.hasTown()&& resident.getTown().equals(townAtLoc)) {
+            if (resident.hasTown() && resident.getTown().equals(townAtLoc)) {
                 return true;
             }
         } catch (NotRegisteredException ignored) {

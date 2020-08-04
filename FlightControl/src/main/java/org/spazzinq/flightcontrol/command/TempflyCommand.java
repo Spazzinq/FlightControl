@@ -25,13 +25,17 @@
 package org.spazzinq.flightcontrol.command;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.object.TempflyTaskType;
 import org.spazzinq.flightcontrol.util.CommandUtil;
+import org.spazzinq.flightcontrol.util.MathUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.util.Arrays;
@@ -39,7 +43,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
 public class TempflyCommand implements CommandExecutor, TabCompleter {
@@ -52,38 +55,45 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        boolean console = sender instanceof ConsoleCommandSender;
         Player targetPlayer = null;
+        TempflyTaskType type;
+        long duration = 0;
 
-        // /tempfly (check, disable)
-        if (args.length < 2) {
-            if (console) {
-                msg(sender, pl.getLangManager().getTempFlyUsage());
-            } else {
-                targetPlayer = (Player) sender;
-            }
-        // /tempfly (check, add, remove, set, disable) (player) [duration]
-        } else if (console || PlayerUtil.hasPermission(sender, FlyPermission.TEMP_FLY_OTHERS)) {
-            targetPlayer = Bukkit.getPlayer(args[1]);
-        }
+        if (args.length > 0) {
+            type = TempflyTaskType.getTaskType(args[0].toUpperCase());
 
-        if (targetPlayer == null) {
-            msg(sender, pl.getLangManager().getTempFlyUsage());
-        } else {
-            TempflyTaskType type = getTaskType(args[0].toUpperCase());
+            if (type != TempflyTaskType.HELP) {
+                // Optional player input
+                // /tempfly set/add/remove (duration) [player]
+                int optionalPlayerIndex = 2;
 
-            long duration = 0;
-            if (args.length == 3) {
+                if (type == TempflyTaskType.CHECK || type == TempflyTaskType.DISABLE) {
+                    // /tempfly check/disable [player]
+                    optionalPlayerIndex = 1;
+                }
+
+                if (args.length > optionalPlayerIndex) {
+                    targetPlayer = Bukkit.getPlayer(args[optionalPlayerIndex]);
+                } else {
+                    targetPlayer = (Player) sender;
+                }
+
                 // Duration
-                String durationStr = args[2].toLowerCase();
+                if (args.length > 1 && (type == TempflyTaskType.SET || type == TempflyTaskType.ADD || type == TempflyTaskType.REMOVE)) {
+                    String durationStr = args[2].toLowerCase();
 
-                if (durationStr.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
-                    duration = calculateDuration(durationStr);
+                    if (durationStr.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
+                        duration = MathUtil.calculateDuration(durationStr);
+                    }
                 }
             }
-
-            runTempflyTask(sender, targetPlayer, type, duration, "silenttempfly".equals(label.toLowerCase()));
+        } else if (sender.isOp()) {
+            type = TempflyTaskType.HELP;
+        } else {
+            type = TempflyTaskType.CHECK;
         }
+
+        runTempflyTask(sender, targetPlayer, type, duration, "silenttempfly".equals(label.toLowerCase()));
 
         return true;
     }
@@ -113,15 +123,11 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
         return Collections.emptyList();
     }
 
-    private void runTempflyTask(CommandSender sender, Player targetPlayer, TempflyTaskType type) {
-        runTempflyTask(sender, targetPlayer, type, 0, false);
-    }
-
     private void runTempflyTask(CommandSender sender, Player targetPlayer, TempflyTaskType type, long duration, boolean silent) {
         FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(targetPlayer);
         boolean hasTimeLeft = type == TempflyTaskType.DISABLE && flightPlayer.getTempflyTimer().hasTimeLeft();
 
-        if (type != TempflyTaskType.CHECK) {
+        if (type != TempflyTaskType.CHECK && type != TempflyTaskType.HELP) {
             flightPlayer.modifyTempflyDuration(type, duration);
         }
 
@@ -132,12 +138,15 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
                 case CHECK:
                     msg = pl.getLangManager().getTempFlyCheck();
                     break;
-                case SET: case ADD: case REMOVE: default:
+                case SET: case ADD: case REMOVE:
                     msg = pl.getLangManager().getTempFlySet();
                     break;
                 case DISABLE:
                     msg = hasTimeLeft
                             ? pl.getLangManager().getTempFlyDisable() : pl.getLangManager().getTempFlyDisabled();
+                    break;
+                case HELP: default:
+                    msg = pl.getLangManager().getTempFlyUsage();
                     break;
             }
 
@@ -146,51 +155,5 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
                 put("duration", PlayerUtil.longTempflyPlaceholder(flightPlayer));
             }});
         }
-    }
-
-    private long calculateDuration(String durationStr) {
-        char unit = findUnit(durationStr);
-        int unitIndex = durationStr.indexOf(unit);
-        // Just in case it's a really
-        long duration = Long.parseLong(durationStr.substring(0, unitIndex == -1 ? durationStr.length() : unitIndex));
-        // In milliseconds
-        duration *= 1000;
-
-        switch (unit) {
-            case 'm':
-                duration *= 60;
-                break;
-            case 'h':
-                duration *= 3600;
-                break;
-            case 'd':
-                duration *= 86400;
-                break;
-            default:
-                break;
-        }
-
-        return duration;
-    }
-
-    private char findUnit(String input) {
-        for (int i = 0; i < input.length(); i++) {
-            if (input.substring(i, i + 1).matches("[smhd]")) {
-                return input.charAt(i);
-            }
-        }
-        return 's';
-    }
-
-    private TempflyTaskType getTaskType(String name) {
-        TempflyTaskType type;
-
-        try {
-            type = TempflyTaskType.valueOf(name);
-        } catch (IllegalArgumentException e) {
-            type = TempflyTaskType.CHECK;
-        }
-
-        return type;
     }
 }

@@ -47,6 +47,31 @@ public final class MathUtil {
         return actualSpeed;
     }
 
+    public static long calculateDuration(String durationStr) {
+        char unit = findUnit(durationStr);
+        int unitIndex = durationStr.indexOf(unit);
+        // Just in case it's a really
+        long duration = Long.parseLong(durationStr.substring(0, unitIndex == -1 ? durationStr.length() : unitIndex));
+        // In milliseconds
+        duration *= 1000;
+
+        switch (unit) {
+            case 'm':
+                duration *= 60;
+                break;
+            case 'h':
+                duration *= 3600;
+                break;
+            case 'd':
+                duration *= 86400;
+                break;
+            default:
+                break;
+        }
+
+        return duration;
+    }
+
     public static int days(long length) {
         return (int) (length / 86400);
     }
@@ -65,5 +90,14 @@ public final class MathUtil {
 
     public static int[] timeArray(long length) {
         return new int[] {days(length), hours(length), minutes(length), seconds(length)};
+    }
+
+    private static char findUnit(String input) {
+        for (int i = 0; i < input.length(); i++) {
+            if (input.substring(i, i + 1).matches("[smhd]")) {
+                return input.charAt(i);
+            }
+        }
+        return 's';
     }
 }
