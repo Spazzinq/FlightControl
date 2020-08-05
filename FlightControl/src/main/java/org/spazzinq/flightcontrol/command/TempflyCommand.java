@@ -25,10 +25,7 @@
 package org.spazzinq.flightcontrol.command;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
@@ -74,6 +71,12 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
 
                 if (args.length > optionalPlayerIndex) {
                     targetPlayer = Bukkit.getPlayer(args[optionalPlayerIndex]);
+
+                    if (targetPlayer == null) {
+                        type = TempflyTaskType.HELP;
+                    }
+                } else if (sender instanceof ConsoleCommandSender) {
+                    type = TempflyTaskType.HELP;
                 } else {
                     targetPlayer = (Player) sender;
                 }
@@ -124,10 +127,10 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
     }
 
     private void runTempflyTask(CommandSender sender, Player targetPlayer, TempflyTaskType type, long duration, boolean silent) {
-        FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(targetPlayer);
-        boolean hasTimeLeft = type == TempflyTaskType.DISABLE && flightPlayer.getTempflyTimer().hasTimeLeft();
+        FlightPlayer flightPlayer = targetPlayer == null ? null : pl.getPlayerManager().getFlightPlayer(targetPlayer);
+        boolean hasTimeLeft = type == TempflyTaskType.DISABLE && targetPlayer != null && flightPlayer.getTempflyTimer().hasTimeLeft();
 
-        if (type != TempflyTaskType.CHECK && type != TempflyTaskType.HELP) {
+        if (type != TempflyTaskType.CHECK && type != TempflyTaskType.HELP && targetPlayer != null) {
             flightPlayer.modifyTempflyDuration(type, duration);
         }
 
@@ -151,8 +154,8 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
             }
 
             msgVar(sender, msg, false, new HashMap<String, String>() {{
-                put("player", targetPlayer.getName());
-                put("duration", PlayerUtil.longTempflyPlaceholder(flightPlayer));
+                put("player", targetPlayer == null ? "ERROR" : targetPlayer.getName());
+                put("duration", targetPlayer == null ? "ERROR" : PlayerUtil.longTempflyPlaceholder(flightPlayer));
             }});
         }
     }

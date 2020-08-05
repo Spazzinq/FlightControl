@@ -47,6 +47,10 @@ public class PlayerManager {
     }
 
     public FlightPlayer getFlightPlayer(Player p) {
+        if (p == null) {
+            return null;
+        }
+
         // Cached loading
         if (!playerCache.containsKey(p.getUniqueId())) {
             File dataFile = new File(folder, p.getUniqueId() + ".yml");

@@ -73,9 +73,9 @@ public final class PlayerUtil {
             }
 
             return builder.toString();
-        } else {
-            return "0s";
         }
+
+        return "0s";
     }
 
     public static String longTempflyPlaceholder(FlightPlayer flightPlayer) {
@@ -97,9 +97,9 @@ public final class PlayerUtil {
             builder.delete(builder.length() - 2, builder.length());
 
             return builder.toString();
-        } else {
-            return "0 seconds";
         }
+
+        return "no time";
     }
 
     public static long formatLength(Long length) {
