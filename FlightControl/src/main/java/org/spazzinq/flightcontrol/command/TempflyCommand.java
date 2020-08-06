@@ -52,7 +52,7 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        Player targetPlayer = null;
+        Player targetPlayer = sender instanceof ConsoleCommandSender ? null : (Player) sender;
         TempflyTaskType type;
         long duration = 0;
 
@@ -77,8 +77,6 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
                     }
                 } else if (sender instanceof ConsoleCommandSender) {
                     type = TempflyTaskType.HELP;
-                } else {
-                    targetPlayer = (Player) sender;
                 }
 
                 // Duration
@@ -127,10 +125,10 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
     }
 
     private void runTempflyTask(CommandSender sender, Player targetPlayer, TempflyTaskType type, long duration, boolean silent) {
-        FlightPlayer flightPlayer = targetPlayer == null ? null : pl.getPlayerManager().getFlightPlayer(targetPlayer);
-        boolean hasTimeLeft = type == TempflyTaskType.DISABLE && targetPlayer != null && flightPlayer.getTempflyTimer().hasTimeLeft();
+        FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(targetPlayer);
+        boolean hasTimeLeft = type == TempflyTaskType.DISABLE && flightPlayer != null && flightPlayer.getTempflyTimer().hasTimeLeft();
 
-        if (type != TempflyTaskType.CHECK && type != TempflyTaskType.HELP && targetPlayer != null) {
+        if (type != TempflyTaskType.CHECK && type != TempflyTaskType.HELP && flightPlayer != null) {
             flightPlayer.modifyTempflyDuration(type, duration);
         }
 
@@ -154,8 +152,12 @@ public class TempflyCommand implements CommandExecutor, TabCompleter {
             }
 
             msgVar(sender, msg, false, new HashMap<String, String>() {{
-                put("player", targetPlayer == null ? "ERROR" : targetPlayer.getName());
-                put("duration", targetPlayer == null ? "ERROR" : PlayerUtil.longTempflyPlaceholder(flightPlayer));
+                if (targetPlayer != null) {
+                    put("player", targetPlayer.getName());
+                }
+                if (flightPlayer != null) {
+                    put("duration", PlayerUtil.longTempflyPlaceholder(flightPlayer));
+                }
             }});
         }
     }

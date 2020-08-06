@@ -99,7 +99,7 @@ public final class PlayerUtil {
             return builder.toString();
         }
 
-        return "no time";
+        return "0 seconds";
     }
 
     public static long formatLength(Long length) {
