@@ -27,25 +27,14 @@ package org.spazzinq.flightcontrol;
 import lombok.Getter;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.spazzinq.flightcontrol.api.APIManager;
 import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
 import org.spazzinq.flightcontrol.multiversion.Particle;
 import org.spazzinq.flightcontrol.multiversion.current.Particle13;
 import org.spazzinq.flightcontrol.multiversion.legacy.Particle8;
-import org.spazzinq.flightcontrol.object.Category;
-import org.spazzinq.flightcontrol.util.CheckUtil;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.UUID;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
@@ -55,9 +44,7 @@ import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
  */
 public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private static FlightControl instance;
-    @Getter private final APIManager apiManager = APIManager.getInstance();
     // Storage management
-    @Getter private final File storageFolder = new File(getDataFolder() + File.separator + "data");
     @Getter private CategoryManager categoryManager;
     @Getter private ConfManager confManager;
     @Getter private LangManager langManager;
@@ -75,26 +62,26 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     // Misc. management
     @Getter private PermissionManager permissionManager;
 
-    // My Minecraft UUID used to notify me of the plugin version and allow debugging (after granted permission)
+    // Used for support (checking plugin version, debugging after granted permission)
     public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
 
     public void onEnable() {
         instance = this;
-
-        // Create storage folder
-        storageFolder.mkdirs();
 
         // Registration
         registerManagers();
         registerCommands();
         new EventListener(this);
 
-        // Load
+        // Load and check
         load();
-        updateManager.checkOnStartup();
+        flightManager.checkAllPlayers();
+        trailManager.checkAllPlayers();
+        updateManager.checkForUpdate();
 
         // Start config watching service (on-the-fly editing)
         new PathWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
+
         // Start bStats
         new MetricsLite(this, 4704); // 4704 = plugin ID
     }
@@ -108,15 +95,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
     }
 
-    /**
-     * Registers all relevant managers in one nice method.
-     */
     private void registerManagers() {
-        categoryManager = new CategoryManager(this);
-        confManager = new ConfManager(this);
-        langManager = new LangManager(this);
-        updateManager = new UpdateManager(this);
-
+        // TODO Change name
         boolean v1_13 = false;
 
         for (int i = 13; i < 18; i++) {
@@ -125,6 +105,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 break;
             }
         }
+
+        categoryManager = new CategoryManager(this);
+        confManager = new ConfManager(this);
+        langManager = new LangManager(this);
+        updateManager = new UpdateManager(this);
 
         checkManager = new CheckManager(this);
         hookManager = new HookManager(this, v1_13);
@@ -135,6 +120,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         statusManager = new StatusManager(this);
         factionsManager = new FactionsManager(this);
         trailManager = new TrailManager(this);
+
+        permissionManager = new PermissionManager();
     }
 
     private void registerCommands() {
@@ -159,48 +146,5 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         hookManager.loadHooks();
         categoryManager.loadCategories();
         playerManager.loadPlayerData();
-
-        checkPlayers();
-    }
-
-    /**
-     * Verifies trail and flight access for all online players.
-     */
-    // TODO MOVE
-    public void checkPlayers() {
-        trailManager.removeEnabledTrails();
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            flightManager.check(p);
-            if (p.isFlying()) {
-                trailManager.trailCheck(p);
-            }
-        }
-    }
-
-    /**
-     * Sends debug information about a player's flight status.
-     *
-     * @param sender the recipient of the debug message
-     * @param targetPlayer the target of the debug check
-     */
-    public void debug(CommandSender sender, Player targetPlayer) {
-        Location l = targetPlayer.getLocation();
-        World world = l.getWorld();
-        String regionName = getHookManager().getWorldGuardHook().getRegionName(l);
-        Category category = categoryManager.getCategory(targetPlayer);
-
-        // config options (settings) and permissions that act upon the same function are listed as
-        // setting boolean (space) permission boolean
-        msg(sender, "&a&lFlightControl &f" + getDescription().getVersion() +
-                "\n&eTarget &7» &f" + targetPlayer.getName() +
-                "\n&eCategory &7» &f" + category.getName() +
-                (hookManager.getWorldGuardHook().isHooked() ? "\n&eW.RG &7» &f" + world.getName() + "." + regionName : "") +
-                (hookManager.getFactionsHook().isHooked() ? "\n&eFac &7» &f" + category.getFactions() : "") +
-                "\n&eWRLDs &7» &f" + category.getWorlds() +
-                (hookManager.getWorldGuardHook().isHooked() ? "\n&eRGs &7» &f" + category.getRegions() : "") +
-                ("\n&eBypass &7» &f" + CheckUtil.checkAll(checkManager.getBypassChecks(), targetPlayer, true)));
-
-        statusManager.checkEnable(targetPlayer, sender);
-        statusManager.checkDisable(targetPlayer, sender);
     }
 }

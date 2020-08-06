@@ -97,7 +97,8 @@ class PathWatcher extends BukkitRunnable {
                         break;
                 }
                 if (playerStateChanged) {
-                    pl.checkPlayers();
+                    pl.getFlightManager().checkAllPlayers();
+                    pl.getTrailManager().checkAllPlayers();
                 }
             }
             boolean valid = key.reset();

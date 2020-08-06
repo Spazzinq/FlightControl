@@ -74,7 +74,7 @@ public class UpdateManager {
         }
     }
 
-    public void checkOnStartup() {
+    public void checkForUpdate() {
         if (pl.getConfManager().isAutoUpdate()) {
             installUpdate(Bukkit.getConsoleSender(), true);
         } else {

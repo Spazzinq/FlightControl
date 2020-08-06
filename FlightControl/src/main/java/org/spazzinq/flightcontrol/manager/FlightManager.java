@@ -25,10 +25,12 @@
 package org.spazzinq.flightcontrol.manager;
 
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.api.APIManager;
 import org.spazzinq.flightcontrol.api.event.FlightCanEnableEvent;
 import org.spazzinq.flightcontrol.api.event.FlightCannotEnableEvent;
 import org.spazzinq.flightcontrol.api.event.FlightDisableEvent;
@@ -57,9 +59,9 @@ public class FlightManager {
         check(p, false);
     }
 
-    public void check(Player p, boolean usingCMD) {
+    public void check(Player p, boolean isCommand) {
         HashSet<Check> bypassChecks = CheckUtil.checkAll(pl.getCheckManager().getBypassChecks(), p);
-        // If has bypass
+        // If not bypassing checks
         if (bypassChecks.isEmpty()) {
             HashSet<Check> enableChecks = pl.getStatusManager().checkEnable(p);
             HashSet<Check> disableChecks = pl.getStatusManager().checkDisable(p);
@@ -76,21 +78,21 @@ public class FlightManager {
             // If all clear to enable
             } else if (enable && !disable) {
                 // If directly enabled or auto-enable is enabled
-                if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
-                    enableFlight(p, enableCause, usingCMD);
+                if (isCommand || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
+                    enableFlight(p, enableCause, isCommand);
                 } else {
                     canEnable(p, enableCause);
                 }
-            // If now denied
-            } else if (usingCMD || alreadyCanMsg.contains(p)) {
+            // If denied
+            } else if (isCommand || alreadyCanMsg.contains(p)) {
                 cannotEnable(p, disableCause);
             }
         // If bypassing checks
         } else if (!p.getAllowFlight()) {
             Cause bypassCause = !bypassChecks.isEmpty() ? bypassChecks.iterator().next().getCause() : null;
 
-            if (usingCMD || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
-                enableFlight(p, bypassCause, usingCMD);
+            if (isCommand || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
+                enableFlight(p, bypassCause, isCommand);
             } else {
                 canEnable(p, bypassCause);
             }
@@ -104,7 +106,7 @@ public class FlightManager {
                     pl.getLangManager().getCanEnableFlight(),
                     pl.getConfManager().getCanEnableSound(), pl.getLangManager().useActionBar());
 
-            pl.getApiManager().callEvent(e);
+            APIManager.getInstance().callEvent(e);
 
             if (!e.isCancelled()) {
                 Sound.play(p, e.getSound());
@@ -119,7 +121,7 @@ public class FlightManager {
                 pl.getLangManager().getCannotEnableFlight(),
                 pl.getConfManager().getCannotEnableSound(), pl.getLangManager().useActionBar());
 
-        pl.getApiManager().callEvent(e);
+        APIManager.getInstance().callEvent(e);
 
         if (!e.isCancelled()) {
             alreadyCanMsg.remove(p);
@@ -132,7 +134,7 @@ public class FlightManager {
         FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), cause, pl.getLangManager().getEnableFlight(),
                 pl.getConfManager().getEnableSound(), pl.getLangManager().useActionBar(), isCommand);
 
-        pl.getApiManager().callEvent(e);
+        APIManager.getInstance().callEvent(e);
 
         if (!e.isCancelled()) {
             if (isCommand) {
@@ -150,7 +152,7 @@ public class FlightManager {
         FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), cause, pl.getLangManager().getDisableFlight(),
                 pl.getConfManager().getDisableSound(), pl.getLangManager().useActionBar(), isCommand);
 
-        pl.getApiManager().callEvent(e);
+        APIManager.getInstance().callEvent(e);
 
         if (!e.isCancelled()) {
             // Don't pause if always decreasing
@@ -176,6 +178,15 @@ public class FlightManager {
             pl.getTrailManager().trailRemove(p);
             Sound.play(p, pl.getConfManager().getDisableSound());
             msg(p, e.getMessage(), e.isByActionbar());
+        }
+    }
+
+    /**
+     * Verifies flight access for all online players.
+     */
+    public void checkAllPlayers() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            check(p);
         }
     }
 }

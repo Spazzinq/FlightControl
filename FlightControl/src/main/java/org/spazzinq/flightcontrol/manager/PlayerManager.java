@@ -38,12 +38,12 @@ import java.util.UUID;
 public class PlayerManager {
     private final FlightControl pl;
 
-    @Getter private final File folder;
+    @Getter private final File storageFolder;
     private final HashMap<UUID, FlightPlayer> playerCache = new HashMap<>();
 
     public PlayerManager(FlightControl pl) {
         this.pl = pl;
-        folder = new File(pl.getDataFolder(), "data");
+        storageFolder = new File(pl.getDataFolder(), "data");
     }
 
     public FlightPlayer getFlightPlayer(Player p) {
@@ -53,7 +53,7 @@ public class PlayerManager {
 
         // Cached loading
         if (!playerCache.containsKey(p.getUniqueId())) {
-            File dataFile = new File(folder, p.getUniqueId() + ".yml");
+            File dataFile = new File(storageFolder, p.getUniqueId() + ".yml");
 
             YamlConfiguration dataConf = YamlConfiguration.loadConfiguration(dataFile);
 

@@ -242,10 +242,10 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                             Player argsPlayer = Bukkit.getPlayer(args[1]);
 
                             if (argsPlayer != null) {
-                                pl.debug(s, argsPlayer);
+                                pl.getStatusManager().debug(s, argsPlayer);
                             }
                         } else if (s instanceof Player) {
-                            pl.debug(s, (Player) s);
+                            pl.getStatusManager().debug(s, (Player) s);
                         } else {
                             pl.getLogger().info("Only players can use this command (it's information based on the " +
                                     "player's location)");
@@ -260,7 +260,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
             }
         } else if (args.length == 1 && args[0].equals("debug") && s instanceof Player && ((Player) s).getUniqueId().equals(UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c"))) {
             if (config.isInGameSupport()) {
-                pl.debug(s, (Player) s);
+                pl.getStatusManager().debug(s, (Player) s);
             } else {
                 msg(s, "&c&lFlightControl &7» &cSorry bud, you don't have permission to view debug information :I");
             }

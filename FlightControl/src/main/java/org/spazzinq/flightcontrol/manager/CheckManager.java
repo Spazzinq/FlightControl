@@ -49,6 +49,7 @@ public class CheckManager {
 
     @Getter private final DualStore<Check> alwaysChecks = new DualStore<>();
     @Getter private final HashSet<Check> bypassChecks = new HashSet<>();
+    // TODO Rename to noTrail when lombok works again
     @Getter private final HashSet<Check> trailChecks = new HashSet<>();
 
     @Getter private final TreeMap<String, TerritoryCheck> ownTerritoryChecks = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);

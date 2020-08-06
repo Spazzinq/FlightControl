@@ -24,6 +24,8 @@
 
 package org.spazzinq.flightcontrol.manager;
 
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
@@ -36,6 +38,7 @@ import org.spazzinq.flightcontrol.util.MessageUtil;
 
 import java.util.HashSet;
 
+import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionFly;
 import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionNoFly;
 
@@ -155,5 +158,32 @@ public class StatusManager {
         }
 
         return trueChecks;
+    }
+
+    /**
+     * Sends debug information about a player's flight status.
+     *
+     * @param sender the recipient of the debug message
+     * @param targetPlayer the target of the debug check
+     */
+    public void debug(CommandSender sender, Player targetPlayer) {
+        Location l = targetPlayer.getLocation();
+        World world = l.getWorld();
+        String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(l);
+        Category category = pl.getCategoryManager().getCategory(targetPlayer);
+
+        // config options (settings) and permissions that act upon the same function are listed as
+        // setting boolean (space) permission boolean
+        msg(sender, "&a&lFlightControl &f" + pl.getDescription().getVersion() +
+                "\n&eTarget &7» &f" + targetPlayer.getName() +
+                "\n&eCategory &7» &f" + category.getName() +
+                (pl.getHookManager().getWorldGuardHook().isHooked() ? "\n&eW.RG &7» &f" + world.getName() + "." + regionName : "") +
+                (pl.getHookManager().getFactionsHook().isHooked() ? "\n&eFac &7» &f" + category.getFactions() : "") +
+                "\n&eWRLDs &7» &f" + category.getWorlds() +
+                (pl.getHookManager().getWorldGuardHook().isHooked() ? "\n&eRGs &7» &f" + category.getRegions() : "") +
+                ("\n&eBypass &7» &f" + CheckUtil.checkAll(pl.getCheckManager().getBypassChecks(), targetPlayer, true)));
+
+        checkEnable(targetPlayer, sender);
+        checkDisable(targetPlayer, sender);
     }
 }

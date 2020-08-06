@@ -25,6 +25,7 @@
 package org.spazzinq.flightcontrol.manager;
 
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -50,12 +51,12 @@ public class TrailManager {
                 && pl.getPlayerManager().getFlightPlayer(p).trailWanted() && !particleTasks.containsKey(p)) {
             particleTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
-                    HashSet<Check> trailCheck = CheckUtil.checkAll(pl.getCheckManager().getTrailChecks(), p);
+                    HashSet<Check> trailChecks = CheckUtil.checkAll(pl.getCheckManager().getTrailChecks(), p);
 
-                    if (trailCheck.isEmpty()) {
+                    if (trailChecks.isEmpty()) {
                         Location l = p.getLocation();
-                        // For some terrible reason the locations are never
-                        // in the correct spot so you have to delay them
+                        // For some terrible reason the particle spawn locations are never
+                        // in the correct spot so you have to delay them...
                         new BukkitRunnable() {
                             @Override public void run() {
                                 pl.getParticle().spawn(l);
@@ -80,5 +81,18 @@ public class TrailManager {
             tasks.cancel();
         }
         particleTasks.clear();
+    }
+
+    /**
+     * Verifies trails for all online players.
+     */
+    public void checkAllPlayers() {
+        removeEnabledTrails();
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.isFlying()) {
+                trailCheck(p);
+            }
+        }
     }
 }
