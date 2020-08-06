@@ -215,6 +215,17 @@ public class LangManager {
             modified = true;
         }
 
+        // 4.7.3
+        if (lang.isString("admin.global_flight_speed.usage")) {
+            lang.deleteNode("admin.global_flight_speed.usage");
+            lang.deleteNode("admin.enemy_range.usage");
+            lang.deleteNode("admin.fly.usage");
+            lang.deleteNode("admin.flyspeed.usage");
+            lang.deleteNode("admin.tempfly.usage");
+
+            modified = true;
+        }
+
         //noinspection ConstantConditions
         if (modified) {
             lang.save();

@@ -76,9 +76,9 @@ public class StatusManager {
             String worldName = p.getWorld().getName();
             String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
 
-            pl.registerDefaultPerms(worldName);
+            pl.getPermissionManager().registerDefaultPerms(worldName);
             if (regionName != null) { // Register new regions dynamically
-                pl.registerDefaultPerms(worldName + "." + regionName);
+                pl.getPermissionManager().registerDefaultPerms(worldName + "." + regionName);
             }
 
             if (hasPermissionFly(p, worldName)) {

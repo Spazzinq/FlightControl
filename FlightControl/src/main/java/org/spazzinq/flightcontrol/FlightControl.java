@@ -72,51 +72,36 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private StatusManager statusManager;
     @Getter private FactionsManager factionsManager;
     @Getter private TrailManager trailManager;
+    // Misc. management
+    @Getter private PermissionManager permissionManager;
 
-    private final PluginManager pm = Bukkit.getPluginManager();
-    private final HashSet<String> permissionSuffixCache = new HashSet<>();
+    // My Minecraft UUID used to notify me of the plugin version and allow debugging (after granted permission)
     public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
 
     public void onEnable() {
         instance = this;
+
         // Create storage folder
-        //noinspection ResultOfMethodCallIgnored
         storageFolder.mkdirs();
 
+        // Registration
         registerManagers();
         registerCommands();
         new EventListener(this);
 
+        // Load
         load();
+        updateManager.checkOnStartup();
 
-        // Update check
-        if (confManager.isAutoUpdate()) {
-            new BukkitRunnable() {
-                @Override public void run() {
-                    updateManager.installUpdate(Bukkit.getConsoleSender(), true);
-                }
-            }.runTaskAsynchronously(this);
-        } else {
-            new BukkitRunnable() {
-                @Override public void run() {
-                    if (updateManager.updateExists()) {
-                        getLogger().info("Hooray! Version " + updateManager.getNewVersion() + " is available for update." +
-                                " Perform \"/fc update\" to update and visit https://www.spigotmc" +
-                                ".org/resources/55168/ to view the feature changes!" +
-                                ".");
-                    }
-                }
-            }.runTaskLaterAsynchronously(this, 70);
-        }
-
-        // Start file watching service
+        // Start config watching service (on-the-fly editing)
         new PathWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
         // Start bStats
-        new MetricsLite(this, 4704);
+        new MetricsLite(this, 4704); // 4704 = plugin ID
     }
 
     @Override public void onDisable() {
         playerManager.savePlayerData();
+
         // Just in case the task isn't automatically cancelled
         for (Player p : Bukkit.getOnlinePlayers()) {
             trailManager.trailRemove(p);
@@ -130,7 +115,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         categoryManager = new CategoryManager(this);
         confManager = new ConfManager(this);
         langManager = new LangManager(this);
-        updateManager = new UpdateManager(this, getDescription().getVersion());
+        updateManager = new UpdateManager(this);
 
         boolean v1_13 = false;
 
@@ -181,6 +166,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     /**
      * Verifies trail and flight access for all online players.
      */
+    // TODO MOVE
     public void checkPlayers() {
         trailManager.removeEnabledTrails();
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -216,34 +202,5 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
         statusManager.checkEnable(targetPlayer, sender);
         statusManager.checkDisable(targetPlayer, sender);
-    }
-
-    /**
-     * Registers the suffix permission to prevent operator status
-     * from automatically receiving unnecessary permissions.
-     *
-     * @param suffix the suffix to be appended to the base permission
-     */
-    public void registerDefaultPerms(String suffix) {
-        if (!permissionSuffixCache.contains(suffix)) {
-            registerPerm("flightcontrol.fly." + suffix);
-            registerPerm("flightcontrol.nofly." + suffix);
-
-            permissionSuffixCache.add(suffix);
-        }
-    }
-
-    /**
-     * Registers or re-registers the permission. See {@link #registerDefaultPerms(String)} for more info.
-     * @param permString the entire permission String
-     */
-    private void registerPerm(String permString) {
-        Permission perm = pm.getPermission(permString);
-
-        if (perm == null) {
-            pm.addPermission(new Permission(permString, PermissionDefault.FALSE));
-        } else if (perm.getDefault() != PermissionDefault.FALSE) {
-            perm.setDefault(PermissionDefault.FALSE);
-        }
     }
 }
