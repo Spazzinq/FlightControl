@@ -25,9 +25,10 @@
 package org.spazzinq.flightcontrol.command;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.object.TempflyTaskType;
@@ -35,21 +36,23 @@ import org.spazzinq.flightcontrol.util.CommandUtil;
 import org.spazzinq.flightcontrol.util.MathUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
-public class TempflyCommand implements CommandExecutor, TabCompleter {
-    private final FlightControl pl;
-
+public class TempflyCommand extends TemplateCommand {
     private final List<String> exampleDurations = Arrays.asList("30minutes", "1hour", "3hours", "6hours", "12hours", "1day");
 
-    public TempflyCommand(FlightControl pl) {
-        this.pl = pl;
+    public TempflyCommand() {
+        subCommands = new TreeMap<String, String>() {{
+            put("check [player]", "Returns a player's current tempfly duration");
+            put("disable [player]", "Disables a player's tempfly");
+            put("set (duration) [player]", "Sets a player's current tempfly duration");
+            put("add (duration) [player]", "Adds time to a player's current tempfly duration");
+            put("remove (duration) [player]", "Removes time from a player's current tempfly duration");
+        }};
     }
+
 
     @Override public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         Player targetPlayer = sender instanceof ConsoleCommandSender ? null : (Player) sender;

@@ -51,8 +51,8 @@ public class FlightManager {
     @Getter private final HashSet<Player> disabledByPlayer = new HashSet<>();
     @Getter private final HashSet<Entity> noFallDmg = new HashSet<>();
 
-    public FlightManager(FlightControl pl) {
-        this.pl = pl;
+    public FlightManager() {
+        pl = FlightControl.getInstance();
     }
 
     public void check(Player p) {

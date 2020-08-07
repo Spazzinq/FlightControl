@@ -41,8 +41,8 @@ public class PlayerManager {
     @Getter private final File storageFolder;
     private final HashMap<UUID, FlightPlayer> playerCache = new HashMap<>();
 
-    public PlayerManager(FlightControl pl) {
-        this.pl = pl;
+    public PlayerManager() {
+        pl = FlightControl.getInstance();
         storageFolder = new File(pl.getDataFolder(), "data");
     }
 

@@ -29,7 +29,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class ActionbarUtil {
+public final class ActionbarUtil {
     private static String nmsPackage;
 
     static {

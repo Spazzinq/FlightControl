@@ -46,8 +46,8 @@ public class FlySpeedCommand implements CommandExecutor {
     private final FlightControl pl;
     private final PlayerManager playerManager;
 
-    public FlySpeedCommand(FlightControl pl) {
-        this.pl = pl;
+    public FlySpeedCommand() {
+        pl = FlightControl.getInstance();
         playerManager = pl.getPlayerManager();
     }
 

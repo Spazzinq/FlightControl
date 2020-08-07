@@ -42,8 +42,8 @@ public class TrailManager {
 
     @Getter private final HashMap<Player, BukkitTask> particleTasks = new HashMap<>();
 
-    public TrailManager(FlightControl pl) {
-        this.pl = pl;
+    public TrailManager() {
+        pl = FlightControl.getInstance();
     }
 
     public void trailCheck(Player p) {

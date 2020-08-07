@@ -33,8 +33,8 @@ public class FactionsManager {
     private final FlightControl pl;
     private FactionsHookBase factions;
 
-    public FactionsManager(FlightControl pl) {
-        this.pl = pl;
+    public FactionsManager() {
+        pl = FlightControl.getInstance();
     }
 
     public FactionRelation getRelationToLocation(Player p) {

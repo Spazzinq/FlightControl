@@ -52,8 +52,8 @@ public class HookManager {
     @Getter private WorldGuardHookBase worldGuardHook = new WorldGuardHookBase();
     @Getter private FactionsHookBase factionsHook = new FactionsHookBase();
 
-    public HookManager(FlightControl pl, boolean is1_13) {
-        this.pl = pl;
+    public HookManager(boolean is1_13) {
+        pl = FlightControl.getInstance();
         this.is1_13 = is1_13;
         pm = pl.getServer().getPluginManager();
     }

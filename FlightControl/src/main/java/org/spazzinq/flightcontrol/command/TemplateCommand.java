@@ -22,33 +22,43 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.util;
+package org.spazzinq.flightcontrol.command;
 
-import java.util.ArrayList;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.manager.LangManager;
+
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.TreeMap;
 
-public final class CommandUtil {
-    public static List<String> autoComplete(Set<String> data, String query, boolean autoFill) {
-        List<String> matches = new ArrayList<>();
+public class TemplateCommand implements CommandExecutor, TabCompleter {
+    protected FlightControl pl;
 
-        for (String entry : data) {
-            if (entry.startsWith(query)) {
-                matches.add(entry);
-            }
+    protected TreeMap<String, String> subCommands;
+    protected String defaultHelp;
+
+    {
+        pl = FlightControl.getInstance();
+
+        // TODO Change design
+        StringBuilder buildDefaultHelp = new StringBuilder(LangManager.HELP_HEADER);
+
+        for (Map.Entry<String, String> c : subCommands.entrySet()) {
+            buildDefaultHelp.append("&a").append(c.getKey()).append(" &7» &f").append(c.getValue()).append("\n");
         }
 
-        return autoFill && matches.isEmpty() ? new ArrayList<>(data) : matches;
+        defaultHelp = buildDefaultHelp.toString();
     }
 
-    public static List<String> autoComplete(List<String> data, String query) {
-        List<String> matches = new ArrayList<>();
+    @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        return true;
+    }
 
-        for (String entry : data) {
-            if (entry.startsWith(query)) {
-                matches.add(entry);
-            }
-        }
-        return matches.isEmpty() ? data : matches;
+    @Override public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return null;
     }
 }

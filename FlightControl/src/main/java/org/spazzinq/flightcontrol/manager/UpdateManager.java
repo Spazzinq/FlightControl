@@ -51,8 +51,8 @@ public class UpdateManager {
 
     private final HashSet<UUID> notified = new HashSet<>();
 
-    public UpdateManager(FlightControl pl) {
-        this.pl = pl;
+    public UpdateManager() {
+        pl = FlightControl.getInstance();
         version = new Version(pl.getDescription().getVersion());
 
         if (version.getVersionType() == VersionType.BETA) {

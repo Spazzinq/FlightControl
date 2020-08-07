@@ -25,7 +25,9 @@
 package org.spazzinq.flightcontrol.command;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.ConfManager;
@@ -40,59 +42,39 @@ import java.util.*;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
-public final class FlightControlCommand implements CommandExecutor, TabCompleter {
-    private final Map<String, String> commands = new TreeMap<String, String>() {{
-        put("actionbar", "Send notifications through the actionbar");
-        put("autoenable", "Toggle automatic flight enabling");
-        put("autoupdate", "Toggle automatic updates");
-        put("combat", "Toggle combat disabling");
-        put("enemyrange", "Change the factions enemy disable range");
-        put("falldamage", "Toggle fall damage prevention");
-        put("speed", "Change the global flight speed");
-        put("reload", "Reload FlightControl's configuration");
-        put("trails", "Toggle trails for the server");
-        put("update", "Update FlightControl");
-        put("vanishbypass", "Toggle vanish bypass");
-    }};
-
-    private final FlightControl pl;
+public class FlightControlCommand extends TemplateCommand {
     private final ConfManager config;
-    private final String defaultHelp;
-    private final String buildHelp;
 
-    public FlightControlCommand(FlightControl pl) {
-        this.pl = pl;
+    public FlightControlCommand() {
         config = pl.getConfManager();
 
-        buildHelp = "&a&lFlightControl &f" + pl.getDescription().getVersion()
-                + "\n&aBy &fSpazzinq\n \n"
-                + "&a&lQUERY&a /fc &7» &f...\n \n";
+        subCommands = new TreeMap<String, String>() {{
+            put("actionbar", "Send notifications through the actionbar");
+            put("autoenable", "Toggle automatic flight enabling");
+            put("autoupdate", "Toggle automatic updates");
+            put("combat", "Toggle combat disabling");
+            put("enemyrange", "Change the factions enemy disable range");
+            put("falldamage", "Toggle fall damage prevention");
+            put("speed", "Change the global flight speed");
+            put("reload", "Reload FlightControl's configuration");
+            put("trails", "Toggle trails for the server");
+            put("update", "Update FlightControl");
+            put("vanishbypass", "Toggle vanish bypass");
+        }};
 
-        StringBuilder buildDefaultHelp = new StringBuilder(buildHelp);
-
-        for (Map.Entry<String, String> c : commands.entrySet()) {
-            buildDefaultHelp.append("&a").append(c.getKey()).append(" &7» &f").append(c.getValue()).append("\n");
-        }
-        buildDefaultHelp.append(" \n&a/tt &7» &fPersonal trail toggle");
-        buildDefaultHelp.append("\n&a/tempfly (check/add/remove/set/disable) (player) [duration] &7» &fActivate temporary flight");
-        defaultHelp = " \n" + buildDefaultHelp.toString();
+        defaultHelp += "\n&a/tempfly help &7» &fTempfly command information \n&a/tt &7» &fPersonal trail toggle";
     }
 
     private String loadHelp(String[] args) {
         if (args.length > 0 && !args[0].isEmpty()) {
-            StringBuilder help = new StringBuilder(buildHelp.replaceAll("\\.\\.\\.", args[0] + "..."));
+            StringBuilder help = new StringBuilder(LangManager.HELP_HEADER.replaceAll("\\.\\.\\.", args[0] + "..."));
 
-            for (Map.Entry<String, String> commandEntry : commands.entrySet()) {
+            for (Map.Entry<String, String> commandEntry : subCommands.entrySet()) {
                 // If command starts with query
                 if (commandEntry.getKey().startsWith(args[0])) {
                     // Add to displayed list
                     help.append("&a").append(commandEntry.getKey()).append(" &7» &f").append(commandEntry.getValue()).append("\n");
                 }
-            }
-
-            // FIXME Is this really necessary?
-            if (help.length() == buildHelp.length() + args[0].length()) {
-                return defaultHelp;
             }
 
             return help.toString();
@@ -108,7 +90,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
 
         if (s instanceof ConsoleCommandSender || PlayerUtil.hasPermission(s, FlyPermission.ADMIN)) {
             if (args.length > 0) {
-                List<String> autoComplete = CommandUtil.autoComplete(commands.keySet(), args[0], false);
+                List<String> autoComplete = CommandUtil.autoComplete(subCommands.keySet(), args[0], false);
 
                 switch (autoComplete.isEmpty()
                         ? args[0] : (autoComplete.size() == 1 ? autoComplete.get(0) : "")) {
@@ -278,7 +260,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
         }
 
         if (args.length == 1) {
-            return CommandUtil.autoComplete(commands.keySet(), args[0], true);
+            return CommandUtil.autoComplete(subCommands.keySet(), args[0], true);
         } else if (args.length == 2) {
             if (args[0].equals("speed")) {
                 return Collections.singletonList("1");

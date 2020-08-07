@@ -45,8 +45,8 @@ import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionNoFly;
 public class StatusManager {
     final FlightControl pl;
 
-    public StatusManager(FlightControl pl) {
-        this.pl = pl;
+    public StatusManager() {
+        pl = FlightControl.getInstance();
     }
 
     public HashSet<Check> checkEnable(Player p) {

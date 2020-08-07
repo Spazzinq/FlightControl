@@ -46,6 +46,11 @@ public class LangManager {
     private final File langFile;
     private boolean ignoreReload;
 
+    // Const
+    public static final String HELP_HEADER = " \n&a&lFlightControl &f"
+            + "\n&aBy &fSpazzinq\n \n"
+            + "&a&lQUERY&a &7» &f...\n \n";;
+
     // Bool
     // TODO Fix caps
     @Setter private boolean useActionBar;
@@ -84,8 +89,9 @@ public class LangManager {
     @Getter private String tempFlyCheck;
     @Getter private String tempFlyUsage;
 
-    public LangManager(FlightControl pl) {
-        this.pl = pl;
+    public LangManager() {
+        pl = FlightControl.getInstance();
+
         langFile = new File(pl.getDataFolder(), "lang.yml");
         locale = Locale.getDefault();
     }

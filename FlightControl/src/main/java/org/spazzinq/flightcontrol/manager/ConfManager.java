@@ -66,8 +66,8 @@ public class ConfManager {
 
     @Getter @Setter private String aeEnchantName;
 
-    public ConfManager(FlightControl pl) {
-        this.pl = pl;
+    public ConfManager() {
+        pl = FlightControl.getInstance();
         confFile = new File(pl.getDataFolder(), "config.yml");
     }
 

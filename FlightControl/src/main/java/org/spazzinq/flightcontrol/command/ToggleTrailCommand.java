@@ -35,8 +35,8 @@ import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 public class ToggleTrailCommand implements CommandExecutor {
     private final FlightControl pl;
 
-    public ToggleTrailCommand(FlightControl pl) {
-        this.pl = pl;
+    public ToggleTrailCommand() {
+        pl = FlightControl.getInstance();
     }
 
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {

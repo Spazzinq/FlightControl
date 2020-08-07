@@ -39,12 +39,12 @@ import org.spazzinq.flightcontrol.util.PlayerUtil;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
-public final class FlyCommand implements CommandExecutor {
+public class FlyCommand implements CommandExecutor {
     private final FlightControl pl;
     private final FlightManager flightManager;
 
-    public FlyCommand(FlightControl pl) {
-        this.pl = pl;
+    public FlyCommand() {
+        pl = FlightControl.getInstance();
         flightManager = pl.getFlightManager();
     }
 

@@ -57,8 +57,8 @@ public class CheckManager {
 
     @Getter private String checksMsg;
 
-    public CheckManager(FlightControl pl) {
-        this.pl = pl;
+    public CheckManager() {
+        pl = FlightControl.getInstance();
         pm = pl.getServer().getPluginManager();
     }
 

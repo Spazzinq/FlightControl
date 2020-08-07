@@ -63,8 +63,8 @@ public class CategoryManager {
     @Getter private final ArrayList<Category> categories = new ArrayList<>();
     @Getter private Category global;
 
-    public CategoryManager(FlightControl pl) {
-        this.pl = pl;
+    public CategoryManager() {
+        pl = FlightControl.getInstance();
         pm = pl.getServer().getPluginManager();
         categoryFile = new File(pl.getDataFolder(), "categories.yml");
     }

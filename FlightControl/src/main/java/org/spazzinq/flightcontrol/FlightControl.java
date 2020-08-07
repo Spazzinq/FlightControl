@@ -34,10 +34,7 @@ import org.spazzinq.flightcontrol.multiversion.Particle;
 import org.spazzinq.flightcontrol.multiversion.current.Particle13;
 import org.spazzinq.flightcontrol.multiversion.legacy.Particle8;
 
-import java.io.File;
 import java.util.UUID;
-
-import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
 /**
  * The main singleton class for FlightControl, a {@link org.bukkit.plugin.java.JavaPlugin JavaPlugin}.
@@ -106,30 +103,30 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             }
         }
 
-        categoryManager = new CategoryManager(this);
-        confManager = new ConfManager(this);
-        langManager = new LangManager(this);
-        updateManager = new UpdateManager(this);
+        categoryManager = new CategoryManager();
+        confManager = new ConfManager();
+        langManager = new LangManager();
+        updateManager = new UpdateManager();
 
-        checkManager = new CheckManager(this);
-        hookManager = new HookManager(this, v1_13);
+        checkManager = new CheckManager();
+        hookManager = new HookManager(v1_13);
         particle = v1_13 ? new Particle13() : new Particle8();
 
-        flightManager = new FlightManager(this);
-        playerManager = new PlayerManager(this);
-        statusManager = new StatusManager(this);
-        factionsManager = new FactionsManager(this);
-        trailManager = new TrailManager(this);
+        flightManager = new FlightManager();
+        playerManager = new PlayerManager();
+        statusManager = new StatusManager();
+        factionsManager = new FactionsManager();
+        trailManager = new TrailManager();
 
         permissionManager = new PermissionManager();
     }
 
     private void registerCommands() {
-        getCommand("tempfly").setExecutor(new TempflyCommand(this));
-        getCommand("fly").setExecutor(new FlyCommand(this));
-        getCommand("flightcontrol").setExecutor(new FlightControlCommand(this));
-        getCommand("toggletrail").setExecutor(new ToggleTrailCommand(this));
-        getCommand("flyspeed").setExecutor(new FlySpeedCommand(this));
+        getCommand("tempfly").setExecutor(new TempflyCommand());
+        getCommand("fly").setExecutor(new FlyCommand());
+        getCommand("flightcontrol").setExecutor(new FlightControlCommand());
+        getCommand("toggletrail").setExecutor(new ToggleTrailCommand());
+        getCommand("flyspeed").setExecutor(new FlySpeedCommand());
     }
 
     /**
