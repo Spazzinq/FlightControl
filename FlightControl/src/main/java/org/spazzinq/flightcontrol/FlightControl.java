@@ -28,6 +28,8 @@ import lombok.Getter;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
@@ -35,6 +37,7 @@ import org.spazzinq.flightcontrol.multiversion.Particle;
 import org.spazzinq.flightcontrol.multiversion.current.Particle13;
 import org.spazzinq.flightcontrol.multiversion.legacy.Particle8;
 
+import java.io.File;
 import java.util.UUID;
 
 /**
@@ -62,6 +65,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
     // Used for support (checking plugin version, debugging after granted permission)
     public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
+
+    protected FlightControl(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+        super(loader, description, dataFolder, file);
+    }
 
     public void onEnable() {
         instance = this;

@@ -27,12 +27,22 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.0.0'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation project(':API')
     implementation project(':Multiversion')
     implementation project(':VersionOld')
     implementation project(':VersionCurrent')
     implementation 'org.bstats:bstats-bukkit-lite:1.7'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testImplementation ('com.github.seeseemelk:MockBukkit:v1.8-spigot-SNAPSHOT') {
+        exclude group: 'net.md-5', module: 'bungeecord-chat'
+    }
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
 
     compileOnly 'org.jetbrains:annotations:19.0.0'
     compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {

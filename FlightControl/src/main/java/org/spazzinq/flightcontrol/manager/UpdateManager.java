@@ -25,6 +25,7 @@
 package org.spazzinq.flightcontrol.manager;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -49,8 +50,8 @@ import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 public class UpdateManager {
     private final FlightControl pl;
 
-    @Getter private Version newVersion;
-    @Getter private final Version version;
+    @Getter @Setter private Version newVersion;
+    @Getter @Setter private Version version;
     private boolean downloaded;
 
     private long lastCheckTimestamp;
