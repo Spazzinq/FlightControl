@@ -32,9 +32,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.Version;
 import org.spazzinq.flightcontrol.object.VersionType;
+import org.spazzinq.flightcontrol.util.ConfUtil;
+import org.spazzinq.flightcontrol.util.FileUtil;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashSet;
@@ -49,6 +53,7 @@ public class UpdateManager {
     @Getter private final Version version;
     private boolean downloaded;
 
+    private long lastCheckTimestamp;
     private final HashSet<UUID> notified = new HashSet<>();
 
     public UpdateManager() {
@@ -76,70 +81,77 @@ public class UpdateManager {
 
     public void checkForUpdate() {
         if (pl.getConfManager().isAutoUpdate()) {
-            installUpdate(Bukkit.getConsoleSender(), true);
+            installUpdate(Bukkit.getConsoleSender(), false);
         } else {
             // Delay sending to be at bottom of console
-            new BukkitRunnable() {
-                @Override public void run() {
-                    if (updateExists()) {
+            if (updateExists()) {
+                new BukkitRunnable() {
+                    @Override public void run() {
                         pl.getLogger().info("Hooray! Version " + newVersion + " is available for update." +
                                 " Perform \"/fc update\" to update and visit https://www.spigotmc" +
                                 ".org/resources/55168/ to view the feature changes!" +
                                 ".");
                     }
-                }
-            }.runTaskLaterAsynchronously(pl, 70);
+                }.runTaskLaterAsynchronously(pl, 70);
+            }
         }
     }
 
     public void installUpdate(CommandSender s, boolean silentCheck) {
-        new BukkitRunnable() {
-            @Override public void run() {
-                if (updateExists()) {
-                    if (!downloaded) {
-                        downloadPlugin();
+        if (updateExists()) {
+            if (!downloaded) {
+                downloadPlugin();
 
-                        if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
-                            msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the configs have automatically " +
-                                    "updated too)! Welcome to FlightControl &f" + getNewVersion() + "&a!");
-                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload flightcontrol");
-                        } else {
-                            msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate downloaded. Restart " +
-                                    "(or reload) the server to apply the update.");
-                        }
-                    } else {
-                        msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate has already been " +
-                                "downloaded. Restart (or reload) the server to apply the update.");
-                    }
-                } else if (!silentCheck) {
-                    msg(s, "&a&lFlightControl &7» &aNo updates found.");
+                if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
+                    msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the configs have automatically " +
+                            "updated too)! Welcome to FlightControl &f" + getNewVersion() + "&a!");
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload flightcontrol");
+                } else {
+                    msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate downloaded. Restart " +
+                            "(or reload) the server to apply the update.");
                 }
+            } else {
+                msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate has already been " +
+                        "downloaded. Restart (or reload) the server to apply the update.");
             }
-        }.runTaskAsynchronously(pl);
+        } else if (!silentCheck) {
+            msg(s, "&a&lFlightControl &7» &aNo updates found.");
+        }
     }
 
     public boolean updateExists() {
-        try {
-            URL spigot = new URL("https://api.spigotmc.org/legacy/update.php?resource=55168");
-            newVersion =
-                    new Version(new BufferedReader(new InputStreamReader(spigot.openConnection().getInputStream())).readLine());
-        } catch (Exception ignored) {
-            return false;
-        }
+        checkSpigotVersion();
 
-        return newVersion.isNewer(version);
+        return newVersion != null && newVersion.isNewer(version);
     }
 
     private void downloadPlugin() {
         try (FileOutputStream fos = new FileOutputStream(new File("plugins/FlightControl.jar"))) {
-            URL gitHub = new URL("https://github.com/Spazzinq/FlightControl/releases/download/" + newVersion +
-                    "/FlightControl.jar");
-            ReadableByteChannel channel = Channels.newChannel(gitHub.openStream());
+            URLConnection gitHub = new URL("https://github.com/Spazzinq/FlightControl/releases/download/" + newVersion +
+                    "/FlightControl.jar").openConnection();
+            gitHub.setConnectTimeout(3000);
+            gitHub.setReadTimeout(3000);
+
+            ReadableByteChannel channel = Channels.newChannel(gitHub.getInputStream());
 
             fos.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
             downloaded = true;
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void checkSpigotVersion() {
+        if (System.currentTimeMillis() > lastCheckTimestamp + 5000) {
+            try {
+                URLConnection spigotConnection = new URL("https://api.spigotmc.org/legacy/update.php?resource=55168").openConnection();
+                spigotConnection.setConnectTimeout(3000);
+                spigotConnection.setReadTimeout(3000);
+
+                newVersion = new Version(FileUtil.streamToString(spigotConnection.getInputStream()));
+            } catch (IOException ignored) {}
+
+            lastCheckTimestamp = System.currentTimeMillis();
         }
     }
 

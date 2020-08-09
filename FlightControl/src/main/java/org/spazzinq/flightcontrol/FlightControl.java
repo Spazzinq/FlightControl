@@ -28,6 +28,7 @@ import lombok.Getter;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
 import org.spazzinq.flightcontrol.multiversion.Particle;
@@ -72,9 +73,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
         // Load and check
         load();
-        flightManager.checkAllPlayers();
-        trailManager.checkAllPlayers();
-        updateManager.checkForUpdate();
+        new BukkitRunnable() {
+            @Override public void run() {
+                updateManager.checkForUpdate();
+            }
+        }.runTaskAsynchronously(this);
 
         // Start config watching service (on-the-fly editing)
         new PathWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
@@ -143,5 +146,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         hookManager.loadHooks();
         categoryManager.loadCategories();
         playerManager.loadPlayerData();
+        // Check connected players
+        flightManager.checkAllPlayers();
+        trailManager.checkAllPlayers();
     }
 }

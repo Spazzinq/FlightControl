@@ -32,7 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class FileUtil extends YamlConfiguration {
-    public static StringBuilder streamToBuilder(InputStream source) {
+    public static String streamToString(InputStream source) {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
@@ -45,7 +45,11 @@ public final class FileUtil extends YamlConfiguration {
             e.printStackTrace();
         }
 
-        return new StringBuilder(result.toString());
+        return result.toString();
+    }
+
+    public static StringBuilder streamToBuilder(InputStream source) {
+        return new StringBuilder(streamToString(source));
     }
 
     public static StringBuilder readFile(Path path) {
