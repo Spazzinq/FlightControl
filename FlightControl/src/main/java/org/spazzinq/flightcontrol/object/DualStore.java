@@ -54,6 +54,10 @@ public class DualStore<T> {
         disabled.addAll(checks);
     }
 
+    public HashSet<T> get(boolean enabledOrDisabled) {
+        return enabledOrDisabled ? enabled : disabled;
+    }
+
     public boolean isEnabledEmpty() {
         return enabled.isEmpty();
     }

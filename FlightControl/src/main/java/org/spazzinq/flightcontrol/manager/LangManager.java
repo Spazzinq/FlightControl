@@ -49,7 +49,7 @@ public class LangManager {
     // Const
     public static final String HELP_HEADER = " \n&a&lFlightControl &f"
             + "\n&aBy &fSpazzinq\n \n"
-            + "&a&lQUERY&a &7» &f...\n \n";;
+            + "&a&lQUERY&a &7» &f...\n \n";
 
     // Bool
     // TODO Fix caps

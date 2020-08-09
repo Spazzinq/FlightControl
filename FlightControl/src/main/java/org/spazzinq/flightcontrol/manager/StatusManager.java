@@ -160,6 +160,61 @@ public class StatusManager {
         return trueChecks;
     }
 
+    public HashSet<Check> check(boolean enabled, Player p, CommandSender s) {
+        boolean debug = s != null;
+
+        // Eval always CheckSet
+        HashSet<Check> trueChecks = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().get(enabled), p, debug);
+
+        // Eval category CheckSet
+        if (trueChecks.isEmpty() || debug) {
+            Category category = pl.getCategoryManager().getCategory(p);
+
+            if (category != null) {
+                HashSet<Check> categoryChecks = CheckUtil.checkAll(category.getChecks().get(enabled), p, debug);
+
+                trueChecks.addAll(categoryChecks);
+            }
+        }
+
+        // Eval permissions
+        if (trueChecks.isEmpty() || debug) {
+            String worldName = p.getWorld().getName();
+            String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
+
+            // Register new world permissions dynamically
+            pl.getPermissionManager().registerDefaultPerms(worldName);
+            if (regionName != null) { // Register new region permissions dynamically
+                pl.getPermissionManager().registerDefaultPerms(worldName + "." + regionName);
+            }
+
+            if (hasPermissionFly(enabled, p, worldName)) {
+                trueChecks.add(WorldPermissionCheck.getInstance());
+            }
+
+            // Allow debug to still eval
+            if ((trueChecks.isEmpty() || debug)
+                    && regionName != null && hasPermissionFly(p, worldName + "." + regionName)) {
+                trueChecks.add(RegionPermissionCheck.getInstance());
+            }
+        }
+
+        if (debug) {
+            Category category = pl.getCategoryManager().getCategory(p);
+            HashSet<Check> falseChecks = new HashSet<>();
+            falseChecks.addAll(pl.getCheckManager().getAlwaysChecks().get(enabled));
+            falseChecks.addAll(category.getChecks().get(enabled));
+            falseChecks.add(WorldPermissionCheck.getInstance());
+            falseChecks.add(RegionPermissionCheck.getInstance());
+
+            falseChecks.removeAll(trueChecks);
+
+            MessageUtil.msg(s, "&e&l" + (enabled ? "Enable" : "Override") + "\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
+        }
+
+        return trueChecks;
+    }
+
     /**
      * Sends debug information about a player's flight status.
      *
