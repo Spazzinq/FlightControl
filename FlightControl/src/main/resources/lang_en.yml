@@ -1,55 +1,55 @@
 # Translations: English (en), French (fr), Mandarin (zh), Portuguese (pt)
-# To change the language, remove the # below and set "locale" to its abbreviation (en, fr, zh)
+# To change the language, remove the # below and set 'locale' to its abbreviation (e.g. en, fr, zh)
 #locale: en
 
 # Notes:
-# 1. If you don't want a message to be sent, set it to ""
+# 1. If you don't want a message to be sent, set it to ''
 # 2. %VARIABLENAME% is the placeholder for the message's information
 #    e.g. %speed% could be the new global flight speed
 player:
   # Use the actionbar (area above hotbar) instead of chat
   actionbar: false
   flight:
-    # Shows remaining tempfly duration in actionbar if the "actionbar" setting is true
-    tempfly_actionbar: "&7You have &a%duration% &7of flight remaining."
-    enabled: "&aYour flight has been enabled."
-    disabled: "&cYour flight has been disabled."
-    # "can_enable" and "cannot_enable" are used when "auto_enable" is false
+    # Shows remaining tempfly duration in actionbar if the 'actionbar' setting is true
+    tempfly_actionbar: '&7You have &a%duration% &7of flight remaining.'
+    enabled: '&aYour flight has been enabled.'
+    disabled: '&cYour flight has been disabled.'
+    # 'can_enable' and 'cannot_enable' are used when 'auto_enable' is false
     # or if the player disables their own flight with /fly
-    can_enable: "&bYou can use /fly now."
-    cannot_enable: "&cYou cannot fly right now."
-    height_denied: "&cYou cannot fly this high!"
+    can_enable: '&bYou can use /fly now.'
+    cannot_enable: '&cYou cannot fly right now.'
+    height_denied: '&cYou cannot fly this high!'
   trail:
-    enabled: "&aYou enabled the flight trail!"
-    disabled: "&cYou disabled the flight trail!"
-  permission_denied: "&cYou do not have permission to use this command."
+    enabled: '&aYou enabled the flight trail!'
+    disabled: '&cYou disabled the flight trail!'
+  permission_denied: '&cYou do not have permission to use this command.'
 
 admin:
   # Prefix applied to messages that cannot be changed (e.g. /fc actionbar)
-  prefix: "&a&lFlightControl &a"
+  prefix: '&a&lFlightControl &a'
   # The prefixes are written out because the different colors have different meanings
-  reloaded: "&a&lFlightControl &7» &aAll configurations were successfully reloaded!"
+  reloaded: '&a&lFlightControl &7» &aAll configurations were successfully reloaded!'
   global_flight_speed:
-    set: "&e&lFlightControl &7» &eSet the global flight speed to &f%speed%&e!"
-    same: "&e&lFlightControl &7» &eGreat news! The global flight speed is already &f%speed%&e!"
-    usage: "&c&lFlightControl &7» &cIncorrect usage! Usage: /fc speed (0-10)"
+    set: '&e&lFlightControl &7» &eSet the global flight speed to &f%speed%&e!'
+    same: '&e&lFlightControl &7» &eGreat news! The global flight speed is already &f%speed%&e!'
+    usage: '&c&lFlightControl &7» &cIncorrect usage! Usage: /fc speed (0-10)'
   enemy_range:
-    set: "&e&lFlightControl &7» &eSet the disable enemy range to &f%range%&e!"
-    same: "&e&lFlightControl &7» &eGreat news! The disable enemy range is already &f%range%&e!"
-    usage: "&c&lFlightControl &7» &cIncorrect usage! Usage: /fc enemyrange (range)"
+    set: '&e&lFlightControl &7» &eSet the disable enemy range to &f%range%&e!'
+    same: '&e&lFlightControl &7» &eGreat news! The disable enemy range is already &f%range%&e!'
+    usage: '&c&lFlightControl &7» &cIncorrect usage! Usage: /fc enemyrange (range)'
   fly:
-    enable: "&e&lFlightControl &7» &eAttempted to enable &f%player%&e's flight!"
-    disable: "&e&lFlightControl &7» &eDisabled &f%player%&e's flight!"
-    usage: "&c&lFlightControl &7» &cPlease provide a valid player!"
+    enable: '&e&lFlightControl &7» &eAttempted to enable &f%player%&e''s flight!'
+    disable: '&e&lFlightControl &7» &eDisabled &f%player%&e''s flight!'
+    usage: '&c&lFlightControl &7» &cPlease provide a valid player!'
   flyspeed:
-    set: "&a&lFlightControl &7» &aSet &f%player%&a's flight speed to &f%speed%&a!"
-    same: "&a&lFlightControl &7» &aGreat news! &f%player%&a's flight speed is already &f%speed%&a!"
-    usage: "&c&lFlightControl &7» &cIncorrect usage! Use /flyspeed (speed) [player]!"
+    set: '&a&lFlightControl &7» &aSet &f%player%&a''s flight speed to &f%speed%&a!'
+    same: '&a&lFlightControl &7» &aGreat news! &f%player%&a''s flight speed is already &f%speed%&a!'
+    usage: '&c&lFlightControl &7» &cIncorrect usage! Use /flyspeed (speed) [player]!'
   tempfly:
-    set: "&e&lFlightControl &7» &f%player%&e now has temporary flight for &f%duration%&e."
-    disable: "&e&lFlightControl &7» &eDisabled %player%'s temporary flight!"
-    disabled: "&c&lFlightControl &7» &f%player%&c's temporary flight is already disabled!"
-    check: "&e&lFlightControl &7» &f%player%&e has &f%duration%&e of flight remaining."
-    usage: "&c&lFlightControl &7» &cInvalid format! Please use /tempfly (check/add/remove/set/disable) (player) [duration] and
+    set: '&e&lFlightControl &7» &f%player%&e now has temporary flight for &f%duration%&e.'
+    disable: '&e&lFlightControl &7» &eDisabled %player%''s temporary flight!'
+    disabled: '&c&lFlightControl &7» &f%player%&c''s temporary flight is already disabled!'
+    check: '&e&lFlightControl &7» &f%player%&e has &f%duration%&e of flight remaining.'
+    usage: '&c&lFlightControl &7» &cInvalid format! Please use /tempfly (check/add/remove/set/disable) (player) [duration] and
             follow the duration with a unit of time. Example durations:
-            &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c."
+            &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c.'

@@ -83,6 +83,7 @@ public class LangManager {
     @Getter private String flySpeedSet;
     @Getter private String flySpeedSame;
     @Getter private String flySpeedUsage;
+    // TODO Fix caps
     @Getter private String tempFlySet;
     @Getter private String tempFlyDisable;
     @Getter private String tempFlyDisabled;
@@ -192,8 +193,8 @@ public class LangManager {
 
         if (!lang.isString("admin.tempfly.check")) {
             // TODO Add depending on locale
-            lang.addSubnodes(Collections.singleton("check: \"&e&lFlightControl &7» &f%player%&e has &f%duration%&e of" +
-                    " flight remaining.\""), "admin.tempfly.disabled");
+            lang.addSubnodes(Collections.singleton("check: '&e&lFlightControl &7» &f%player%&e has &f%duration%&e of" +
+                    " flight remaining.'"), "admin.tempfly.disabled");
 
             modified = true;
         }
@@ -207,7 +208,7 @@ public class LangManager {
 
         // 4.6.10
         if (lang.isString("admin.tempfly.enable")) {
-            lang.addIndentedSubnodes(Collections.singleton("set: \"" + lang.getString("admin.tempfly.enable") + "\""), "admin.tempfly");
+            lang.addIndentedSubnodes(Collections.singleton("set: '" + lang.getString("admin.tempfly.enable") + "'"), "admin.tempfly");
             lang.deleteNode("admin.tempfly.enable");
 
             modified = true;
@@ -216,7 +217,7 @@ public class LangManager {
         // 4.7.0
         if (!lang.isString("player.flight.tempfly_actionbar")) {
             // TODO Add depending on locale
-            lang.addIndentedSubnodes(Collections.singleton("&7You have &a%duration% &7of flight remaining."), "player.flight");
+            lang.addIndentedSubnodes(Collections.singleton("tempfly_actionbar: '&7You have &a%duration% &7of flight remaining.'"), "player.flight");
 
             modified = true;
         }
