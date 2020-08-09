@@ -32,11 +32,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.Version;
 import org.spazzinq.flightcontrol.object.VersionType;
-import org.spazzinq.flightcontrol.util.ConfUtil;
 import org.spazzinq.flightcontrol.util.FileUtil;
 
-import java.io.*;
-import java.net.MalformedURLException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
@@ -84,7 +84,7 @@ public class UpdateManager {
             installUpdate(Bukkit.getConsoleSender(), false);
         } else {
             // Delay sending to be at bottom of console
-            if (updateExists()) {
+            if (updateExists(true)) {
                 new BukkitRunnable() {
                     @Override public void run() {
                         pl.getLogger().info("Hooray! Version " + newVersion + " is available for update." +
@@ -98,8 +98,8 @@ public class UpdateManager {
     }
 
     public void installUpdate(CommandSender s, boolean silentCheck) {
-        if (updateExists()) {
-            if (!downloaded) {
+        if (!downloaded) {
+            if (updateExists(true)) {
                 downloadPlugin();
 
                 if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
@@ -110,17 +110,17 @@ public class UpdateManager {
                     msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate downloaded. Restart " +
                             "(or reload) the server to apply the update.");
                 }
-            } else {
-                msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate has already been " +
-                        "downloaded. Restart (or reload) the server to apply the update.");
+            } else if (!silentCheck) {
+                msg(s, "&a&lFlightControl &7» &aNo updates found.");
             }
-        } else if (!silentCheck) {
-            msg(s, "&a&lFlightControl &7» &aNo updates found.");
+        } else {
+            msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate has already been " +
+                    "downloaded. Restart (or reload) the server to install the update.");
         }
     }
 
-    public boolean updateExists() {
-        checkSpigotVersion();
+    public boolean updateExists(boolean forceCheck) {
+        checkSpigotVersion(forceCheck);
 
         return newVersion != null && newVersion.isNewer(version);
     }
@@ -141,8 +141,9 @@ public class UpdateManager {
         }
     }
 
-    private void checkSpigotVersion() {
-        if (System.currentTimeMillis() > lastCheckTimestamp + 5000) {
+    private void checkSpigotVersion(boolean forceCheck) {
+        // If it's been more than 5 minutes since last check
+        if (forceCheck || System.currentTimeMillis() > lastCheckTimestamp + 5 * 60 * 1000) {
             try {
                 URLConnection spigotConnection = new URL("https://api.spigotmc.org/legacy/update.php?resource=55168").openConnection();
                 spigotConnection.setConnectTimeout(3000);
@@ -156,7 +157,7 @@ public class UpdateManager {
     }
 
     public void notifyUpdate(Player p) {
-        if (updateExists() && !notified.contains(p.getUniqueId())) {
+        if (updateExists(false) && !notified.contains(p.getUniqueId())) {
             notified.add(p.getUniqueId());
             msg(p, "&e&lFlightControl &7» &eWoot woot! Version &f" + getNewVersion() + "&e is now available! " +
                     "Update with \"/fc update\" and check out the new features: &fhttps://www.spigotmc" +
