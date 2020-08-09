@@ -41,10 +41,11 @@ public class TemplateCommand implements CommandExecutor, TabCompleter {
     protected TreeMap<String, String> subCommands;
     protected String defaultHelp;
 
-    {
+    public TemplateCommand() {
         pl = FlightControl.getInstance();
+    }
 
-        // TODO Change design
+    protected void buildHelp() {
         StringBuilder buildDefaultHelp = new StringBuilder(LangManager.HELP_HEADER);
 
         for (Map.Entry<String, String> c : subCommands.entrySet()) {

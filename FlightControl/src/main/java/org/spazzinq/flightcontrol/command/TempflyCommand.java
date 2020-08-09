@@ -51,6 +51,8 @@ public class TempflyCommand extends TemplateCommand {
             put("add (duration) [player]", "Adds time to a player's current tempfly duration");
             put("remove (duration) [player]", "Removes time from a player's current tempfly duration");
         }};
+
+        buildHelp();
     }
 
 

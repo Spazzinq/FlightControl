@@ -29,6 +29,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.ConfManager;
 import org.spazzinq.flightcontrol.manager.LangManager;
@@ -62,6 +63,7 @@ public class FlightControlCommand extends TemplateCommand {
             put("vanishbypass", "Toggle vanish bypass");
         }};
 
+        buildHelp();
         defaultHelp += "\n&a/tempfly help &7» &fTempfly command information \n&a/tt &7» &fPersonal trail toggle";
     }
 
@@ -99,7 +101,11 @@ public class FlightControlCommand extends TemplateCommand {
                         msg(s, pl.getLangManager().getPluginReloaded());
                         break;
                     case "update":
-                        pl.getUpdateManager().installUpdate(s, false);
+                        new BukkitRunnable() {
+                            @Override public void run() {
+                                pl.getUpdateManager().installUpdate(s, false);
+                            }
+                        }.runTaskAsynchronously(pl);
                         break;
                     case "combat":
                         config.setCombatChecked(!config.isCombatChecked());
