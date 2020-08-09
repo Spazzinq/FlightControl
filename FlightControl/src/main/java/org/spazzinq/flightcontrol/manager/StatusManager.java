@@ -40,7 +40,6 @@ import java.util.HashSet;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionFly;
-import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionNoFly;
 
 public class StatusManager {
     final FlightControl pl;
@@ -58,109 +57,14 @@ public class StatusManager {
     }
 
     public HashSet<Check> checkEnable(Player p, CommandSender s) {
-        boolean debug = s != null;
-
-        // Eval always CheckSet
-        HashSet<Check> trueChecks = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().getEnabled(), p, debug);
-
-        // Eval category CheckSet
-        if (trueChecks.isEmpty() || debug) {
-            Category category = pl.getCategoryManager().getCategory(p);
-
-            if (category != null) {
-                HashSet<Check> enabledCatChecks = CheckUtil.checkAll(category.getChecks().getEnabled(), p, debug);
-
-                trueChecks.addAll(enabledCatChecks);
-            }
-        }
-
-        // Eval permissions
-        if (trueChecks.isEmpty() || debug) {
-            String worldName = p.getWorld().getName();
-            String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
-
-            pl.getPermissionManager().registerDefaultPerms(worldName);
-            if (regionName != null) { // Register new regions dynamically
-                pl.getPermissionManager().registerDefaultPerms(worldName + "." + regionName);
-            }
-
-            if (hasPermissionFly(p, worldName)) {
-                trueChecks.add(WorldPermissionCheck.getInstance());
-            }
-
-            // Allow debug to still eval
-            if ((trueChecks.isEmpty() || debug)
-                    && regionName != null && hasPermissionFly(p, worldName + "." + regionName)) {
-                trueChecks.add(RegionPermissionCheck.getInstance());
-            }
-        }
-
-        if (debug) {
-            Category category = pl.getCategoryManager().getCategory(p);
-            HashSet<Check> falseChecks = new HashSet<>();
-            falseChecks.addAll(pl.getCheckManager().getAlwaysChecks().getEnabled());
-            falseChecks.addAll(category.getChecks().getEnabled());
-            falseChecks.add(WorldPermissionCheck.getInstance());
-            falseChecks.add(RegionPermissionCheck.getInstance());
-
-            falseChecks.removeAll(trueChecks);
-
-            MessageUtil.msg(s, "&e&lEnable\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
-        }
-
-        return trueChecks;
+        return check(true, p, s);
     }
 
     public HashSet<Check> checkDisable(Player p, CommandSender s) {
-        boolean debug = s != null;
-
-        // Eval always CheckSet
-        HashSet<Check> trueChecks = CheckUtil.checkAll(pl.getCheckManager().getAlwaysChecks().getDisabled(), p, debug);
-
-        // Eval category CheckSet
-        if (trueChecks.isEmpty() || debug) {
-            Category category = pl.getCategoryManager().getCategory(p);
-
-            if (category != null) {
-                HashSet<Check> disabledCatChecks = CheckUtil.checkAll(category.getChecks().getDisabled(), p, debug);
-
-                trueChecks.addAll(disabledCatChecks);
-            }
-        }
-
-        // Eval permissions
-        if (trueChecks.isEmpty() || debug) {
-            String worldName = p.getWorld().getName();
-            String regionName = pl.getHookManager().getWorldGuardHook().getRegionName(p.getLocation());
-
-            if (hasPermissionNoFly(p, worldName)) {
-                trueChecks.add(WorldPermissionCheck.getInstance());
-            }
-
-            // Allow debug to still eval
-            if ((trueChecks.isEmpty() || debug)
-                    && regionName != null && hasPermissionNoFly(p, worldName + "." + regionName)) {
-                trueChecks.add(RegionPermissionCheck.getInstance());
-            }
-        }
-
-        if (debug) {
-            Category category = pl.getCategoryManager().getCategory(p);
-            HashSet<Check> falseChecks = new HashSet<>();
-            falseChecks.addAll(pl.getCheckManager().getAlwaysChecks().getDisabled());
-            falseChecks.addAll(category.getChecks().getDisabled());
-            falseChecks.add(WorldPermissionCheck.getInstance());
-            falseChecks.add(RegionPermissionCheck.getInstance());
-
-            falseChecks.removeAll(trueChecks);
-
-            MessageUtil.msg(s, "&e&lOverride\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
-        }
-
-        return trueChecks;
+        return check(false, p, s);
     }
 
-    public HashSet<Check> check(boolean enabled, Player p, CommandSender s) {
+    private HashSet<Check> check(boolean enabled, Player p, CommandSender s) {
         boolean debug = s != null;
 
         // Eval always CheckSet
