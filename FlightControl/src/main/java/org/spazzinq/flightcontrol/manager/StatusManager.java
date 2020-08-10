@@ -98,15 +98,14 @@ public class StatusManager {
 
             // Allow debug to still eval
             if ((trueChecks.isEmpty() || debug)
-                    && regionName != null && hasPermissionFly(p, worldName + "." + regionName)) {
+                    && regionName != null && hasPermissionFly(enabled, p, worldName + "." + regionName)) {
                 trueChecks.add(RegionPermissionCheck.getInstance());
             }
         }
 
         if (debug) {
             Category category = pl.getCategoryManager().getCategory(p);
-            HashSet<Check> falseChecks = new HashSet<>();
-            falseChecks.addAll(pl.getCheckManager().getAlwaysChecks().get(enabled));
+            HashSet<Check> falseChecks = new HashSet<>(pl.getCheckManager().getAlwaysChecks().get(enabled));
             falseChecks.addAll(category.getChecks().get(enabled));
             falseChecks.add(WorldPermissionCheck.getInstance());
             falseChecks.add(RegionPermissionCheck.getInstance());
