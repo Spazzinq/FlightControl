@@ -143,11 +143,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
      * Loads config data, relevant checks, categories, and player data.
      */
     public void load() {
-        confManager.loadConf();
-        langManager.loadLang();
-        // Allow for any necessary config migration from previous versions
-        confManager.updateConf();
-        langManager.updateLang();
+        confManager.load();
+        langManager.load();
         // Load config first so the check manager knows which checks to use
         checkManager.loadChecks();
         hookManager.loadHooks();

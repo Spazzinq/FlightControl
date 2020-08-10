@@ -29,27 +29,28 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.CommentConf;
+import org.spazzinq.flightcontrol.object.StorageManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Locale;
 
-public class LangManager {
+public class LangManager extends StorageManager {
     private final HashSet<String> languages = new HashSet<>(Arrays.asList("en", "fr", "zh"));
     private Locale locale;
 
-    private final FlightControl pl;
     @Getter private CommentConf lang;
     private final File langFile;
-    private boolean ignoreReload;
 
     // Const
     public static final String HELP_HEADER = " \n&a&lFlightControl &f"
             + "\n&aBy &fSpazzinq\n \n"
-            + "&a&lQUERY&a &7» &f...\n \n";;
+            + "&a&lQUERY&a &7» &f...\n \n";
 
     // Bool
     // TODO Fix caps
@@ -72,76 +73,71 @@ public class LangManager {
     // Config editing messages
     @Getter private String globalFlightSpeedSet;
     @Getter private String globalFlightSpeedSame;
-    @Getter private String globalFlightSpeedUsage;
+    // TODO Set usage messages
+    @Getter private String globalFlightSpeedUsage = "";
     @Getter private String enemyRangeSet;
     @Getter private String enemyRangeSame;
-    @Getter private String enemyRangeUsage;
+    @Getter private String enemyRangeUsage = "";
     // Command messages
     @Getter private String flyCommandEnable;
     @Getter private String flyCommandDisable;
-    @Getter private String flyCommandUsage;
+    @Getter private String flyCommandUsage = "";
     @Getter private String flySpeedSet;
     @Getter private String flySpeedSame;
-    @Getter private String flySpeedUsage;
+    @Getter private String flySpeedUsage = "";
+    // TODO Fix caps
     @Getter private String tempFlySet;
     @Getter private String tempFlyDisable;
     @Getter private String tempFlyDisabled;
     @Getter private String tempFlyCheck;
-    @Getter private String tempFlyUsage;
+    @Getter private String tempFlyUsage = "";
 
     public LangManager() {
-        pl = FlightControl.getInstance();
+        super("lang.yml");
 
-        langFile = new File(pl.getDataFolder(), "lang.yml");
         locale = Locale.getDefault();
+        langFile = confFile;
     }
 
-    public boolean loadLang() {
-        boolean reloaded = false;
+    @Override protected void initializeConf() {
+        if (langFile.exists()) {
+            YamlConfiguration tempLocaleConf = YamlConfiguration.loadConfiguration(langFile);
 
-        if (!ignoreReload) {
-            ignoreReload = true;
+            if (tempLocaleConf.isString("locale")) {
+                String preferredLocale = tempLocaleConf.getString("locale");
 
-            if (langFile.exists()) {
-                YamlConfiguration tempLocaleConf = YamlConfiguration.loadConfiguration(langFile);
+                if (languages.contains(preferredLocale)) {
+                    locale = Locale.forLanguageTag(preferredLocale);
 
-                if (tempLocaleConf.isString("locale")) {
-                    String preferredLocale = tempLocaleConf.getString("locale");
-
-                    if (languages.contains(preferredLocale)) {
-                        locale = Locale.forLanguageTag(preferredLocale);
-
-                        try {
-                            //noinspection UnstableApiUsage
-                            Files.move(langFile, new File(pl.getDataFolder(), "lang_old.yml"));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        pl.getLogger().info("Generated a new lang.yml!");
+                    try {
+                        //noinspection UnstableApiUsage
+                        Files.move(langFile, new File(pl.getDataFolder(), "lang_old.yml"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+
+                    pl.getLogger().info("Generated a new lang.yml!");
                 }
             }
+        }
 
-            InputStream langResource = pl.getResource("lang_" + locale.getLanguage() + ".yml");
-            boolean langResourceExists = langResource != null;
+        InputStream langResource = pl.getResource("lang_" + locale.getLanguage() + ".yml");
+        boolean langResourceExists = langResource != null;
 
-            if (!langResourceExists) {
-                pl.getLogger().warning("No custom lang file for " + locale.getDisplayLanguage() + " could be found! " +
-                        "Defaulting to English...");
-            }
+        if (!langResourceExists) {
+            pl.getLogger().warning("No custom lang file for " + locale.getDisplayLanguage() + " could be found! " +
+                    "Defaulting to English...");
+        }
 
-            lang = new CommentConf(langFile, langResourceExists ? langResource : pl.getResource("lang_en.yml"));
+        conf = lang = new CommentConf(langFile, langResourceExists ? langResource : pl.getResource("lang_en.yml"));
+    }
 
-            // Migrate config messages
-            if (pl.getConfManager().getConf().isConfigurationSection("messages")) {
-                migrateFromVersion4();
-            }
-
+    @Override protected void initializeValues() {
             // boolean
             useActionBar = lang.getBoolean("player.actionbar");
 
-            // Strings
+            // String
+            /* Player */
             tempflyActionbar = lang.getString("player.flight.tempfly_actionbar");
             disableFlight = lang.getString("player.flight.disabled");
             enableFlight = lang.getString("player.flight.enabled");
@@ -151,49 +147,30 @@ public class LangManager {
             personalTrailDisable = lang.getString("player.trail.disabled");
             personalTrailEnable = lang.getString("player.trail.enabled");
             permDenied = lang.getString("player.permission_denied");
-
+            /* Admin */
             prefix = lang.getString("admin.prefix");
             pluginReloaded = lang.getString("admin.reloaded");
-            // Config set
             globalFlightSpeedSet = lang.getString("admin.global_flight_speed.set");
             globalFlightSpeedSame = lang.getString("admin.global_flight_speed.same");
-            globalFlightSpeedUsage = lang.getString("admin.global_flight_speed.usage");
             enemyRangeSet = lang.getString("admin.enemy_range.set");
             enemyRangeSame = lang.getString("admin.enemy_range.same");
-            enemyRangeUsage = lang.getString("admin.enemy_range.usage");
-            // Commands
             flyCommandEnable = lang.getString("admin.fly.enable");
             flyCommandDisable = lang.getString("admin.fly.disable");
-            flyCommandUsage = lang.getString("admin.fly_command.usage");
             flySpeedSet = lang.getString("admin.flyspeed.set");
             flySpeedSame = lang.getString("admin.flyspeed.same");
-            flySpeedUsage = lang.getString("admin.flyspeed.usage");
             tempFlySet = lang.getString("admin.tempfly.set");
             tempFlyDisable = lang.getString("admin.tempfly.disable");
             tempFlyDisabled = lang.getString("admin.tempfly.disabled");
             tempFlyCheck = lang.getString("admin.tempfly.check");
-            tempFlyUsage = lang.getString("admin.tempfly.usage");
-
-            // Prevent reloading for the next 250ms
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    ignoreReload = false;
-                }
-            }, 500);
-
-            reloaded = true;
-        }
-        return reloaded;
     }
 
-    public void updateLang() {
+    @Override protected void updateFormatting() {
         boolean modified = false;
 
         if (!lang.isString("admin.tempfly.check")) {
             // TODO Add depending on locale
-            lang.addSubnodes(Collections.singleton("check: \"&e&lFlightControl &7» &f%player%&e has &f%duration%&e of" +
-                    " flight remaining.\""), "admin.tempfly.disabled");
+            lang.addSubnodes(Collections.singleton("check: '&e&lFlightControl &7» &f%player%&e has &f%duration%&e of" +
+                    " flight remaining.'"), "admin.tempfly.disabled");
 
             modified = true;
         }
@@ -207,7 +184,7 @@ public class LangManager {
 
         // 4.6.10
         if (lang.isString("admin.tempfly.enable")) {
-            lang.addIndentedSubnodes(Collections.singleton("set: \"" + lang.getString("admin.tempfly.enable") + "\""), "admin.tempfly");
+            lang.addIndentedSubnodes(Collections.singleton("set: '" + lang.getString("admin.tempfly.enable") + "'"), "admin.tempfly");
             lang.deleteNode("admin.tempfly.enable");
 
             modified = true;
@@ -216,62 +193,52 @@ public class LangManager {
         // 4.7.0
         if (!lang.isString("player.flight.tempfly_actionbar")) {
             // TODO Add depending on locale
-            lang.addIndentedSubnodes(Collections.singleton("&7You have &a%duration% &7of flight remaining."), "player.flight");
+            lang.addIndentedSubnodes(Collections.singleton("tempfly_actionbar: '&7You have &a%duration% &7of flight remaining.'"), "player.flight");
 
             modified = true;
         }
 
-//        // 4.7.3
-//        if (lang.isString("admin.global_flight_speed.usage")) {
-//            lang.deleteNode("admin.global_flight_speed.usage");
-//            lang.deleteNode("admin.enemy_range.usage");
-//            lang.deleteNode("admin.fly.usage");
-//            lang.deleteNode("admin.flyspeed.usage");
-//            lang.deleteNode("admin.tempfly.usage");
-//
-//            modified = true;
-//        }
+        // 4.7.5
+        if (lang.isString("admin.global_flight_speed.usage")) {
+            lang.deleteNode("admin.global_flight_speed.usage");
+            lang.deleteNode("admin.enemy_range.usage");
+            lang.deleteNode("admin.fly.usage");
+            lang.deleteNode("admin.flyspeed.usage");
+            lang.deleteNode("admin.tempfly.usage");
+
+            modified = true;
+        }
 
         if (modified) {
             lang.save();
         }
     }
 
-    public void set(String path, Object value) {
-        ignoreReload = true;
-        lang.set(path, value);
-        lang.save();
+    // Version 4
+    @Override protected void migrateFromOldVersion() {
+        if (pl.getConfManager().getConf().isConfigurationSection("messages")) {
+            CommentConf conf = pl.getConfManager().getConf();
+            ConfigurationSection msgs = conf.getConfigurationSection("messages");
 
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                ignoreReload = false;
-            }
-        }, 500);
-    }
+            lang.set("player.actionbar", msgs.getBoolean("actionbar"));
 
-    private void migrateFromVersion4() {
-        CommentConf conf = pl.getConfManager().getConf();
-        ConfigurationSection msgs = conf.getConfigurationSection("messages");
+            lang.set("player.flight.enabled", msgs.getString("flight.enable"));
+            lang.set("player.flight.disabled", msgs.getString("flight.disable"));
+            lang.set("player.flight.can_enable", msgs.getString("flight.can_enable"));
+            lang.set("player.flight.cannot_enable", msgs.getString("flight.cannot_enable"));
 
-        lang.set("player.actionbar", msgs.getBoolean("actionbar"));
+            lang.set("player.trail.enabled", msgs.getString("trail.enable"));
+            lang.set("player.trail.disabled", msgs.getString("trail.disable"));
 
-        lang.set("player.flight.enabled", msgs.getString("flight.enable"));
-        lang.set("player.flight.disabled", msgs.getString("flight.disable"));
-        lang.set("player.flight.can_enable", msgs.getString("flight.can_enable"));
-        lang.set("player.flight.cannot_enable", msgs.getString("flight.cannot_enable"));
+            lang.set("player.permission_denied", msgs.getString("permission_denied"));
 
-        lang.set("player.trail.enabled", msgs.getString("trail.enable"));
-        lang.set("player.trail.disabled", msgs.getString("trail.disable"));
+            lang.save();
 
-        lang.set("player.permission_denied", msgs.getString("permission_denied"));
+            conf.deleteNode("messages");
+            conf.save();
 
-        lang.save();
-
-        conf.deleteNode("messages");
-        conf.save();
-
-        pl.getLogger().info("Successfully migrated the messages from config.yml to lang.yml!");
+            pl.getLogger().info("Successfully migrated the messages from config.yml to lang.yml!");
+        }
     }
 
     public boolean useActionBar() {

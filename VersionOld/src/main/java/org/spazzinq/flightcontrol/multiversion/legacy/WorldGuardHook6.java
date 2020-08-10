@@ -33,35 +33,27 @@ import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 import java.util.Iterator;
 
 public class WorldGuardHook6 extends WorldGuardHookBase {
-    public String getRegionName(Location l) {
-        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld()).getApplicableRegions(l).iterator();
-
-        if (iter.hasNext()) {
-            return iter.next().getId();
-        }
-
-        return "none";
-    }
-
     public boolean isMember(Player p) {
-        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(p.getWorld()).getApplicableRegions(p.getLocation()).iterator();
+        ProtectedRegion region = getRegion(p.getLocation());
 
-        if (iter.hasNext()) {
-            ProtectedRegion region = iter.next();
-            return region.hasMembersOrOwners() && region.isMember(WGBukkit.getPlugin().wrapPlayer(p));
-        }
-
-        return false;
+        return region != null && region.hasMembersOrOwners() && region.isMember(WGBukkit.getPlugin().wrapPlayer(p));
     }
 
     public boolean isOwner(Player p) {
-        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(p.getWorld()).getApplicableRegions(p.getLocation()).iterator();
+        ProtectedRegion region = getRegion(p.getLocation());
+
+        return region != null && region.hasMembersOrOwners() && region.isOwner(WGBukkit.getPlugin().wrapPlayer(p));
+    }
+
+    @Override protected ProtectedRegion getRegion(Location l) {
+        ProtectedRegion region = null;
+        Iterator<ProtectedRegion> iter = WGBukkit.getRegionManager(l.getWorld())
+                .getApplicableRegions(l).iterator();
 
         if (iter.hasNext()) {
-            ProtectedRegion region = iter.next();
-            return region.hasMembersOrOwners() && region.isOwner(WGBukkit.getPlugin().wrapPlayer(p));
+            region = iter.next();
         }
 
-        return false;
+        return region;
     }
 }

@@ -85,6 +85,7 @@ public class FlightControlCommand extends TemplateCommand {
         }
     }
 
+    // TODO Refactor somehow
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
         for (int i = 0; i < args.length; i++) {
             args[i] = args[i].toLowerCase();

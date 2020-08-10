@@ -24,13 +24,16 @@
 
 package org.spazzinq.flightcontrol.multiversion;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 @SuppressWarnings("unused")
 public class WorldGuardHookBase extends Hook {
     public String getRegionName(Location l) {
-        return null;
+        ProtectedRegion region = getRegion(l);
+
+        return region == null ? "none" : region.getId();
     }
 
     public boolean isMember(Player p) {
@@ -39,5 +42,9 @@ public class WorldGuardHookBase extends Hook {
 
     public boolean isOwner(Player p) {
         return false;
+    }
+
+    protected ProtectedRegion getRegion(Location l) {
+        return null;
     }
 }

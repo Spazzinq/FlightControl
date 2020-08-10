@@ -30,8 +30,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.object.Region;
@@ -94,15 +92,10 @@ public class CategoryManager {
 
     private Category loadCategory(String name, ConfigurationSection category) {
         // Prevent permission auto-granting from "*" permission
-        if (pm.getPermission(FlyPermission.CATEGORY_STUB + name) == null) {
-            pm.addPermission(new Permission(FlyPermission.CATEGORY_STUB + name, PermissionDefault.FALSE));
-        }
-        if (pm.getPermission(FlyPermission.TEMP_FLY_STUB + name) == null) {
-            pm.addPermission(new Permission(FlyPermission.TEMP_FLY_STUB + name, PermissionDefault.FALSE));
-        }
+        pl.getPermissionManager().registerDefaultPerm(FlyPermission.CATEGORY_STUB + name);
+        pl.getPermissionManager().registerDefaultPerm(FlyPermission.TEMP_FLY_STUB + name);
 
         DualStore<Check> checks = new DualStore<>();
-
         DualStore<World> worlds = loadWorlds(name, category.getConfigurationSection("worlds"), checks);
         DualStore<Region> regions = loadRegions(name, category.getConfigurationSection("regions"), checks);
         DualStore<FactionRelation> factions = loadFactions(name, category.getConfigurationSection("factions"), checks);
@@ -285,7 +278,8 @@ public class CategoryManager {
     public Category getCategory(Player p) {
         for (Category category : getCategories()) {
             if (PlayerUtil.hasPermissionCategory(p, category)
-                    || PlayerUtil.hasPermissionTempfly(p, category) && pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().hasTimeLeft()) {
+                    || PlayerUtil.hasPermissionTempfly(p, category)
+                    && pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().hasTimeLeft()) {
                 return category;
             }
         }

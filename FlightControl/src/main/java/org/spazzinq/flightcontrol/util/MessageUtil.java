@@ -39,15 +39,12 @@ public final class MessageUtil {
 
     public static void msg(CommandSender s, String msg, boolean actionBar) {
         if (msg != null && !msg.isEmpty()) {
-            boolean console = s instanceof ConsoleCommandSender;
-            String finalMsg = msg;
-
-            finalMsg = ChatColor.translateAlternateColorCodes('&', finalMsg);
+            String finalMsg = ChatColor.translateAlternateColorCodes('&', msg);
 
             if (actionBar && s instanceof Player) {
                 ActionbarUtil.sendActionbar((Player) s, finalMsg);
             } else {
-                s.sendMessage((console ? "[FlightControl] " : "")
+                s.sendMessage((s instanceof ConsoleCommandSender ? "[FlightControl] " : "")
                         + finalMsg);
             }
         }
@@ -55,6 +52,7 @@ public final class MessageUtil {
 
     public static void msgVar(CommandSender s, String msg, boolean actionBar, HashMap<String, String> toReplace) {
         String finalMsg = msg;
+
         for (Map.Entry<String, String> entry : toReplace.entrySet()) {
             finalMsg = finalMsg.replaceAll("%" + entry.getKey() + "%", entry.getValue());
         }
