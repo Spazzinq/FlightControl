@@ -94,8 +94,8 @@ public class LangManager extends StorageManager {
 
     public LangManager() {
         super("lang.yml");
-        locale = Locale.getDefault();
 
+        locale = Locale.getDefault();
         langFile = confFile;
     }
 

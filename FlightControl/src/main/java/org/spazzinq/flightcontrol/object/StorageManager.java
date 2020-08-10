@@ -41,8 +41,8 @@ public abstract class StorageManager {
     protected boolean reloadIgnored;
 
     public StorageManager(String fileName) {
+        this.fileName = fileName;
         pl = FlightControl.getInstance();
-
         confFile = new File(pl.getDataFolder(), fileName);
     }
 
