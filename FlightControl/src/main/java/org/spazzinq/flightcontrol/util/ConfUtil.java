@@ -59,7 +59,7 @@ public final class ConfUtil {
             // Remove leading spaces
             String trimmedLine = line.trim();
             // Current indent
-            String newIndent = leadingSpaces(line);
+            String newIndent = getLeadingWhitespace(line);
 
             if ((trimmedLine.startsWith("#") || trimmedLine.isEmpty()) && task == SAVE_COMMENTS) {
                 // Saves current line in comment
@@ -138,7 +138,7 @@ public final class ConfUtil {
     }
 
     @NotNull
-    private static String updateNode(String node, String simpleNode, int indentDifference) {
+    public static String updateNode(String node, String simpleNode, int indentDifference) {
         // If newIndentLength decreases from previousIndentLength, then
         // substring off end (. + oldSimpleNode) until new node matches indent pattern
         if (indentDifference >= 0) {
@@ -153,7 +153,7 @@ public final class ConfUtil {
         return node;
     }
 
-    private static String leadingSpaces(String string) {
+    private static String getLeadingWhitespace(String string) {
         // Remove all non-whitespace that may be followed by whitespace
         return string.replaceAll("(\\S+)(\\s+)?", "");
     }
