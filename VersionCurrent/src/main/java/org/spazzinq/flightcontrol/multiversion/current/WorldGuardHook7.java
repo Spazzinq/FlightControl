@@ -40,41 +40,28 @@ import java.util.Iterator;
 public class WorldGuardHook7 extends WorldGuardHookBase {
     private WorldGuardPlatform platform;
 
-    public String getRegionName(Location l) {
+    public boolean isMember(Player p) {
+        ProtectedRegion region = getRegion(p.getLocation());
+
+        return region != null && region.hasMembersOrOwners() && region.isMember(WorldGuardPlugin.inst().wrapPlayer(p));
+    }
+
+    public boolean isOwner(Player p) {
+        ProtectedRegion region = getRegion(p.getLocation());
+
+        return region != null && region.hasMembersOrOwners() && region.isOwner(WorldGuardPlugin.inst().wrapPlayer(p));
+    }
+
+    @Override protected ProtectedRegion getRegion(Location l) {
+        ProtectedRegion region = null;
         Iterator<ProtectedRegion> iter = getRegionContainer().createQuery()
                 .getApplicableRegions(BukkitAdapter.adapt(l)).iterator();
 
         if (iter.hasNext()) {
-            return iter.next().getId();
+            region = iter.next();
         }
 
-        return "none";
-    }
-
-    public boolean isMember(Player p) {
-        Iterator<ProtectedRegion> iter = getRegionContainer().createQuery()
-                .getApplicableRegions(BukkitAdapter.adapt(p.getLocation())).iterator();
-
-        if (iter.hasNext()) {
-            ProtectedRegion region = iter.next();
-
-            return region.hasMembersOrOwners() && region.isMember(WorldGuardPlugin.inst().wrapPlayer(p));
-        }
-
-        return false;
-    }
-
-    public boolean isOwner(Player p) {
-        Iterator<ProtectedRegion> iter = getRegionContainer().createQuery()
-                .getApplicableRegions(BukkitAdapter.adapt(p.getLocation())).iterator();
-
-        if (iter.hasNext()) {
-            ProtectedRegion region = iter.next();
-
-            return region.hasMembersOrOwners() && region.isOwner(WorldGuardPlugin.inst().wrapPlayer(p));
-        }
-
-        return false;
+        return region;
     }
 
     private RegionContainer getRegionContainer() {
