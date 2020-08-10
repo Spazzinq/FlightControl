@@ -69,7 +69,7 @@ public class StatusManager {
         allChecks.addAll(pl.getCategoryManager().getCategory(p).getChecks().get(enabled));
 
         // Register perms before evaluating permission-based ones
-        pl.getPermissionManager().registerLocationalPerms(p);
+        pl.getPermissionManager().registerLocationalFlyPerms(p);
 
         // Evaluate all checks
         HashSet<Check> trueChecks = CheckUtil.evaluate(allChecks, p, debug);

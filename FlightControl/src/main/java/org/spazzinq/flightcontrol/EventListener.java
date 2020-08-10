@@ -206,6 +206,6 @@ final class EventListener implements org.bukkit.event.Listener {
      * Manages world permissions on-the-fly. Note: this does not take care of initial server start because of "load: POSTWORLD" in the plugin.yml.
      */
     @EventHandler private void onWorldInit(WorldInitEvent e) {
-        pl.getPermissionManager().registerDefaultPerms(e.getWorld().getName());
+        pl.getPermissionManager().registerDefaultFlyPerms(e.getWorld().getName());
     }
 }
