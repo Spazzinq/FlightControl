@@ -27,6 +27,7 @@ package org.spazzinq.flightcontrol.manager;
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.api.object.Region;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.always.*;
 import org.spazzinq.flightcontrol.check.bypasstrail.BypassPermissionCheck;
@@ -104,8 +105,8 @@ public class CheckManager {
 
     private void loadAlwaysChecks() {
         /* ENABLE */
-        // Flyall perm Check, Tempfly Check
-        alwaysChecks.addEnabled(new FlyAllCheck());
+        // Flyall perm Check, World/Region Checks
+        alwaysChecks.addEnabled(new FlyAllCheck(), new WorldPermissionCheck(true), new RegionPermissionCheck(true));
         // CrazyEnchants Check
         if (pluginLoading("CrazyEnchantments") && pm.getPlugin("CrazyEnchantments").getDescription().getVersion().startsWith("1.8")) {
             alwaysChecks.addEnabled(new CrazyEnchantmentsCheck());
@@ -116,6 +117,8 @@ public class CheckManager {
         }
 
         /* DISABLE */
+        // World/Region Checks
+        alwaysChecks.addDisabled(new WorldPermissionCheck(false), new RegionPermissionCheck(false));
         // Combat Checks
         loadCombatChecks();
         // Nearby Checks

@@ -24,26 +24,27 @@
 
 package org.spazzinq.flightcontrol.check.always;
 
+import lombok.Getter;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.util.PlayerUtil;
+
+import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionFly;
 
 public class WorldPermissionCheck extends Check {
-    private static WorldPermissionCheck instance;
+    private final boolean enabled;
+    public WorldPermissionCheck(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     @Override public boolean check(Player p) {
-        return true;
+        return PlayerUtil.hasPermissionFly(enabled, p, p.getWorld().getName());
     }
 
     @Override public Cause getCause() {
         return Cause.PERMISSION_WORLD;
-    }
-
-    public static WorldPermissionCheck getInstance() {
-        if (instance == null) {
-            instance = new WorldPermissionCheck();
-        }
-
-        return instance;
     }
 }

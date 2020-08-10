@@ -25,18 +25,40 @@
 package org.spazzinq.flightcontrol.manager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
+import org.spazzinq.flightcontrol.FlightControl;
 
 import java.util.HashSet;
 
 public class PermissionManager {
+    private final FlightControl pl;
     private final PluginManager pm;
+
     private final HashSet<String> permissionSuffixCache = new HashSet<>();
 
     public PermissionManager() {
+        pl = FlightControl.getInstance();
         pm = Bukkit.getPluginManager();
+    }
+
+    /**
+     * Registers permissions relative to the player's location to prevent
+     * operator status from automatically receiving unnecessary permissions.
+     * @param p the player from which world and region data are checked
+     */
+    public void registerLocationalPerms(Player p) {
+        String worldName = p.getWorld().getName();
+        String regionName = FlightControl.getInstance().getHookManager()
+                .getWorldGuardHook().getRegionName(p.getLocation());
+
+        // Register new world permissions dynamically
+        pl.getPermissionManager().registerDefaultPerms(worldName);
+        if (regionName != null) { // Register new region permissions dynamically
+            pl.getPermissionManager().registerDefaultPerms(worldName + "." + regionName);
+        }
     }
 
     /**

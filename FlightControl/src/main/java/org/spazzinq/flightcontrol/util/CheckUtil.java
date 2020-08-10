@@ -31,26 +31,18 @@ import java.util.HashSet;
 
 public final class CheckUtil {
     /**
-     * Returns the first true check.
+     * Returns the first true check, or all true checks if debugging.
      *
      * @param checks the set of checks to check
      * @param p the player to check
-     * @return returns the first true check
-     */
-    public static HashSet<Check> checkAll(HashSet<Check> checks, Player p) {
-        return checkAll(checks, p, false);
-    }
-
-    /**
-     * Returns the first true check or all true checks if debugging.
-     *
-     * @param checks the set of checks to check
-     * @param p the player to check
+     * @param debug if method should evaluate all regardless of performance
      * @return returns the first true check or all true checks if debugging
      */
-    public static HashSet<Check> checkAll(HashSet<Check> checks, Player p, boolean debug) {
+    public static HashSet<Check> evaluate(HashSet<Check> checks, Player p, boolean debug) {
         HashSet<Check> trueChecks = new HashSet<>();
 
+        // Did not put debug conditional at more narrow level
+        // to prevent unnecessary rechecking (performance)
         if (debug) {
             for (Check check : checks) {
                 if (check.check(p)) {
@@ -67,5 +59,9 @@ public final class CheckUtil {
         }
 
         return trueChecks;
+    }
+
+    public static HashSet<Check> evaluate(HashSet<Check> checks, Player p) {
+        return evaluate(checks, p, false);
     }
 }

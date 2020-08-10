@@ -60,7 +60,7 @@ public class FlightManager {
     }
 
     public void check(Player p, boolean isCommand) {
-        HashSet<Check> bypassChecks = CheckUtil.checkAll(pl.getCheckManager().getBypassChecks(), p);
+        HashSet<Check> bypassChecks = CheckUtil.evaluate(pl.getCheckManager().getBypassChecks(), p);
         // If not bypassing checks
         if (bypassChecks.isEmpty()) {
             HashSet<Check> enableChecks = pl.getStatusManager().checkEnable(p);
