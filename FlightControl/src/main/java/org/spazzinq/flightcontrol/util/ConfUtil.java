@@ -24,11 +24,10 @@
 
 package org.spazzinq.flightcontrol.util;
 
+import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.ConfTask;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 import static org.spazzinq.flightcontrol.object.ConfTask.*;
 

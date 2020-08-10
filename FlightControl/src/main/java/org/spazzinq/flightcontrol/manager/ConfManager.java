@@ -27,22 +27,18 @@ package org.spazzinq.flightcontrol.manager;
 import com.google.common.io.Files;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.configuration.ConfigurationSection;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.object.Sound;
 import org.spazzinq.flightcontrol.object.CommentConf;
+import org.spazzinq.flightcontrol.object.StorageManager;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class ConfManager {
-    private final FlightControl pl;
-    private boolean ignoreReload;
-
-    private final File confFile;
-    @Getter private CommentConf conf;
-
+public class ConfManager extends StorageManager {
     @Getter @Setter private boolean autoEnable;
     @Getter @Setter private boolean autoUpdate;
     @Getter @Setter private boolean inGameSupport;
@@ -67,64 +63,42 @@ public class ConfManager {
     @Getter @Setter private String aeEnchantName;
 
     public ConfManager() {
-        pl = FlightControl.getInstance();
-        confFile = new File(pl.getDataFolder(), "config.yml");
+        super("config.yml");
     }
 
-    public boolean loadConf() {
-        boolean reloaded = false;
+    @Override protected void initializeConf() {
+        conf = new CommentConf(confFile, pl.getResource(fileName));
+    }
 
-        if (!ignoreReload) {
-            ignoreReload = true;
-            conf = new CommentConf(confFile, pl.getResource("config.yml"));
+    @Override protected void initializeValues() {
+        // booleans
+        autoUpdate = conf.getBoolean("settings.auto_update");
+        autoEnable = conf.getBoolean("settings.auto_enable_flight");
+        combatChecked = conf.getBoolean("settings.disable_flight_in_combat");
+        cancelFall = conf.getBoolean("settings.prevent_fall_damage");
+        vanishBypass = conf.getBoolean("settings.vanish_bypass");
+        isNearbyCheckEnemies = conf.getBoolean("nearby_disable.factions_enemy");
+        tempflyAlwaysDecrease = conf.getBoolean("tempfly.always_decrease");
 
-            if (conf.isBoolean("auto_update")) {
-                migrateFromVersion3();
-            }
+        // ints
+        int range = conf.getInt("nearby_disable.range");
 
-            updateConf();
-
-            // booleans
-            autoUpdate = conf.getBoolean("settings.auto_update");
-            autoEnable = conf.getBoolean("settings.auto_enable_flight");
-            combatChecked = conf.getBoolean("settings.disable_flight_in_combat");
-            cancelFall = conf.getBoolean("settings.prevent_fall_damage");
-            vanishBypass = conf.getBoolean("settings.vanish_bypass");
-            isNearbyCheckEnemies = conf.getBoolean("nearby_disable.factions_enemy");
-            tempflyAlwaysDecrease = conf.getBoolean("tempfly.always_decrease");
-
-            // ints
-            int range = conf.getInt("nearby_disable.range");
-
-            if (nearbyCheck = (range != -1)) {
-                nearbyRangeSquared = range * range;
-            }
-
-            // floats
-            defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed"));
-
-            // Strings
-            aeEnchantName = conf.getString("settings.ae_enchant_name");
-
-            // Load other stuff that have separate methods
-            loadSounds();
-            loadTrail();
-
-            // Prevent reloading for the next 500ms
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    ignoreReload = false;
-                }
-            }, 500);
-
-            reloaded = true;
+        if (nearbyCheck = (range != -1)) {
+            nearbyRangeSquared = range * range;
         }
-        return reloaded;
+
+        // floats
+        defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed"));
+
+        // Strings
+        aeEnchantName = conf.getString("settings.ae_enchant_name");
+
+        // Load other stuff that have separate methods
+        loadSounds();
+        loadTrail();
     }
 
-    // TODO Continue to add!
-    public void updateConf() {
+    @Override protected void updateFormatting() {
         boolean modified = false;
 
         // 4.2.5 - relocate lands, towny; add griefprevention
@@ -180,6 +154,19 @@ public class ConfManager {
         }
     }
 
+    // Version 3
+    @Override protected void migrateFromOldVersion() {
+        if (conf.isBoolean("auto_update")) {
+            try {
+                //noinspection UnstableApiUsage
+                Files.move(confFile, new File(pl.getDataFolder(), "config_old.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            pl.saveDefaultConfig();
+        }
+    }
+
     private void loadTrail() {
         trail = conf.getBoolean("trail.enabled");
 
@@ -206,36 +193,14 @@ public class ConfManager {
     }
 
     private Sound getSound(String key) {
+        Sound sound = null;
+
         if (conf.isConfigurationSection(key)) {
-            String s = conf.getString(key + ".sound").toUpperCase().replaceAll("\\.", "_");
-            if (Sound.is(s)) {
-                return new Sound(s, (float) conf.getDouble(key + ".volume"), (float) conf.getDouble(key + ".pitch"));
-            }
+            ConfigurationSection soundType = conf.getConfigurationSection(key);
+
+            sound = Sound.valueOf(soundType.getString("sound"), soundType.getDouble("volume"), soundType.getDouble("pitch"));
         }
-        return null;
-    }
 
-    // FILE CONFIG METHODS
-    public void set(String path, Object value) {
-        ignoreReload = true;
-        conf.set(path, value);
-        conf.save();
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                ignoreReload = false;
-            }
-        }, 500);
-    }
-
-    private void migrateFromVersion3() {
-        try {
-            //noinspection UnstableApiUsage
-            Files.move(confFile, new File(pl.getDataFolder(), "config_old.yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        pl.saveDefaultConfig();
+        return sound;
     }
 }

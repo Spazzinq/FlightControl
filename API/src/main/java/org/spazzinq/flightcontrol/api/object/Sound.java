@@ -65,4 +65,15 @@ public final class Sound {
             return false;
         }
     }
+
+    public static Sound valueOf(String str, double volume, double pitch) {
+        try {
+            String soundStr = str.toUpperCase().replaceAll("\\.", "_");
+            org.bukkit.Sound.valueOf(str.toUpperCase().replaceAll("\\.", "_"));
+
+            return new Sound(str, (float) volume, (float) pitch);
+        } catch (Exception ignored) {}
+
+        return null;
+    }
 }
