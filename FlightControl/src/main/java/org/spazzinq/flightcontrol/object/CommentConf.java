@@ -111,8 +111,8 @@ public class CommentConf extends YamlConfiguration {
         StringBuilder currentConf = FileUtil.readFile(file.toPath());
         HashMap<String, Set<String>> currentComments = new HashMap<>();
 
-        runTask(defaultConf, defaultComments, SAVE_COMMENTS);
-        runTask(currentConf, currentComments, SAVE_COMMENTS);
+        runTask(defaultConf, SAVE_COMMENTS, defaultComments);
+        runTask(currentConf, SAVE_COMMENTS, currentComments);
 
         // Load the config for YAMLConfiguration methods
         try {
@@ -207,13 +207,13 @@ public class CommentConf extends YamlConfiguration {
     private String finalizeConfig(String config) {
         StringBuilder configBuilder = new StringBuilder(config);
 
-        runTask(configBuilder, addNodes, WRITE_NODES);
+        runTask(configBuilder, WRITE_NODES, addNodes);
         addNodes.clear();
-        runTask(configBuilder, addSubnodes, WRITE_SUBNODES);
+        runTask(configBuilder, WRITE_SUBNODES, addSubnodes);
         addSubnodes.clear();
-        runTask(configBuilder, addIndentedSubnodes, WRITE_INDENTED_SUBNODES);
+        runTask(configBuilder, WRITE_INDENTED_SUBNODES, addIndentedSubnodes);
         addIndentedSubnodes.clear();
-        runTask(configBuilder, defaultComments, WRITE_COMMENTS);
+        runTask(configBuilder, WRITE_COMMENTS, defaultComments);
 
         return configBuilder.toString();
     }
