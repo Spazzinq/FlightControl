@@ -57,15 +57,6 @@ public final class Sound {
         }
     }
 
-    public static boolean is(String s) {
-        try {
-            org.bukkit.Sound.valueOf(s);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public static Sound valueOf(String str, double volume, double pitch) {
         try {
             String soundStr = str.toUpperCase().replaceAll("\\.", "_");

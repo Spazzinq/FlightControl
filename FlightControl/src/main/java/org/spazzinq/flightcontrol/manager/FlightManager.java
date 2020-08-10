@@ -59,6 +59,7 @@ public class FlightManager {
         check(p, false);
     }
 
+    // TODO Refactor
     public void check(Player p, boolean isCommand) {
         HashSet<Check> bypassChecks = CheckUtil.evaluate(pl.getCheckManager().getBypassChecks(), p);
         // If not bypassing checks
@@ -155,7 +156,7 @@ public class FlightManager {
         APIManager.getInstance().callEvent(e);
 
         if (!e.isCancelled()) {
-            // Don't pause if always decreasing
+            // Don't pause if NOT always decreasing
             if (!pl.getConfManager().isTempflyAlwaysDecrease()) {
                 pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
             }
