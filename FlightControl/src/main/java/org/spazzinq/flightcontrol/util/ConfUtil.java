@@ -73,9 +73,10 @@ public final class ConfUtil {
             } else if (trimmedLine.contains(":")) {
                 // Substring off : to get simpleNode
                 String simpleNode = trimmedLine.substring(0, trimmedLine.indexOf(":"));
+                int indentDifference = (previousIndentLength - newIndent.length()) / 2;
 
                 // Update node
-                node = updateNode(node, simpleNode, previousIndentLength, newIndent);
+                node = updateNode(node, simpleNode, indentDifference);
                 // Set for next iteration
                 previousIndentLength = newIndent.length();
 
@@ -137,13 +138,11 @@ public final class ConfUtil {
     }
 
     @NotNull
-    private static String updateNode(String node, String simpleNode, int previousIndentLength, String newIndent) {
+    private static String updateNode(String node, String simpleNode, int indentDifference) {
         // If newIndentLength decreases from previousIndentLength, then
         // substring off end (. + oldSimpleNode) until new node matches indent pattern
-        if (previousIndentLength >= newIndent.length()) {
-            int doubleIndentsBack = (previousIndentLength - newIndent.length()) / 2;
-
-            for (int i = 0; i <= doubleIndentsBack; i++) {
+        if (indentDifference >= 0) {
+            for (int i = 0; i <= indentDifference; i++) {
                 node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
             }
         }
