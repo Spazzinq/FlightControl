@@ -27,7 +27,6 @@ package org.spazzinq.flightcontrol.manager;
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.api.object.Region;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.always.*;
 import org.spazzinq.flightcontrol.check.bypasstrail.BypassPermissionCheck;

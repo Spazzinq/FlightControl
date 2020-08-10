@@ -28,7 +28,6 @@ import com.google.common.io.Files;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.configuration.ConfigurationSection;
-import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.object.Sound;
 import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.StorageManager;
@@ -36,7 +35,7 @@ import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
 
 public class ConfManager extends StorageManager {
     @Getter @Setter private boolean autoEnable;
@@ -100,29 +99,6 @@ public class ConfManager extends StorageManager {
 
     @Override protected void updateFormatting() {
         boolean modified = false;
-
-        // 4.2.5 - relocate lands, towny; add griefprevention
-        if (conf.isConfigurationSection("towny") || conf.isConfigurationSection("lands")) {
-            pl.getLogger().info("Territories have migrated to the categories.yml!");
-            conf.deleteNode("towny");
-            conf.deleteNode("lands");
-
-            modified = true;
-        }
-
-        // 4.2.5 - change function of factions_enemy_range
-        if (conf.isConfigurationSection("factions")) {
-            pl.getLogger().info("Migrated the factions disable enemy range section of the configuration!");
-
-            conf.addNode("nearby_disable:", "trail");
-            conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
-                    "range: " + conf.getInt("factions.disable_enemy_range"),
-                    "factions_enemy: " + (conf.getInt("factions.disable_enemy_range") != -1))), "nearby_disable");
-
-            conf.deleteNode("factions");
-
-            modified = true;
-        }
 
         // 4.5.0 - remove "territory"
         if (conf.isConfigurationSection("territory")) {

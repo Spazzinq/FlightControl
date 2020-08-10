@@ -30,8 +30,6 @@ import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
-import static org.spazzinq.flightcontrol.util.PlayerUtil.hasPermissionFly;
-
 public class RegionPermissionCheck extends Check {
     private final boolean enabled;
 

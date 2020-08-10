@@ -29,14 +29,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.StorageManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Locale;
 
 public class LangManager extends StorageManager {
     private final HashSet<String> languages = new HashSet<>(Arrays.asList("en", "fr", "zh"));
