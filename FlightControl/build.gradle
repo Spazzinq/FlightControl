@@ -38,7 +38,7 @@ dependencies {
     compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {
         exclude group: 'net.md-5', module: 'bungeecord-chat'
     }
-    compileOnly ('me.badbones69:crazyenchantments-plugin:1.8-Dev-Build-v8.1') {
+    compileOnly('me.badbones69:crazyenchantments-plugin:1.8-Dev-Build-v8.1') {
         exclude group: 'com.github.intellectualsites.plotsquared', module: 'PlotSquared-API'
     }
     compileOnly 'net.ess3:EssentialsX:2.17.1'

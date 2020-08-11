@@ -49,12 +49,12 @@ public class StatusManager {
         return checkEnable(p, null);
     }
 
-    public HashSet<Check> checkDisable(Player p) {
-        return checkDisable(p, null);
-    }
-
     public HashSet<Check> checkEnable(Player p, CommandSender s) {
         return check(true, p, s);
+    }
+
+    public HashSet<Check> checkDisable(Player p) {
+        return checkDisable(p, null);
     }
 
     public HashSet<Check> checkDisable(Player p, CommandSender s) {
