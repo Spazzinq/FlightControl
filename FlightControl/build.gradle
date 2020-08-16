@@ -57,6 +57,7 @@ dependencies {
     }
     compileOnly 'com.github.NoChanceSD.PvPManager:PvPManager:3.7'
 
+    compileOnly files('../lib/Residence-4.9.1.9.jar')
     compileOnly files('../lib/BentoBox-1.13.1.jar')
     compileOnly files('../lib/RedProtect-7.7.2-b357-Universal.jar')
     compileOnly files('../lib/CombatLogX-9.9.3.1.jar')

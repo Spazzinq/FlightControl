@@ -25,7 +25,7 @@ player:
   permission_denied: '&cVocê não tem permissão para usar este comando.'
 
 admin:
-  # Prefixo aplicado as mensagens que não podem ser modificadas (ex: /fc actionbar) 
+  # Prefixo aplicado as mensagens que não podem ser modificadas (ex: /fc actionbar)
   prefix: '&6&lFlightControl &a'
   # Os prefixos são escritos abaixo por causa das cores que significados diferentes
   reloaded: '&a&lFlightControl &7» &aAs configurações foram recarregadas com sucesso!'

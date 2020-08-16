@@ -23,7 +23,8 @@ global:
     enable: [OWN, ALLY]
     disable: []
   # Disable/enable flight in certain plugin territories
-  # Supports: GriefPrevention, Lands, PlotSquared, TownyTown, TownyNation, RedProtect, BentoBox (island), WorldGuard
+  # Supports: GriefPrevention, Lands, PlotSquared, TownyTown, TownyNation,
+  #           RedProtect, BentoBox (island), WorldGuard, Residence
   territory:
     enable:
       # Enable/Disable in player's own territory

@@ -157,8 +157,8 @@ public class CheckManager {
             trustedTerritoryChecks.put("TownyNation", new TownyNationCheck());
         }
         if (pluginLoading("Lands")) {
-            ownTerritoryChecks.put("Lands", new LandsOwnCheck(pl));
-            trustedTerritoryChecks.put("Lands", new LandsTrustedCheck(pl));
+            ownTerritoryChecks.put("Lands", new LandsOwnCheck());
+            trustedTerritoryChecks.put("Lands", new LandsTrustedCheck());
         }
         if (pluginLoading("GriefPrevention")) {
             ownTerritoryChecks.put("GriefPrevention", new GriefPreventionOwnCheck());
@@ -175,6 +175,10 @@ public class CheckManager {
         if (pluginLoading("WorldGuard")) {
             ownTerritoryChecks.put("WorldGuard", new WorldGuardOwnCheck());
             trustedTerritoryChecks.put("WorldGuard", new WorldGuardTrustedCheck());
+        }
+        if (pluginLoading("Residence")) {
+            ownTerritoryChecks.put("Residence", new ResidenceOwnCheck());
+            trustedTerritoryChecks.put("Residence", new ResidenceOwnCheck());
         }
     }
 

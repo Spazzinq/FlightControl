@@ -22,24 +22,18 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.territory.trusted;
+package org.spazzinq.flightcontrol.check.territory.own;
 
-import me.angeschossen.lands.api.integration.LandsIntegration;
-import me.angeschossen.lands.api.land.Land;
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.api.ResidenceApi;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
-public final class LandsTrustedCheck extends TerritoryCheck {
-    private final LandsIntegration landsIntegration;
-
-    public LandsTrustedCheck() {
-        landsIntegration = new LandsIntegration(FlightControl.getInstance());
-    }
-
+public class ResidenceOwnCheck extends TerritoryCheck {
     @Override public boolean check(Player p) {
-        Land land = landsIntegration.getLand(p.getLocation());
+        ClaimedResidence residence = Residence.getInstance().getResidenceManager().getByLoc(p.getLocation());
 
-        return land != null && land.getTrustedPlayers().contains(p.getUniqueId());
+        return residence != null && residence.isOwner(p);
     }
 }

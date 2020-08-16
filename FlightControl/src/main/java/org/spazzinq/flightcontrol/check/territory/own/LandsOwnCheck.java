@@ -33,8 +33,8 @@ import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 public final class LandsOwnCheck extends TerritoryCheck {
     private final LandsIntegration landsIntegration;
 
-    public LandsOwnCheck(FlightControl pl) {
-        landsIntegration = new LandsIntegration(pl);
+    public LandsOwnCheck() {
+        landsIntegration = new LandsIntegration(FlightControl.getInstance());
     }
 
     @Override public boolean check(Player p) {
