@@ -38,7 +38,7 @@ import java.util.TreeMap;
 public class TemplateCommand implements CommandExecutor, TabCompleter {
     protected FlightControl pl;
 
-    protected TreeMap<String, String> subCommands;
+    protected Map<String, String> subCommands;
     protected String defaultHelp;
 
     public TemplateCommand() {

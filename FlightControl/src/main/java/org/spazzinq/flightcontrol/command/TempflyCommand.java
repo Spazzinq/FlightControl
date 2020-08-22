@@ -44,7 +44,7 @@ public class TempflyCommand extends TemplateCommand {
     private final List<String> exampleDurations = Arrays.asList("30minutes", "1hour", "3hours", "6hours", "12hours", "1day");
 
     public TempflyCommand() {
-        subCommands = new TreeMap<String, String>() {{
+        subCommands = new HashMap<String, String>() {{
             put("check [player]", "Returns a player's current tempfly duration");
             put("disable [player]", "Disables a player's tempfly");
             put("set (duration) [player]", "Sets a player's current tempfly duration");
@@ -56,6 +56,7 @@ public class TempflyCommand extends TemplateCommand {
     }
 
 
+    // TODO Add error handling (redirect to help when incorrectly entered)
     @Override public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         Player targetPlayer = sender instanceof ConsoleCommandSender ? null : (Player) sender;
         TempflyTaskType type;
@@ -65,7 +66,7 @@ public class TempflyCommand extends TemplateCommand {
             type = TempflyTaskType.getTaskType(args[0].toUpperCase());
 
             if (type != TempflyTaskType.HELP) {
-                // Optional player input
+                // Optional remote player
                 // /tempfly set/add/remove (duration) [player]
                 int optionalPlayerIndex = 2;
 
@@ -85,11 +86,16 @@ public class TempflyCommand extends TemplateCommand {
                 }
 
                 // Duration
-                if (args.length > 1 && (type == TempflyTaskType.SET || type == TempflyTaskType.ADD || type == TempflyTaskType.REMOVE)) {
-                    String durationStr = args[2].toLowerCase();
+                // /tempfly set/add/remove (duration) [player]
+                if (type == TempflyTaskType.SET || type == TempflyTaskType.ADD || type == TempflyTaskType.REMOVE) {
+                    if (args.length > 1) {
+                        String durationStr = args[1].toLowerCase();
 
-                    if (durationStr.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
-                        duration = MathUtil.calculateDuration(durationStr);
+                        if (durationStr.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
+                            duration = MathUtil.calculateDuration(durationStr);
+                        }
+                    } else {
+                        type = TempflyTaskType.HELP;
                     }
                 }
             }
@@ -112,17 +118,29 @@ public class TempflyCommand extends TemplateCommand {
             }
         }
 
+        // TODO Refactor with variable indexes
+        int TYPE_INDEX = 0;
+
+        // /tempfly check/disable [player]
+        // /tempfly set/add/remove (duration) [player]
         if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS)) {
-            // /tempfly (check, add, remove, set, disable)
-            if (args.length == 1) {
-                return CommandUtil.autoComplete(TempflyTaskType.types, args[0]);
-                // /tempfly (check, add, remove, set, disable) (player)
-            } else if (args.length == 2) {
-                // Default auto-complete for player
-                return null;
-                // /tempfly (check, add, remove, set, disable) (player) [duration]
-            } else if (args.length == 3) {
-                return CommandUtil.autoComplete(exampleDurations, args[2]);
+            if (args.length > TYPE_INDEX) {
+                TempflyTaskType type = TempflyTaskType.getTaskType(args[TYPE_INDEX].toUpperCase());
+                // /tempfly (check, add, remove, set, disable)
+                if (args.length == TYPE_INDEX + 1) {
+                    return CommandUtil.autoComplete(TempflyTaskType.types, args[TYPE_INDEX]);
+                    // /tempfly (check, add, remove, set, disable) (player)
+                } else if (args.length == 2 && (type == TempflyTaskType.CHECK || type == TempflyTaskType.DISABLE)) {
+                    // Default auto-complete for player
+                    return null;
+                } else if (type == TempflyTaskType.SET || type == TempflyTaskType.ADD || type == TempflyTaskType.REMOVE) {
+                    if (args.length == 2) {
+                        return CommandUtil.autoComplete(exampleDurations, args[1]);
+                    } else if (args.length == 3) {
+                        // Default auto-complete for player
+                        return null;
+                    }
+                }
             }
         }
 
@@ -152,7 +170,7 @@ public class TempflyCommand extends TemplateCommand {
                             ? pl.getLangManager().getTempFlyDisable() : pl.getLangManager().getTempFlyDisabled();
                     break;
                 case HELP: default:
-                    msg = pl.getLangManager().getTempFlyUsage();
+                    msg = defaultHelp;
                     break;
             }
 

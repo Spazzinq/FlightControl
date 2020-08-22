@@ -64,7 +64,7 @@ public class FlightControlCommand extends TemplateCommand {
         }};
 
         buildHelp();
-        defaultHelp += "\n&a/tempfly help &7» &fTempfly command information \n&a/tt &7» &fPersonal trail toggle";
+        defaultHelp += "\n \n&a/tt &7» &fPersonal trail toggle";
     }
 
     private String loadHelp(String[] args) {
