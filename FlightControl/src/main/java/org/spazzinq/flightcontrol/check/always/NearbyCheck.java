@@ -42,7 +42,7 @@ public class NearbyCheck extends Check {
     }
 
     @Override public boolean check(Player p) {
-        if (pl.getConfManager().isNearbyCheck() && !PlayerUtil.hasPermission(p, FlyPermission.NEARBYPASS)) {
+        if (!PlayerUtil.hasPermission(p, FlyPermission.NEARBYPASS)) {
             Location l = p.getLocation();
             List<Player> worldPlayers = p.getWorld().getPlayers();
 

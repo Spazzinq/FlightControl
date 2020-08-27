@@ -82,11 +82,11 @@ class PathWatcher extends BukkitRunnable {
                         break;
                     case CONFIG:
                         if (pl.getConfManager().load()) {
+                            playerStateChanged = true;
                             logChanges(CONFIG);
                             // If flight_speed is updated!
                             pl.getPlayerManager().loadPlayerData();
                         }
-                        playerStateChanged = true;
                         break;
                     case LANG:
                         if (pl.getLangManager().load()) {
@@ -97,6 +97,8 @@ class PathWatcher extends BukkitRunnable {
                         break;
                 }
                 if (playerStateChanged) {
+                    pl.getCheckManager().loadChecks();
+
                     pl.getFlightManager().checkAllPlayers();
                     pl.getTrailManager().checkAllPlayers();
                 }
