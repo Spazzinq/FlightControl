@@ -54,7 +54,6 @@ import java.util.TreeMap;
 
 public class CategoryManager {
     private final FlightControl pl;
-    private final PluginManager pm;
 
     @Getter private CommentConf conf;
     @Getter private final File categoryFile;
@@ -63,7 +62,6 @@ public class CategoryManager {
 
     public CategoryManager() {
         pl = FlightControl.getInstance();
-        pm = pl.getServer().getPluginManager();
         categoryFile = new File(pl.getDataFolder(), "categories.yml");
     }
 
@@ -73,7 +71,7 @@ public class CategoryManager {
         global = null;
         categories.clear();
 
-        // Remove the old global territory
+        // Migrate to new version
         if (!conf.isConfigurationSection("global.territory")) {
             migrateFromVersion4();
         }

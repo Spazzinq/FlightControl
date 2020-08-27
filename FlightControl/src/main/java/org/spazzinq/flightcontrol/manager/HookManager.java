@@ -31,9 +31,9 @@ import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
 import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
 import org.spazzinq.flightcontrol.multiversion.current.FactionsXHook;
 import org.spazzinq.flightcontrol.multiversion.current.MassiveFactionsHook;
-import org.spazzinq.flightcontrol.multiversion.current.SavageFactionsHook;
+import org.spazzinq.flightcontrol.multiversion.legacy.LegacyFactionsUUIDHook;
 import org.spazzinq.flightcontrol.multiversion.current.WorldGuardHook7;
-import org.spazzinq.flightcontrol.multiversion.legacy.FactionsUUIDHook;
+import org.spazzinq.flightcontrol.multiversion.current.FactionsUUIDHook;
 import org.spazzinq.flightcontrol.multiversion.legacy.WorldGuardHook6;
 import org.spazzinq.flightcontrol.placeholder.ClipPlaceholder;
 import org.spazzinq.flightcontrol.placeholder.MVdWPlaceholder;
@@ -75,8 +75,9 @@ public class HookManager {
         } else if (pluginLoading("Factions")) {
             if (pm.isPluginEnabled("MassiveCore")) {
                 factionsHook = new MassiveFactionsHook();
-            } else if (pm.getPlugin("Factions").getDescription().getAuthors().contains("ProSavage")) {
-                factionsHook = new SavageFactionsHook();
+            } else if (pm.getPlugin("Factions").getDescription().getVersion().startsWith("1.6.9.5-U0.4")
+                    || pm.getPlugin("Factions").getDescription().getAuthors().contains("ProSavage")) {
+                factionsHook = new LegacyFactionsUUIDHook();
             } else {
                 factionsHook = new FactionsUUIDHook();
             }

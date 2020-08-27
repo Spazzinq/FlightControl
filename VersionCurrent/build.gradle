@@ -28,8 +28,13 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.16.1-R0.1-SNAPSHOT'
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.1.0-SNAPSHOT'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.2-SNAPSHOT'
-    compileOnly 'com.github.SavageLabs:SavageFactions:1.14'
     compileOnly 'net.prosavage.factionsx:FactionsX:0.4.2-PATREON'
+    compileOnly('com.massivecraft:Factions:1.6.9.5-U0.5.18') {
+        exclude group: 'com.darkblade12', module: 'particleeffect'
+        exclude group: 'org.spongepowered', module: 'configurate-hocon'
+        exclude group: 'org.kitteh', module: 'paste-gg-api'
+        exclude group: 'com.mojang', module: 'brigadier'
+    }
 
     compileOnly files('../lib/MassiveCore-2.14.0.jar', '../lib/Factions-2.14.0.jar')
 }

@@ -25,11 +25,11 @@
 package org.spazzinq.flightcontrol.multiversion.current;
 
 import com.massivecraft.factions.*;
-import com.massivecraft.factions.struct.Relation;
+import com.massivecraft.factions.perms.Relation;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
 
-public final class SavageFactionsHook extends FactionsHookBase {
+public final class FactionsUUIDHook extends FactionsHookBase {
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p).isWarZone();
     }
@@ -70,7 +70,10 @@ public final class SavageFactionsHook extends FactionsHookBase {
         return FPlayers.getInstance().getByPlayer(p);
     }
 
-    // WARNING: Some versions of Factions don't have Relation.isEnemy()
+    /*
+    WARNING: Some versions of Factions don't have Relation.isEnemy().
+    "perms" package added in 1.6.9.5-U0.5.0 (versions before 1.6.9.5-U0.4.3 will not work).
+    */
     @Override public boolean isEnemy(Player p, Player otherP) {
         return getFPlayer(p).getRelationTo(getFPlayer(otherP)) == Relation.ENEMY;
     }
