@@ -36,7 +36,10 @@ import org.spazzinq.flightcontrol.util.CommandUtil;
 import org.spazzinq.flightcontrol.util.MathUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 

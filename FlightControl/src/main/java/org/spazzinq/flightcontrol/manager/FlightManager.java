@@ -28,7 +28,6 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.APIManager;
 import org.spazzinq.flightcontrol.api.event.FlightCanEnableEvent;
@@ -170,9 +169,6 @@ public class FlightManager {
 
             if (pl.getConfManager().isCancelFall() && p.isFlying()) {
                 noFallDmg.add(p);
-                new BukkitRunnable() {
-                    public void run() { noFallDmg.remove(p); }
-                }.runTaskLater(pl, 300);
             }
             p.setAllowFlight(false);
             p.setFlying(false);
