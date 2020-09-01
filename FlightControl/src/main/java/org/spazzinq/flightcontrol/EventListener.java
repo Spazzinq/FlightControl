@@ -35,6 +35,7 @@ import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.object.Sound;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
+import org.spazzinq.flightcontrol.object.Timer;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
@@ -60,7 +61,18 @@ final class EventListener implements org.bukkit.event.Listener {
                 || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    pl.getFlightManager().check(e.getPlayer());
+                    Player p = e.getPlayer();
+
+                    pl.getFlightManager().check(p);
+
+                    // Safety check for plugins that enable flight
+                    if (p.isFlying()) {
+                        Timer tempflyTimer = pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer();
+
+                        if (!tempflyTimer.isRunning()) {
+                            tempflyTimer.start();
+                        }
+                    }
                 }
             }.runTask(pl);
         }

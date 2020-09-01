@@ -91,6 +91,10 @@ public abstract class Timer {
         return getTimeLeft() != 0;
     }
 
+    public boolean isRunning() {
+        return totalTime != 0;
+    }
+
     public abstract void onFinish();
     public abstract void onStart();
 }
