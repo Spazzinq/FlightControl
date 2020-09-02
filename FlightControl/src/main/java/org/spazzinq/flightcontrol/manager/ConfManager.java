@@ -42,11 +42,13 @@ public class ConfManager extends StorageManager {
     @Getter @Setter private boolean autoUpdate;
     @Getter @Setter private boolean inGameSupport;
 
+    @Getter @Setter private float defaultFlightSpeed;
+    @Getter @Setter private int heightLimit;
+
     @Getter @Setter private Sound enableSound;
     @Getter @Setter private Sound disableSound;
     @Getter @Setter private Sound canEnableSound;
     @Getter @Setter private Sound cannotEnableSound;
-    @Getter @Setter private float defaultFlightSpeed;
     @Getter @Setter private boolean combatChecked;
     @Getter @Setter private boolean cancelFall;
     @Getter @Setter private boolean vanishBypass;
@@ -81,6 +83,7 @@ public class ConfManager extends StorageManager {
 
         // ints
         int range = conf.getInt("nearby_disable.range");
+        heightLimit = conf.getInt("settings.height_limit");
 
         if (nearbyCheck = (range != -1)) {
             nearbyRangeSquared = range * range;
@@ -121,6 +124,14 @@ public class ConfManager extends StorageManager {
             pl.getLogger().info("Added \"tempfly\" section to config!");
             conf.addNode("tempfly:","nearby_disable");
             conf.addIndentedSubnodes(Collections.singleton("always_decrease: true"), "tempfly");
+
+            modified = true;
+        }
+
+        // 4.7.12 - add height limit
+        if (!conf.isInt("settings.height_limit")) {
+            pl.getLogger().info("Added \"height_limit\" section to config!");
+            conf.addSubnodes(Collections.singleton("height_limit: -1"), "settings.flight_speed");
 
             modified = true;
         }

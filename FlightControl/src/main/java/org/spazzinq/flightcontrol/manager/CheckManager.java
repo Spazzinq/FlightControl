@@ -124,6 +124,10 @@ public class CheckManager {
         if (pl.getConfManager().isNearbyCheck()) {
             alwaysChecks.addDisabled(pl.getConfManager().isNearbyCheckEnemies() ? new NearbyEnemyCheck(pl) : new NearbyCheck(pl));
         }
+        // Height Limit Check
+        if (pl.getConfManager().getHeightLimit() != -1) {
+            alwaysChecks.addDisabled(new HeightLimitCheck());
+        }
     }
 
     private void loadTerritoryChecks() {

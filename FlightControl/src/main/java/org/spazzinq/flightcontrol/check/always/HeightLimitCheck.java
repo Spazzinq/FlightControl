@@ -22,18 +22,19 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.api.object;
+package org.spazzinq.flightcontrol.check.always;
 
-public enum Cause {
-    // Bypass and trail Checks
-    BYPASS_PERMISSION, INVISIBILITY_POTION, SPECTATOR_MODE, VANISH,
-    // Always enable Checks
-    ENCHANT, FLY_ALL, TEMP_FLY, PERMISSION_REGION, PERMISSION_WORLD,
-    // Always disable Checks
-    COMBAT, NEARBY, HEIGHT_LIMIT,
-    // Category specific Checks
-    CATEGORY, TERRITORY,
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.api.object.Cause;
+import org.spazzinq.flightcontrol.check.Check;
 
-    // Player-induced
-    DISABLE_COMMAND
+public class HeightLimitCheck extends Check {
+    @Override public boolean check(Player p) {
+        return p.getLocation().getBlockY() > FlightControl.getInstance().getConfManager().getHeightLimit();
+    }
+
+    @Override public Cause getCause() {
+        return Cause.HEIGHT_LIMIT;
+    }
 }
