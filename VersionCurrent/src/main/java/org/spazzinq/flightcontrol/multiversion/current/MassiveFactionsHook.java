@@ -71,7 +71,11 @@ public final class MassiveFactionsHook extends FactionsHook {
     }
 
     @Override public boolean isEnemy(Player p, Player otherP) {
-        return MPlayer.get(p).getRelationTo(MPlayer.get(otherP)) == Rel.ENEMY;
+        MPlayer massivePlayer = MPlayer.get(p);
+        MPlayer massiveOtherPlayer = MPlayer.get(otherP);
+
+        return massivePlayer != null && massiveOtherPlayer != null
+                && massivePlayer.getRelationTo(massiveOtherPlayer) == Rel.ENEMY;
     }
 
     private Faction getFactionAtLocation(Player p) {
