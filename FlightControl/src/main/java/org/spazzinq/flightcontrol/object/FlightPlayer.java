@@ -89,7 +89,7 @@ public class FlightPlayer {
         return trail;
     }
 
-    @SneakyThrows public void modifyTempflyDuration(TempflyTaskType type, long duration) {
+    @SneakyThrows public void modifyTempflyDuration(TempflyTask type, long duration) {
         // TODO Fix subtraction calculation
         switch (type) {
             case ADD:
@@ -109,7 +109,7 @@ public class FlightPlayer {
         }
 
         // Start if always running/currently flying
-        if (type != TempflyTaskType.REMOVE
+        if (type != TempflyTask.REMOVE
                 && (FlightControl.getInstance().getConfManager().isTempflyAlwaysDecrease()
                     || getPlayer().isFlying())) {
             tempflyTimer.start();

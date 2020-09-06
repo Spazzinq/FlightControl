@@ -26,26 +26,26 @@ package org.spazzinq.flightcontrol.object;
 
 import java.util.ArrayList;
 
-public enum TempflyTaskType {
+public enum TempflyTask {
     HELP, CHECK, ADD, REMOVE, SET, DISABLE;
 
     public static final ArrayList<String> types = new ArrayList<>();
 
     static {
-        for (TempflyTaskType type : values()) {
+        for (TempflyTask type : values()) {
             String name = type.name().toLowerCase();
 
             types.add(name);
         }
     }
 
-    public static TempflyTaskType getTaskType(String name) {
-        TempflyTaskType type;
+    public static TempflyTask getTaskType(String name) {
+        TempflyTask type;
 
         try {
-            type = TempflyTaskType.valueOf(name);
+            type = TempflyTask.valueOf(name);
         } catch (IllegalArgumentException e) {
-            type = TempflyTaskType.CHECK;
+            type = TempflyTask.CHECK;
         }
 
         return type;

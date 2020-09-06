@@ -24,17 +24,14 @@
 
 package org.spazzinq.flightcontrol.command;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.manager.LangManager;
 
-import java.util.List;
 import java.util.Map;
 
-public class TemplateCommand implements CommandExecutor, TabCompleter {
+public abstract class TemplateCommand implements CommandExecutor, TabCompleter {
     protected FlightControl pl;
 
     protected Map<String, String> subCommands;
@@ -52,13 +49,5 @@ public class TemplateCommand implements CommandExecutor, TabCompleter {
         }
 
         defaultHelp = buildDefaultHelp.toString();
-    }
-
-    @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        return true;
-    }
-
-    @Override public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
     }
 }
