@@ -64,15 +64,6 @@ final class EventListener implements org.bukkit.event.Listener {
                     Player p = e.getPlayer();
 
                     pl.getFlightManager().check(p);
-
-                    // Safety check for plugins that enable flight
-                    if (p.isFlying()) {
-                        Timer tempflyTimer = pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer();
-
-                        if (!tempflyTimer.isRunning()) {
-                            tempflyTimer.start();
-                        }
-                    }
                 }
             }.runTask(pl);
         }
