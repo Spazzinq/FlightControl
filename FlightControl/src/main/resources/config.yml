@@ -12,6 +12,8 @@
 settings:
   # Updates the config automatically and adds new features
   auto_update: true
+  # Automatically reloads the config when changes are saved
+  auto_reload: true
   # Enables flight automatically (no command necessary)
   auto_enable_flight: true
   # The default speed is 1.0 and matches Essentials's /flyspeed values (0-10)

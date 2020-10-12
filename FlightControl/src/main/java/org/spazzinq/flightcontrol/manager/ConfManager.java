@@ -39,6 +39,7 @@ import java.util.Collections;
 
 public class ConfManager extends StorageManager {
     @Getter @Setter private boolean autoEnable;
+    @Getter @Setter private boolean autoReload;
     @Getter @Setter private boolean autoUpdate;
     @Getter @Setter private boolean inGameSupport;
 
@@ -74,6 +75,7 @@ public class ConfManager extends StorageManager {
     @Override protected void initializeValues() {
         // booleans
         autoUpdate = conf.getBoolean("settings.auto_update");
+        autoReload = conf.getBoolean("settings.auto_reload");
         autoEnable = conf.getBoolean("settings.auto_enable_flight");
         combatChecked = conf.getBoolean("settings.disable_flight_in_combat");
         cancelFall = conf.getBoolean("settings.prevent_fall_damage");
@@ -107,7 +109,6 @@ public class ConfManager extends StorageManager {
         if (conf.isConfigurationSection("territory")) {
             pl.getLogger().info("Territories have migrated to the categories.yml!");
             conf.deleteNode("territory");
-
             modified = true;
         }
 
@@ -115,7 +116,6 @@ public class ConfManager extends StorageManager {
         if (!conf.isString("settings.ae_enchant_name")){
             pl.getLogger().info("Added AdvancedEnchantments custom enchant name setting!");
             conf.addSubnodes(Collections.singleton("ae_enchant_name: \"Flight\""), "settings.vanish_bypass");
-
             modified = true;
         }
 
@@ -124,7 +124,6 @@ public class ConfManager extends StorageManager {
             pl.getLogger().info("Added \"tempfly\" section to config!");
             conf.addNode("tempfly:","nearby_disable");
             conf.addIndentedSubnodes(Collections.singleton("always_decrease: true"), "tempfly");
-
             modified = true;
         }
 
@@ -132,7 +131,13 @@ public class ConfManager extends StorageManager {
         if (!conf.isInt("settings.height_limit")) {
             pl.getLogger().info("Added \"height_limit\" section to config!");
             conf.addSubnodes(Collections.singleton("height_limit: -1"), "settings.flight_speed");
+            modified = true;
+        }
 
+        // 4.7.14
+        if (!conf.isString("settings.auto_reload")) {
+            pl.getLogger().info("Added \"auto_reload\" to the config!");
+            conf.addSubnodes(Collections.singleton("auto_reload: true"), "settings.auto_update");
             modified = true;
         }
 

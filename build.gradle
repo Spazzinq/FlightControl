@@ -24,7 +24,7 @@
 
 allprojects {
     group = 'org.spazzinq'
-    version = '4.7.13-BETA'
+    version = '4.7.14-BETA'
 }
 
 subprojects {
@@ -49,8 +49,6 @@ subprojects {
         maven { url = 'https://jitpack.io' }
         // PlaceholderAPI
         maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-        // MVdWPlaceholderAPI
-        maven { url = 'https://repo.mvdw-software.com/content/groups/public/' }
         // FactionsX
         maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
     }
