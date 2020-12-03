@@ -184,6 +184,10 @@ public class CheckManager {
             ownTerritoryChecks.put("Residence", new ResidenceOwnCheck());
             trustedTerritoryChecks.put("Residence", new ResidenceOwnCheck());
         }
+        if (pluginLoading("SuperiorSkyblock2")) {
+            ownTerritoryChecks.put("SuperiorSkyblock2", new SuperiorSkyblockOwnCheck());
+            trustedTerritoryChecks.put("SuperiorSkyblock2", new SuperiorSkyblockTrustedCheck());
+        }
     }
 
     private void loadCombatChecks() {

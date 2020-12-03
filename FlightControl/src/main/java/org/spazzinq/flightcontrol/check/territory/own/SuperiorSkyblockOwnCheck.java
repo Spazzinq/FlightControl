@@ -22,34 +22,14 @@
  * SOFTWARE.
  */
 
-allprojects {
-    group = 'org.spazzinq'
-    version = '4.7.15-BETA'
-}
+package org.spazzinq.flightcontrol.check.territory.own;
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
+import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
-    repositories {
-        mavenCentral()
-        // Spigot
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats, [BentoBox doesn't work]
-        maven { url = 'https://repo.codemc.io/repository/maven-public/' }
-        // WorldEdit, WorldGuard
-        maven { url = 'https://maven.sk89q.com/repo/' }
-        // Essentials, FactionsUUID
-        maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
-        // PlotSquared
-        maven { url = 'https://plotsquared.com/mvn/' }
-        // CrazyEnchantments
-        maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PvPManager, CombatLogX
-        maven { url = 'https://jitpack.io' }
-        // PlaceholderAPI
-        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-        // FactionsX
-        maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
+public class SuperiorSkyblockOwnCheck extends TerritoryCheck {
+    @Override public boolean check(Player p) {
+        return SuperiorSkyblockAPI.getPlayer(p).isInsideIsland();
     }
 }
