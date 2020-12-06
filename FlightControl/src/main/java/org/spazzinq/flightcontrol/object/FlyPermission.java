@@ -30,6 +30,7 @@ public enum FlyPermission {
     NEARBYPASS("flightcontrol.nearbypass"),
 
     FLY_ALL("flightcontrol.flyall"),
+    FLY_COMMAND("flightcontrol.flycommand"),
 
     CATEGORY_STUB("flightcontrol.category."),
     TEMP_FLY_STUB("flightcontrol.tempfly."),

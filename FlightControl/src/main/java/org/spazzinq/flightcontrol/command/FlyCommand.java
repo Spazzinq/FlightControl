@@ -51,12 +51,16 @@ public class FlyCommand implements CommandExecutor {
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
         if (args.length == 0) {
             if (s instanceof Player) {
-                Player p = (Player) s;
+                if (PlayerUtil.hasPermission(s, FlyPermission.FLY_COMMAND)) {
+                    Player p = (Player) s;
 
-                if (p.getAllowFlight()) {
-                    flightManager.disableFlight(p, Cause.DISABLE_COMMAND, true);
+                    if (p.getAllowFlight()) {
+                        flightManager.disableFlight(p, Cause.DISABLE_COMMAND, true);
+                    } else {
+                        flightManager.check(p, true);
+                    }
                 } else {
-                    flightManager.check(p, true);
+                    msg(s, pl.getLangManager().getPermDenied());
                 }
             } else {
                 pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
