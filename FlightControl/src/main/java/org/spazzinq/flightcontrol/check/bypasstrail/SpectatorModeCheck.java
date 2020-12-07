@@ -31,7 +31,7 @@ import org.spazzinq.flightcontrol.check.Check;
 
 public class SpectatorModeCheck extends Check {
     @Override public boolean check(Player p) {
-        return p.getGameMode() == GameMode.SPECTATOR;
+        return p != null && p.getGameMode() == GameMode.SPECTATOR;
     }
 
     @Override public Cause getCause() {
