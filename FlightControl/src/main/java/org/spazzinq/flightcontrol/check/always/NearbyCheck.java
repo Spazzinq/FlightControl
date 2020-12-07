@@ -49,7 +49,9 @@ public class NearbyCheck extends Check {
             worldPlayers.remove(p);
 
             for (Player otherP : worldPlayers) {
-                if (l.distanceSquared(otherP.getLocation()) <= pl.getConfManager().getNearbyRangeSquared()) {
+                if (!PlayerUtil.hasPermission(otherP, FlyPermission.NEARBYPASS)
+                        && l.distanceSquared(otherP.getLocation()) <= pl.getConfManager().getNearbyRangeSquared()) {
+
                     if (otherP.isFlying()) {
                         pl.getFlightManager().check(otherP);
                     }
