@@ -39,46 +39,70 @@ import java.util.HashSet;
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 
 public class StatusManager {
-    final FlightControl pl;
+    private final FlightControl pl;
 
     public StatusManager() {
         pl = FlightControl.getInstance();
     }
 
-    public HashSet<Check> checkEnable(Player p) {
-        return checkEnable(p, null);
+    /**
+     * Checks if the player's flight should be enabled.
+     * @param targetPlayer the target of the check
+     * @return Checks that indicate flight should enable
+     */
+    public HashSet<Check> checkEnable(Player targetPlayer) {
+        return checkEnable(targetPlayer, null);
     }
 
-    public HashSet<Check> checkEnable(Player p, CommandSender s) {
-        return check(true, p, s);
+    /**
+     * Checks if the player's flight should be enabled
+     * and sends a debug message to the sender.
+     * @param targetPlayer the target of the debug check
+     * @param sender the recipient of the debug info
+     * @return Checks that indicate flight should enable
+     */
+    public HashSet<Check> checkEnable(Player targetPlayer, CommandSender sender) {
+        return check(true, targetPlayer, sender);
     }
 
-    public HashSet<Check> checkDisable(Player p) {
-        return checkDisable(p, null);
+    /**
+     * Checks if the player's flight should be disabled.
+     * @param targetPlayer the target of the check
+     * @return Checks that indicate flight should disable
+     */
+    public HashSet<Check> checkDisable(Player targetPlayer) {
+        return checkDisable(targetPlayer, null);
     }
 
-    public HashSet<Check> checkDisable(Player p, CommandSender s) {
-        return check(false, p, s);
+    /**
+     * Checks if the player's flight should be disabled
+     * and sends a debug message to the sender.
+     * @param targetPlayer the target of the debug check
+     * @param sender the recipient of the debug info
+     * @return Checks that indicate flight should disable
+     */
+    public HashSet<Check> checkDisable(Player targetPlayer, CommandSender sender) {
+        return check(false, targetPlayer, sender);
     }
 
-    private HashSet<Check> check(boolean enabled, Player p, CommandSender s) {
-        boolean debug = s != null;
+    private HashSet<Check> check(boolean enable, Player targetPlayer, CommandSender sender) {
+        boolean debug = sender != null;
         HashSet<Check> allChecks = new HashSet<>();
         // Always & Category Checks
-        allChecks.addAll(pl.getCheckManager().getAlwaysChecks().get(enabled));
-        allChecks.addAll(pl.getCategoryManager().getCategory(p).getChecks().get(enabled));
+        allChecks.addAll(pl.getCheckManager().getAlwaysChecks().get(enable));
+        allChecks.addAll(pl.getCategoryManager().getCategory(targetPlayer).getChecks().get(enable));
 
         // Register perms before evaluating permission-based ones
-        pl.getPermissionManager().registerLocationalFlyPerms(p);
+        pl.getPermissionManager().registerLocationalFlyPerms(targetPlayer);
 
         // Evaluate all checks
-        HashSet<Check> trueChecks = CheckUtil.evaluate(allChecks, p, debug);
+        HashSet<Check> trueChecks = CheckUtil.evaluate(allChecks, targetPlayer, debug);
 
         if (debug) {
             HashSet<Check> falseChecks = new HashSet<>(allChecks);
             falseChecks.removeAll(trueChecks);
 
-            MessageUtil.msg(s, "&e&l" + (enabled ? "Enable" : "Override") + "\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
+            MessageUtil.msg(sender, "&e&l" + (enable ? "Enable" : "Override") + "\n&aTrue&f: " + trueChecks + "\n&cFalse&f: " + falseChecks);
         }
 
         return trueChecks;
