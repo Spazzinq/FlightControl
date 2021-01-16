@@ -9,6 +9,9 @@ assignees: Spazzinq
 
 ***ALWAYS HAVE THE LATEST VERSION OF THE PLUGIN*** 
 
+**Discord Tag** *(so I can notify you if I need more information or if an issue is fixed)*
+ ...
+
 **Describe the bug** *(if not just an error)*
  ...
  
