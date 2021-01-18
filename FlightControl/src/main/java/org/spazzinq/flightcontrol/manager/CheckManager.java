@@ -26,6 +26,8 @@ package org.spazzinq.flightcontrol.manager;
 
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.always.*;
@@ -40,6 +42,7 @@ import org.spazzinq.flightcontrol.check.territory.own.*;
 import org.spazzinq.flightcontrol.check.territory.trusted.*;
 import org.spazzinq.flightcontrol.object.DualStore;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.TreeMap;
 
@@ -49,8 +52,7 @@ public class CheckManager {
 
     @Getter private final DualStore<Check> alwaysChecks = new DualStore<>();
     @Getter private final HashSet<Check> bypassChecks = new HashSet<>();
-    // TODO Rename to noTrail when lombok works again
-    @Getter private final HashSet<Check> trailChecks = new HashSet<>();
+    @Getter private final HashSet<Check> noTrailChecks = new HashSet<>();
 
     @Getter private final TreeMap<String, TerritoryCheck> ownTerritoryChecks = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     @Getter private final TreeMap<String, TerritoryCheck> trustedTerritoryChecks = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -83,7 +85,7 @@ public class CheckManager {
         // Spectator Check
         SpectatorModeCheck spectatorModeCheck = new SpectatorModeCheck();
         bypassChecks.add(spectatorModeCheck);
-        trailChecks.add(spectatorModeCheck);
+        noTrailChecks.add(spectatorModeCheck);
         // Vanish Checks
         HashSet<Check> vanishChecks = new HashSet<>();
 
@@ -95,10 +97,10 @@ public class CheckManager {
 
         if (!vanishChecks.isEmpty() && pl.getConfManager().isVanishBypass()) {
             bypassChecks.addAll(vanishChecks);
-            trailChecks.addAll(vanishChecks);
+            noTrailChecks.addAll(vanishChecks);
         }
         // Invisibility potion Check
-        trailChecks.add(new InvisibilityPotionCheck());
+        noTrailChecks.add(new InvisibilityPotionCheck());
         /* DISABLE EMPTY */
     }
 
@@ -154,40 +156,22 @@ public class CheckManager {
             // trusted == own
             ownTerritoryChecks.put("Towny", new TownyTownCheck());
             trustedTerritoryChecks.put("Towny", new TownyTownCheck());
+
             ownTerritoryChecks.put("TownyTown", new TownyTownCheck());
             trustedTerritoryChecks.put("TownyTown", new TownyTownCheck());
 
             ownTerritoryChecks.put("TownyNation", new TownyNationCheck());
             trustedTerritoryChecks.put("TownyNation", new TownyNationCheck());
         }
-        if (pluginLoading("Lands")) {
-            ownTerritoryChecks.put("Lands", new LandsOwnCheck());
-            trustedTerritoryChecks.put("Lands", new LandsTrustedCheck());
-        }
-        if (pluginLoading("GriefPrevention")) {
-            ownTerritoryChecks.put("GriefPrevention", new GriefPreventionOwnCheck());
-            trustedTerritoryChecks.put("GriefPrevention", new GriefPreventionTrustedCheck());
-        }
-        if (pluginLoading("RedProtect")) {
-            ownTerritoryChecks.put("RedProtect", new RedProtectOwnCheck());
-            trustedTerritoryChecks.put("RedProtect", new RedProtectTrustedCheck());
-        }
-        if (pluginLoading("BentoBox")) {
-            ownTerritoryChecks.put("BentoBox", new BentoBoxOwnCheck());
-            trustedTerritoryChecks.put("BentoBox", new BentoBoxTrustedCheck());
-        }
-        if (pluginLoading("WorldGuard")) {
-            ownTerritoryChecks.put("WorldGuard", new WorldGuardOwnCheck());
-            trustedTerritoryChecks.put("WorldGuard", new WorldGuardTrustedCheck());
-        }
-        if (pluginLoading("Residence")) {
-            ownTerritoryChecks.put("Residence", new ResidenceOwnCheck());
-            trustedTerritoryChecks.put("Residence", new ResidenceOwnCheck());
-        }
-        if (pluginLoading("SuperiorSkyblock2")) {
-            ownTerritoryChecks.put("SuperiorSkyblock2", new SuperiorSkyblockOwnCheck());
-            trustedTerritoryChecks.put("SuperiorSkyblock2", new SuperiorSkyblockTrustedCheck());
-        }
+
+        addTerritoryCheck("Lands", new LandsOwnCheck(), new LandsTrustedCheck());
+        addTerritoryCheck("GriefPrevention", new GriefPreventionOwnCheck(), new GriefPreventionTrustedCheck());
+        addTerritoryCheck("RedProtect", new RedProtectOwnCheck(), new RedProtectTrustedCheck());
+        addTerritoryCheck("BentoBox", new BentoBoxOwnCheck(), new BentoBoxTrustedCheck());
+        addTerritoryCheck("WorldGuard", new WorldGuardOwnCheck(), new WorldGuardTrustedCheck());
+        // trusted == own
+        addTerritoryCheck("Residence", new ResidenceOwnCheck(), new ResidenceOwnCheck());
+        addTerritoryCheck("SuperiorSkyblock2", new SuperiorSkyblockOwnCheck(), new SuperiorSkyblockTrustedCheck());
     }
 
     private void loadCombatChecks() {
@@ -212,6 +196,13 @@ public class CheckManager {
 
         if (!combatChecks.isEmpty() && pl.getConfManager().isCombatChecked()) {
             alwaysChecks.addDisabled(combatChecks);
+        }
+    }
+
+    private void addTerritoryCheck(String pluginName, @NotNull TerritoryCheck... checks) {
+        if (pluginLoading(pluginName)) {
+            ownTerritoryChecks.put(pluginName, checks[0]);
+            trustedTerritoryChecks.put(pluginName, checks[1]);
         }
     }
 

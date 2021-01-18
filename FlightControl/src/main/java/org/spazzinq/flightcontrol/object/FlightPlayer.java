@@ -60,9 +60,11 @@ public class FlightPlayer {
             }
 
             @Override public void onStart() {
-                finishTask = new BukkitRunnable() {
+                new BukkitRunnable() {
                     @Override public void run() {
-                        FlightControl.getInstance().getFlightManager().check(getPlayer());
+                        if (getPlayer() != null) {
+                            FlightControl.getInstance().getFlightManager().check(getPlayer());
+                        }
                     }
                 }.runTaskLater(FlightControl.getInstance(), getTimeLeft() / 50 + 4);
             }
