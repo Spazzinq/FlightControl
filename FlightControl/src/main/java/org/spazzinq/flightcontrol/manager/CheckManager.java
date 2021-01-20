@@ -164,14 +164,35 @@ public class CheckManager {
             trustedTerritoryChecks.put("TownyNation", new TownyNationCheck());
         }
 
-        addTerritoryCheck("Lands", new LandsOwnCheck(), new LandsTrustedCheck());
-        addTerritoryCheck("GriefPrevention", new GriefPreventionOwnCheck(), new GriefPreventionTrustedCheck());
-        addTerritoryCheck("RedProtect", new RedProtectOwnCheck(), new RedProtectTrustedCheck());
-        addTerritoryCheck("BentoBox", new BentoBoxOwnCheck(), new BentoBoxTrustedCheck());
-        addTerritoryCheck("WorldGuard", new WorldGuardOwnCheck(), new WorldGuardTrustedCheck());
+        if (pluginLoading("Lands")) {
+            ownTerritoryChecks.put("Lands", new LandsOwnCheck());
+            trustedTerritoryChecks.put("Lands", new LandsTrustedCheck());
+        }
+        if (pluginLoading("GriefPrevention")) {
+            ownTerritoryChecks.put("GriefPrevention", new GriefPreventionOwnCheck());
+            trustedTerritoryChecks.put("GriefPrevention", new GriefPreventionTrustedCheck());
+        }
+        if (pluginLoading("RedProtect")) {
+            ownTerritoryChecks.put("RedProtect", new RedProtectOwnCheck());
+            trustedTerritoryChecks.put("RedProtect", new RedProtectTrustedCheck());
+        }
+        if (pluginLoading("BentoBox")) {
+            ownTerritoryChecks.put("BentoBox", new BentoBoxOwnCheck());
+            trustedTerritoryChecks.put("BentoBox", new BentoBoxTrustedCheck());
+        }
+        if (pluginLoading("WorldGuard")) {
+            ownTerritoryChecks.put("WorldGuard", new WorldGuardOwnCheck());
+            trustedTerritoryChecks.put("WorldGuard", new WorldGuardTrustedCheck());
+        }
         // trusted == own
-        addTerritoryCheck("Residence", new ResidenceOwnCheck(), new ResidenceOwnCheck());
-        addTerritoryCheck("SuperiorSkyblock2", new SuperiorSkyblockOwnCheck(), new SuperiorSkyblockTrustedCheck());
+        if (pluginLoading("Residence")) {
+            ownTerritoryChecks.put("Residence", new ResidenceOwnCheck());
+            trustedTerritoryChecks.put("Residence", new ResidenceOwnCheck());
+        }
+        if (pluginLoading("SuperiorSkyblock2")) {
+            ownTerritoryChecks.put("SuperiorSkyblock2", new SuperiorSkyblockOwnCheck());
+            trustedTerritoryChecks.put("SuperiorSkyblock2", new SuperiorSkyblockTrustedCheck());
+        }
     }
 
     private void loadCombatChecks() {
