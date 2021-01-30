@@ -51,7 +51,7 @@ public class TrailManager {
                 && pl.getPlayerManager().getFlightPlayer(p).trailWanted() && !particleTasks.containsKey(p)) {
             particleTasks.put(p, new BukkitRunnable() {
                 @Override public void run() {
-                    HashSet<Check> trailChecks = CheckUtil.evaluate(pl.getCheckManager().getTrailChecks(), p);
+                    HashSet<Check> trailChecks = CheckUtil.evaluate(pl.getCheckManager().getNoTrailChecks(), p);
 
                     if (trailChecks.isEmpty()) {
                         Location l = p.getLocation();

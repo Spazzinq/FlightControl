@@ -42,23 +42,22 @@ public class NearbyEnemyCheck extends Check {
     }
 
     @Override public boolean check(Player p) {
-        if (pl.getConfManager().isNearbyCheck() && !PlayerUtil.hasPermission(p, FlyPermission.NEARBYPASS)) {
+        if (!PlayerUtil.hasPermission(p, FlyPermission.NEARBYPASS)) {
             Location l = p.getLocation();
             List<Player> worldPlayers = p.getWorld().getPlayers();
 
             worldPlayers.remove(p);
 
-            if (pl.getConfManager().isNearbyCheckEnemies()) {
-                for (Player otherP : worldPlayers) {
-                    if (pl.getHookManager().getFactionsHook().isEnemy(p, otherP)
-                            && l.distanceSquared(otherP.getLocation()) <= pl.getConfManager().getNearbyRangeSquared()) {
+            for (Player otherP : worldPlayers) {
+                if (!PlayerUtil.hasPermission(otherP, FlyPermission.NEARBYPASS)
+                        && pl.getHookManager().getFactionsHook().isEnemy(p, otherP)
+                        && l.distanceSquared(otherP.getLocation()) <= pl.getConfManager().getNearbyRangeSquared()) {
 
-                        if (otherP.isFlying()) {
-                            pl.getFlightManager().check(otherP);
-                        }
-
-                        return true;
+                    if (otherP.isFlying()) {
+                        pl.getFlightManager().check(otherP);
                     }
+
+                    return true;
                 }
             }
         }

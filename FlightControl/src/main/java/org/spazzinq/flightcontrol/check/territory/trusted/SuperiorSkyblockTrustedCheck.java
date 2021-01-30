@@ -22,19 +22,15 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.bypasstrail;
+package org.spazzinq.flightcontrol.check.territory.trusted;
 
-import org.bukkit.GameMode;
+import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.object.Cause;
-import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
-public class SpectatorModeCheck extends Check {
+public class SuperiorSkyblockTrustedCheck extends TerritoryCheck {
     @Override public boolean check(Player p) {
-        return p != null && p.getGameMode() == GameMode.SPECTATOR;
-    }
-
-    @Override public Cause getCause() {
-        return Cause.SPECTATOR_MODE;
+        return SuperiorSkyblockAPI.getIslandAt(p.getLocation())
+                .isMember(SuperiorSkyblockAPI.getPlayer(p));
     }
 }

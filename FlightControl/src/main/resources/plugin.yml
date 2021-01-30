@@ -46,6 +46,9 @@ permissions:
   flightcontrol.flyall:
     description: Ability to automatically fly in all regions that are not disabled
     default: false
+  flightcontrol.flycommand:
+    description: Ability to use the fly command (granted by default)
+    default: true
   flightcontrol.flyspeed:
     description: Ability to set flight speed
     default: op

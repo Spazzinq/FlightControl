@@ -24,13 +24,10 @@
 
 package org.spazzinq.flightcontrol.object;
 
-import org.bukkit.scheduler.BukkitTask;
-
 public abstract class Timer {
     private long startTime;
     private long totalTime;
     private long elapsedTime;
-    protected BukkitTask finishTask;
 
     public Timer(long totalTime) {
         this.totalTime = totalTime;

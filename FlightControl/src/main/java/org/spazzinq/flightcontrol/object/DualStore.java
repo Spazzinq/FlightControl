@@ -42,12 +42,12 @@ public class DualStore<T> {
         enabled.addAll(Arrays.asList(type));
     }
 
-    @SafeVarargs public final void addDisabled(T... type) {
-        disabled.addAll(Arrays.asList(type));
-    }
-
     public void addEnabled(HashSet<T> checks) {
         enabled.addAll(checks);
+    }
+
+    @SafeVarargs public final void addDisabled(T... type) {
+        disabled.addAll(Arrays.asList(type));
     }
 
     public void addDisabled(HashSet<T> checks) {

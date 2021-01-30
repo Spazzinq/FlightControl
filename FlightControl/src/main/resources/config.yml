@@ -12,10 +12,14 @@
 settings:
   # Updates the config automatically and adds new features
   auto_update: true
+  # Automatically reloads the config when changes are saved
+  auto_reload: true
   # Enables flight automatically (no command necessary)
   auto_enable_flight: true
   # The default speed is 1.0 and matches Essentials's /flyspeed values (0-10)
   flight_speed: 1.0
+  # Disables flight past the block height limit
+  height_limit: -1
   # Supports: CombatTagPlus, CombatLogX, CombatLogPro, AntiCombatLogging, DeluxeCombat
   # NOTE: disable flight disabling/enabling in the combat plugin's config to prevent issues
   disable_flight_in_combat: false

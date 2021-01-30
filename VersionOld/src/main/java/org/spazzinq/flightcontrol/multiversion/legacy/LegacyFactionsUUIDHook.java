@@ -25,11 +25,14 @@
 package org.spazzinq.flightcontrol.multiversion.legacy;
 
 import com.massivecraft.factions.*;
-import com.massivecraft.factions.perms.Relation;
+import com.massivecraft.factions.struct.Relation;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
 
-public final class FactionsUUIDHook extends FactionsHookBase {
+/**
+ * Implements the checks for SavageFactions and legacy versions of FactionsUUID versions 1.6.9.5-U0.4.3 and before).
+ */
+public final class LegacyFactionsUUIDHook extends FactionsHookBase {
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p).isWarZone();
     }

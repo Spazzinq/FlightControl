@@ -22,19 +22,19 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.bypasstrail;
+package org.spazzinq.flightcontrol.check.always;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.check.Check;
 
-public class SpectatorModeCheck extends Check {
+public class HeightLimitCheck extends Check {
     @Override public boolean check(Player p) {
-        return p != null && p.getGameMode() == GameMode.SPECTATOR;
+        return p.getLocation().getBlockY() > FlightControl.getInstance().getConfManager().getHeightLimit();
     }
 
     @Override public Cause getCause() {
-        return Cause.SPECTATOR_MODE;
+        return Cause.HEIGHT_LIMIT;
     }
 }

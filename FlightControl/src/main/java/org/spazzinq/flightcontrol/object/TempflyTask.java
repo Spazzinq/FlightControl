@@ -22,19 +22,32 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.bypasstrail;
+package org.spazzinq.flightcontrol.object;
 
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.api.object.Cause;
-import org.spazzinq.flightcontrol.check.Check;
+import java.util.ArrayList;
 
-public class SpectatorModeCheck extends Check {
-    @Override public boolean check(Player p) {
-        return p != null && p.getGameMode() == GameMode.SPECTATOR;
+public enum TempflyTask {
+    HELP, CHECK, ADD, REMOVE, SET, DISABLE;
+
+    public static final ArrayList<String> types = new ArrayList<>();
+
+    static {
+        for (TempflyTask type : values()) {
+            String name = type.name().toLowerCase();
+
+            types.add(name);
+        }
     }
 
-    @Override public Cause getCause() {
-        return Cause.SPECTATOR_MODE;
+    public static TempflyTask getTaskType(String name) {
+        TempflyTask type;
+
+        try {
+            type = TempflyTask.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            type = TempflyTask.CHECK;
+        }
+
+        return type;
     }
 }

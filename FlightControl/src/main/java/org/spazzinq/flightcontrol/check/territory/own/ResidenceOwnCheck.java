@@ -22,32 +22,17 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.check.territory.own;
 
-import java.util.ArrayList;
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
-public enum TempflyTaskType {
-    HELP, CHECK, ADD, REMOVE, SET, DISABLE;
+public class ResidenceOwnCheck extends TerritoryCheck {
+    @Override public boolean check(Player p) {
+        ClaimedResidence residence = Residence.getInstance().getResidenceManager().getByLoc(p.getLocation());
 
-    public static final ArrayList<String> types = new ArrayList<>();
-
-    static {
-        for (TempflyTaskType type : values()) {
-            String name = type.name().toLowerCase();
-
-            types.add(name);
-        }
-    }
-
-    public static TempflyTaskType getTaskType(String name) {
-        TempflyTaskType type;
-
-        try {
-            type = TempflyTaskType.valueOf(name);
-        } catch (IllegalArgumentException e) {
-            type = TempflyTaskType.CHECK;
-        }
-
-        return type;
+        return residence != null && residence.isOwner(p);
     }
 }

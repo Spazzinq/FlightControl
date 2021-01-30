@@ -86,9 +86,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             }
         }.runTaskAsynchronously(this);
 
-        // Start config watching service (on-the-fly editing)
-        new PathWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
-
         // Start bStats
         new MetricsLite(this, 4704); // 4704 = plugin ID
     }
@@ -153,5 +150,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         // Check connected players
         flightManager.checkAllPlayers();
         trailManager.checkAllPlayers();
+
+        // Start config watching service (on-the-fly editing)
+        if (confManager.isAutoReload()) {
+            new PathWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
+        }
+
     }
 }
