@@ -74,7 +74,8 @@ dependencies {
     compileOnly files('../lib/DummyCombatTagPlus.jar')
     compileOnly files('../lib/CombatLogPro-v1.5.9.jar')
     compileOnly files('../lib/AntiCombatLoggingAPI.jar')
-    compileOnly files('../lib/AdvancedEnchantmentsAPI.jar')
+    compileOnly files('../lib/AdvancedEnchantmentsAPI-8.0.0.jar')
+    compileOnly files('../lib/GriefDefenderAPI-1.0.0.jar')
 }
 
 processResources {
