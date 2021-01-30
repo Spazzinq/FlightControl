@@ -7,6 +7,8 @@
 .gradle/
 *.iml
 *.ipr
+.project
+.settings/
 
 # IntelliJ
 target/
