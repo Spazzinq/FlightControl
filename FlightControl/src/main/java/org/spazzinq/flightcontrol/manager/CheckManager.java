@@ -193,6 +193,10 @@ public class CheckManager {
             ownTerritoryChecks.put("SuperiorSkyblock2", new SuperiorSkyblockOwnCheck());
             trustedTerritoryChecks.put("SuperiorSkyblock2", new SuperiorSkyblockTrustedCheck());
         }
+        if (pluginLoading("GriefDefender")) {
+            ownTerritoryChecks.put("GriefDefender", new GriefDefenderOwnCheck());
+            trustedTerritoryChecks.put("GriefDefender", new GriefDefenderTrustedCheck());
+        }
     }
 
     private void loadCombatChecks() {
