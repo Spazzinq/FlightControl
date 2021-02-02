@@ -242,7 +242,10 @@ public class FlightControlCommand extends TemplateCommand {
                         }
                         break;
                     case "advancedenchantments":
-                        msg(s, String.valueOf(new AdvancedEnchantmentsCheck(pl).getBootEnchants((Player) s).keySet()));
+                        msg(s, "Enchants: " + new AdvancedEnchantmentsCheck(pl).getBootEnchants((Player) s).keySet()
+                                + "\nConfName: " + pl.getConfManager().getAeEnchantName()
+                                + "\nEquivalent: " + new AdvancedEnchantmentsCheck(pl).check((Player) s));
+                        break;
                     default:
                         msg(s, loadHelp(args));
                         break;

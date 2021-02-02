@@ -66,10 +66,6 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     // Used for support (checking plugin version, debugging after granted permission)
     public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
 
-    protected FlightControl(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
-        super(loader, description, dataFolder, file);
-    }
-
     public void onEnable() {
         instance = this;
 
