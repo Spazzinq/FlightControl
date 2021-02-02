@@ -30,6 +30,8 @@ import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.check.Check;
 
+import java.util.HashMap;
+
 public class AdvancedEnchantmentsCheck extends Check {
     private final FlightControl pl;
 
@@ -38,7 +40,11 @@ public class AdvancedEnchantmentsCheck extends Check {
     }
 
     @Override public boolean check(Player p) {
-        return p.getInventory().getBoots() != null && AEAPI.getEnchantmentsOnItem(p.getInventory().getBoots()).containsKey(pl.getConfManager().getAeEnchantName());
+        return p.getInventory().getBoots() != null && getBootEnchants(p).containsKey(pl.getConfManager().getAeEnchantName());
+    }
+
+    public HashMap<String, Integer> getBootEnchants(Player p) {
+        return AEAPI.getEnchantmentsOnItem(p.getInventory().getBoots());
     }
 
     @Override public Cause getCause() {

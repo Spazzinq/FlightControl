@@ -31,6 +31,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.check.always.AdvancedEnchantmentsCheck;
 import org.spazzinq.flightcontrol.manager.ConfManager;
 import org.spazzinq.flightcontrol.manager.LangManager;
 import org.spazzinq.flightcontrol.object.FlyPermission;
@@ -240,6 +241,8 @@ public class FlightControlCommand extends TemplateCommand {
                                     "player's location)");
                         }
                         break;
+                    case "advancedenchantments":
+                        msg(s, String.valueOf(new AdvancedEnchantmentsCheck(pl).getBootEnchants((Player) s).keySet()));
                     default:
                         msg(s, loadHelp(args));
                         break;
