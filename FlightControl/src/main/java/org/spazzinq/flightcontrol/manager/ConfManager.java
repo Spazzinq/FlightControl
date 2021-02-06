@@ -135,7 +135,7 @@ public class ConfManager extends StorageManager {
         }
 
         // 4.7.14
-        if (!conf.isString("settings.auto_reload")) {
+        if (!conf.isBoolean("settings.auto_reload")) {
             pl.getLogger().info("Added \"auto_reload\" to the config!");
             conf.addSubnodes(Collections.singleton("auto_reload: true"), "settings.auto_update");
             modified = true;
