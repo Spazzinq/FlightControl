@@ -25,6 +25,7 @@
 package org.spazzinq.flightcontrol.object;
 
 public abstract class Timer {
+    public static boolean alwaysDecrease;
     private long startTime;
     private long totalTime;
     private long elapsedTime;
@@ -57,7 +58,7 @@ public abstract class Timer {
     }
 
     public void pause() {
-        if (startTime != 0) {
+        if (!alwaysDecrease && startTime != 0) {
             elapsedTime += System.currentTimeMillis() - startTime;
             startTime = 0;
         }

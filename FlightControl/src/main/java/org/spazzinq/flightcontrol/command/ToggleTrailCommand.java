@@ -47,7 +47,7 @@ public class ToggleTrailCommand implements CommandExecutor {
                 // No need to check for trail enable because of command listener
                 msg(s, pl.getLangManager().getPersonalTrailEnable(), pl.getLangManager().useActionBar());
             } else {
-                pl.getTrailManager().trailRemove(p);
+                pl.getTrailManager().disableTrail(p);
                 msg(s, pl.getLangManager().getPersonalTrailDisable(), pl.getLangManager().useActionBar());
             }
         } else {

@@ -31,6 +31,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.spazzinq.flightcontrol.api.object.Sound;
 import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.StorageManager;
+import org.spazzinq.flightcontrol.object.Timer;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.io.File;
@@ -46,17 +47,10 @@ public class ConfManager extends StorageManager {
     @Getter @Setter private float defaultFlightSpeed;
     @Getter @Setter private int heightLimit;
 
-    @Getter @Setter private Sound enableSound;
-    @Getter @Setter private Sound disableSound;
-    @Getter @Setter private Sound canEnableSound;
-    @Getter @Setter private Sound cannotEnableSound;
     @Getter @Setter private boolean combatChecked;
     @Getter @Setter private boolean cancelFall;
     @Getter @Setter private boolean vanishBypass;
-    @Getter @Setter private boolean trail;
-    @Getter @Setter private boolean everyEnable;
-    @Getter @Setter private boolean everyDisable;
-    @Getter @Setter private boolean tempflyAlwaysDecrease;
+    @Getter @Setter private boolean trailEnabled;
 
     @Getter @Setter private boolean nearbyCheck;
     @Getter @Setter private boolean isNearbyCheckEnemies;
@@ -81,7 +75,7 @@ public class ConfManager extends StorageManager {
         cancelFall = conf.getBoolean("settings.prevent_fall_damage");
         vanishBypass = conf.getBoolean("settings.vanish_bypass");
         isNearbyCheckEnemies = conf.getBoolean("nearby_disable.factions_enemy");
-        tempflyAlwaysDecrease = conf.getBoolean("tempfly.always_decrease");
+        Timer.alwaysDecrease = conf.getBoolean("tempfly.always_decrease");
 
         // ints
         int range = conf.getInt("nearby_disable.range");
@@ -160,9 +154,9 @@ public class ConfManager extends StorageManager {
     }
 
     private void loadTrail() {
-        trail = conf.getBoolean("trail.enabled");
+        trailEnabled = conf.getBoolean("trail.enabled");
 
-        if (trail) {
+        if (trailEnabled) {
             pl.getParticle().setParticle(conf.getString("trail.particle"));
             pl.getParticle().setAmount(conf.getInt("trail.amount"));
             String offset = conf.getString("trail.rgb");
@@ -176,12 +170,12 @@ public class ConfManager extends StorageManager {
     }
 
     private void loadSounds() {
-        everyEnable = conf.getBoolean("sounds.every_enable");
-        everyDisable = conf.getBoolean("sounds.every_disable");
-        enableSound = getSound("sounds.enable");
-        disableSound = getSound("sounds.disable");
-        canEnableSound = getSound("sounds.can_enable");
-        cannotEnableSound = getSound("sounds.cannot_enable");
+        Sound.playEveryEnable = conf.getBoolean("sounds.every_enable");
+        Sound.playEveryDisable = conf.getBoolean("sounds.every_disable");
+        Sound.enableSound = getSound("sounds.enable");
+        Sound.disableSound = getSound("sounds.disable");
+        Sound.canEnableSound = getSound("sounds.can_enable");
+        Sound.cannotEnableSound = getSound("sounds.cannot_enable");
     }
 
     private Sound getSound(String key) {

@@ -46,29 +46,51 @@ public class TrailManager {
         pl = FlightControl.getInstance();
     }
 
+    /**
+     * Checks whether the player's trail should be enabled.
+     * @param p the target player
+     */
     public void trailCheck(Player p) {
-        if (pl.getParticle() != null && pl.getConfManager().isTrail()
-                && pl.getPlayerManager().getFlightPlayer(p).trailWanted() && !particleTasks.containsKey(p)) {
-            particleTasks.put(p, new BukkitRunnable() {
-                @Override public void run() {
-                    HashSet<Check> trailChecks = CheckUtil.evaluate(pl.getCheckManager().getNoTrailChecks(), p);
+        boolean conditions = pl.getParticle() != null
+                && pl.getConfManager().isTrailEnabled()
+                && pl.getPlayerManager().getFlightPlayer(p).isTrailWanted()
+                && !particleTasks.containsKey(p);
 
-                    if (trailChecks.isEmpty()) {
-                        Location l = p.getLocation();
-                        // For some terrible reason the particle spawn locations are never
-                        // in the correct spot so you have to delay them...
-                        new BukkitRunnable() {
-                            @Override public void run() {
-                                pl.getParticle().spawn(l);
-                            }
-                        }.runTaskLater(pl, 2);
-                    }
-                }
-            }.runTaskTimerAsynchronously(pl, 0, 4));
+        if (conditions) {
+            enableTrail(p);
+        } else {
+            disableTrail(p);
         }
     }
 
-    public void trailRemove(Player p) {
+    /**
+     * Enables the player trail regardless of status.
+     * @param p the target player
+     */
+    public void enableTrail(Player p) {
+        particleTasks.put(p, new BukkitRunnable() {
+            @Override public void run() {
+                HashSet<Check> trailChecks = CheckUtil.evaluate(pl.getCheckManager().getNoTrailChecks(), p);
+
+                if (trailChecks.isEmpty()) {
+                    Location l = p.getLocation();
+                    // For some terrible reason the particle spawn locations are never
+                    // in the correct spot so you have to delay them...
+                    new BukkitRunnable() {
+                        @Override public void run() {
+                            pl.getParticle().spawn(l);
+                        }
+                    }.runTaskLater(pl, 2);
+                }
+            }
+        }.runTaskTimerAsynchronously(pl, 0, 4));
+    }
+
+    /**
+     * Disables the player trail regardless of status.
+     * @param p the target player
+     */
+    public void disableTrail(Player p) {
         BukkitTask task = particleTasks.remove(p);
 
         if (task != null) {
@@ -76,7 +98,10 @@ public class TrailManager {
         }
     }
 
-    public void removeEnabledTrails() {
+    /**
+     * Disables all player trails regardless of status.
+     */
+    public void disableAllTrails() {
         for (BukkitTask tasks : particleTasks.values()) {
             tasks.cancel();
         }
@@ -84,10 +109,10 @@ public class TrailManager {
     }
 
     /**
-     * Verifies trails for all online players.
+     * Disables all player trails then re-checks all online players.
      */
     public void checkAllPlayers() {
-        removeEnabledTrails();
+        disableAllTrails();
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.isFlying()) {

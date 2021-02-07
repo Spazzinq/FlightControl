@@ -120,17 +120,17 @@ public class FlightControlCommand extends TemplateCommand {
                         msgToggle(s, config.isCancelFall(), "Prevent Fall Damage");
                         break;
                     case "trails":
-                        config.setTrail(!config.isTrail());
-                        config.set("trail.enabled", config.isTrail());
-                        msgToggle(s, config.isTrail(), "Trails");
-                        if (config.isTrail()) {
+                        config.setTrailEnabled(!config.isTrailEnabled());
+                        config.set("trail.enabled", config.isTrailEnabled());
+                        msgToggle(s, config.isTrailEnabled(), "Trails");
+                        if (config.isTrailEnabled()) {
                             for (Player p : Bukkit.getOnlinePlayers()) {
                                 if (p.isFlying()) {
                                     pl.getTrailManager().trailCheck(p);
                                 }
                             }
                         } else {
-                            pl.getTrailManager().removeEnabledTrails();
+                            pl.getTrailManager().disableAllTrails();
                         }
                         break;
                     case "vanishbypass":

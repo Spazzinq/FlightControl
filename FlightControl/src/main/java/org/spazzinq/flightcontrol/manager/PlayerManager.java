@@ -28,6 +28,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 
@@ -46,7 +47,7 @@ public class PlayerManager {
         storageFolder = new File(pl.getDataFolder(), "data");
     }
 
-    public FlightPlayer getFlightPlayer(Player p) {
+    public FlightPlayer getFlightPlayer(@Nullable Player p) {
         if (p == null) {
             return null;
         }
@@ -91,8 +92,8 @@ public class PlayerManager {
             FlightPlayer flightPlayer = getFlightPlayer(p);
 
             p.setFlySpeed(flightPlayer.getActualFlightSpeed());
-            if (!flightPlayer.trailWanted()) {
-                pl.getTrailManager().trailRemove(p);
+            if (!flightPlayer.isTrailWanted()) {
+                pl.getTrailManager().disableTrail(p);
             }
         }
     }

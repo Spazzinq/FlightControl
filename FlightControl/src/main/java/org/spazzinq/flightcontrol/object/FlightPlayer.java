@@ -43,15 +43,15 @@ public class FlightPlayer {
 
     @Getter private final Timer tempflyTimer;
     @Getter private float actualFlightSpeed;
-    @Setter private boolean trail;
+    @Getter @Setter private boolean trailWanted;
 
-    public FlightPlayer(File dataFile, YamlConfiguration data, UUID uuid, float actualFlightSpeed, boolean trail, long tempflyDuration) {
+    public FlightPlayer(File dataFile, YamlConfiguration data, UUID uuid, float actualFlightSpeed, boolean trailWanted, long tempflyDuration) {
         this.dataFile = dataFile;
         this.data = data;
         this.uuid = uuid;
         // Don't store speed in data conf if not personal for player
         this.actualFlightSpeed = actualFlightSpeed;
-        this.trail = trail;
+        this.trailWanted = trailWanted;
         this.tempflyTimer = new Timer(tempflyDuration) {
             @SneakyThrows @Override public void onFinish() {
                 FlightControl.getInstance().getFlightManager().check(getPlayer());
@@ -79,16 +79,12 @@ public class FlightPlayer {
         }.runTaskTimerAsynchronously(FlightControl.getInstance(), 6000, 6000);
     }
 
-    public boolean trailWanted() {
-        return trail;
-    }
-
     @SneakyThrows public boolean toggleTrail() {
-        trail = !trail;
+        trailWanted = !trailWanted;
 
-        data.set("trail", trail);
+        data.set("trail", trailWanted);
 
-        return trail;
+        return trailWanted;
     }
 
     @SneakyThrows public void modifyTempflyDuration(TempflyTask type, long duration) {
@@ -112,7 +108,7 @@ public class FlightPlayer {
 
         // Start if always running/currently flying
         if (type != TempflyTask.REMOVE
-                && (FlightControl.getInstance().getConfManager().isTempflyAlwaysDecrease()
+                && (Timer.alwaysDecrease
                     || getPlayer().isFlying())) {
             tempflyTimer.start();
         }

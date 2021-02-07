@@ -29,6 +29,13 @@ import org.bukkit.entity.Player;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Sound {
+    public static boolean playEveryEnable;
+    public static boolean playEveryDisable;
+    public static Sound enableSound;
+    public static Sound disableSound;
+    public static Sound canEnableSound;
+    public static Sound cannotEnableSound;
+
     @Getter private final org.bukkit.Sound sound;
     @Getter private final float volume;
     @Getter private final float pitch;
@@ -52,9 +59,26 @@ public final class Sound {
     }
 
     public static void play(Player p, Sound s) {
+        play(p, s, false);
+    }
+
+    public static void play(Player p, Sound s, boolean forcedEvent) {
         if (s != null) {
             p.playSound(p.getLocation(), s.sound, s.volume, s.pitch);
         }
+    }
+
+    public static void playEnable(Player p) {
+        play(p, enableSound, false);
+    }
+    public static void playDisable(Player p) {
+        play(p, disableSound, false);
+    }
+    public static void playCanEnable(Player p) {
+        play(p, canEnableSound, false);
+    }
+    public static void playCannotEnable(Player p) {
+        play(p, cannotEnableSound, false);
     }
 
     public static Sound valueOf(String str, double volume, double pitch) {

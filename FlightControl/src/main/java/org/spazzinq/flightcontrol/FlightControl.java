@@ -28,8 +28,6 @@ import lombok.Getter;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
@@ -37,7 +35,6 @@ import org.spazzinq.flightcontrol.multiversion.Particle;
 import org.spazzinq.flightcontrol.multiversion.current.Particle13;
 import org.spazzinq.flightcontrol.multiversion.legacy.Particle8;
 
-import java.io.File;
 import java.util.UUID;
 
 /**
@@ -91,7 +88,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
         // Just in case the task isn't automatically cancelled
         for (Player p : Bukkit.getOnlinePlayers()) {
-            trailManager.trailRemove(p);
+            trailManager.disableTrail(p);
         }
     }
 

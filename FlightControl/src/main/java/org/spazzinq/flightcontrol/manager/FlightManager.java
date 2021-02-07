@@ -104,7 +104,7 @@ public class FlightManager {
             alreadyCanMsg.add(p);
             FlightCanEnableEvent e = new FlightCanEnableEvent(p, p.getLocation(), cause,
                     pl.getLangManager().getCanEnableFlight(),
-                    pl.getConfManager().getCanEnableSound(), pl.getLangManager().useActionBar());
+                    Sound.canEnableSound, pl.getLangManager().useActionBar());
 
             APIManager.getInstance().callEvent(e);
 
@@ -119,20 +119,20 @@ public class FlightManager {
     private void cannotEnable(Player p, Cause cause) {
         FlightCannotEnableEvent e = new FlightCannotEnableEvent(p, p.getLocation(), cause,
                 pl.getLangManager().getCannotEnableFlight(),
-                pl.getConfManager().getCannotEnableSound(), pl.getLangManager().useActionBar());
+                Sound.cannotEnableSound, pl.getLangManager().useActionBar());
 
         APIManager.getInstance().callEvent(e);
 
         if (!e.isCancelled()) {
             alreadyCanMsg.remove(p);
-            Sound.play(p, pl.getConfManager().getCannotEnableSound());
+            Sound.play(p, e.getSound());
             msg(p, e.getMessage(), e.isByActionbar());
         }
     }
 
     private void enableFlight(Player p, Cause cause, boolean isCommand) {
         FlightEnableEvent e = new FlightEnableEvent(p, p.getLocation(), cause, pl.getLangManager().getEnableFlight(),
-                pl.getConfManager().getEnableSound(), pl.getLangManager().useActionBar(), isCommand);
+                Sound.enableSound, pl.getLangManager().useActionBar(), isCommand);
 
         APIManager.getInstance().callEvent(e);
 
@@ -141,8 +141,9 @@ public class FlightManager {
                 disabledByPlayer.remove(p);
             }
             p.setAllowFlight(true);
-            if (!pl.getConfManager().isEveryEnable()) {
-                Sound.play(p, pl.getConfManager().getEnableSound());
+            // Ignore if not double-tapped
+            if (!Sound.playEveryEnable) {
+                Sound.play(p, e.getSound());
             }
             msg(p, e.getMessage(), e.isByActionbar());
         }
@@ -150,15 +151,12 @@ public class FlightManager {
 
     public void disableFlight(Player p, Cause cause, boolean isCommand) {
         FlightDisableEvent e = new FlightDisableEvent(p, p.getLocation(), cause, pl.getLangManager().getDisableFlight(),
-                pl.getConfManager().getDisableSound(), pl.getLangManager().useActionBar(), isCommand);
+                Sound.disableSound, pl.getLangManager().useActionBar(), isCommand);
 
         APIManager.getInstance().callEvent(e);
 
         if (!e.isCancelled()) {
-            // Don't pause if NOT always decreasing
-            if (!pl.getConfManager().isTempflyAlwaysDecrease()) {
-                pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
-            }
+            pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
 
             if (isCommand) {
                 disabledByPlayer.add(p);
@@ -172,8 +170,8 @@ public class FlightManager {
             }
             p.setAllowFlight(false);
             p.setFlying(false);
-            pl.getTrailManager().trailRemove(p);
-            Sound.play(p, pl.getConfManager().getDisableSound());
+            pl.getTrailManager().disableTrail(p);
+            Sound.play(p, e.getSound());
             msg(p, e.getMessage(), e.isByActionbar());
         }
     }

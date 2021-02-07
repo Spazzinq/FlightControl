@@ -25,6 +25,7 @@
 package org.spazzinq.flightcontrol;
 
 import org.bukkit.Bukkit;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -74,22 +75,19 @@ final class EventListener implements org.bukkit.event.Listener {
      */
     @EventHandler private void onToggleFly(PlayerToggleFlightEvent e) {
         Player p = e.getPlayer();
+        pl.getTrailManager().trailCheck(p);
 
         if (e.isFlying()) {
             pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().start();
 
-            pl.getTrailManager().trailCheck(p);
-            if (pl.getConfManager().isEveryEnable()) {
-                Sound.play(p, pl.getConfManager().getEnableSound());
+            if (Sound.playEveryEnable) {
+                Sound.playEnable(p);
             }
         } else {
-            if (!pl.getConfManager().isTempflyAlwaysDecrease()) {
-                pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
-            }
+            pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
 
-            pl.getTrailManager().trailRemove(p);
-            if (pl.getConfManager().isEveryDisable()) {
-                Sound.play(p, pl.getConfManager().getDisableSound());
+            if (Sound.playEveryDisable) {
+                Sound.playEnable(p);
             }
         }
     }
@@ -106,7 +104,7 @@ final class EventListener implements org.bukkit.event.Listener {
 
             // Fixes a bug where particles remain when not supposed so
             if (!p.getAllowFlight()) {
-                pl.getTrailManager().trailRemove(p);
+                pl.getTrailManager().disableTrail(p);
             }
         }
     }
@@ -117,7 +115,7 @@ final class EventListener implements org.bukkit.event.Listener {
     @EventHandler private void onQuit(PlayerQuitEvent e) {
         pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempflyTimer().pause();
 
-        pl.getTrailManager().trailRemove(e.getPlayer());
+        pl.getTrailManager().disableTrail(e.getPlayer());
     }
 
     /**
@@ -158,7 +156,7 @@ final class EventListener implements org.bukkit.event.Listener {
                 }
 
                 // Start if always running or flying on login
-                if (pl.getConfManager().isTempflyAlwaysDecrease() || p.isFlying()) {
+                if (Timer.alwaysDecrease || p.isFlying()) {
                     flightPlayer.getTempflyTimer().start();
                 }
 
@@ -169,9 +167,8 @@ final class EventListener implements org.bukkit.event.Listener {
     }
 
     /**
-     * Checks flight and trail when a player
-     * executes a command because commands
-     * might affect permissions/flight status.
+     * Checks flight and trail when a player executes a command
+     * because commands may affect permissions/flight status.
      */
     @EventHandler private void onCommand(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
@@ -189,10 +186,29 @@ final class EventListener implements org.bukkit.event.Listener {
                         }.runTask(pl);
                     }
                 } else {
-                    pl.getTrailManager().trailRemove(p);
+                    pl.getTrailManager().disableTrail(p);
                 }
             }
         }.runTask(pl);
+    }
+
+    /**
+     * Checks tempfly timer when a player interacts
+     * with a sign because signs may affect tempfly status.
+     */
+    @EventHandler private void onSignInteract(PlayerInteractEvent e) {
+        if (e.hasBlock()) {
+            // Workaround for multiple versions (I hope)
+            if (e.getClickedBlock().getState() instanceof Sign) {
+                Player p = e.getPlayer();
+
+                if (p.isFlying()) {
+                    pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().start();
+                } else {
+                    pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
+                }
+            }
+        }
     }
 
     /**
@@ -206,7 +222,8 @@ final class EventListener implements org.bukkit.event.Listener {
     }
 
     /**
-     * Manages world permissions on-the-fly. Note: this does not take care of initial server start because of "load: POSTWORLD" in the plugin.yml.
+     * Manages world permissions on-the-fly.
+     * Note: this does not take care of initial server start because of "load: POSTWORLD" in the plugin.yml.
      */
     @EventHandler private void onWorldInit(WorldInitEvent e) {
         pl.getPermissionManager().registerDefaultFlyPerms(e.getWorld().getName());
