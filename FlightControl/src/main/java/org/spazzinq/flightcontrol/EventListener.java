@@ -202,11 +202,16 @@ final class EventListener implements org.bukkit.event.Listener {
             if (e.getClickedBlock().getState() instanceof Sign) {
                 Player p = e.getPlayer();
 
-                if (p.isFlying()) {
-                    pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().start();
-                } else {
-                    pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
-                }
+                // Waits one second then checks
+                new BukkitRunnable() {
+                    public void run() {
+                        if (p.isFlying()) {
+                            pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().start();
+                        } else {
+                            pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
+                        }
+                    }
+                }.runTaskLater(pl, 20);
             }
         }
     }
