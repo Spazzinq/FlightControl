@@ -36,7 +36,7 @@ dependencies {
     implementation project(':Multiversion')
     implementation project(':VersionOld')
     implementation project(':VersionCurrent')
-    implementation 'org.bstats:bstats-bukkit-lite:1.7'
+    implementation 'org.bstats:bstats-bukkit-lite:1.8'
 
     compileOnly 'org.jetbrains:annotations:20.1.0'
     compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {

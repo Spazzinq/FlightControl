@@ -45,6 +45,7 @@ public class ConfManager extends StorageManager {
     @Getter @Setter private boolean inGameSupport;
 
     @Getter @Setter private float defaultFlightSpeed;
+    @Getter @Setter private float maxFlightSpeed;
     @Getter @Setter private int heightLimit;
 
     @Getter @Setter private boolean combatChecked;
@@ -86,7 +87,8 @@ public class ConfManager extends StorageManager {
         }
 
         // floats
-        defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed"));
+        defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed", 1));
+        maxFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.max_flight_speed", 10));
 
         // Strings
         aeEnchantName = conf.getString("settings.ae_enchant_name");
@@ -133,6 +135,12 @@ public class ConfManager extends StorageManager {
             pl.getLogger().info("Added \"auto_reload\" to the config!");
             conf.addSubnodes(Collections.singleton("auto_reload: true"), "settings.auto_update");
             modified = true;
+        }
+
+        // 4.8.2
+        if (!conf.isDouble("settings.max_flight_speed")) {
+            pl.getLogger().info("Added \"max_flight_speed\" to the config!");
+            conf.addSubnodes(Collections.singleton("max_flight_speed: 10.0"), "settings.flight_speed");
         }
 
         if (modified) {

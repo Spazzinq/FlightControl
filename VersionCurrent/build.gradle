@@ -25,7 +25,9 @@
 dependencies {
     implementation project(':API')
     implementation project(':Multiversion')
-    compileOnly 'org.spigotmc:spigot-api:1.16.3-R0.1-SNAPSHOT'
+    compileOnly ('org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT') {
+        exclude group: 'net.md-5', module: 'bungeecord-chat'
+    }
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.1.0-SNAPSHOT'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.2-SNAPSHOT'
     compileOnly 'net.prosavage.factionsx:FactionsX:0.6-PATREON'
