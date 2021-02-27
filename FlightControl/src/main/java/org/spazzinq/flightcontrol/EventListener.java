@@ -196,15 +196,28 @@ final class EventListener implements org.bukkit.event.Listener {
      * Checks tempfly timer when a player interacts
      * with a sign because signs may affect tempfly status.
      */
-    @EventHandler private void onSignInteract(PlayerInteractEvent e) {
+    @EventHandler(priority = EventPriority.MONITOR) private void onSignInteract(PlayerInteractEvent e) {
         if (e.hasBlock()) {
+
+            if (FlightControl.spazzinqUUID.equals(e.getPlayer().getUniqueId())) {
+                msg(e.getPlayer(), "You clicked a " + e.getClickedBlock());
+            }
+
             // Workaround for multiple versions (I hope)
             if (e.getClickedBlock().getState() instanceof Sign) {
                 Player p = e.getPlayer();
 
+                if (FlightControl.spazzinqUUID.equals(p.getUniqueId())) {
+                    msg(p, "Clicked a sign! Current flight status is " + p.isFlying());
+                }
+
                 // Waits one second then checks
                 new BukkitRunnable() {
                     public void run() {
+                        if (FlightControl.spazzinqUUID.equals(p.getUniqueId())) {
+                            msg(p, "Current flight status 1s later is " + p.isFlying());
+                        }
+
                         if (p.isFlying()) {
                             pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().start();
                         } else {
@@ -212,6 +225,14 @@ final class EventListener implements org.bukkit.event.Listener {
                         }
                     }
                 }.runTaskLater(pl, 20);
+
+                new BukkitRunnable() {
+                    public void run() {
+                        if (FlightControl.spazzinqUUID.equals(p.getUniqueId())) {
+                            msg(p, "Current flight status 2s later is " + p.isFlying());
+                        }
+                    }
+                }.runTaskLater(pl, 40);
             }
         }
     }
