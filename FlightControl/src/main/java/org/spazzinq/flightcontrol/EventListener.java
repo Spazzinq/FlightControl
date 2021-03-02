@@ -196,7 +196,7 @@ final class EventListener implements org.bukkit.event.Listener {
      * Checks tempfly timer when a player interacts
      * with a sign because signs may affect tempfly status.
      */
-    @EventHandler private void onSignInteract(PlayerInteractEvent e) {
+    @EventHandler(priority = EventPriority.MONITOR) private void onSignInteract(PlayerInteractEvent e) {
         if (e.hasBlock()) {
             // Workaround for multiple versions (I hope)
             if (e.getClickedBlock().getState() instanceof Sign) {
