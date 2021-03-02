@@ -53,12 +53,12 @@ permissions:
     description: Ability to set flight speed
     default: op
     children:
-      others: false
+      others: true
   flightcontrol.tempfly:
     description: Ability to give temporary flight
     default: op
     children:
-      others: false
+      others: true
   flightcontrol.nearbypass:
     description: Bypasses the "nearby_disable" check
     default: op

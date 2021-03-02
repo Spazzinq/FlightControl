@@ -58,54 +58,55 @@ public class TempflyCommand extends TemplateCommand {
         buildHelp();
     }
 
-
-    // TODO Add error handling (redirect to help when incorrectly entered)
     @Override public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         Player targetPlayer = sender instanceof ConsoleCommandSender ? null : (Player) sender;
         TempflyTask type;
         long duration = 0;
 
-        // If not base command
-        if (args.length > 0) {
-            type = TempflyTask.getTaskType(args[0].toUpperCase());
+        if (PlayerUtil.hasPermission(sender, FlyPermission.TEMP_FLY)) {
+            // If not base command
+            if (args.length > 0) {
+                type = TempflyTask.getTaskType(args[0].toUpperCase());
 
-            if (type != TempflyTask.HELP) {
-                // Optional remote player
-                // /tempfly set/add/remove (duration) [player]
-                int optionalPlayerIndex = 2; // Default index
+                if (type != TempflyTask.HELP) {
+                    // Optional remote player
+                    // /tempfly set/add/remove (duration) [player]
+                    int optionalPlayerIndex = 2; // Default index
 
-                if (type == TempflyTask.CHECK || type == TempflyTask.DISABLE) {
-                    // /tempfly check/disable [player]
-                    optionalPlayerIndex = 1;
-                }
-
-                if (args.length > optionalPlayerIndex) {
-                    targetPlayer = Bukkit.getPlayer(args[optionalPlayerIndex]);
-
-                    if (targetPlayer == null) {
-                        type = TempflyTask.HELP;
+                    if (type == TempflyTask.CHECK || type == TempflyTask.DISABLE) {
+                        // /tempfly check/disable [player]
+                        optionalPlayerIndex = 1;
                     }
-                } else if (sender instanceof ConsoleCommandSender) {
-                    type = TempflyTask.HELP;
-                }
 
-                // Duration
-                // /tempfly set/add/remove (duration) [player]
-                if (type == TempflyTask.SET || type == TempflyTask.ADD || type == TempflyTask.REMOVE) {
-                    if (args.length > 1) {
-                        String durationStr = args[1].toLowerCase();
+                    if (PlayerUtil.hasPermission(sender, FlyPermission.TEMP_FLY_OTHERS) && args.length > optionalPlayerIndex) {
+                        targetPlayer = Bukkit.getPlayer(args[optionalPlayerIndex]);
 
-                        if (durationStr.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
-                            duration = MathUtil.calculateDuration(durationStr);
+                        if (targetPlayer == null) {
+                            type = TempflyTask.HELP;
                         }
-                    } else {
+                    } else if (sender instanceof ConsoleCommandSender) {
                         type = TempflyTask.HELP;
                     }
+
+                    // Duration
+                    // /tempfly set/add/remove (duration) [player]
+                    if (type == TempflyTask.SET || type == TempflyTask.ADD || type == TempflyTask.REMOVE) {
+                        if (args.length > 1) {
+                            String durationStr = args[1].toLowerCase();
+
+                            if (durationStr.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
+                                duration = MathUtil.calculateDuration(durationStr);
+                            }
+                        } else {
+                            type = TempflyTask.HELP;
+                        }
+                    }
                 }
+            // If has perm but is not command, send command help
+            } else {
+                type = TempflyTask.HELP;
             }
-        // If OP, send command help; otherwise, check tempfly duration.
-        } else if (sender.isOp()) {
-            type = TempflyTask.HELP;
+        // If does not have admin perms
         } else {
             type = TempflyTask.CHECK;
         }
@@ -125,7 +126,7 @@ public class TempflyCommand extends TemplateCommand {
 
         // /tempfly check/disable [player]
         // /tempfly set/add/remove (duration) [player]
-        if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY_OTHERS)) {
+        if (PlayerUtil.hasPermission(s, FlyPermission.TEMP_FLY)) {
             if (args.length > 0) {
                 TempflyTask type = TempflyTask.getTaskType(args[0].toUpperCase());
 
