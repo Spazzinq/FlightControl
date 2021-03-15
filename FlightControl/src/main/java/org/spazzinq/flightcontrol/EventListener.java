@@ -93,16 +93,12 @@ final class EventListener implements org.bukkit.event.Listener {
     }
 
     /**
-    * Checks a player's flight status when they world change, and disables the trail if necessary.
-    */
+     * Checks a player's flight status when they world change, and disables the trail if necessary.
+     */
     @EventHandler
     public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
         Player p = e.getPlayer();
-        pl.getFlightManager().check(p);
-        if (!p.getAllowFlight()) {
-            pl.getTrailManager().disableTrail(p);
-        }
-
+        checkPlayer(p);
     }
 
     /**
@@ -115,12 +111,15 @@ final class EventListener implements org.bukkit.event.Listener {
             Player p = e.getPlayer();
 
             if (e.getFrom().getWorld().equals(e.getTo().getWorld()))
-                pl.getFlightManager().check(p);
+                checkPlayer(p);
+        }
+    }
 
-            // Fixes a bug where particles remain when not supposed so
-            if (!p.getAllowFlight()) {
-                pl.getTrailManager().disableTrail(p);
-            }
+    private void checkPlayer(Player p) {
+        pl.getFlightManager().check(p);
+        // Fixes a bug where particles remain when not supposed so
+        if (!p.getAllowFlight()) {
+            pl.getTrailManager().disableTrail(p);
         }
     }
 
