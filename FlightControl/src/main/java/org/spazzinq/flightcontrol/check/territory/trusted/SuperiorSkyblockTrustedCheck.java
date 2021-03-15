@@ -34,6 +34,7 @@ public class SuperiorSkyblockTrustedCheck extends TerritoryCheck {
     @Override public boolean check(Player p) {
         SuperiorPlayer player = SuperiorSkyblockAPI.getPlayer(p);
         Island island = SuperiorSkyblockAPI.getIslandAt(p.getLocation());
+        
         return player != null && island != null && !island.isSpawn();
     }
 }
