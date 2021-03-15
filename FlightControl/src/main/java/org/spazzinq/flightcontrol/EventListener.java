@@ -93,14 +93,29 @@ final class EventListener implements org.bukkit.event.Listener {
     }
 
     /**
+    * Checks a player's flight status when they world change, and disables the trail if necessary.
+    */
+    @EventHandler
+    public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
+        Player p = e.getPlayer();
+        pl.getFlightManager().check(p);
+        if (!p.getAllowFlight()) {
+            pl.getTrailManager().disableTrail(p);
+        }
+
+    }
+
+    /**
      * Checks a player's flight status when they teleport, and disables the trail if necessary.
      */
-    @EventHandler private void onTP(PlayerTeleportEvent e) {
+    @EventHandler
+    private void onTP(PlayerTeleportEvent e) {
         // Prevent calling on login because another handler takes care of that
         if (e.getCause() != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
             Player p = e.getPlayer();
 
-            pl.getFlightManager().check(p);
+            if (e.getFrom().getWorld().equals(e.getTo().getWorld()))
+                pl.getFlightManager().check(p);
 
             // Fixes a bug where particles remain when not supposed so
             if (!p.getAllowFlight()) {
