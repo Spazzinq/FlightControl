@@ -93,35 +93,40 @@ final class EventListener implements org.bukkit.event.Listener {
     }
 
     /**
-    * Checks a player's flight status when they world change, and disables the trail if necessary.
-    */
-    @EventHandler
-    public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
-        Player p = e.getPlayer();
-        pl.getFlightManager().check(p);
-        if (!p.getAllowFlight()) {
-            pl.getTrailManager().disableTrail(p);
-        }
-
-    }
-
-    /**
      * Checks a player's flight status when they teleport, and disables the trail if necessary.
      */
-    @EventHandler
-    private void onTP(PlayerTeleportEvent e) {
-        // Prevent calling on login because another handler takes care of that
+    @EventHandler private void onTP(PlayerTeleportEvent e) {
+        // Only check if not login because onJoin handles login
         if (e.getCause() != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
             Player p = e.getPlayer();
 
-            if (e.getFrom().getWorld().equals(e.getTo().getWorld()))
+            // Only check if same worlds because onWorldChange handles world changes
+            if (e.getFrom().getWorld().equals(e.getTo().getWorld())) {
                 pl.getFlightManager().check(p);
+            }
 
             // Fixes a bug where particles remain when not supposed so
             if (!p.getAllowFlight()) {
                 pl.getTrailManager().disableTrail(p);
             }
         }
+    }
+
+    /**
+    * Checks a player's flight status when they change worlds, and disables the trail if necessary.
+    *
+    * Note: Must use world change event because otherwise the manager checks from the previous
+    * world and enables flight incorrectly.
+    */
+    @EventHandler private void onWorldChange(PlayerChangedWorldEvent e) {
+        Player p = e.getPlayer();
+
+        pl.getFlightManager().check(p);
+
+        if (!p.getAllowFlight()) {
+            pl.getTrailManager().disableTrail(p);
+        }
+
     }
 
     /**
@@ -211,7 +216,8 @@ final class EventListener implements org.bukkit.event.Listener {
      * Checks tempfly timer when a player interacts
      * with a sign because signs may affect tempfly status.
      */
-    @EventHandler(priority = EventPriority.MONITOR) private void onSignInteract(PlayerInteractEvent e) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    private void onSignInteract(PlayerInteractEvent e) {
         if (e.hasBlock()) {
             // Workaround for multiple versions (I hope)
             if (e.getClickedBlock().getState() instanceof Sign) {
