@@ -105,7 +105,7 @@ final class EventListener implements org.bukkit.event.Listener {
                 pl.getFlightManager().check(p);
             }
 
-            // Fixes a bug where particles remain when not supposed so
+            // Fixes a bug where particles remain when not supposed to
             if (!p.getAllowFlight()) {
                 pl.getTrailManager().disableTrail(p);
             }
@@ -123,6 +123,7 @@ final class EventListener implements org.bukkit.event.Listener {
 
         pl.getFlightManager().check(p);
 
+        // Fixes a bug where particles remain when not supposed to
         if (!p.getAllowFlight()) {
             pl.getTrailManager().disableTrail(p);
         }
