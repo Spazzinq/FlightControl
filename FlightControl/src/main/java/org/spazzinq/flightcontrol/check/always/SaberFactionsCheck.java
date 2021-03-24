@@ -22,34 +22,18 @@
  * SOFTWARE.
  */
 
-allprojects {
-    group = 'org.spazzinq'
-    version = '4.8.7-BETA'
-}
+package org.spazzinq.flightcontrol.check.always;
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
+import com.massivecraft.factions.FPlayers;
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.api.object.Cause;
+import org.spazzinq.flightcontrol.check.Check;
 
-    repositories {
-        mavenCentral()
-        // Spigot
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats,
-        maven { url = 'https://repo.codemc.io/repository/maven-public/' }
-        // WorldEdit, WorldGuard
-        maven { url = 'https://maven.sk89q.com/repo/' }
-        // Essentials, FactionsUUID
-        maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
-        // PlotSquared
-        maven { url = 'https://plotsquared.com/mvn/' }
-        // CrazyEnchantments
-        maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PvPManager, CombatLogX, SaberFactions
-        maven { url = 'https://jitpack.io' }
-        // PlaceholderAPI
-        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-        // FactionsX
-        maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
+public class SaberFactionsCheck extends Check {
+    @Override public boolean check(Player p) {
+        return FPlayers.getInstance().getByPlayer(p).canFlyAtLocation();
+    }
+    @Override public Cause getCause() {
+        return Cause.SABER_FLY;
     }
 }

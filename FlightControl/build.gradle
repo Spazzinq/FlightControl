@@ -58,6 +58,13 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.10.9'
     compileOnly 'com.github.NoChanceSD.PvPManager:PvPManager:3.7'
     compileOnly 'com.github.OmerBenGera:SuperiorSkyblockAPI:b18'
+    compileOnly ('com.github.SaberLLC:Saber-Factions:2.6.2-STABLE') {
+        exclude group: 'com.mojang', module: 'brigadier'
+        exclude group: 'net.dv8tion', module: 'JDA'
+        exclude group: 'com.mojang', module: 'authlib'
+        exclude group: 'me.rayzr522', module: 'jsonmessage'
+        exclude group: 'com.jagrosh', module: 'jda-utilities-commons'
+    }
 
     compileOnly files('../lib/MVdWPlaceholderAPI-3.1.1.jar')
     compileOnly files('../lib/Residence-4.9.1.9.jar')

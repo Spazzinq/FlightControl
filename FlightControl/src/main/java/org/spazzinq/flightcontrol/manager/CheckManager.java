@@ -27,7 +27,6 @@ package org.spazzinq.flightcontrol.manager;
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.always.*;
@@ -42,7 +41,6 @@ import org.spazzinq.flightcontrol.check.territory.own.*;
 import org.spazzinq.flightcontrol.check.territory.trusted.*;
 import org.spazzinq.flightcontrol.object.DualStore;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.TreeMap;
 
@@ -115,6 +113,10 @@ public class CheckManager {
         // AdvancedEnchantments Check
         if (pluginLoading("AdvancedEnchantments")) {
             alwaysChecks.addEnabled(new AdvancedEnchantmentsCheck(pl));
+        }
+        // SaberFactions Check
+        if (pluginLoading("Factions") && pm.getPlugin("Factions").getDescription().getAuthors().contains("Driftay")) {
+            alwaysChecks.addEnabled(new SaberFactionsCheck());
         }
 
         /* DISABLE */
