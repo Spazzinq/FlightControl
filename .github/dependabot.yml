@@ -1,0 +1,16 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  target-branch: beta
+  ignore:
+  - dependency-name: org.spigotmc:spigot-api
+    versions:
+    - 1.16.5-R0.1-SNAPSHOT
+  - dependency-name: org.bstats:bstats-bukkit-lite
+    versions:
+    - "1.8"
