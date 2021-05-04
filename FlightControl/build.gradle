@@ -64,7 +64,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.10.9'
     compileOnly 'com.github.NoChanceSD.PvPManager:PvPManager:3.7'
     compileOnly 'com.github.OmerBenGera:SuperiorSkyblockAPI:b18'
-    compileOnly ('com.github.SaberLLC:Saber-Factions:2.6.2-STABLE') {
+    compileOnly ('com.github.SaberLLC:Saber-Factions:2.8.8-STABLE') {
         exclude group: 'com.mojang', module: 'brigadier'
         exclude group: 'net.dv8tion', module: 'JDA'
         exclude group: 'com.mojang', module: 'authlib'
