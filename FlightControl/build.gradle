@@ -64,12 +64,13 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.10.9'
     compileOnly 'com.github.NoChanceSD.PvPManager:PvPManager:3.7.16'
     compileOnly 'com.github.OmerBenGera:SuperiorSkyblockAPI:b18'
-    compileOnly ('com.github.SaberLLC:Saber-Factions:2.6.2-STABLE') {
+    compileOnly ('com.github.SaberLLC:Saber-Factions:2.8.8-STABLE') {
         exclude group: 'com.mojang', module: 'brigadier'
         exclude group: 'net.dv8tion', module: 'JDA'
         exclude group: 'com.mojang', module: 'authlib'
         exclude group: 'me.rayzr522', module: 'jsonmessage'
         exclude group: 'com.jagrosh', module: 'jda-utilities-commons'
+        exclude group: 'club.minnced', module: 'discord-webhooks'
     }
 
     compileOnly files('../lib/MVdWPlaceholderAPI-3.1.1.jar')
