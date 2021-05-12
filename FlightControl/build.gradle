@@ -70,6 +70,7 @@ dependencies {
         exclude group: 'com.mojang', module: 'authlib'
         exclude group: 'me.rayzr522', module: 'jsonmessage'
         exclude group: 'com.jagrosh', module: 'jda-utilities-commons'
+        exclude group: 'club.minnced', module: 'discord-webhooks'
     }
 
     compileOnly files('../lib/MVdWPlaceholderAPI-3.1.1.jar')
