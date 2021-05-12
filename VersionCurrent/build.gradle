@@ -34,7 +34,7 @@ dependencies {
     compileOnly ('com.sk89q.worldguard:worldguard-bukkit:7.0.5-SNAPSHOT') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
-    compileOnly 'net.prosavage.factionsx:FactionsX:0.6-PATREON'
+    compileOnly 'net.prosavage.factionsx:FactionsX:1.0.8-RC'
     compileOnly('com.massivecraft:Factions:1.6.9.5-U0.5.18') {
         exclude group: 'com.darkblade12', module: 'particleeffect'
         exclude group: 'org.spongepowered', module: 'configurate-hocon'
