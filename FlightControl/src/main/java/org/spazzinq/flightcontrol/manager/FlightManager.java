@@ -69,22 +69,23 @@ public class FlightManager {
             boolean disable = !disableChecks.isEmpty();
             Cause enableCause = enable ? enableChecks.iterator().next().getCause() : null;
             Cause disableCause = disable ? disableChecks.iterator().next().getCause() : null;
-
             if (p.getAllowFlight()) {
                 // If override or not enabled
                 if (disable || !enable) {
                     disableFlight(p, disableCause,false);
                 }
             // If all clear to enable
+
             } else if (enable && !disable) {
                 // If directly enabled or auto-enable is enabled
+
                 if (isCommand || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
                     enableFlight(p, enableCause, isCommand);
                 } else {
                     canEnable(p, enableCause);
                 }
             // If denied
-            } else if (isCommand || alreadyCanMsg.contains(p)) {
+            } else if (isCommand || (alreadyCanMsg.contains(p) && !disabledByPlayer.contains(p))) {
                 cannotEnable(p, disableCause);
             }
         // If bypassing checks
@@ -124,6 +125,9 @@ public class FlightManager {
         APIManager.getInstance().callEvent(e);
 
         if (!e.isCancelled()) {
+            pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
+            p.setAllowFlight(false);
+            p.setFlying(false);
             alreadyCanMsg.remove(p);
             Sound.play(p, e.getSound());
             msg(p, e.getMessage(), e.isByActionbar());
@@ -140,6 +144,7 @@ public class FlightManager {
             if (isCommand) {
                 disabledByPlayer.remove(p);
             }
+            alreadyCanMsg.add(p);
             p.setAllowFlight(true);
             // Ignore if not double-tapped
             if (!Sound.playEveryEnable) {
@@ -154,16 +159,14 @@ public class FlightManager {
                 Sound.disableSound, pl.getLangManager().useActionBar(), isCommand);
 
         APIManager.getInstance().callEvent(e);
-
         if (!e.isCancelled()) {
+
             pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().pause();
 
             if (isCommand) {
                 disabledByPlayer.add(p);
-                alreadyCanMsg.add(p);
-            } else {
-                alreadyCanMsg.remove(p);
             }
+            alreadyCanMsg.remove(p);
 
             if (pl.getConfManager().isCancelFall() && p.isFlying()) {
                 noFallDmg.add(p);
