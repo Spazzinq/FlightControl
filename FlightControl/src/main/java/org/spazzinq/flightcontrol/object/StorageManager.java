@@ -47,7 +47,9 @@ public abstract class StorageManager {
     }
 
     public boolean load() {
-        if (!reloadIgnored) {
+        boolean initIgnored = !reloadIgnored;
+
+        if (initIgnored) {
             ignoreReload();
 
             initializeConf();
@@ -56,7 +58,7 @@ public abstract class StorageManager {
             initializeValues();
         }
 
-        return !reloadIgnored;
+        return initIgnored;
     }
 
     protected abstract void initializeConf();

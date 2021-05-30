@@ -92,7 +92,7 @@ public class ConfManager extends StorageManager {
         maxFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.max_flight_speed", 10));
 
         // Strings
-        flyCommandName = conf.getString("settings.fly_command_name");
+        flyCommandName = conf.getString("settings.fly_command_name", "fly");
         aeEnchantName = conf.getString("settings.ae_enchant_name");
 
         // Load other stuff that have separate methods
@@ -143,12 +143,14 @@ public class ConfManager extends StorageManager {
         if (!conf.isDouble("settings.max_flight_speed")) {
             pl.getLogger().info("Added \"max_flight_speed\" to the config!");
             conf.addSubnodes(Collections.singleton("max_flight_speed: 10.0"), "settings.flight_speed");
+            modified = true;
         }
 
         // 4.8.10
         if (!conf.isString("settings.fly_command_name")) {
             pl.getLogger().info("Added \"fly_command_name\" to the config!");
             conf.addSubnodes(Collections.singleton("fly_command_name: \"fly\""), "settings.auto_reload");
+            modified = true;
         }
 
         if (modified) {

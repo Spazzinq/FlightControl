@@ -78,9 +78,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
         // Registration
         registerManagers();
-        registerCommands();
         new EventListener(this);
-
         // Load and check
         load();
         new BukkitRunnable() {
@@ -131,8 +129,10 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         permissionManager = new PermissionManager();
     }
 
-    private void registerCommands() {
+    // Always not null because of plugin.yml
+    @SuppressWarnings("ConstantConditions") public void registerCommands() {
         getCommand("tempfly").setExecutor(new TempflyCommand());
+        // Dependent on ConfManager
         registerFlyCommand();
         getCommand("flightcontrol").setExecutor(new FlightControlCommand());
         getCommand("toggletrail").setExecutor(new ToggleTrailCommand());
@@ -153,6 +153,9 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         // Check connected players
         flightManager.checkAllPlayers();
         trailManager.checkAllPlayers();
+
+        // Register commands
+        registerCommands();
 
         // Start config watching service (on-the-fly editing)
         if (confManager.isAutoReload()) {

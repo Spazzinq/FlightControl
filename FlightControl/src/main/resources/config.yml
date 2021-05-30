@@ -14,6 +14,8 @@ settings:
   auto_update: true
   # Automatically reloads the config when changes are saved
   auto_reload: true
+  # Allows the /fly command to be changed to a different command name (e.g. /votefly)
+  fly_command_name: "fly"
   # Enables flight automatically (no command necessary)
   auto_enable_flight: true
   # The default speed is 1.0 and matches Essentials's /flyspeed values (0-10)

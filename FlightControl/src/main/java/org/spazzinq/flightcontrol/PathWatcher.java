@@ -73,6 +73,7 @@ class PathWatcher extends BukkitRunnable {
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 String fileString = ev.context().toString();
                 boolean playerStateChanged = false;
+                boolean cmdChanged = false;
 
                 switch (fileString) {
                     case CATEGORIES:
@@ -82,6 +83,7 @@ class PathWatcher extends BukkitRunnable {
                         break;
                     case CONFIG:
                         if (pl.getConfManager().load()) {
+                            cmdChanged = true;
                             playerStateChanged = true;
                             logChanges(CONFIG);
                             // If flight_speed is updated!
@@ -101,6 +103,9 @@ class PathWatcher extends BukkitRunnable {
 
                     pl.getFlightManager().checkAllPlayers();
                     pl.getTrailManager().checkAllPlayers();
+                }
+                if (cmdChanged) {
+                    pl.registerCommands();
                 }
             }
             boolean valid = key.reset();

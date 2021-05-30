@@ -236,12 +236,13 @@ public class CheckManager {
 
     private void printLoadedChecks() {
         HashSet<Check> checks = new HashSet<>(bypassChecks);
+        checks.add(ignoreCheck);
         checks.addAll(alwaysChecks.getEnabled());
         checks.addAll(alwaysChecks.getDisabled());
         checks.addAll(ownTerritoryChecks.values());
         checks.addAll(trustedTerritoryChecks.values());
 
-        pl.getLogger().info(checksMsg = "Loaded checks: " + checks.toString());
+        pl.getLogger().info(checksMsg = "Loaded checks: " + checks);
     }
 
     private boolean pluginLoading(String pluginName) {
