@@ -22,43 +22,20 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.object;
+package org.spazzinq.flightcontrol.check.always;
 
-public enum FlyPermission {
-    ADMIN("flightcontrol.admin"),
-    BYPASS("flightcontrol.bypass"),
-    NEARBYPASS("flightcontrol.nearbypass"),
-    IGNORE("flightcontrol.ignore"),
+import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.api.object.Cause;
+import org.spazzinq.flightcontrol.check.Check;
+import org.spazzinq.flightcontrol.object.FlyPermission;
+import org.spazzinq.flightcontrol.util.PlayerUtil;
 
-    FLY_ALL("flightcontrol.flyall"),
-    FLY_COMMAND("flightcontrol.flycommand"),
-
-    CATEGORY_STUB("flightcontrol.category."),
-    TEMP_FLY_STUB("flightcontrol.tempfly."),
-    FLY_STUB("flightcontrol.fly."),
-    NO_FLY_STUB("flightcontrol.nofly."),
-
-    TOWNY_OWN("flightcontrol.towny.own"),
-
-    LANDS_OWN("flightcontrol.lands.own"),
-    LANDS_TRUSTED("flightcontrol.lands.trusted"),
-
-    CLAIM_OWN("flightcontrol.claim.own"),
-    CLAIM_TRUSTED("flightcontrol.claim.trusted"),
-
-    FLY_SPEED("flightcontrol.flyspeed"),
-    FLY_SPEED_OTHERS("flightcontrol.flypseed.others"),
-
-    TEMP_FLY("flightcontrol.tempfly"),
-    TEMP_FLY_OTHERS("flightcontrol.tempfly.others");
-
-    private final String stringPermission;
-
-    FlyPermission(String stringPermission) {
-        this.stringPermission = stringPermission;
+public class IgnoreCheck extends Check {
+    @Override public boolean check(Player p) {
+        return PlayerUtil.hasPermission(p, FlyPermission.IGNORE);
     }
-
-    @Override public String toString() {
-        return stringPermission;
+    @Override public Cause getCause() {
+        // Check never calls anything, so no need for Cause
+        return null;
     }
 }

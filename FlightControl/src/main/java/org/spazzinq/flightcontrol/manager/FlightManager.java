@@ -60,41 +60,44 @@ public class FlightManager {
 
     // TODO Refactor
     public void check(Player p, boolean isCommand) {
-        HashSet<Check> bypassChecks = CheckUtil.evaluate(pl.getCheckManager().getBypassChecks(), p);
-        // If not bypassing checks
-        if (bypassChecks.isEmpty()) {
-            HashSet<Check> enableChecks = pl.getStatusManager().checkEnable(p);
-            HashSet<Check> disableChecks = pl.getStatusManager().checkDisable(p);
-            boolean enable = !enableChecks.isEmpty();
-            boolean disable = !disableChecks.isEmpty();
-            Cause enableCause = enable ? enableChecks.iterator().next().getCause() : null;
-            Cause disableCause = disable ? disableChecks.iterator().next().getCause() : null;
+        // If not ignoring checks
+        if (!pl.getCheckManager().getIgnoreCheck().check(p)) {
+            HashSet<Check> bypassChecks = CheckUtil.evaluate(pl.getCheckManager().getBypassChecks(), p);
+            // If not bypassing checks
+            if (bypassChecks.isEmpty()) {
+                HashSet<Check> enableChecks = pl.getStatusManager().checkEnable(p);
+                HashSet<Check> disableChecks = pl.getStatusManager().checkDisable(p);
+                boolean enable = !enableChecks.isEmpty();
+                boolean disable = !disableChecks.isEmpty();
+                Cause enableCause = enable ? enableChecks.iterator().next().getCause() : null;
+                Cause disableCause = disable ? disableChecks.iterator().next().getCause() : null;
 
-            if (p.getAllowFlight()) {
-                // If override or not enabled
-                if (disable || !enable) {
-                    disableFlight(p, disableCause,false);
+                if (p.getAllowFlight()) {
+                    // If override or not enabled
+                    if (disable || !enable) {
+                        disableFlight(p, disableCause,false);
+                    }
+                    // If all clear to enable
+                } else if (enable && !disable) {
+                    // If directly enabled or auto-enable is enabled
+                    if (isCommand || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
+                        enableFlight(p, enableCause, isCommand);
+                    } else {
+                        canEnable(p, enableCause);
+                    }
+                    // If denied
+                } else if (isCommand || alreadyCanMsg.contains(p)) {
+                    cannotEnable(p, disableCause);
                 }
-            // If all clear to enable
-            } else if (enable && !disable) {
-                // If directly enabled or auto-enable is enabled
+                // If bypassing checks
+            } else if (!p.getAllowFlight()) {
+                Cause bypassCause = !bypassChecks.isEmpty() ? bypassChecks.iterator().next().getCause() : null;
+
                 if (isCommand || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
-                    enableFlight(p, enableCause, isCommand);
+                    enableFlight(p, bypassCause, isCommand);
                 } else {
-                    canEnable(p, enableCause);
+                    canEnable(p, bypassCause);
                 }
-            // If denied
-            } else if (isCommand || alreadyCanMsg.contains(p)) {
-                cannotEnable(p, disableCause);
-            }
-        // If bypassing checks
-        } else if (!p.getAllowFlight()) {
-            Cause bypassCause = !bypassChecks.isEmpty() ? bypassChecks.iterator().next().getCause() : null;
-
-            if (isCommand || (pl.getConfManager().isAutoEnable() && !disabledByPlayer.contains(p))) {
-                enableFlight(p, bypassCause, isCommand);
-            } else {
-                canEnable(p, bypassCause);
             }
         }
     }

@@ -51,6 +51,7 @@ public class CheckManager {
     @Getter private final DualStore<Check> alwaysChecks = new DualStore<>();
     @Getter private final HashSet<Check> bypassChecks = new HashSet<>();
     @Getter private final HashSet<Check> noTrailChecks = new HashSet<>();
+    @Getter private final IgnoreCheck ignoreCheck = new IgnoreCheck();
 
     @Getter private final TreeMap<String, TerritoryCheck> ownTerritoryChecks = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     @Getter private final TreeMap<String, TerritoryCheck> trustedTerritoryChecks = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);

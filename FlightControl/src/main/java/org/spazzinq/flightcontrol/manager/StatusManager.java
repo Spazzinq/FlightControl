@@ -131,7 +131,12 @@ public class StatusManager {
                 (pl.getHookManager().getWorldGuardHook().isHooked() ? "\n&eRGs &7» &f" + category.getRegions() : "") +
                 ("\n&eBypass &7» &f" + CheckUtil.evaluate(pl.getCheckManager().getBypassChecks(), targetPlayer, true)));
 
-        checkEnable(targetPlayer, sender);
-        checkDisable(targetPlayer, sender);
+        if (pl.getCheckManager().getIgnoreCheck().check(targetPlayer)) {
+            MessageUtil.msg(sender, "&e&lCHECKS IGNORED.");
+        } else {
+            checkEnable(targetPlayer, sender);
+            checkDisable(targetPlayer, sender);
+        }
+
     }
 }

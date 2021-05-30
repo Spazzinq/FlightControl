@@ -59,6 +59,9 @@ permissions:
     default: op
     children:
       others: true
+  flightcontrol.ignore:
+    description: Ignores FlightControl's checks and does not change flight
+    default: false
   flightcontrol.nearbypass:
     description: Bypasses the "nearby_disable" check
     default: op
