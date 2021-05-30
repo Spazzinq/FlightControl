@@ -27,7 +27,12 @@ package org.spazzinq.flightcontrol;
 import lombok.Getter;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
@@ -35,6 +40,11 @@ import org.spazzinq.flightcontrol.multiversion.Particle;
 import org.spazzinq.flightcontrol.multiversion.current.Particle13;
 import org.spazzinq.flightcontrol.multiversion.legacy.Particle8;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -123,7 +133,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
     private void registerCommands() {
         getCommand("tempfly").setExecutor(new TempflyCommand());
-        getCommand("fly").setExecutor(new FlyCommand());
+        registerFlyCommand();
         getCommand("flightcontrol").setExecutor(new FlightControlCommand());
         getCommand("toggletrail").setExecutor(new ToggleTrailCommand());
         getCommand("flyspeed").setExecutor(new FlySpeedCommand());
@@ -149,5 +159,31 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
             new PathWatcher(this, getDataFolder().toPath()).runTaskTimer(this, 0, 10);
         }
 
+    }
+
+    private void registerFlyCommand() {
+        String flyCmdName = confManager.getFlyCommandName().toLowerCase();
+
+        try {
+            // Reflection to add command
+            Field cmdMap = Bukkit.getServer().getClass().getDeclaredField("commandMap"), knownCmds = SimpleCommandMap.class.getDeclaredField("knownCommands");
+            Constructor<PluginCommand> plCmd = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+            cmdMap.setAccessible(true); knownCmds.setAccessible(true); plCmd.setAccessible(true);
+            CommandMap map = (CommandMap) cmdMap.get(Bukkit.getServer());
+            @SuppressWarnings("unchecked") Map<String, Command> kCMDMap = (Map<String, Command>) knownCmds.get(cmdMap.get(Bukkit.getServer()));
+            PluginCommand fly = plCmd.newInstance(flyCmdName, this);
+            String plName = getDescription().getName();
+
+            fly.setDescription("Toggles flight");
+            fly.setAliases(Arrays.asList("fcfly", "ffly"));
+            map.register(plName, fly);
+            kCMDMap.put(plName.toLowerCase() + ":" + flyCmdName, fly);
+            kCMDMap.put(flyCmdName, fly);
+
+            // Try catch handles null
+            getCommand(flyCmdName).setExecutor(new FlyCommand());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
