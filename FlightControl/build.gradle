@@ -57,7 +57,7 @@ dependencies {
     }
     compileOnly 'com.github.intellectualsites.plotsquared:PlotSquared-API:4.514'
     compileOnly 'com.plotsquared:PlotSquared:5.1'
-    compileOnly 'com.github.TownyAdvanced:Towny:0.97.0.0'
+    compileOnly 'com.github.TownyAdvanced:Towny:0.97.0.5'
     compileOnly 'com.github.Angeschossen:LandsAPI:5.7.4'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.17.1'
     compileOnly 'com.github.SirBlobman.CombatLogX:CombatLogX-API:10.0.0.0-beta2'
