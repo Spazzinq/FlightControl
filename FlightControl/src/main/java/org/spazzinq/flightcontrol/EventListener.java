@@ -106,7 +106,12 @@ final class EventListener implements org.bukkit.event.Listener {
             if (!p.getAllowFlight()) {
                 pl.getTrailManager().disableTrail(p);
             }
+
+            // Apply flyspeed on world changes
+            p.setFlySpeed(pl.getPlayerManager().getFlightPlayer(p).getActualFlightSpeed());
         }
+
+
     }
 
     /**
