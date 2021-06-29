@@ -73,7 +73,9 @@ public class HookManager {
         if (pluginLoading("FactionsX")) {
             factionsHook = new FactionsXHook();
         } else if (pluginLoading("Factions")) {
-            if (pm.isPluginEnabled("MassiveCore")) {
+            String website = pm.getPlugin("Factions").getDescription().getWebsite();
+
+            if (website != null && website.equals("https://www.massivecraft.com/factions")) {
                 factionsHook = new MassiveFactionsHook();
             } else if (pm.getPlugin("Factions").getDescription().getVersion().startsWith("1.6.9.5-U0.4")
                     || pm.getPlugin("Factions").getDescription().getAuthors().contains("ProSavage")) {
