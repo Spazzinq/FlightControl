@@ -99,6 +99,8 @@ public class FlightManager {
                     canEnable(p, bypassCause);
                 }
             }
+        } else if (isCommand) {
+            msg(p, "&c&lFlightControl &7» &fUnable to change flight status because you are ignoring checks. Contact the developer on Discord if you are confused.");
         }
     }
 
