@@ -53,6 +53,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private static FlightControl instance;
     // Storage management
     @Getter private CategoryManager categoryManager;
+    @Getter private RewardManager rewardManager;
     @Getter private ConfManager confManager;
     @Getter private LangManager langManager;
     @Getter private UpdateManager updateManager;
@@ -111,6 +112,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }
 
         categoryManager = new CategoryManager();
+        rewardManager = new RewardManager();
         confManager = new ConfManager();
         langManager = new LangManager();
         updateManager = new UpdateManager();
@@ -149,6 +151,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         hookManager.loadHooks();
         categoryManager.loadCategories();
         playerManager.loadPlayerData();
+        rewardManager.loadRewards();
         // Check connected players
         flightManager.checkAllPlayers();
         trailManager.checkAllPlayers();

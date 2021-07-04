@@ -29,7 +29,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.manager.PlayerManager;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.object.TempflyTask;

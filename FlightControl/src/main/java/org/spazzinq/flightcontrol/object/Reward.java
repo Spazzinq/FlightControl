@@ -22,34 +22,32 @@
  * SOFTWARE.
  */
 
-allprojects {
-    group = 'org.spazzinq'
-    version = '4.9.0-BETA'
-}
+package org.spazzinq.flightcontrol.object;
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.spazzinq.flightcontrol.FlightControl;
 
-    repositories {
-        mavenCentral()
-        // Spigot
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats,
-        maven { url = 'https://repo.codemc.io/repository/maven-public/' }
-        // WorldEdit, WorldGuard
-        maven { url = 'https://maven.sk89q.com/repo/' }
-        // Essentials, FactionsUUID
-        maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
-        // PlotSquared
-        maven { url = 'https://plotsquared.com/mvn/' }
-        // CrazyEnchantments
-        maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PvPManager, CombatLogX, SaberFactions, GriefPrevention
-        maven { url = 'https://jitpack.io' }
-        // PlaceholderAPI
-        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-        // FactionsX
-        maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
+import java.util.List;
+
+public class Reward extends BukkitRunnable {
+    @Getter private final Category category;
+    @Getter private final List<String> commands;
+
+    @Override public void run() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (category == FlightControl.getInstance().getCategoryManager().getCategory(p)) {
+                for (String command : commands) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(),command.replaceAll("%player%", p.getName()));
+                }
+            }
+        }
+    }
+
+    public Reward(Category category, List<String> commands) {
+        this.category = category;
+        this.commands = commands;
     }
 }
