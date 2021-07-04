@@ -50,6 +50,6 @@ admin:
     disable: '&e&lFlightControl &7» &e已为%player%关闭临时飞行!'
     disabled: '&c&lFlightControl &7» &f%player%&c的临时飞行已经是关闭状态'
     check: '&e&lFlightControl &7» &f%player%&e还有&f%duration%&e 的飞行时间.'
-    usage: '&c&lFlightControl &7» &c错误的用法! 用法: /tempfly (check/add/remove/set/disable) (player) [时间]
+    usage: '&c&lFlightControl &7» &c错误的用法! 用法: /tempfly (check/add/remove/set/disable) (player/all) [时间]
       后加时间. 时间示例: &f1d,
       4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c'

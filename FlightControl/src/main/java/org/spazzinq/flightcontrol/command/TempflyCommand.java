@@ -29,6 +29,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.manager.PlayerManager;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.object.TempflyTask;
@@ -36,10 +37,7 @@ import org.spazzinq.flightcontrol.util.CommandUtil;
 import org.spazzinq.flightcontrol.util.MathUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
@@ -59,7 +57,7 @@ public class TempflyCommand extends TemplateCommand {
     }
 
     @Override public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        Player targetPlayer = sender instanceof ConsoleCommandSender ? null : (Player) sender;
+        Set<Player> targetPlayers = sender instanceof ConsoleCommandSender ? Collections.emptySet() : Collections.singleton((Player) sender);
         TempflyTask type;
         long duration = 0;
 
@@ -79,9 +77,17 @@ public class TempflyCommand extends TemplateCommand {
                     }
 
                     if (PlayerUtil.hasPermission(sender, FlyPermission.TEMP_FLY_OTHERS) && args.length > optionalPlayerIndex) {
-                        targetPlayer = Bukkit.getPlayer(args[optionalPlayerIndex]);
+                        if (args[optionalPlayerIndex].equalsIgnoreCase("all")) {
+                            targetPlayers = new HashSet<>(Bukkit.getOnlinePlayers());
+                        } else {
+                            Player p = Bukkit.getPlayer(args[optionalPlayerIndex]);
 
-                        if (targetPlayer == null) {
+                            if (p != null) {
+                                targetPlayers = Collections.singleton(p);
+                            }
+                        }
+
+                        if (targetPlayers.isEmpty()) {
                             type = TempflyTask.HELP;
                         }
                     } else if (sender instanceof ConsoleCommandSender) {
@@ -111,7 +117,7 @@ public class TempflyCommand extends TemplateCommand {
             type = TempflyTask.CHECK;
         }
 
-        runTempflyTask(sender, targetPlayer, type, duration, "silenttempfly".equals(label.toLowerCase()));
+        runTempflyTask(sender, targetPlayers, type, duration, "silenttempfly".equals(label.toLowerCase()));
 
         return true;
     }
@@ -153,41 +159,43 @@ public class TempflyCommand extends TemplateCommand {
         return Collections.emptyList();
     }
 
-    private void runTempflyTask(CommandSender sender, Player targetPlayer, TempflyTask type, long duration, boolean silent) {
-        FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(targetPlayer);
-        boolean hasTimeLeft = type == TempflyTask.DISABLE && flightPlayer != null && flightPlayer.getTempflyTimer().hasTimeLeft();
+    private void runTempflyTask(CommandSender sender, Set<Player> targetPlayers, TempflyTask type, long duration, boolean silent) {
+        for (Player targetPlayer : targetPlayers) {
+            FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(targetPlayer);
+            boolean hasTimeLeft = type == TempflyTask.DISABLE && flightPlayer != null && flightPlayer.getTempflyTimer().hasTimeLeft();
 
-        if (type != TempflyTask.CHECK && type != TempflyTask.HELP && flightPlayer != null) {
-            flightPlayer.modifyTempflyDuration(type, duration);
-        }
-
-        if (!silent) {
-            String msg;
-
-            switch (type) {
-                case CHECK:
-                    msg = pl.getLangManager().getTempFlyCheck();
-                    break;
-                case SET: case ADD: case REMOVE:
-                    msg = pl.getLangManager().getTempFlySet();
-                    break;
-                case DISABLE:
-                    msg = hasTimeLeft
-                            ? pl.getLangManager().getTempFlyDisable() : pl.getLangManager().getTempFlyDisabled();
-                    break;
-                case HELP: default:
-                    msg = defaultHelp;
-                    break;
+            if (type != TempflyTask.CHECK && type != TempflyTask.HELP && flightPlayer != null) {
+                flightPlayer.modifyTempflyDuration(type, duration);
             }
 
-            msgVar(sender, msg, false, new HashMap<String, String>() {{
-                if (targetPlayer != null) {
-                    put("player", targetPlayer.getName());
+            if (!silent) {
+                String msg;
+
+                switch (type) {
+                    case CHECK:
+                        msg = pl.getLangManager().getTempFlyCheck();
+                        break;
+                    case SET: case ADD: case REMOVE:
+                        msg = pl.getLangManager().getTempFlySet();
+                        break;
+                    case DISABLE:
+                        msg = hasTimeLeft
+                                ? pl.getLangManager().getTempFlyDisable() : pl.getLangManager().getTempFlyDisabled();
+                        break;
+                    case HELP: default:
+                        msg = defaultHelp;
+                        break;
                 }
-                if (flightPlayer != null) {
-                    put("duration", PlayerUtil.longTempflyPlaceholder(flightPlayer));
-                }
-            }});
+
+                msgVar(sender, msg, false, new HashMap<String, String>() {{
+                    if (targetPlayer != null) {
+                        put("player", targetPlayer.getName());
+                    }
+                    if (flightPlayer != null) {
+                        put("duration", PlayerUtil.longTempflyPlaceholder(flightPlayer));
+                    }
+                }});
+            }
         }
     }
 }
