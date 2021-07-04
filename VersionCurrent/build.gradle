@@ -35,7 +35,7 @@ dependencies {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
     compileOnly 'net.prosavage.factionsx:FactionsX:1.0.8-RC'
-    compileOnly('com.massivecraft:Factions:1.6.9.5-U0.5.18') {
+    compileOnly('com.massivecraft:Factions:1.6.9.5-2.7.0-STABLE') {
         exclude group: 'com.darkblade12', module: 'particleeffect'
         exclude group: 'org.spongepowered', module: 'configurate-hocon'
         exclude group: 'org.kitteh', module: 'paste-gg-api'
