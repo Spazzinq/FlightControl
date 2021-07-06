@@ -39,7 +39,7 @@ dependencies {
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
 
     compileOnly 'org.jetbrains:annotations:21.0.1'
-    compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {
+    compileOnly('org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT') {
         exclude group: 'net.md-5', module: 'bungeecord-chat'
     }
     compileOnly('me.badbones69:crazyenchantments-plugin:1.8-Dev-Build-v8.1') {
