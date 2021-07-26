@@ -16,7 +16,7 @@ commands:
     aliases: [trail, tt, trailtoggle]
   tempfly:
     description: Gives temporary flight
-    aliases: [tfly, tempflight, silenttempfly]
+    aliases: [tfly, tempflight, silenttempfly, flytime]
   flyspeed:
     description: Sets flight speed
     aliases: [flightspeed]
