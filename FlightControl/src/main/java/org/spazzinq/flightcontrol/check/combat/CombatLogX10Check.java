@@ -22,34 +22,22 @@
  * SOFTWARE.
  */
 
-allprojects {
-    group = 'org.spazzinq'
-    version = '4.9.2-BETA'
-}
+package org.spazzinq.flightcontrol.check.combat;
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
+import com.SirBlobman.combatlogx.api.ICombatLogX;
+import com.SirBlobman.combatlogx.api.utility.ICombatManager;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-    repositories {
-        mavenCentral()
-        // Spigot
-        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats,
-        maven { url = 'https://repo.codemc.io/repository/maven-public/' }
-        // WorldEdit, WorldGuard
-        maven { url = 'https://maven.sk89q.com/repo/' }
-        // Essentials, FactionsUUID
-        maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
-        // PlotSquared
-        maven { url = 'https://plotsquared.com/mvn/' }
-        // CrazyEnchantments
-        maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PvPManager, CombatLogX, SaberFactions, GriefPrevention
-        maven { url = 'https://jitpack.io' }
-        // PlaceholderAPI
-        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-        // FactionsX
-        maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
+public final class CombatLogX10Check extends CombatCheck {
+    private ICombatManager combatManager;
+
+    @Override public boolean check(Player p) {
+        if (combatManager == null) {
+            combatManager = ((ICombatLogX
+                    ) Bukkit.getPluginManager().getPlugin("CombatLogX")).getCombatManager();
+        }
+
+        return combatManager.isInCombat(p);
     }
 }

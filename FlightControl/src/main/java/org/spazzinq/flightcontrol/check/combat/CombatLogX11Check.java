@@ -24,12 +24,12 @@
 
 package org.spazzinq.flightcontrol.check.combat;
 
-import com.SirBlobman.combatlogx.api.ICombatLogX;
-import com.SirBlobman.combatlogx.api.utility.ICombatManager;
+import com.github.sirblobman.combatlogx.api.ICombatLogX;
+import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public final class CombatLogXCheck extends CombatCheck {
+public final class CombatLogX11Check extends CombatCheck {
     private ICombatManager combatManager;
 
     @Override public boolean check(Player p) {

@@ -78,6 +78,7 @@ dependencies {
     compileOnly files('../lib/RedProtect-7.7.2-b357-Universal.jar')
     compileOnly files('../lib/CombatLogX-10.4.2.1.jar')
     compileOnly files('../lib/CombatLogX-11.0.0.0.jar')
+    compileOnly files('../lib/SirBlobmanCore-2.3.0.jar') // Necessary for CombatLogX v11
     compileOnly files('../lib/DeluxeCombat_v.1.14.2.jar')
     compileOnly files('../lib/DummyCombatTagPlus.jar')
     compileOnly files('../lib/CombatLogPro-v1.5.9.jar')
