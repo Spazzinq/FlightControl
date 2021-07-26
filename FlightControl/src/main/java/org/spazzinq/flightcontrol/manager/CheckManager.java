@@ -206,7 +206,10 @@ public class CheckManager {
         HashSet<Check> combatChecks = new HashSet<>();
 
         if (pluginLoading("CombatLogX")) {
-            combatChecks.add(new CombatLogXCheck());
+            String version = pm.getPlugin("CombatLogX").getDescription().getVersion();
+            boolean versionEleven = version != null && version.startsWith("11.");
+
+            combatChecks.add(versionEleven ? new CombatLogX11Check() : new CombatLogX10Check());
         } else if (pluginLoading("CombatTagPlus")) {
             combatChecks.add(new CombatTagPlusCheck());
         } else if (pluginLoading("AntiCombatLogging")) {
