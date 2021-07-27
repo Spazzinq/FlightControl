@@ -57,7 +57,7 @@ dependencies {
     }
     compileOnly 'com.github.intellectualsites.plotsquared:PlotSquared-API:4.514'
     compileOnly 'com.plotsquared:PlotSquared:5.1'
-    compileOnly 'com.github.TownyAdvanced:Towny:0.97.0.6'
+    compileOnly 'com.github.TownyAdvanced:Towny:0.97.0.17'
     compileOnly 'com.github.Angeschossen:LandsAPI:5.7.4'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.17.1'
     compileOnly 'me.clip:placeholderapi:2.10.9'
