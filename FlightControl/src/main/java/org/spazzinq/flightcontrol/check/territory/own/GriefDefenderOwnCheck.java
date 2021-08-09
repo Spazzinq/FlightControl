@@ -11,6 +11,7 @@ public class GriefDefenderOwnCheck extends TerritoryCheck {
     }
 
     private Claim getClaimAt(Player p) {
-        return GriefDefender.getCore().getClaimManager(p.getWorld().getUID()).getClaimAt(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
+        return GriefDefender.getCore().getClaimAt(p.getWorld().getUID(),
+                p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
     }
 }
