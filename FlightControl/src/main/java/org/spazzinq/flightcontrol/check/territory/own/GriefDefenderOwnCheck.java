@@ -1,5 +1,6 @@
 package org.spazzinq.flightcontrol.check.territory.own;
 
+import com.flowpowered.math.vector.Vector3i;
 import com.griefdefender.api.GriefDefender;
 import com.griefdefender.api.claim.Claim;
 import org.bukkit.entity.Player;
@@ -11,7 +12,7 @@ public class GriefDefenderOwnCheck extends TerritoryCheck {
     }
 
     private Claim getClaimAt(Player p) {
-        return GriefDefender.getCore().getClaimAt(p.getWorld().getUID(),
-                p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
+        return GriefDefender.getCore().getClaimManager(p.getWorld().getUID()).getClaimAt(
+                Vector3i.from(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ()));
     }
 }

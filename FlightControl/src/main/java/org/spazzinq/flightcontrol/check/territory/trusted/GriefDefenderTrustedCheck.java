@@ -1,5 +1,6 @@
 package org.spazzinq.flightcontrol.check.territory.trusted;
 
+import com.flowpowered.math.vector.Vector3i;
 import com.griefdefender.api.GriefDefender;
 import com.griefdefender.api.claim.Claim;
 import com.griefdefender.api.claim.TrustTypes;
@@ -12,7 +13,7 @@ public class GriefDefenderTrustedCheck extends TerritoryCheck {
     }
 
     private Claim getClaimAt(Player p) {
-        return GriefDefender.getCore().getClaimAt(p.getWorld().getUID(),
-                p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ());
+        return GriefDefender.getCore().getClaimManager(p.getWorld().getUID()).getClaimAt(
+                Vector3i.from(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ()));
     }
 }
