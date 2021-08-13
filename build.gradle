@@ -24,7 +24,7 @@
 
 allprojects {
     group = 'org.spazzinq'
-    version = '4.9.4-BETA'
+    version = '4.9.5-BETA'
 }
 
 subprojects {
@@ -35,7 +35,7 @@ subprojects {
         mavenCentral()
         // Spigot
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats,
+        // bStats, CombatLogX 10
         maven { url = 'https://repo.codemc.io/repository/maven-public/' }
         // WorldEdit, WorldGuard
         maven { url = 'https://maven.sk89q.com/repo/' }
@@ -45,7 +45,7 @@ subprojects {
         maven { url = 'https://plotsquared.com/mvn/' }
         // CrazyEnchantments
         maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PvPManager, CombatLogX, SaberFactions, GriefPrevention
+        // Lands, PvPManager, CombatLogX 11, SaberFactions, GriefPrevention, GriefDefender
         maven { url = 'https://jitpack.io' }
         // PlaceholderAPI
         maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
