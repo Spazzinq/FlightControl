@@ -71,7 +71,6 @@ dependencies {
     }
     compileOnly 'com.github.bloodmc:GriefDefenderAPI:master'
     compileOnly 'world.bentobox:bentobox:1.17.2-SNAPSHOT'
-    compileOnly 'com.github.sirblobman.combatlogx:api:11.0.0.0-SNAPSHOT'
     compileOnly 'com.SirBlobman.combatlogx:CombatLogX-API:10.0.0.0-SNAPSHOT'
 
     compileOnly files('../lib/MVdWPlaceholderAPI-3.1.1.jar')
@@ -82,6 +81,7 @@ dependencies {
     compileOnly files('../lib/CombatLogPro-v1.5.9.jar')
     compileOnly files('../lib/AntiCombatLoggingAPI.jar')
     compileOnly files('../lib/AdvancedEnchantmentsAPI-8.0.0.jar')
+    compileOnly files('../lib/CombatLogX-11.jar')
 }
 
 processResources {
