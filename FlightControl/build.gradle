@@ -71,20 +71,19 @@ dependencies {
         exclude group: 'com.jagrosh', module: 'jda-utilities-commons'
         exclude group: 'club.minnced', module: 'discord-webhooks'
     }
+    compileOnly 'com.github.bloodmc:GriefDefenderAPI:master'
+    compileOnly 'world.bentobox:bentobox:1.17.2-SNAPSHOT'
+    compileOnly 'com.github.sirblobman.combatlogx:api:11.0.0.0-SNAPSHOT'
+    compileOnly 'com.SirBlobman.combatlogx:CombatLogX-API:10.0.0.0-SNAPSHOT'
 
     compileOnly files('../lib/MVdWPlaceholderAPI-3.1.1.jar')
     compileOnly files('../lib/Residence-4.9.1.9.jar')
-    compileOnly files('../lib/BentoBox-1.13.1.jar')
     compileOnly files('../lib/RedProtect-7.7.2-b357-Universal.jar')
-    compileOnly files('../lib/CombatLogX-10.4.2.1.jar')
-    compileOnly files('../lib/CombatLogX-11.0.0.0.jar')
-    compileOnly files('../lib/SirBlobmanCore-2.3.0.jar') // Necessary for CombatLogX v11
     compileOnly files('../lib/DeluxeCombat_v.1.14.2.jar')
     compileOnly files('../lib/DummyCombatTagPlus.jar')
     compileOnly files('../lib/CombatLogPro-v1.5.9.jar')
     compileOnly files('../lib/AntiCombatLoggingAPI.jar')
     compileOnly files('../lib/AdvancedEnchantmentsAPI-8.0.0.jar')
-    compileOnly files('../lib/GriefDefender-bukkit-2.0.0.jar') // Manually compiled
 }
 
 processResources {
@@ -103,5 +102,6 @@ tasks.withType(JavaCompile) {
 
 shadowJar {
     relocate 'org.bstats.bukkit', 'org.spazzinq.flightcontrol.metric'
+    relocate 'com.flowpowered' , 'com.griefdefender.lib.flowpowered'
     archiveFileName = 'FlightControl.jar'
 }
