@@ -24,7 +24,7 @@
 
 allprojects {
     group = 'org.spazzinq'
-    version = '4.9.6-BETA'
+    version = '4.9.7-BETA'
 }
 
 subprojects {
@@ -35,6 +35,8 @@ subprojects {
         mavenCentral()
         // Spigot
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+        // Bungeecord
+        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
         // bStats, CombatLogX 10
         maven { url = 'https://repo.codemc.io/repository/maven-public/' }
         // WorldEdit, WorldGuard

@@ -24,21 +24,43 @@
 
 package org.spazzinq.flightcontrol.util;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
 public final class ActionbarUtil {
+    private static boolean isAboveV1_8;
     private static String nmsPackage;
 
     static {
         nmsPackage = Bukkit.getServer().getClass().getPackage().getName();
         nmsPackage = nmsPackage.substring(nmsPackage.lastIndexOf(".") + 1);
+
+        for (int i = 9; i < 18; i++) {
+            if (Bukkit.getServer().getBukkitVersion().contains("1." + i)) {
+                isAboveV1_8 = true;
+                break;
+            }
+        }
+    }
+
+    public static void sendActionbar(Player p, String msg) {
+        if (isAboveV1_8) {
+            sendActionbarAboveV1_8(p, msg);
+        } else {
+            sendActionbarV1_8(p, msg);
+        }
+    }
+
+    public static void sendActionbarAboveV1_8(Player p, String msg) {
+        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static void sendActionbar(Player p, String msg) {
+    public static void sendActionbarV1_8(Player p, String msg) {
         try {
             Class<?> packetPlayOutChatClass = getNMSClass("PacketPlayOutChat");
             Class<?> iChatBaseComponentClass = getNMSClass("IChatBaseComponent");
@@ -49,26 +71,9 @@ public final class ActionbarUtil {
 
             Class<?> chatMessageTypeClass = getNMSClass("ChatMessageType");
 
-            if (chatMessageTypeClass == null) {
-                // Probably 1.8
-                packetPlayOutChat = packetPlayOutChatClass.getConstructor(
-                        new Class[]{iChatBaseComponentClass, byte.class})
-                        .newInstance(chatComponentText, (byte) 2);
-            } else {
-                Object chatMessageType = chatMessageTypeClass.getField("GAME_INFO").get(null);
-
-                try {
-                    // Everything after above version and before 1.16
-                    packetPlayOutChat = packetPlayOutChatClass.getConstructor(
-                            new Class[]{iChatBaseComponentClass, chatMessageTypeClass})
-                            .newInstance(chatComponentText, chatMessageType);
-                } catch (NoSuchMethodException e) {
-                    // 1.16 and later
-                    packetPlayOutChat = packetPlayOutChatClass.getConstructor(
-                            new Class[]{iChatBaseComponentClass, chatMessageTypeClass, UUID.class})
-                            .newInstance(chatComponentText, chatMessageType, p.getUniqueId());
-                }
-            }
+            packetPlayOutChat = packetPlayOutChatClass.getConstructor(
+                    new Class[]{iChatBaseComponentClass, byte.class})
+                    .newInstance(chatComponentText, (byte) 2);
 
             Object handle = p.getClass().getMethod("getHandle", new Class[0]).invoke(p);
             Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
