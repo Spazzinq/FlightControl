@@ -15,9 +15,11 @@ vip:
   # cooldown period. By default, VIP players receive 1 hour of tempfly every !2 hours.
   cooldown: "12 hours"
   # These are the commands that are executed after every cooldown period.
+  # /silenttempfly disables console output for the /tempfly command
+  # to reduce spam.
   commands:
-    - "tempfly add 1h %player%"
+    - "silenttempfly add 1h %player%"
 mvp:
   cooldown: "2 hours"
   commands:
-    - "tempfly add 1h %player%"
+    - "silenttempfly add 1h %player%"

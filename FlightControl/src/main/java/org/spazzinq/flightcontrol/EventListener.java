@@ -46,8 +46,8 @@ import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 final class EventListener implements org.bukkit.event.Listener {
     private final FlightControl pl;
 
-    EventListener(FlightControl pl) {
-        this.pl = pl;
+    EventListener() {
+        this.pl = FlightControl.getInstance();
         Bukkit.getPluginManager().registerEvents(this, pl);
     }
 
@@ -56,15 +56,13 @@ final class EventListener implements org.bukkit.event.Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onMove(PlayerMoveEvent e) {
-        // Save performance
+        // For performance
         if (e.getFrom().getBlockX() != e.getTo().getBlockX()
                 || e.getFrom().getBlockY() != e.getTo().getBlockY()
                 || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
             new BukkitRunnable() {
                 @Override public void run() {
-                    Player p = e.getPlayer();
-
-                    pl.getFlightManager().check(p);
+                    pl.getFlightManager().check(e.getPlayer());
                 }
             }.runTask(pl);
         }

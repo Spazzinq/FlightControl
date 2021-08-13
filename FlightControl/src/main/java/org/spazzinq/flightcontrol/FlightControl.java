@@ -78,7 +78,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
 
         // Registration
         registerManagers();
-        new EventListener(this);
+        new EventListener();
         // Load and check
         load();
         new BukkitRunnable() {
