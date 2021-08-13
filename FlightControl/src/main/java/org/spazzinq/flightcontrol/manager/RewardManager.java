@@ -68,12 +68,12 @@ public class RewardManager {
                     category = c;
                 }
             }
-            if (categoryName.equals(pl.getCategoryManager().getGlobal().getName())) {
+            if (category == null && categoryName.equals(pl.getCategoryManager().getGlobal().getName())) {
                 category = pl.getCategoryManager().getGlobal();
             }
 
             String cooldownStr = conf.getConfigurationSection(categoryName).getString("cooldown");
-            cooldown = MathUtil.calculateDuration(cooldownStr) / 50; // Convert to ticks
+            cooldown = MathUtil.calculateDuration(cooldownStr) * 20; // Convert to ticks
 
             commands = conf.getConfigurationSection(categoryName).getStringList("commands");
 

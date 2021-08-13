@@ -48,9 +48,9 @@ public final class MathUtil {
     }
 
     /**
-     * Returns the normally written duration in milliseconds
+     * Returns the normally written duration in seconds.
      * @param durationStr The input String
-     * @return The duration in milliseconds
+     * @return The duration in seconds
      */
     public static long calculateDuration(String durationStr) {
         // Remove whitespace
@@ -60,8 +60,6 @@ public final class MathUtil {
         int unitIndex = durationStr.indexOf(unit);
         // Substring off unit
         long duration = Long.parseLong(durationStr.substring(0, unitIndex == -1 ? durationStr.length() : unitIndex));
-        // Start in milliseconds
-        duration *= 1000;
 
         switch (unit) {
             case 'm':

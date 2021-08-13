@@ -100,7 +100,7 @@ public class TempflyCommand extends TemplateCommand {
                             String durationStr = args[1].toLowerCase();
 
                             if (durationStr.matches("\\d+([smhd]|seconds?|minutes?|hours?|days?)")) {
-                                duration = MathUtil.calculateDuration(durationStr);
+                                duration = MathUtil.calculateDuration(durationStr) * 1000; // Convert to ms
                             }
                         } else {
                             type = TempflyTask.HELP;
