@@ -37,10 +37,13 @@ public class Reward extends BukkitRunnable {
     @Getter private final List<String> commands;
 
     @Override public void run() {
+//        FlightControl.getInstance().getLogger().info("Running reward");
         for (Player p : Bukkit.getOnlinePlayers()) {
+//            FlightControl.getInstance().getLogger().info("Found " + p.getName());
             if (category == FlightControl.getInstance().getCategoryManager().getCategory(p)) {
                 for (String command : commands) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(),command.replaceAll("%player%", p.getName()));
+//                    FlightControl.getInstance().getLogger().info("Running command " + command.replaceAll("%player%", p.getName()));
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("%player%", p.getName()));
                 }
             }
         }

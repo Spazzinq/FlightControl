@@ -47,12 +47,20 @@ public final class MathUtil {
         return actualSpeed;
     }
 
+    /**
+     * Returns the normally written duration in milliseconds
+     * @param durationStr The input String
+     * @return The duration in milliseconds
+     */
     public static long calculateDuration(String durationStr) {
+        // Remove whitespace
+        durationStr = durationStr.replaceAll("\\s+", "");
+
         char unit = findUnit(durationStr);
         int unitIndex = durationStr.indexOf(unit);
-        // Just in case it's a really
+        // Substring off unit
         long duration = Long.parseLong(durationStr.substring(0, unitIndex == -1 ? durationStr.length() : unitIndex));
-        // In milliseconds
+        // Start in milliseconds
         duration *= 1000;
 
         switch (unit) {
@@ -68,7 +76,6 @@ public final class MathUtil {
             default:
                 break;
         }
-
         return duration;
     }
 

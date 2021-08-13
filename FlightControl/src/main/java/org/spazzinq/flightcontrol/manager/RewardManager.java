@@ -68,14 +68,17 @@ public class RewardManager {
                     category = c;
                 }
             }
+            if (categoryName.equals(pl.getCategoryManager().getGlobal().getName())) {
+                category = pl.getCategoryManager().getGlobal();
+            }
 
             String cooldownStr = conf.getConfigurationSection(categoryName).getString("cooldown");
-            cooldown = MathUtil.calculateDuration(cooldownStr);
+            cooldown = MathUtil.calculateDuration(cooldownStr) / 50; // Convert to ticks
 
             commands = conf.getConfigurationSection(categoryName).getStringList("commands");
 
             if (category != null) {
-                rewardTasks.add(new Reward(category, commands).runTaskLaterAsynchronously(pl, cooldown));
+                rewardTasks.add(new Reward(category, commands).runTaskTimer(pl, 0, cooldown));
             } else {
                 pl.getLogger().warning("Category name \"" + categoryName + "\" from rewards.yml does not exist in categories.yml!");
             }
