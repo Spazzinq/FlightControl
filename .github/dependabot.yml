@@ -9,3 +9,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: "org.spigotmc:spigot-api"
+        versions: ["1.8.8-R0.1-SNAPSHOT"]
+      - dependency-name: "com.sk89q.worldguard:worldguard-legacy"
+        versions: ["6.1.3-SNAPSHOT"]
