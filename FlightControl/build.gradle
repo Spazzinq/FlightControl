@@ -38,7 +38,7 @@ dependencies {
     implementation project(':VersionCurrent')
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
 
-    compileOnly 'org.jetbrains:annotations:21.0.1'
+    compileOnly 'org.jetbrains:annotations:22.0.0'
     compileOnly('org.spigotmc:spigot-api:1.10-R0.1-SNAPSHOT')
     compileOnly('me.badbones69:crazyenchantments-plugin:1.8-Dev-Build-v8.1') {
         exclude group: 'com.github.intellectualsites.plotsquared', module: 'PlotSquared-API'
@@ -58,7 +58,7 @@ dependencies {
     compileOnly 'com.github.TownyAdvanced:Towny:0.97.0.23'
     compileOnly 'com.github.Angeschossen:LandsAPI:5.7.4'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.17.1'
-    compileOnly 'me.clip:placeholderapi:2.10.9'
+    compileOnly 'me.clip:placeholderapi:2.10.10'
     compileOnly 'com.github.NoChanceSD.PvPManager:PvPManager:3.8.4'
     compileOnly 'com.github.OmerBenGera:SuperiorSkyblockAPI:b18'
     compileOnly ('com.github.SaberLLC:Saber-Factions:2.8.8-STABLE') {
