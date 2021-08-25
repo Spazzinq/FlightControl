@@ -33,6 +33,6 @@ public final class GriefPreventionTrustedCheck extends TerritoryCheck {
     @Override public boolean check(Player p) {
         Claim claim = GriefPrevention.instance.dataStore.getClaimAt(p.getLocation(), true, null);
         // Check method call is derived from code implementation
-        return claim != null && claim.managers.contains(p.getUniqueId().toString());
+        return claim != null && claim.allowAccess(p) != null;
     }
 }
