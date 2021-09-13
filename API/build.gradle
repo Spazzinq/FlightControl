@@ -23,7 +23,7 @@
  */
 
 plugins {
-    id 'io.freefair.lombok' version '5.3.3.3'
+    id 'io.freefair.lombok' version '6.2.0'
 }
 
 dependencies {
