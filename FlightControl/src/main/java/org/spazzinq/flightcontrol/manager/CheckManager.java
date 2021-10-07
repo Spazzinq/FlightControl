@@ -119,6 +119,10 @@ public class CheckManager {
         if (pluginLoading("Factions") && pm.getPlugin("Factions").getDescription().getAuthors().contains("Driftay")) {
             alwaysChecks.addEnabled(new SaberFactionsCheck());
         }
+        // FabledSkyblock Check
+        if (pluginLoading("FabledSkyBlock")) {
+            alwaysChecks.addEnabled(new FabledSkyblockCheck());
+        }
 
         /* DISABLE */
         // World/Region Checks

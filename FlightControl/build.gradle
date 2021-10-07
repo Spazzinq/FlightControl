@@ -83,6 +83,7 @@ dependencies {
     compileOnly files('../lib/AntiCombatLoggingAPI.jar')
     compileOnly files('../lib/AdvancedEnchantmentsAPI-8.6.4.jar')
     compileOnly files('../lib/CombatLogX-11.jar')
+    compileOnly files('../lib/FabledSkyblock-2.3.29.jar')
 }
 
 processResources {
