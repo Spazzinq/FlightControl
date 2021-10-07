@@ -24,7 +24,7 @@
 
 package org.spazzinq.flightcontrol.check.always;
 
-import n3kas.ae.api.AEAPI;
+import net.advancedplugins.ae.api.AEAPI;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.api.object.Cause;
