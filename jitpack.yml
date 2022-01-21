@@ -1,0 +1,5 @@
+jdk:
+  - openjdk9
+install:
+  - echo "Running custom install command"
+  - ./gradlew clean shadowJar -xtest

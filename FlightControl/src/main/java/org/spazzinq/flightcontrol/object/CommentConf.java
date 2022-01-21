@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +27,9 @@ package org.spazzinq.flightcontrol.object;
 import com.google.common.io.Files;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConstructor;
 import org.bukkit.configuration.file.YamlRepresenter;
+import org.spazzinq.flightcontrol.object.conf.YamlConfiguration;
 import org.spazzinq.flightcontrol.util.FileUtil;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -41,7 +41,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static org.spazzinq.flightcontrol.object.ConfTask.*;
 import static org.spazzinq.flightcontrol.util.ConfUtil.runTask;
@@ -58,7 +61,6 @@ public class CommentConf extends YamlConfiguration {
     private final HashMap<String, Set<String>> addNodes = new HashMap<>();
     private final HashMap<String, Set<String>> addSubnodes = new HashMap<>();
     private final HashMap<String, Set<String>> addIndentedSubnodes = new HashMap<>();
-    private final Set<String> deleteNodes = new HashSet<>();
 
     private CommentConf() {
         // From saveToString in YamlConfiguration
@@ -80,11 +82,22 @@ public class CommentConf extends YamlConfiguration {
      * @param defaultConfStream the InputStream to the new config
      */
     public CommentConf(File file, InputStream defaultConfStream) {
+        this(file, defaultConfStream, true);
+    }
+
+    /**
+     * Compares comments, loads configuration, and possibly saves the stream to a file.
+     *
+     * @param file              the location of the current modified config
+     * @param defaultConfStream the InputStream to the new config
+     * @param saveFile          should the stream be saved to the file
+     */
+    public CommentConf(File file, InputStream defaultConfStream, boolean saveFile) {
         this();
         this.file = file;
         boolean fileExists = file.exists();
 
-        if (!fileExists) {
+        if (saveFile && !fileExists) {
             try {
                 //noinspection UnstableApiUsage
                 Files.createParentDirs(file);
@@ -98,8 +111,8 @@ public class CommentConf extends YamlConfiguration {
         StringBuilder currentConf = FileUtil.readFile(file.toPath());
         HashMap<String, Set<String>> currentComments = new HashMap<>();
 
-        runTask(defaultConf, defaultComments, SAVE_COMMENTS);
-        runTask(currentConf, currentComments, SAVE_COMMENTS);
+        runTask(defaultConf, SAVE_COMMENTS, defaultComments);
+        runTask(currentConf, SAVE_COMMENTS, currentComments);
 
         // Load the config for YAMLConfiguration methods
         try {
@@ -194,15 +207,13 @@ public class CommentConf extends YamlConfiguration {
     private String finalizeConfig(String config) {
         StringBuilder configBuilder = new StringBuilder(config);
 
-        runTask(configBuilder, addNodes, WRITE_NODES);
+        runTask(configBuilder, WRITE_NODES, addNodes);
         addNodes.clear();
-        runTask(configBuilder, addSubnodes, WRITE_SUBNODES);
+        runTask(configBuilder, WRITE_SUBNODES, addSubnodes);
         addSubnodes.clear();
-        runTask(configBuilder, addIndentedSubnodes, WRITE_INDENTED_SUBNODES);
+        runTask(configBuilder, WRITE_INDENTED_SUBNODES, addIndentedSubnodes);
         addIndentedSubnodes.clear();
-        runTask(configBuilder, deleteNodes, DELETE_NODES);
-        deleteNodes.clear();
-        runTask(configBuilder, defaultComments, WRITE_COMMENTS);
+        runTask(configBuilder, WRITE_COMMENTS, defaultComments);
 
         return configBuilder.toString();
     }

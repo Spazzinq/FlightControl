@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,11 @@
  */
 
 plugins {
-    id 'io.freefair.lombok' version '4.1.6'
+    id 'io.freefair.lombok' version '5.3.3.3'
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT'
+    compileOnly ('org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT') {
+        exclude group: 'net.md-5', module: 'bungeecord-chat'
+    }
 }

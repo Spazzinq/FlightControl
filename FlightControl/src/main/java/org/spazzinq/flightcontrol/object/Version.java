@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class Version implements Comparable<Version> {
-    final int[] versionData = new int[3];
+    private final int[] versionData = new int[3];
     @Getter private final VersionType versionType;
 
     public Version(String entireVersionStr) {
@@ -48,6 +48,18 @@ public class Version implements Comparable<Version> {
 
     public boolean isNewer(Version o) {
         return compareTo(o) > 0;
+    }
+
+    public int getMajorVersion() {
+        return versionData[0];
+    }
+
+    public int getMinorVersion() {
+        return versionData[1];
+    }
+
+    public int getPatchVersion() {
+        return versionData[2];
     }
 
     @Override

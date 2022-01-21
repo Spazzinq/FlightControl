@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 
 package org.spazzinq.flightcontrol.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.spazzinq.flightcontrol.object.ConfTask;
 
 import java.util.Collections;
@@ -41,58 +42,43 @@ public final class ConfUtil {
     private static final String NEW_LINE = "\n";
 
     @SuppressWarnings("unchecked")
-    public static void runTask(StringBuilder config, Object list, ConfTask task) {
-        // Split into lines
-        String[] lines = config.toString().split(NEW_LINE);
+    public static void runTask(StringBuilder config, ConfTask task, Object list) {
+        // Position through config
+        int pos = 0;
+        // Indent length of the line before
         int previousIndentLength = 0;
         // Current actual node
         String node = "";
 
-        // Position through config
-        int pos = 0;
-        int separatorLength = NEW_LINE.length();
+        // Split into lines
+        String[] lines = config.toString().split(NEW_LINE);
         // Current comment if SAVE_COMMENTS
         StringBuilder currentComment = task == SAVE_COMMENTS ? new StringBuilder() : null;
-        // Where to start if DELETE_NODES
-        int deleteStart = -1;
-        // Node to delete if DELETE_NODES
-        String deletingNode = null;
 
         for (String line : lines) {
             // Remove leading spaces
             String trimmedLine = line.trim();
-            // Simple node (no hierarchy)
-            String simpleNode;
             // Current indent
-            String newIndent = leadingSpaces(line);
-            int newIndentLength = newIndent.length();
-            boolean endOfConfig = pos + line.length() == config.length();
+            String newIndent = getLeadingWhitespace(line);
 
             if ((trimmedLine.startsWith("#") || trimmedLine.isEmpty()) && task == SAVE_COMMENTS) {
                 // Saves current line in comment
                 currentComment.append(line).append(NEW_LINE);
 
-                if (endOfConfig) {
+                // If end of config
+                if (config.length() == pos + line.length()) {
                     ((HashMap<String, Set<String>>) list).put("footer_ghost_node",
                             Collections.singleton(currentComment.toString()));
                 }
             } else if (trimmedLine.contains(":")) {
                 // Substring off : to get simpleNode
-                simpleNode = trimmedLine.substring(0, trimmedLine.indexOf(":"));
+                String simpleNode = trimmedLine.substring(0, trimmedLine.indexOf(":"));
+                int indentDifference = (previousIndentLength - newIndent.length()) / 2;
 
-                // If newIndentLength decreases from previousIndentLength, then
-                // substring off end (. + oldSimpleNode) until new node matches indent pattern
-                if (previousIndentLength >= newIndentLength) {
-                    int doubleIndentsBack = (previousIndentLength - newIndentLength) / 2;
-
-                    for (int i = 0; i <= doubleIndentsBack; i++) {
-                        node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
-                    }
-                }
-                // Add the simpleNode on
-                node += (node.isEmpty() ? "" : ".") + simpleNode;
-                // Set previousIndentLength for next iteration
-                previousIndentLength = newIndentLength;
+                // Update node
+                node = updateNode(node, simpleNode, indentDifference);
+                // Set for next iteration
+                previousIndentLength = newIndent.length();
 
                 // Once the node changes, then add the comment to HashMap and reinitialize
                 if (task == SAVE_COMMENTS && currentComment.length() != 0) {
@@ -108,7 +94,7 @@ public final class ConfUtil {
                     for (String insert : insertingList) {
                         switch (task) {
                             case WRITE_INDENTED_SUBNODES:
-                                // Add new indent!
+                                // Add new indent (double space)!
                                 insert = "  " + insert;
                                 // fall through
                             case WRITE_SUBNODES:
@@ -134,28 +120,9 @@ public final class ConfUtil {
                         pos += insert.length();
                     }
                 }
-
-                if (task == DELETE_NODES) {
-                    // '' && (ensure the node isn't a part of a later node before deleting || '')
-                    if (deletingNode != null && (!node.matches("(\\S+\\.)*" + deletingNode + "(\\.\\S+)*") || endOfConfig)) {
-                        int deleteEnd = pos + (endOfConfig ? line.length() : 0);
-
-                        deletingNode = null;
-                        // Account for deleted section in pos
-                        pos -= deleteEnd - deleteStart;
-
-                        config.delete(deleteStart, deleteEnd);
-                    }
-                    if (((Set<String>) list).contains(node)) {
-                        // Set deletingNode and delete start (on next iteration, the code will first check if
-                        // deletingNode exists)
-                        deletingNode = node;
-                        deleteStart = pos;
-                    }
-                }
             }
-            // Include split character (newLine)
-            pos += line.length() + separatorLength;
+            // Include split character (new line)
+            pos += line.length() + NEW_LINE.length();
         }
 
         if (task == WRITE_COMMENTS) {
@@ -164,13 +131,29 @@ public final class ConfUtil {
             if (footerSet != null) {
                 // Only should iterate once
                 for (String footer : footerSet) {
-                    config.append(footer, 0, footer.length() - separatorLength);
+                    config.append(footer, 0, footer.length() - NEW_LINE.length());
                 }
             }
         }
     }
 
-    private static String leadingSpaces(String string) {
+    @NotNull
+    public static String updateNode(String node, String simpleNode, int indentDifference) {
+        // If newIndentLength decreases from previousIndentLength, then
+        // substring off end (. + oldSimpleNode) until new node matches indent pattern
+        if (indentDifference >= 0) {
+            for (int i = 0; i <= indentDifference; i++) {
+                node = node.contains(".") ? node.substring(0, node.lastIndexOf(".")) : "";
+            }
+        }
+
+        // Add the simpleNode on
+        node += (node.isEmpty() ? "" : ".") + simpleNode;
+
+        return node;
+    }
+
+    private static String getLeadingWhitespace(String string) {
         // Remove all non-whitespace that may be followed by whitespace
         return string.replaceAll("(\\S+)(\\s+)?", "");
     }

@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,159 +27,129 @@ package org.spazzinq.flightcontrol.manager;
 import com.google.common.io.Files;
 import lombok.Getter;
 import lombok.Setter;
-import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.api.objects.Sound;
+import org.bukkit.configuration.ConfigurationSection;
+import org.spazzinq.flightcontrol.api.object.Sound;
 import org.spazzinq.flightcontrol.object.CommentConf;
+import org.spazzinq.flightcontrol.object.StorageManager;
+import org.spazzinq.flightcontrol.object.Timer;
 import org.spazzinq.flightcontrol.util.MathUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
 
-public final class ConfManager {
-    private final FlightControl pl;
-    private boolean ignoreReload;
-
-    private final File confFile;
-    @Getter private CommentConf conf;
-
+public class ConfManager extends StorageManager {
     @Getter @Setter private boolean autoEnable;
+    @Getter @Setter private boolean autoReload;
     @Getter @Setter private boolean autoUpdate;
     @Getter @Setter private boolean inGameSupport;
 
-    @Getter @Setter private Sound eSound, dSound, cSound, nSound;
     @Getter @Setter private float defaultFlightSpeed;
+    @Getter @Setter private float maxFlightSpeed;
+    @Getter @Setter private int heightLimit;
+
     @Getter @Setter private boolean combatChecked;
     @Getter @Setter private boolean cancelFall;
     @Getter @Setter private boolean vanishBypass;
-    @Getter @Setter private boolean trail;
-    @Getter @Setter private boolean everyEnable;
-    @Getter @Setter private boolean everyDisable;
+    @Getter @Setter private boolean trailEnabled;
 
-    @Getter @Setter private boolean townyOwn;
-    @Getter @Setter private boolean townyWarDisable;
-    @Getter @Setter private boolean landsOwnEnable;
-    @Getter @Setter private boolean landsIncludeTrusted;
-    @Getter @Setter private boolean gpClaimOwnEnable;
-    @Getter @Setter private boolean gpClaimIncludeTrusted;
     @Getter @Setter private boolean nearbyCheck;
     @Getter @Setter private boolean isNearbyCheckEnemies;
     @Getter @Setter private double nearbyRangeSquared;
 
-    public ConfManager(FlightControl pl) {
-        this.pl = pl;
-        confFile = new File(pl.getDataFolder(), "config.yml");
+    @Getter @Setter private String flyCommandName;
+    @Getter @Setter private String aeEnchantName;
+
+    public ConfManager() {
+        super("config.yml");
     }
 
-    public boolean loadConf() {
-        boolean reloaded = false;
+    @Override protected void initializeConf() {
+        conf = new CommentConf(confFile, pl.getResource(fileName));
+    }
 
-        if (!ignoreReload) {
-            ignoreReload = true;
-            conf = new CommentConf(confFile, pl.getResource("config.yml"));
+    @Override protected void initializeValues() {
+        // booleans
+        autoUpdate = conf.getBoolean("settings.auto_update");
+        autoReload = conf.getBoolean("settings.auto_reload");
+        autoEnable = conf.getBoolean("settings.auto_enable_flight");
+        combatChecked = conf.getBoolean("settings.disable_flight_in_combat");
+        cancelFall = conf.getBoolean("settings.prevent_fall_damage");
+        vanishBypass = conf.getBoolean("settings.vanish_bypass");
+        isNearbyCheckEnemies = conf.getBoolean("nearby_disable.factions_enemy");
+        Timer.alwaysDecrease = conf.getBoolean("tempfly.always_decrease");
 
-            if (conf.isBoolean("auto_update")) {
-                migrateFromVersion3();
-            }
+        // ints
+        int range = conf.getInt("nearby_disable.range");
+        heightLimit = conf.getInt("settings.height_limit");
 
-            updateConfig();
-
-            // booleans
-            autoUpdate = conf.getBoolean("settings.auto_update");
-            autoEnable = conf.getBoolean("settings.auto_enable_flight");
-            combatChecked = conf.getBoolean("settings.disable_flight_in_combat");
-            cancelFall = conf.getBoolean("settings.prevent_fall_damage");
-            vanishBypass = conf.getBoolean("settings.vanish_bypass");
-
-            townyOwn = conf.getBoolean("territory.towny.enable_own_town");
-            townyWarDisable = conf.getBoolean("territory.towny.negate_during_war");
-            landsOwnEnable = conf.getBoolean("territory.lands.enable_own_land");
-            landsIncludeTrusted = conf.getBoolean("territory.lands.include_trusted");
-            gpClaimOwnEnable = conf.getBoolean("territory.griefprevention.enable_own_claim");
-            gpClaimIncludeTrusted = conf.getBoolean("territory.griefprevention.include_trusted");
-
-            // ints
-            int range = conf.getInt("nearby_disable.range");
-
-            if (nearbyCheck = (range != -1)) {
-                nearbyRangeSquared = range * range;
-            }
-
-            isNearbyCheckEnemies = conf.getBoolean("nearby_disable.factions_enemy");
-
-            // floats
-            defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed"));
-
-            // Load other stuff that have separate methods
-            loadSounds();
-            loadTrail();
-
-            // Prevent reloading for the next 250ms
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    ignoreReload = false;
-                }
-            }, 250);
-
-            reloaded = true;
+        if (nearbyCheck = (range != -1)) {
+            nearbyRangeSquared = range * range;
         }
-        return reloaded;
+
+        // floats
+        defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed", 1));
+        maxFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.max_flight_speed", 10));
+
+        // Strings
+        flyCommandName = conf.getString("settings.fly_command_name", "fly");
+        aeEnchantName = conf.getString("settings.ae_enchant_name");
+
+        // Load other stuff that have separate methods
+        loadSounds();
+        loadTrail();
     }
 
-    // TODO Continue to add!
-    public void updateConfig() {
+    @Override protected void updateFormatting() {
         boolean modified = false;
 
-        // 4.1.0 - moved to lang.yml
-        if (conf.isConfigurationSection("messages")) {
-            pl.getLogger().info("Removed the messages section from config.yml!");
-            conf.deleteNode("messages");
+        // 4.5.0 - remove "territory"
+        if (conf.isConfigurationSection("territory")) {
+            pl.getLogger().info("Territories have migrated to the categories.yml!");
+            conf.deleteNode("territory");
             modified = true;
         }
 
-        // 4.2.5 - relocate lands, towny; add griefprevention
-        if (conf.isConfigurationSection("towny") || conf.isConfigurationSection("lands")) {
-            pl.getLogger().info("Migrated the towny and lands section of the configuration!");
-
-            conf.addNode("territory:", "trail");
-            conf.addSubnodes(new HashSet<>(Arrays.asList("towny:", "lands:", "griefprevention:")), "territory");
-            conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
-                    "enable_own_town: " + conf.getBoolean("towny.enable_own_town"),
-                    "negate_during_war: " + conf.getBoolean("towny.negate_during_war"))), "territory.towny");
-            conf.addIndentedSubnodes(new HashSet<>(Arrays.asList(
-                    "enable_own_land: " + conf.getBoolean("lands.enable_own_land"),
-                    "include_trusted: " + conf.getBoolean("lands.include_trusted", false))), "territory.lands");
-            conf.addIndentedSubnodes(new HashSet<>(Collections.singletonList("enable_own_claim: false")), "territory" +
-                    ".griefprevention");
-
-            conf.deleteNode("towny");
-            conf.deleteNode("lands");
-
+        // 4.5.8 - add AdvancedEnchantments custom enchant support
+        if (!conf.isString("settings.ae_enchant_name")){
+            pl.getLogger().info("Added AdvancedEnchantments custom enchant name setting!");
+            conf.addSubnodes(Collections.singleton("ae_enchant_name: \"Flight\""), "settings.vanish_bypass");
             modified = true;
         }
 
-        // 4.2.5 - change function of factions_enemy_range
-        if (conf.isConfigurationSection("factions")) {
-            pl.getLogger().info("Migrated the factions disable enemy range section of the configuration!");
-
-            conf.addNode("nearby_disable:", "trail");
-            conf.addSubnodes(new HashSet<>(Arrays.asList(
-                    "range: " + conf.getInt("factions.disable_enemy_range"),
-                    "factions_enemy: " + (conf.getInt("factions.disable_enemy_range") != -1))), "nearby_disable");
-
-            conf.deleteNode("factions");
-
+        // 4.6.0 - add tempfly setting
+        if (!conf.isConfigurationSection("tempfly")) {
+            pl.getLogger().info("Added \"tempfly\" section to config!");
+            conf.addNode("tempfly:","nearby_disable");
+            conf.addIndentedSubnodes(Collections.singleton("always_decrease: true"), "tempfly");
             modified = true;
         }
 
-        // 4.3.8 - add trusted to GriefPrevention section
-        if (!conf.isBoolean("territory.griefprevention.include_trusted")) {
-            pl.getLogger().info("Added \"include_trusted\" to the GriefPrevention section of the config!");
+        // 4.7.12 - add height limit
+        if (!conf.isInt("settings.height_limit")) {
+            pl.getLogger().info("Added \"height_limit\" section to config!");
+            conf.addSubnodes(Collections.singleton("height_limit: -1"), "settings.flight_speed");
+            modified = true;
+        }
 
-            conf.addSubnodes(new HashSet<>(Collections.singleton("include_trusted: false")), "territory" +
-                    ".griefprevention.enable_own_claim");
+        // 4.7.14
+        if (!conf.isBoolean("settings.auto_reload")) {
+            pl.getLogger().info("Added \"auto_reload\" to the config!");
+            conf.addSubnodes(Collections.singleton("auto_reload: true"), "settings.auto_update");
+            modified = true;
+        }
 
+        // 4.8.2
+        if (!conf.isDouble("settings.max_flight_speed")) {
+            pl.getLogger().info("Added \"max_flight_speed\" to the config!");
+            conf.addSubnodes(Collections.singleton("max_flight_speed: 10.0"), "settings.flight_speed");
+            modified = true;
+        }
+
+        // 4.8.10
+        if (!conf.isString("settings.fly_command_name")) {
+            pl.getLogger().info("Added \"fly_command_name\" to the config!");
+            conf.addSubnodes(Collections.singleton("fly_command_name: \"fly\""), "settings.auto_reload");
             modified = true;
         }
 
@@ -188,16 +158,29 @@ public final class ConfManager {
         }
     }
 
-    private void loadTrail() {
-        trail = conf.getBoolean("trail.enabled");
+    // Version 3
+    @Override protected void migrateFromOldVersion() {
+        if (conf.isBoolean("auto_update")) {
+            try {
+                //noinspection UnstableApiUsage
+                Files.move(confFile, new File(pl.getDataFolder(), "config_old.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            pl.saveDefaultConfig();
+        }
+    }
 
-        if (trail) {
-            pl.getParticleManager().setParticle(conf.getString("trail.particle"));
-            pl.getParticleManager().setAmount(conf.getInt("trail.amount"));
+    private void loadTrail() {
+        trailEnabled = conf.getBoolean("trail.enabled");
+
+        if (trailEnabled) {
+            pl.getParticle().setParticle(conf.getString("trail.particle"));
+            pl.getParticle().setAmount(conf.getInt("trail.amount"));
             String offset = conf.getString("trail.rgb");
             if (offset != null && (offset = offset.replaceAll("\\s+", "")).split(",").length == 3) {
                 String[] xyz = offset.split(",");
-                pl.getParticleManager().setRBG(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[0]) : 0,
+                pl.getParticle().setRBG(xyz[0].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[0]) : 0,
                         xyz[1].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[1]) : 0,
                         xyz[2].matches("-?\\d+(.(\\d+)?)?") ? Integer.parseInt(xyz[2]) : 0);
             }
@@ -205,45 +188,23 @@ public final class ConfManager {
     }
 
     private void loadSounds() {
-        everyEnable = conf.getBoolean("sounds.every_enable");
-        everyDisable = conf.getBoolean("sounds.every_disable");
-        eSound = getSound("sounds.enable");
-        dSound = getSound("sounds.disable");
-        cSound = getSound("sounds.can_enable");
-        nSound = getSound("sounds.cannot_enable");
+        Sound.playEveryEnable = conf.getBoolean("sounds.every_enable");
+        Sound.playEveryDisable = conf.getBoolean("sounds.every_disable");
+        Sound.enableSound = getSound("sounds.enable");
+        Sound.disableSound = getSound("sounds.disable");
+        Sound.canEnableSound = getSound("sounds.can_enable");
+        Sound.cannotEnableSound = getSound("sounds.cannot_enable");
     }
 
     private Sound getSound(String key) {
+        Sound sound = null;
+
         if (conf.isConfigurationSection(key)) {
-            String s = conf.getString(key + ".sound").toUpperCase().replaceAll("\\.", "_");
-            if (Sound.is(s)) {
-                return new Sound(s, (float) conf.getDouble(key + ".volume"), (float) conf.getDouble(key + ".pitch"));
-            }
+            ConfigurationSection soundType = conf.getConfigurationSection(key);
+
+            sound = Sound.valueOf(soundType.getString("sound"), soundType.getDouble("volume"), soundType.getDouble("pitch"));
         }
-        return null;
-    }
 
-    // FILE CONFIG METHODS
-    public void set(String path, Object value) {
-        ignoreReload = true;
-        conf.set(path, value);
-        conf.save();
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                ignoreReload = false;
-            }
-        }, 500);
-    }
-
-    private void migrateFromVersion3() {
-        try {
-            //noinspection UnstableApiUsage
-            Files.move(confFile, new File(pl.getDataFolder(), "config_old.yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        pl.saveDefaultConfig();
+        return sound;
     }
 }

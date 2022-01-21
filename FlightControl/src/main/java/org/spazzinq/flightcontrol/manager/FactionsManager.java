@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,14 @@ package org.spazzinq.flightcontrol.manager;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
-import org.spazzinq.flightcontrol.multiversion.FactionsHook;
+import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
 
 public class FactionsManager {
     private final FlightControl pl;
-    private FactionsHook factions;
+    private FactionsHookBase factions;
 
-    public FactionsManager(FlightControl pl) {
-        this.pl = pl;
+    public FactionsManager() {
+        pl = FlightControl.getInstance();
     }
 
     public FactionRelation getRelationToLocation(Player p) {
@@ -50,18 +50,16 @@ public class FactionsManager {
             relation = FactionRelation.SAFEZONE;
         } else if (factions.inWilderness(p)) {
             relation = FactionRelation.WILDERNESS;
-        } else if (factions.hasFaction(p)) {
-            if (factions.inOwnTerritory(p)) {
-                relation = FactionRelation.OWN;
-            } else if (factions.inAllyTerritory(p)) {
-                relation = FactionRelation.ALLY;
-            } else if (factions.inTruceTerritory(p)) {
-                relation = FactionRelation.TRUCE;
-            } else if (factions.inNeutralTerritory(p)) {
-                relation = FactionRelation.NEUTRAL;
-            } else if (factions.inEnemyTerritory(p)) {
-                relation = FactionRelation.ENEMY;
-            }
+        } else if (factions.inOwnTerritory(p)) {
+            relation = FactionRelation.OWN;
+        } else if (factions.inAllyTerritory(p)) {
+            relation = FactionRelation.ALLY;
+        } else if (factions.inTruceTerritory(p)) {
+            relation = FactionRelation.TRUCE;
+        } else if (factions.inEnemyTerritory(p)) {
+            relation = FactionRelation.ENEMY;
+        } else if (factions.inNeutralTerritory(p)) {
+            relation = FactionRelation.NEUTRAL;
         }
 
         return relation;

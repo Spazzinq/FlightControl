@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,30 +24,29 @@
 
 package org.spazzinq.flightcontrol.api;
 
-import org.spazzinq.flightcontrol.api.events.FlightCanEnableEvent;
-import org.spazzinq.flightcontrol.api.events.FlightCannotEnableEvent;
-import org.spazzinq.flightcontrol.api.events.FlightDisableEvent;
-import org.spazzinq.flightcontrol.api.events.FlightEnableEvent;
-import org.spazzinq.flightcontrol.api.events.interfaces.FlightEvent;
-import org.spazzinq.flightcontrol.api.objects.FlightListener;
-import org.spazzinq.flightcontrol.api.objects.HandlerMethod;
+import org.spazzinq.flightcontrol.api.event.FlightCanEnableEvent;
+import org.spazzinq.flightcontrol.api.event.FlightCannotEnableEvent;
+import org.spazzinq.flightcontrol.api.event.FlightDisableEvent;
+import org.spazzinq.flightcontrol.api.event.FlightEnableEvent;
+import org.spazzinq.flightcontrol.api.event.interfaces.FlightEvent;
+import org.spazzinq.flightcontrol.api.object.FlightListener;
+import org.spazzinq.flightcontrol.api.object.HandlerMethod;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("unused")
 public class APIManager {
     private static APIManager instance;
-    private Map<Class, List<HandlerMethod>> handlers = new HashMap<>();
 
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private List<FlightListener> listeners = new ArrayList<>();
+    private final Map<Class<?>, List<HandlerMethod>> handlers = new HashMap<>();
+    private final List<FlightListener> listeners = new ArrayList<>();
 
     private APIManager() {
-        Set<Class> events = new HashSet<>(Arrays.asList(FlightCanEnableEvent.class, FlightCannotEnableEvent.class,
+        Set<Class<?>> events = new HashSet<>(Arrays.asList(FlightCanEnableEvent.class, FlightCannotEnableEvent.class,
                 FlightDisableEvent.class, FlightEnableEvent.class));
 
-        for (Class event : events) {
+        for (Class<?> event : events) {
             handlers.put(event, new ArrayList<>());
         }
     }
@@ -118,16 +117,14 @@ public class APIManager {
      * @param event the FlightEvent instance
      * @throws InvocationTargetException
      * @throws IllegalAccessException
-     * @throws InstantiationException
      */
-    private void callMethods(FlightEvent e) throws InvocationTargetException, IllegalAccessException,
-            InstantiationException {
+    private void callMethods(FlightEvent event) throws InvocationTargetException, IllegalAccessException {
         // Prevent CME by cloning List
-        List<HandlerMethod> handlersCopy = new ArrayList<>(handlers.get(e.getClass()));
+        List<HandlerMethod> handlersCopy = new ArrayList<>(handlers.get(event.getClass()));
 
         for (HandlerMethod m : handlersCopy) {
             if (m.getPlugin().isEnabled()) {
-                m.getMethod().invoke(m.getListener(), e);
+                m.getMethod().invoke(m.getListener(), event);
             } else if (containsListener(m.getListener())) {
                 removeListener(m.getListener());
             }
@@ -169,7 +166,7 @@ public class APIManager {
      *
      * @return All registered events
      */
-    public Set<Class> getEvents() {
+    public Set<Class<?>> getEvents() {
         return handlers.keySet();
     }
 

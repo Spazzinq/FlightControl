@@ -1,26 +1,22 @@
 name: FlightControl
 main: org.spazzinq.flightcontrol.FlightControl
 version: ${revision}
-api-version: 1.13
+api-version: "1.13"
 author: Spazzinq
 description: "An elegant solution for controlling player flight"
-softdepend: [AntiCombatLogging, CombatLogPro, CombatLogX, CombatTagPlus, DeluxeCombat,
-             Essentials, Factions, PlotSquared, WorldGuard, SuperVanish, PremiumVanish,
-             Towny, Lands, GriefPrevention, CrazyEnchantments, Multiverse-Core]
+load: POSTWORLD
+softdepend: [Essentials, Lands, MVdWPlaceholderAPI, WorldEdit, WorldGuard]
 
 commands:
   flightcontrol:
     description: FlightControl administration
     aliases: [fc]
-  fly:
-    description: Toggles flight
-    aliases: [fcfly, ffly]
   toggletrail:
     description: Per-player trail toggle
-    aliases: [trail, tt]
+    aliases: [trail, tt, trailtoggle]
   tempfly:
     description: Gives temporary flight
-    aliases: [tfly, tempflight, silenttempfly]
+    aliases: [tfly, tempflight, silenttempfly, flytime]
   flyspeed:
     description: Sets flight speed
     aliases: [flightspeed]
@@ -47,16 +43,22 @@ permissions:
   flightcontrol.flyall:
     description: Ability to automatically fly in all regions that are not disabled
     default: false
+  flightcontrol.flycommand:
+    description: Ability to use the fly command (granted by default)
+    default: true
   flightcontrol.flyspeed:
     description: Ability to set flight speed
     default: op
     children:
-      others: false
+      others: true
   flightcontrol.tempfly:
     description: Ability to give temporary flight
     default: op
     children:
-      others: false
+      others: true
+  flightcontrol.ignore:
+    description: Ignores FlightControl's checks and does not change flight
+    default: false
   flightcontrol.nearbypass:
     description: Bypasses the "nearby_disable" check
     default: op

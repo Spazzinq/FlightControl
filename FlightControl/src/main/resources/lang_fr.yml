@@ -1,53 +1,55 @@
-# Translations: français (fr), English (en), 中文 (zh)
-# Pour changer la langue, veuillez supprimer le # ci-dessous et mettre "locale" à son abréviation (en, fr, zh)
+# Translations: English (en), French (fr), Mandarin (zh), Portuguese (pt)
+# Pour changer la langue, veuillez supprimer le # ci-dessous et mettre 'locale' à son abréviation (p.ex. en, fr, zh)
 #locale: fr
 
-# Si vous ne voulez pas de message, veuillez mettre ""
+# Attention :
+# 1. Si vous ne voulez pas de message, veuillez mettre ''
+# 2. %VARIABLENAME% est le bouche-trou pour l’information de message
+#    Par exemple, %speed% veut peut-être dire la nouvelle vitesse de vol globale
 player:
   # Utiliser l'actionbar (la région au-dessus de la barre d'action) pour ces messages
   actionbar: false
   flight:
-    enabled: "&aVotre vol a été activé."
-    disabled: "&cVotre vol a été désactivé."
-    # "can_enable" et "cannot_enable" sont utilisés quand "auto_enable" est faux
+    # Si 'actionbar' est mise sur vrai, cela affichera la durée restante du vol temporaire dans la barre d’action
+    tempfly_actionbar: '&fTemps de vol restant &7: &a&f%duration%'
+    enabled: '&aVotre vol a été activé.'
+    disabled: '&cVotre vol a été désactivé.'
+    # 'can_enable' et 'cannot_enable' sont utilisés quand 'auto_enable' est faux
     # ou quand le joueur désactive son vol avec /fly
-    can_enable: "&bVous pouvez utiliser /fly maintenant."
-    cannot_enable: "&cVous ne pouvez pas utiliser /fly maintenant."
+    can_enable: '&bVous pouvez utiliser /fly maintenant.'
+    cannot_enable: '&cVous ne pouvez pas utiliser /fly maintenant.'
+    height_denied: '&cVous ne pouvez pas voler aussi haut !'
   trail:
-    enabled: "&aVouz avez activé les particules de vol !"
-    disabled: "&cVous avez désactivé les particules de vol !"
-  permission_denied: "&cVous n''êtes pas autorisé(e) à utiliser cette commande."
+    enabled: '&aVouz avez activé les particules de vol !'
+    disabled: '&cVous avez désactivé les particules de vol !'
+  permission_denied: '&cVous n''êtes pas autorisé(e) à utiliser cette commande.'
 
-# %VARIABLENAME% est le bouche-trou pour l’information de message
-# Par exemple, %speed% veut peut-être dire la nouvelle vitesse de vol globale
 admin:
-  ## Les messages d’édition de config ##
   # Le préfixe appliqué aux messages qui ne peuvent pas être modifiés (par ex. /fc actionbar)
-  prefix: "&a&lFlightControl &a"
+  prefix: '&a&lFlightControl &a'
   # Les préfixes sont écrits parce que les couleurs différentes des messages signifient les choses différentes
-  reloaded: "&a&lFlightControl &7» &aToutes les configs ont été rechargées avec succès !"
+  reloaded: '&a&lFlightControl &7» &aToutes les configs ont été rechargées avec succès !'
   global_flight_speed:
-    set: "&e&lFlightControl &7» &eLa vitesse de vol globale est maintenant &f%speed%&e !"
-    same: "&e&lFlightControl &7» &eRien ne s'est passé ! La vitesse de vol globale est déjà à &f%speed%&e !"
-    usage: "&c&lFlightControl &7» &cPas correct ! Usage correct : /fc speed (0-10)"
+    set: '&e&lFlightControl &7» &eLa vitesse de vol globale est maintenant &f%speed%&e !'
+    same: '&e&lFlightControl &7» &eRien ne s''est passé ! La vitesse de vol globale est déjà à &f%speed%&e !'
+    usage: '&c&lFlightControl &7» &cPas correct ! Usage correct : /fc speed (0-10)'
   enemy_range:
-    set: "&e&lFlightControl &7» &eDéfinir la portée de l'ennemi afin de désactiver le vol à &f%range%&e !"
-    same: "&e&lFlightControl &7» &eRien ne s'est passé ! La désactivation du vol à la portée de l'ennemi est déjà à &f%range%&e !"
-    usage: "&c&lFlightControl &7» &cPas correct ! Usage correct : /fc enemyrange (gamme)"
-  ## Command messages ##
+    set: '&e&lFlightControl &7» &eDéfinir la portée de l''ennemi afin de désactiver le vol à &f%range%&e !'
+    same: '&e&lFlightControl &7» &eRien ne s''est passé ! La désactivation du vol à la portée de l''ennemi est déjà à &f%range%&e !'
+    usage: '&c&lFlightControl &7» &cPas correct ! Usage correct : /fc enemyrange (gamme)'
   fly:
-    enable: "&e&lFlightControl &7» &eTentative d’activer le vol de &f%player%&e !"
-    disable: "&e&lFlightControl &7» &eLe vol de &f%player%&e a été désactivé !"
-    usage: "&c&lFlightControl &7» &cVeuillez fournir un vrai joueur !"
+    enable: '&e&lFlightControl &7» &eTentative d’activer le vol de &f%player%&e !'
+    disable: '&e&lFlightControl &7» &eLe vol de &f%player%&e a été désactivé !'
+    usage: '&c&lFlightControl &7» &cVeuillez fournir un vrai joueur !'
   flyspeed:
-    set: "&a&lFlightControl &7» &aVotre vitesse de vol est maintenant &f%speed%&a !"
-    same: "&a&lFlightControl &7» &aRien ne s'est passé ! Votre vitesse de vol est déjà à &f%speed%&a !"
-    usage: "&c&lFlightControl &7» &cPas correct ! Usage correct : /flyspeed (vitesse) [joueur] !"
+    set: '&a&lFlightControl &7» &aVotre vitesse de vol est maintenant &f%speed%&a !'
+    same: '&a&lFlightControl &7» &aRien ne s''est passé ! Votre vitesse de vol est déjà à &f%speed%&a !'
+    usage: '&c&lFlightControl &7» &cPas correct ! Usage correct : /flyspeed (vitesse) [joueur] !'
   tempfly:
-    enable: "&e&lFlightControl &7» &f%player%&e a maintenant un vol temporaire pendant &f%duration%&e."
-    add: "&e&lFlightControl &7» &f%player%&e a maintenant un vol temporaire pendant &f%duration%&e de plus."
-    disable: "&e&lFlightControl &7» &eDésactivé le vol temporaire de &f%player%&e !"
-    disabled: "&c&lFlightControl &7» Le vol temporaire de &f%player%&c est déjà désactivé !"
-    usage: "&c&lFlightControl &7» &cUsage incorrect ! Usage : /tempfly (durée) [joueur]. Une unité de temps anglaise
+    set: '&e&lFlightControl &7» &f%player%&e a maintenant un vol temporaire pendant &f%duration%&e.'
+    disable: '&e&lFlightControl &7» &eDésactivé le vol temporaire de &f%player%&e !'
+    disabled: '&c&lFlightControl &7» &eLe vol temporaire de &f%player%&c est déjà désactivé !'
+    check: '&e&lFlightControl &7» &eTemps de vol restant pour &f%player%&e &7: &f%duration%&e.'
+    usage: '&c&lFlightControl &7» &cUsage incorrect ! Usage : /tempfly (check/add/remove/set/disable) (joueur/all) [durée]. Une unité de temps anglaise
               doit suivre la durée. Les exemples de durées :
-              &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c."
+              &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c.'

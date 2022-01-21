@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,31 +31,36 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.manager.FlightManager;
 import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
-import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
-public final class FlyCommand implements CommandExecutor {
+public class FlyCommand implements CommandExecutor {
     private final FlightControl pl;
     private final FlightManager flightManager;
 
-    public FlyCommand(FlightControl pl) {
-        this.pl = pl;
+    public FlyCommand() {
+        pl = FlightControl.getInstance();
         flightManager = pl.getFlightManager();
     }
 
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
         if (args.length == 0) {
             if (s instanceof Player) {
-                Player p = (Player) s;
+                if (PlayerUtil.hasPermission(s, FlyPermission.FLY_COMMAND)) {
+                    Player p = (Player) s;
 
-                if (p.getAllowFlight()) {
-                    flightManager.disableFlight(p, true);
+                    if (p.getAllowFlight()) {
+                        flightManager.disableFlight(p, Cause.DISABLE_COMMAND, true);
+                    } else {
+                        flightManager.check(p, true);
+                    }
                 } else {
-                    flightManager.check(p, p.getLocation(), true);
+                    msg(s, pl.getLangManager().getPermDenied());
                 }
             } else {
                 pl.getLogger().info("Only players can use this command (the console can't fly, can it?)");
@@ -65,15 +70,16 @@ public final class FlyCommand implements CommandExecutor {
                 Player p = Bukkit.getPlayer(args[0]);
                 // Allow admins to disable flight
                 if (p != null) {
-                    msg(s, replaceVar(p.getAllowFlight() ? pl.getLangManager().getFlyCommandDisable()
-                            : pl.getLangManager().getFlyCommandEnable(), p.getName(), "player"));
+                    String msg = p.getAllowFlight() ? pl.getLangManager().getFlyCommandDisable()
+                            : pl.getLangManager().getFlyCommandEnable();
+
+                    msgVar(s, msg, false, "player", p.getName());
 
                     if (p.getAllowFlight()) {
-                        flightManager.disableFlight(p, true);
+                        flightManager.disableFlight(p, Cause.DISABLE_COMMAND, true);
                     } else {
-                        flightManager.check(p, p.getLocation(), true);
+                        flightManager.check(p, true);
                     }
-                    // TODO this ain't working?
                 } else {
                     msg(s, pl.getLangManager().getFlyCommandUsage());
                 }

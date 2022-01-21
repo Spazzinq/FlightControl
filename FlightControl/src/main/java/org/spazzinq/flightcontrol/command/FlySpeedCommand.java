@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,15 +37,17 @@ import org.spazzinq.flightcontrol.object.FlyPermission;
 import org.spazzinq.flightcontrol.util.MathUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
+import java.util.HashMap;
+
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
-import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
 public class FlySpeedCommand implements CommandExecutor {
     private final FlightControl pl;
     private final PlayerManager playerManager;
 
-    public FlySpeedCommand(FlightControl pl) {
-        this.pl = pl;
+    public FlySpeedCommand() {
+        pl = FlightControl.getInstance();
         playerManager = pl.getPlayerManager();
     }
 
@@ -87,16 +89,22 @@ public class FlySpeedCommand implements CommandExecutor {
 
     private void setSpeed(CommandSender s, Player p, String wrongSpeedStr) {
         if (wrongSpeedStr.matches("\\d+|(\\d+)?.\\d+")) {
-            float wrongSpeed = Math.min(Float.parseFloat(wrongSpeedStr), 10);
+            float wrongSpeed = Math.min(Float.parseFloat(wrongSpeedStr), pl.getConfManager().getMaxFlightSpeed());
             float speed = MathUtil.calcConvertedSpeed(wrongSpeed);
             FlightPlayer flightPlayer = playerManager.getFlightPlayer(p);
 
             if (flightPlayer.getActualFlightSpeed() == speed) {
-                msg(p, replaceVar(pl.getLangManager().getFlySpeedSame(), wrongSpeed + "", "speed"));
+                msgVar(s, pl.getLangManager().getFlySpeedSame(), false, new HashMap<String, String>() {{
+                    put("speed", String.valueOf(wrongSpeed));
+                    put("player", p.getName());
+                }});
             } else {
                 playerManager.getFlightPlayer(p).setActualFlightSpeed(speed);
-                p.setFlySpeed(flightPlayer.getActualFlightSpeed());
-                msg(p, replaceVar(pl.getLangManager().getFlySpeedSet(), wrongSpeed + "", "speed"));
+
+                msgVar(s, pl.getLangManager().getFlySpeedSet(), false, new HashMap<String, String>() {{
+                    put("speed", String.valueOf(wrongSpeed));
+                    put("player", p.getName());
+                }});
             }
         } else {
             msg(s, pl.getLangManager().getFlySpeedUsage());

@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,8 @@ import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
 public class ToggleTrailCommand implements CommandExecutor {
     private final FlightControl pl;
 
-    public ToggleTrailCommand(FlightControl pl) {
-        this.pl = pl;
+    public ToggleTrailCommand() {
+        pl = FlightControl.getInstance();
     }
 
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
@@ -47,7 +47,7 @@ public class ToggleTrailCommand implements CommandExecutor {
                 // No need to check for trail enable because of command listener
                 msg(s, pl.getLangManager().getPersonalTrailEnable(), pl.getLangManager().useActionBar());
             } else {
-                pl.getTrailManager().trailRemove(p);
+                pl.getTrailManager().disableTrail(p);
                 msg(s, pl.getLangManager().getPersonalTrailDisable(), pl.getLangManager().useActionBar());
             }
         } else {

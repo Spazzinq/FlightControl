@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,169 +24,91 @@
 
 package org.spazzinq.flightcontrol.manager;
 
-import com.earth2me.essentials.Essentials;
 import lombok.Getter;
-import net.minelink.ctplus.CombatTagPlus;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.hook.combat.*;
-import org.spazzinq.flightcontrol.hook.enchantment.CrazyEnchantmentsHook;
-import org.spazzinq.flightcontrol.hook.enchantment.EnchantsHook;
-import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionBase;
-import org.spazzinq.flightcontrol.hook.griefprevention.GriefPreventionHook;
-import org.spazzinq.flightcontrol.hook.lands.LandsBase;
-import org.spazzinq.flightcontrol.hook.lands.LandsHook;
-import org.spazzinq.flightcontrol.hook.plot.NewPlotSquaredHook;
-import org.spazzinq.flightcontrol.hook.plot.OldPlotSquaredHook;
-import org.spazzinq.flightcontrol.hook.plot.PlotHook;
-import org.spazzinq.flightcontrol.hook.towny.TownyBase;
-import org.spazzinq.flightcontrol.hook.towny.TownyHook;
-import org.spazzinq.flightcontrol.hook.vanish.EssentialsVanishHook;
-import org.spazzinq.flightcontrol.hook.vanish.PremiumSuperVanishHook;
-import org.spazzinq.flightcontrol.hook.vanish.VanishHook;
-import org.spazzinq.flightcontrol.multiversion.FactionsHook;
-import org.spazzinq.flightcontrol.multiversion.WorldGuardHook;
+import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
+import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
+import org.spazzinq.flightcontrol.multiversion.current.FactionsUUIDHook;
+import org.spazzinq.flightcontrol.multiversion.current.FactionsXHook;
 import org.spazzinq.flightcontrol.multiversion.current.MassiveFactionsHook;
-import org.spazzinq.flightcontrol.multiversion.current.SavageFactionsHook;
 import org.spazzinq.flightcontrol.multiversion.current.WorldGuardHook7;
-import org.spazzinq.flightcontrol.multiversion.old.FactionsUUIDHook;
-import org.spazzinq.flightcontrol.multiversion.old.WorldGuardHook6;
+import org.spazzinq.flightcontrol.multiversion.legacy.LegacyFactionsUUIDHook;
+import org.spazzinq.flightcontrol.multiversion.legacy.WorldGuardHook6;
+import org.spazzinq.flightcontrol.placeholder.ClipPlaceholder;
+import org.spazzinq.flightcontrol.placeholder.MVdWPlaceholder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 public class HookManager {
     private final FlightControl pl;
     private final PluginManager pm;
     private final boolean is1_13;
 
-    // Load early to prevent NPEs
-    @Getter private WorldGuardHook worldGuardHook = new WorldGuardHook();
-    @Getter private VanishHook vanishHook = new VanishHook();
-    @Getter private TownyBase townyHook = new TownyBase();
-    @Getter private LandsBase landsHook = new LandsBase();
-    @Getter private CombatHook combatHook = new CombatHook();
-    @Getter private EnchantsHook enchantmentsHook = new EnchantsHook();
-    @Getter private FactionsHook factionsHook = new FactionsHook();
-    @Getter private PlotHook plotHook = new PlotHook();
-    @Getter private GriefPreventionBase griefPreventionHook = new GriefPreventionBase();
-
     @Getter private String hookedMsg;
-    private final Set<String> hooked = new HashSet<>();
+    private final ArrayList<String> hooked = new ArrayList<>();
 
-    public HookManager(FlightControl pl, boolean is1_13) {
-        this.pl = pl;
+    // Load early to prevent NPEs
+    @Getter private WorldGuardHookBase worldGuardHook = new WorldGuardHookBase();
+    @Getter private FactionsHookBase factionsHook = new FactionsHookBase();
+
+    public HookManager(boolean is1_13) {
+        pl = FlightControl.getInstance();
         this.is1_13 = is1_13;
         pm = pl.getServer().getPluginManager();
     }
 
-    public void load() {
-        boolean factionsEnabled = loadFactions();
-        loadCombat();
-        loadVanish();
+    public void loadHooks() {
+        loadFactionsHook();
+        loadPlaceholderHooks();
 
-        if (pluginEnabled("PlotSquared")) {
-            plotHook = is1_13 ? new NewPlotSquaredHook() : new OldPlotSquaredHook();
-        }
-        if (pluginEnabled("WorldGuard")) {
+        if (pluginLoading("WorldGuard")) {
             worldGuardHook = is1_13 ? new WorldGuardHook7() : new WorldGuardHook6();
         }
-        if (pluginEnabled("Towny")) {
-            townyHook = new TownyHook();
-        }
-        if (pluginEnabled("Lands")) {
-            landsHook = new LandsHook(pl);
-        }
-        if (pluginEnabled("CrazyEnchantments")) {
-            enchantmentsHook = new CrazyEnchantmentsHook();
-        }
-        if (pluginEnabled("GriefPrevention")) {
-            griefPreventionHook = new GriefPreventionHook();
-        }
 
-        loadHookMsg();
-        pl.getLogger().info(hookedMsg);
-
-        if (!factionsEnabled) {
-            pl.getLogger().warning("Factions not detected. FlightControl will attempt to hook again in a few seconds." +
-                    "..");
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    boolean factionsEnabled = loadFactions();
-                    if (factionsEnabled) {
-                        loadHookMsg();
-                    }
-                    pl.getLogger().info(factionsEnabled ? "Hooked with Factions!" : "Still did not detect Factions.");
-                }
-            }.runTaskLater(pl, 40);
-        }
+        printLoadedHooks();
     }
 
-    private boolean loadFactions() {
-        boolean factionsEnabled = pluginEnabled("Factions");
+    private void loadFactionsHook() {
+        if (pluginLoading("FactionsX")) {
+            factionsHook = new FactionsXHook();
+        } else if (pluginLoading("Factions")) {
+            String website = pm.getPlugin("Factions").getDescription().getWebsite();
 
-        if (factionsEnabled) {
-            if (pm.isPluginEnabled("MassiveCore")) {
+            if (website != null && website.equals("https://www.massivecraft.com/factions")) {
                 factionsHook = new MassiveFactionsHook();
-            } else if (pm.getPlugin("Factions").getDescription().getAuthors().contains("ProSavage")) {
-                factionsHook = new SavageFactionsHook();
+            } else if (pm.getPlugin("Factions").getDescription().getVersion().startsWith("1.6.9.5-U0.4")
+                    || pm.getPlugin("Factions").getDescription().getAuthors().contains("ProSavage")) {
+                factionsHook = new LegacyFactionsUUIDHook();
             } else {
                 factionsHook = new FactionsUUIDHook();
             }
         }
-        return factionsEnabled;
     }
 
-    private void loadCombat() {
-        if (pluginEnabled("CombatLogX")) {
-            String version = pm.getPlugin("CombatLogX").getDescription().getVersion();
-            boolean versionTen = version != null && version.startsWith("10.");
-
-            combatHook = versionTen ? new CombatLogX10Hook() : new CombatLogX9Hook();
-        } else if (pluginEnabled("CombatTagPlus")) {
-            combatHook = new CombatTagPlusHook(((CombatTagPlus) pm.getPlugin("CombatTagPlus")).getTagManager());
-        } else if (pluginEnabled("AntiCombatLogging")) {
-            combatHook = new AntiCombatLoggingHook();
-        } else if (pluginEnabled("CombatLogPro")) {
-            combatHook = new CombatLogProHook(pm.getPlugin("CombatLogPro"));
-        } else if (pluginEnabled("DeluxeCombat")) {
-            combatHook = new DeluxeCombatHook();
+    private void loadPlaceholderHooks() {
+        if (pluginLoading("PlaceholderAPI")) {
+            new ClipPlaceholder(pl).register();
+        }
+        if (pluginLoading("MVdWPlaceholderAPI")) {
+            new MVdWPlaceholder(pl);
         }
     }
 
-    private void loadVanish() {
-        if (pluginEnabled("PremiumVanish") || pluginEnabled("SuperVanish")) {
-            vanishHook = new PremiumSuperVanishHook();
-        } else if (pluginEnabled("Essentials")) {
-            vanishHook = new EssentialsVanishHook((Essentials) pm.getPlugin("Essentials"));
-        }
+    private void printLoadedHooks() {
+        hookedMsg = hooked.isEmpty() ? "Hooked with no plugins." : "Loaded hooks: " + hooked;
+
+        pl.getLogger().info(hookedMsg);
     }
 
-    private void loadHookMsg() {
-        // Prepare hooked msg
-        StringBuilder hookMsg = new StringBuilder("Hooked with ");
-        if (hooked.isEmpty()) {
-            hookMsg.append("no plugins.");
-        } else {
-            for (String hook : hooked) {
-                hookMsg.append(hook).append(", ");
-            }
-            hookMsg.delete(hookMsg.length() - 2, hookMsg.length());
-            hookMsg.insert(hookMsg.lastIndexOf(",") + 1, " and");
-            hookMsg.append(".");
-        }
-
-        hookedMsg = hookMsg.toString();
-    }
-
-    private boolean pluginEnabled(String pluginName) {
-        boolean enabled = pm.isPluginEnabled(pluginName);
+    private boolean pluginLoading(String pluginName) {
+        // Don't use .isPluginEnabled()--plugin might not yet be ready
+        boolean enabled = pm.getPlugin(pluginName) != null;
 
         if (enabled) {
             hooked.add(pluginName);
         }
+
         return enabled;
     }
 }

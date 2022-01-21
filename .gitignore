@@ -7,10 +7,16 @@
 .gradle/
 *.iml
 *.ipr
+.project
+.settings/
 
 # IntelliJ
 target/
 build/
+
+# VSCode
+bin/
+*.classpath
 
 # Ignore Gradle GUI config
 gradle-app.setting

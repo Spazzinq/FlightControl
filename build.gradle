@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,31 +24,36 @@
 
 allprojects {
     group = 'org.spazzinq'
-    version = '4.3.12'
+    version = '4.9.18'
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
 
-    sourceCompatibility = '1.8'
-
     repositories {
         mavenCentral()
         // Spigot
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-        // bStats, CombatLogX
+        // Bungeecord
+        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        // bStats
         maven { url = 'https://repo.codemc.io/repository/maven-public/' }
         // WorldEdit, WorldGuard
-        maven { url = 'https://maven.sk89q.com/repo/' }
+        maven { url = 'https://maven.enginehub.org/repo/' }
         // Essentials, FactionsUUID
         maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
         // PlotSquared
-        maven { url = 'https://ci.athion.net/job/PlotSquared-Breaking/ws/mvn/' }
-        maven { url = 'https://ci.athion.net/job/PlotSquared-Legacy/ws/mvn/' }
+        maven { url = 'https://plotsquared.com/mvn/' }
         // CrazyEnchantments
         maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PlotSquared
+        // Lands, PvPManager, SaberFactions, GriefPrevention, GriefDefender
         maven { url = 'https://jitpack.io' }
+        // PlaceholderAPI
+        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+        // FactionsX
+        maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
+        // CombatLogX
+        maven { url = 'https://nexus.sirblobman.xyz/repository/public/' }
     }
 }

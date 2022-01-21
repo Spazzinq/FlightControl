@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,5 +25,5 @@
 package org.spazzinq.flightcontrol.object;
 
 public enum ConfTask {
-    SAVE_COMMENTS, WRITE_COMMENTS, WRITE_NODES, WRITE_SUBNODES, WRITE_INDENTED_SUBNODES, DELETE_NODES
+    SAVE_COMMENTS, WRITE_COMMENTS, WRITE_NODES, WRITE_SUBNODES, WRITE_INDENTED_SUBNODES
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,9 @@ import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
+/**
+ * Listens for changes in the configurations and reloads them if they are created or modified.
+ */
 class PathWatcher extends BukkitRunnable {
     private final FlightControl pl;
     private WatchService watcher;
@@ -70,23 +73,25 @@ class PathWatcher extends BukkitRunnable {
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 String fileString = ev.context().toString();
                 boolean playerStateChanged = false;
+                boolean cmdChanged = false;
 
                 switch (fileString) {
                     case CATEGORIES:
                         logChanges(CATEGORIES);
-                        pl.getCategoryManager().reloadCategories();
+                        pl.getCategoryManager().loadCategories();
                         playerStateChanged = true;
                         break;
                     case CONFIG:
-                        if (pl.getConfManager().loadConf()) {
+                        if (pl.getConfManager().load()) {
+                            cmdChanged = true;
+                            playerStateChanged = true;
                             logChanges(CONFIG);
                             // If flight_speed is updated!
                             pl.getPlayerManager().loadPlayerData();
                         }
-                        playerStateChanged = true;
                         break;
                     case LANG:
-                        if (pl.getLangManager().loadLang()) {
+                        if (pl.getLangManager().load()) {
                             logChanges(LANG);
                         }
                         break;
@@ -94,7 +99,13 @@ class PathWatcher extends BukkitRunnable {
                         break;
                 }
                 if (playerStateChanged) {
-                    pl.checkPlayers();
+                    pl.getCheckManager().loadChecks();
+
+                    pl.getFlightManager().checkAllPlayers();
+                    pl.getTrailManager().checkAllPlayers();
+                }
+                if (cmdChanged) {
+                    pl.registerCommands();
                 }
             }
             boolean valid = key.reset();

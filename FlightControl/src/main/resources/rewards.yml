@@ -1,0 +1,25 @@
+# WARNING: You MUST set up the categories in the categories.yml for
+# the rewards to work properly.
+
+# This is the reward for the *global* category
+global:
+  # Every player in the global category receives this command every
+  # cooldown period. By default, global players receive nothing every 1 day.
+  cooldown: "1 day"
+  # These are the commands that are executed after every cooldown period.
+  commands:
+    - ""
+# This is the reward for the VIP category
+vip:
+  # Every player in the VIP category receives this command every
+  # cooldown period. By default, VIP players receive 1 hour of tempfly every !2 hours.
+  cooldown: "12 hours"
+  # These are the commands that are executed after every cooldown period.
+  # /silenttempfly disables console output for the /tempfly command
+  # to reduce spam.
+  commands:
+    - "silenttempfly add 1h %player%"
+mvp:
+  cooldown: "2 hours"
+  commands:
+    - "silenttempfly add 1h %player%"

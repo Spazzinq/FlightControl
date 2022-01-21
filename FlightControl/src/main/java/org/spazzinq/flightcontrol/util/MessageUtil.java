@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,28 +29,38 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-public class MessageUtil {
+import java.util.HashMap;
+import java.util.Map;
+
+public final class MessageUtil {
     public static void msg(CommandSender s, String msg) {
         msg(s, msg, false);
     }
 
     public static void msg(CommandSender s, String msg, boolean actionBar) {
         if (msg != null && !msg.isEmpty()) {
-            boolean console = s instanceof ConsoleCommandSender;
-            String finalMsg = msg;
-
-            finalMsg = ChatColor.translateAlternateColorCodes('&', finalMsg);
+            String finalMsg = ChatColor.translateAlternateColorCodes('&', msg);
 
             if (actionBar && s instanceof Player) {
-                ActionBarUtil.sendBar((Player) s, finalMsg);
+                ActionbarUtil.sendActionbar((Player) s, finalMsg);
             } else {
-                s.sendMessage((console ? "[FlightControl] " : "")
+                s.sendMessage((s instanceof ConsoleCommandSender ? "[FlightControl] " : "")
                         + finalMsg);
             }
         }
     }
 
-    public static String replaceVar(String msg, String value, String varName) {
-        return msg.replaceAll("%" + varName + "%", value);
+    public static void msgVar(CommandSender s, String msg, boolean actionBar, HashMap<String, String> toReplace) {
+        String finalMsg = msg;
+
+        for (Map.Entry<String, String> entry : toReplace.entrySet()) {
+            finalMsg = finalMsg.replaceAll("%" + entry.getKey() + "%", entry.getValue());
+        }
+
+        msg(s, finalMsg, actionBar);
+    }
+
+    public static void msgVar(CommandSender s, String msg, boolean actionBar, String var, String value) {
+        msg(s, msg.replace("%" + var + "%", value), actionBar);
     }
 }

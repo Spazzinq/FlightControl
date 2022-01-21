@@ -7,20 +7,23 @@
 # Discord: https://spazzinq.org/discord
 # Issue Tracker: https://github.com/Spazzinq/FlightControl/issues
 # Spigot Page: https://www.spigotmc.org/resources/flightcontrol.55168/
-# Permissions: https://spazzinq.org/flightcontrol/permissions.html
-
-# Before you leave a negative review:
-# ✓ Read through ALL the information in this configuration
-# ✓ Contact me on Discord (if the config does not solve your problem)
-# ✓ Create an official bug report or feature request on GitHub
+# Wiki/Permissions: https://spazzinq.org/flightcontrol/
 
 settings:
   # Updates the config automatically and adds new features
   auto_update: true
+  # Automatically reloads the config when changes are saved
+  auto_reload: true
+  # Allows the /fly command to be changed to a different command name (e.g. /votefly)
+  fly_command_name: "fly"
   # Enables flight automatically (no command necessary)
   auto_enable_flight: true
-  # The default speed is 1.0 and matches Essential's /flyspeed values (decimal from 0-10)
+  # The default speed is 1.0 and matches Essentials's /flyspeed values (0-10)
   flight_speed: 1.0
+  # The maximum flight speed a user can set using /flyspeed
+  max_flight_speed: 10.0
+  # Disables flight past the block height limit
+  height_limit: -1
   # Supports: CombatTagPlus, CombatLogX, CombatLogPro, AntiCombatLogging, DeluxeCombat
   # NOTE: disable flight disabling/enabling in the combat plugin's config to prevent issues
   disable_flight_in_combat: false
@@ -29,42 +32,30 @@ settings:
   # Supports: EssentialsX, PremiumVanish, SuperVanish
   # Prevents flight disabling while in vanish
   vanish_bypass: true
+  # Supports: AdvancedEnchantments
+  # Set as the enchant name to support custom flight enchantments
+  ae_enchant_name: "Flight"
+
+tempfly:
+  # Should tempfly decrease even when the player isn't flying?
+  always_decrease: true
 
 # NOTE: this feature is resource intensive and may cause performance issues
 nearby_disable:
   # Disables flight when a player is within a certain block range (set to -1 to disable)
   range: -1
-  # Officially Supports: Factions by MassiveCraft, FactionsUUID, SavageFactions
+  # Supports: Factions by MassiveCraft, FactionsUUID, SavageFactions
   # Makes the "range" setting only for faction enemies
   factions_enemy: true
 
-territory:
-  # Requires Towny plugin
-  towny:
-    enable_own_town: false
-    # Ignores above setting if in a war
-    negate_during_war: false
-  # Requires Lands plugin
-  lands:
-    enable_own_land: false
-    # Includes trusted people for "enable_own_land"
-    include_trusted: false
-  # Requires GriefPrevention plugin
-  griefprevention:
-    enable_own_claim: false
-    # Includes trusted people for "enable_own_claim"
-    include_trusted: false
-
 trail:
   enabled: false
-  # 1.8 Particle List: https://spazzinq.org/particles/1.8.html
-  # 1.15 Particle List: https://spazzinq.org/particles/1.15.html
+  # 1.8 Particle Info: https://spazzinq.org/flightcontrol/particles/1
+  # 1.15 Particle Info: https://spazzinq.org/flightcontrol/particles/2
   particle: "CLOUD"
   amount: 2
-  # "rgb" is used with colored particles (format: "red,green,blue")
-  # Color picker: https://www.google.com/search?q=color+picker
-  # For one specific color, you MUST set the amount to 0 if you use
-  # COLOURED_DUST on 1.8, SPELL_MOB on 1.14, SPELL_MOB_AMBIENT on 1.14, or NOTE on 1.14.
+  # Please look at the particle info links above to know which particles can change color
+  # Color picker (RBG): https://www.google.com/search?q=color+picker
   rgb: "0,0,0"
 
 sounds:

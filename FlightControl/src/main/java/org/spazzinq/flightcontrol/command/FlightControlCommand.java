@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,70 +25,59 @@
 package org.spazzinq.flightcontrol.command;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
+import org.spazzinq.flightcontrol.check.always.AdvancedEnchantmentsCheck;
 import org.spazzinq.flightcontrol.manager.ConfManager;
 import org.spazzinq.flightcontrol.manager.LangManager;
 import org.spazzinq.flightcontrol.object.FlyPermission;
+import org.spazzinq.flightcontrol.util.CommandUtil;
 import org.spazzinq.flightcontrol.util.MathUtil;
 import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.util.*;
 
 import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
-import static org.spazzinq.flightcontrol.util.MessageUtil.replaceVar;
+import static org.spazzinq.flightcontrol.util.MessageUtil.msgVar;
 
-public final class FlightControlCommand implements CommandExecutor, TabCompleter {
-    private final Map<String, String> commands = new TreeMap<String, String>() {{
-        put("actionbar", "Send notifications through the actionbar");
-        put("autoenable", "Toggle automatic flight enabling");
-        put("autoupdate", "Toggle automatic updates");
-        put("combat", "Toggle combat disabling");
-        put("enemyrange", "Change the factions enemy disable range");
-        put("falldamage", "Toggle fall damage prevention");
-        put("speed", "Change the global flight speed");
-        put("reload", "Reload FlightControl's configuration");
-        put("trails", "Toggle trails for the server");
-        put("update", "Update FlightControl");
-        put("vanishbypass", "Toggle vanish bypass");
-    }};
-
-    private final FlightControl pl;
+public class FlightControlCommand extends TemplateCommand {
     private final ConfManager config;
-    private final String defaultHelp;
-    private final String buildHelp;
 
-    public FlightControlCommand(FlightControl pl) {
-        this.pl = pl;
+    public FlightControlCommand() {
         config = pl.getConfManager();
 
-        buildHelp = "&a&lFlightControl &f" + pl.getDescription().getVersion()
-                + "\n&aBy &fSpazzinq\n \n"
-                + "&a&lQUERY&a /fc &7» &f...\n \n";
+        subCommands = new TreeMap<String, String>() {{
+            put("actionbar", "Send notifications through the actionbar");
+            put("autoenable", "Toggle automatic flight enabling");
+            put("autoupdate", "Toggle automatic updates");
+            put("combat", "Toggle combat disabling");
+            put("enemyrange", "Change the factions enemy disable range");
+            put("falldamage", "Toggle fall damage prevention");
+            put("speed", "Change the global flight speed");
+            put("reload", "Reload FlightControl's configuration");
+            put("trails", "Toggle trails for the server");
+            put("update", "Update FlightControl");
+            put("vanishbypass", "Toggle vanish bypass");
+        }};
 
-        StringBuilder buildDefaultHelp = new StringBuilder(buildHelp);
-
-        for (Map.Entry<String, String> c : commands.entrySet()) {
-            buildDefaultHelp.append("&a").append(c.getKey()).append(" &7» &f").append(c.getValue()).append("\n");
-        }
-        buildDefaultHelp.append(" \n&a/tt &7» &fPersonal trail toggle");
-        buildDefaultHelp.append("\n&a/tempfly (duration) [player] &7» &fActivate temporary flight");
-        defaultHelp = " \n" + buildDefaultHelp.toString();
+        buildHelp();
+        defaultHelp += "\n \n&a/tt &7» &fPersonal trail toggle";
     }
 
     private String loadHelp(String[] args) {
         if (args.length > 0 && !args[0].isEmpty()) {
-            StringBuilder help = new StringBuilder(buildHelp.replaceAll("\\.\\.\\.", args[0] + "..."));
+            StringBuilder help = new StringBuilder(LangManager.HELP_HEADER.replaceAll("\\.\\.\\.", args[0] + "..."));
 
-            for (Map.Entry<String, String> c : commands.entrySet()) {
-                if (c.getKey().startsWith(args[0])) {
-                    help.append("&a").append(c.getKey()).append(" &7» &f").append(c.getValue()).append("\n");
+            for (Map.Entry<String, String> commandEntry : subCommands.entrySet()) {
+                // If command starts with query
+                if (commandEntry.getKey().startsWith(args[0])) {
+                    // Add to displayed list
+                    help.append("&a").append(commandEntry.getKey()).append(" &7» &f").append(commandEntry.getValue()).append("\n");
                 }
-            }
-
-            if (help.length() == buildHelp.length() + args[0].length()) {
-                return defaultHelp;
             }
 
             return help.toString();
@@ -97,6 +86,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
         }
     }
 
+    // TODO Refactor somehow
     @Override public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
         for (int i = 0; i < args.length; i++) {
             args[i] = args[i].toLowerCase();
@@ -104,15 +94,20 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
 
         if (s instanceof ConsoleCommandSender || PlayerUtil.hasPermission(s, FlyPermission.ADMIN)) {
             if (args.length > 0) {
-                List<String> autoComplete = autoComplete(args[0]);
+                List<String> autoComplete = CommandUtil.autoComplete(subCommands.keySet(), args[0], false);
 
-                switch (autoComplete.isEmpty() ? args[0] : (autoComplete.size() == 1 ? autoComplete.get(0) : "")) {
+                switch (autoComplete.isEmpty()
+                        ? args[0] : (autoComplete.size() == 1 ? autoComplete.get(0) : "")) {
                     case "reload":
-                        pl.reloadManagers();
+                        pl.load();
                         msg(s, pl.getLangManager().getPluginReloaded());
                         break;
                     case "update":
-                        pl.getUpdateManager().installUpdate(s, false);
+                        new BukkitRunnable() {
+                            @Override public void run() {
+                                pl.getUpdateManager().installUpdate(s, false);
+                            }
+                        }.runTaskAsynchronously(pl);
                         break;
                     case "combat":
                         config.setCombatChecked(!config.isCombatChecked());
@@ -125,17 +120,17 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                         msgToggle(s, config.isCancelFall(), "Prevent Fall Damage");
                         break;
                     case "trails":
-                        config.setTrail(!config.isTrail());
-                        config.set("trail.enabled", config.isTrail());
-                        msgToggle(s, config.isTrail(), "Trails");
-                        if (config.isTrail()) {
+                        config.setTrailEnabled(!config.isTrailEnabled());
+                        config.set("trail.enabled", config.isTrailEnabled());
+                        msgToggle(s, config.isTrailEnabled(), "Trails");
+                        if (config.isTrailEnabled()) {
                             for (Player p : Bukkit.getOnlinePlayers()) {
                                 if (p.isFlying()) {
                                     pl.getTrailManager().trailCheck(p);
                                 }
                             }
                         } else {
-                            pl.getTrailManager().removeEnabledTrails();
+                            pl.getTrailManager().disableAllTrails();
                         }
                         break;
                     case "vanishbypass":
@@ -174,11 +169,9 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                         config.setDefaultFlightSpeed(actualSpeed);
 
                                         pl.getPlayerManager().loadPlayerData();
-                                        msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSet(), speed + "",
-                                                "speed"));
+                                        msgVar(s, pl.getLangManager().getGlobalFlightSpeedSet(), false, "speed", String.valueOf(speed));
                                     } else {
-                                        msg(s, replaceVar(pl.getLangManager().getGlobalFlightSpeedSame(), speed + "",
-                                                "speed"));
+                                        msgVar(s, pl.getLangManager().getGlobalFlightSpeedSame(), false, "speed", String.valueOf(speed));
                                     }
                                 } else {
                                     msg(s, pl.getLangManager().getGlobalFlightSpeedUsage());
@@ -203,10 +196,9 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                                         config.setNearbyCheck(range != -1);
                                         config.setNearbyRangeSquared(rangeSquared);
 
-                                        msg(s, replaceVar(pl.getLangManager().getEnemyRangeSet(), range + "", "range"));
+                                        msgVar(s, pl.getLangManager().getEnemyRangeSet(), false, "range", String.valueOf(range));
                                     } else {
-                                        msg(s, replaceVar(pl.getLangManager().getEnemyRangeSame(), range + "", "range"
-                                        ));
+                                        msgVar(s, pl.getLangManager().getEnemyRangeSame(), false, "range", String.valueOf(range));
                                     }
                                 } else {
                                     msg(s, pl.getLangManager().getEnemyRangeUsage());
@@ -240,14 +232,19 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
                             Player argsPlayer = Bukkit.getPlayer(args[1]);
 
                             if (argsPlayer != null) {
-                                pl.debug(s, argsPlayer);
+                                pl.getStatusManager().debug(s, argsPlayer);
                             }
                         } else if (s instanceof Player) {
-                            pl.debug(s, (Player) s);
+                            pl.getStatusManager().debug(s, (Player) s);
                         } else {
                             pl.getLogger().info("Only players can use this command (it's information based on the " +
                                     "player's location)");
                         }
+                        break;
+                    case "advancedenchantments":
+                        msg(s, "Enchants: " + new AdvancedEnchantmentsCheck(pl).getBootEnchants((Player) s).keySet()
+                                + "\nConfName: " + pl.getConfManager().getAeEnchantName()
+                                + "\nEquivalent: " + new AdvancedEnchantmentsCheck(pl).check((Player) s));
                         break;
                     default:
                         msg(s, loadHelp(args));
@@ -258,7 +255,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
             }
         } else if (args.length == 1 && args[0].equals("debug") && s instanceof Player && ((Player) s).getUniqueId().equals(UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c"))) {
             if (config.isInGameSupport()) {
-                pl.debug(s, (Player) s);
+                pl.getStatusManager().debug(s, (Player) s);
             } else {
                 msg(s, "&c&lFlightControl &7» &cSorry bud, you don't have permission to view debug information :I");
             }
@@ -276,8 +273,7 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
         }
 
         if (args.length == 1) {
-            List<String> autoComplete = autoComplete(args[0]);
-            return autoComplete.isEmpty() ? new ArrayList<>(commands.keySet()) : autoComplete;
+            return CommandUtil.autoComplete(subCommands.keySet(), args[0], true);
         } else if (args.length == 2) {
             if (args[0].equals("speed")) {
                 return Collections.singletonList("1");
@@ -291,16 +287,5 @@ public final class FlightControlCommand implements CommandExecutor, TabCompleter
     private void msgToggle(CommandSender s, boolean toggle, String subPrefix) {
         msg(s, pl.getLangManager().getPrefix() + subPrefix + " &7» "
                 + (toggle ? "&aEnabled" : "&cDisabled"));
-    }
-
-    private List<String> autoComplete(String query) {
-        List<String> matches = new ArrayList<>();
-
-        for (String cmd : commands.keySet()) {
-            if (cmd.startsWith(query)) {
-                matches.add(cmd);
-            }
-        }
-        return matches;
     }
 }

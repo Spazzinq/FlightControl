@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2020 Spazzinq
+ * Copyright (c) 2021 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,43 +28,55 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import org.spazzinq.flightcontrol.FlightControl;
-import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.FlightPlayer;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class PlayerManager {
     private final FlightControl pl;
 
-    @Getter private final File folder;
+    @Getter private final File storageFolder;
     private final HashMap<UUID, FlightPlayer> playerCache = new HashMap<>();
 
-    public PlayerManager(FlightControl pl) {
-        this.pl = pl;
-        folder = new File(pl.getDataFolder(), "data");
-
-        if (new File(folder, "disabled_trail.yml").exists()) {
-            migrateFromVersion3();
-        }
+    public PlayerManager() {
+        pl = FlightControl.getInstance();
+        storageFolder = new File(pl.getDataFolder(), "data");
     }
 
-    public FlightPlayer getFlightPlayer(Player p) {
+    public FlightPlayer getFlightPlayer(@Nullable Player p) {
+        if (p == null) {
+            return null;
+        }
+
         // Cached loading
         if (!playerCache.containsKey(p.getUniqueId())) {
-            File data = new File(folder, p.getUniqueId() + ".yml");
+            File dataFile = new File(storageFolder, p.getUniqueId() + ".yml");
 
-            CommentConf dataConf = new CommentConf(data, pl.getResource("default_data.yml"));
+            YamlConfiguration dataConf = YamlConfiguration.loadConfiguration(dataFile);
 
             float speed = dataConf.isDouble("flight_speed")
                     ? (float) dataConf.getDouble("flight_speed")
                     : pl.getConfManager().getDefaultFlightSpeed();
-            Long tempFlyLength = dataConf.isLong("temp_fly") ? dataConf.getLong("temp_fly") : null;
 
-            FlightPlayer flightPlayer = new FlightPlayer(dataConf, p, speed, dataConf.getBoolean("trail"),
+            long tempFlyLength;
+
+            if (dataConf.isInt("tempfly")) {
+                tempFlyLength = dataConf.getInt("tempfly");
+                // Migrate from 4.3.11 - old key
+            } else if (dataConf.isInt("temp_fly")) {
+                tempFlyLength = System.currentTimeMillis() - dataConf.getInt("temp_fly");
+
+                dataConf.set("temp_fly", null);
+                dataConf.set("tempfly", tempFlyLength);
+            } else {
+                tempFlyLength = 0;
+            }
+
+            FlightPlayer flightPlayer = new FlightPlayer(dataFile, dataConf, p.getUniqueId(), speed, dataConf.getBoolean("trail", true),
                     tempFlyLength);
 
             playerCache.put(p.getUniqueId(), flightPlayer);
@@ -80,45 +92,15 @@ public class PlayerManager {
             FlightPlayer flightPlayer = getFlightPlayer(p);
 
             p.setFlySpeed(flightPlayer.getActualFlightSpeed());
-            if (!flightPlayer.trailWanted()) {
-                pl.getTrailManager().trailRemove(p);
+            if (!flightPlayer.isTrailWanted()) {
+                pl.getTrailManager().disableTrail(p);
             }
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void migrateFromVersion3() {
-        File disabledTrails = new File(folder, "disabled_trail.yml");
-        YamlConfiguration disabledConf = YamlConfiguration.loadConfiguration(disabledTrails);
-
-        HashMap<String, FlightPlayer> migrateStorage = new HashMap<>();
-
-        for (String uuid : disabledConf.getStringList("disabled_trail")) {
-            migrateStorage.put(uuid, new FlightPlayer(null, null, -1, false, null));
-        }
-        disabledTrails.delete();
-
-        File tempfly = new File(folder, "tempfly.yml");
-        YamlConfiguration tempflyConf = YamlConfiguration.loadConfiguration(tempfly);
-
-        for (String uuid : tempflyConf.getKeys(false)) {
-            FlightPlayer flightPlayer = migrateStorage.getOrDefault(uuid, new FlightPlayer(null, null, -1, true, null));
-            flightPlayer.setTempFly(tempflyConf.getLong(uuid));
-        }
-        tempfly.delete();
-
-        for (Map.Entry<String, FlightPlayer> migration : migrateStorage.entrySet()) {
-            String uuid = migration.getKey();
-            FlightPlayer tempData = migration.getValue();
-            File data = new File(folder, uuid + ".yml");
-            CommentConf dataConf = new CommentConf(data, pl.getResource("default_data.yml"));
-
-            dataConf.set("trail", tempData.trailWanted());
-
-            Long tempFlyLength = tempData.getTempFlyEnd();
-            dataConf.set("temp_fly", tempFlyLength);
-
-            dataConf.save();
+    public void savePlayerData() {
+        for (FlightPlayer flightPlayer : playerCache.values()) {
+            flightPlayer.saveData();
         }
     }
 }
