@@ -30,35 +30,32 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public final class ActionbarUtil {
-    private static boolean isAboveV1_8;
+    private static boolean isV1_8;
     private static String nmsPackage;
 
     static {
         nmsPackage = Bukkit.getServer().getClass().getPackage().getName();
         nmsPackage = nmsPackage.substring(nmsPackage.lastIndexOf(".") + 1);
 
-        for (int i = 9; i < 18; i++) {
-            if (Bukkit.getServer().getBukkitVersion().contains("1." + i)) {
-                isAboveV1_8 = true;
-                break;
-            }
+        if (Bukkit.getServer().getBukkitVersion().contains("1.8")) {
+            isV1_8 = true;
         }
     }
 
     public static void sendActionbar(Player p, String msg) {
-        if (isAboveV1_8) {
-            sendActionbarAboveV1_8(p, msg);
+        if (isV1_8) {
+            sendActionbarLegacy(p, msg);
         } else {
-            sendActionbarV1_8(p, msg);
+            sendActionbarNew(p, msg);
         }
     }
 
-    public static void sendActionbarAboveV1_8(Player p, String msg) {
+    public static void sendActionbarNew(Player p, String msg) {
         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static void sendActionbarV1_8(Player p, String msg) {
+    public static void sendActionbarLegacy(Player p, String msg) {
         try {
             Class<?> packetPlayOutChatClass = getNMSClass("PacketPlayOutChat");
             Class<?> iChatBaseComponentClass = getNMSClass("IChatBaseComponent");

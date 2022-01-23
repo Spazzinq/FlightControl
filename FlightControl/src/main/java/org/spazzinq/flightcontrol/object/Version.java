@@ -50,6 +50,18 @@ public class Version implements Comparable<Version> {
         return compareTo(o) > 0;
     }
 
+    public int getMajorVersion() {
+        return versionData[0];
+    }
+
+    public int getMinorVersion() {
+        return versionData[1];
+    }
+
+    public int getPatchVersion() {
+        return versionData[2];
+    }
+
     @Override
     public int compareTo(@NotNull Version o) {
         // Cycles through the MAJOR, MINOR, and PATCH version

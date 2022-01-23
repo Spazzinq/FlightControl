@@ -36,6 +36,6 @@ public class EssentialsVanishCheck extends VanishCheck {
             e = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
         }
 
-        return e.getUser(p).isVanished();
+        return e.getUser(p) != null && e.getUser(p).isVanished();
     }
 }
