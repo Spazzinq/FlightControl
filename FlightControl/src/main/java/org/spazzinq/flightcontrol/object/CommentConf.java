@@ -29,6 +29,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConstructor;
 import org.bukkit.configuration.file.YamlRepresenter;
+import org.jetbrains.annotations.NotNull;
 import org.spazzinq.flightcontrol.object.conf.YamlConfiguration;
 import org.spazzinq.flightcontrol.util.FileUtil;
 import org.yaml.snakeyaml.DumperOptions;
@@ -179,7 +180,7 @@ public class CommentConf extends YamlConfiguration {
      * @param data the String from which to load the config
      * @throws InvalidConfigurationException if the config parsed with the String is invalid
      */
-    @Override public void loadFromString(String data) throws InvalidConfigurationException {
+    @Override public void loadFromString(@NotNull String data) throws InvalidConfigurationException {
         Validate.notNull(data, "Contents cannot be null");
 
         Map<?, ?> input;
@@ -199,7 +200,7 @@ public class CommentConf extends YamlConfiguration {
     /**
      * Saves the config to a String.
      */
-    @Override public String saveToString() {
+    @NotNull @Override public String saveToString() {
         String config = yaml.dump(getValues(false));
         return config.equals(BLANK_CONFIG) ? "" : finalizeConfig(config);
     }
