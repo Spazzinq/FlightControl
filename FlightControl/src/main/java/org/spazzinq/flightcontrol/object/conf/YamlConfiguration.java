@@ -77,7 +77,7 @@ public class YamlConfiguration extends FileConfiguration {
 
         Map<?, ?> input;
         try {
-            input = (Map<?, ?>) yaml.load(contents);
+            input = yaml.load(contents);
         } catch (YAMLException e) {
             throw new InvalidConfigurationException(e);
         } catch (ClassCastException e) {
@@ -145,11 +145,11 @@ public class YamlConfiguration extends FileConfiguration {
         if (options().copyHeader()) {
             Configuration def = getDefaults();
 
-            if ((def != null) && (def instanceof FileConfiguration)) {
+            if ((def instanceof FileConfiguration)) {
                 FileConfiguration filedefaults = (FileConfiguration) def;
                 String defaultsHeader = filedefaults.buildHeader();
 
-                if ((defaultsHeader != null) && (defaultsHeader.length() > 0)) {
+                if (defaultsHeader.length() > 0) {
                     return defaultsHeader;
                 }
             }
@@ -207,10 +207,8 @@ public class YamlConfiguration extends FileConfiguration {
 
         try {
             config.load(file);
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, ex);
-        } catch (InvalidConfigurationException ex) {
+        } catch (FileNotFoundException ignored) {
+        } catch (IOException | InvalidConfigurationException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, ex);
         }
 
@@ -236,9 +234,7 @@ public class YamlConfiguration extends FileConfiguration {
 
         try {
             config.load(reader);
-        } catch (IOException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Cannot load configuration from stream", ex);
-        } catch (InvalidConfigurationException ex) {
+        } catch (IOException | InvalidConfigurationException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot load configuration from stream", ex);
         }
 
