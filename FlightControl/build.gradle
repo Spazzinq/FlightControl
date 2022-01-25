@@ -70,7 +70,7 @@ dependencies {
         exclude group: 'club.minnced', module: 'discord-webhooks'
     }
     compileOnly 'com.github.bloodmc:GriefDefenderAPI:master'
-    compileOnly 'world.bentobox:bentobox:1.17.2-SNAPSHOT'
+    compileOnly 'world.bentobox:bentobox:1.20.0-SNAPSHOT'
     compileOnly 'com.SirBlobman.combatlogx:CombatLogX-API:10.0.0.0-SNAPSHOT'
     compileOnly 'com.github.sirblobman.api:core:2.3-SNAPSHOT' // for CombatLogX 11
 
