@@ -54,7 +54,7 @@ dependencies {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
     compileOnly 'com.github.intellectualsites.plotsquared:PlotSquared-API:4.514'
-    compileOnly 'com.plotsquared:PlotSquared:5.1'
+    compileOnly 'com.plotsquared:PlotSquared:6.4.0'
     compileOnly 'com.github.TownyAdvanced:Towny:0.97.5.1'
     compileOnly 'com.github.Angeschossen:LandsAPI:5.15.2'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.17.1'
