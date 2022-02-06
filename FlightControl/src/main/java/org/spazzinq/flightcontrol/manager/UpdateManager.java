@@ -55,7 +55,7 @@ public class UpdateManager {
     private boolean downloaded;
 
     private long lastCheckTimestamp;
-    private final HashSet<UUID> notified = new HashSet<>();
+    private final HashSet<String> notified = new HashSet<>();
 
     public UpdateManager() {
         pl = FlightControl.getInstance();
@@ -88,34 +88,36 @@ public class UpdateManager {
             if (updateExists(true)) {
                 new BukkitRunnable() {
                     @Override public void run() {
-                        pl.getLogger().info("Hooray! Version " + newVersion + " is available for update." +
-                                " Perform \"/fc update\" to update and visit https://www.spigotmc" +
-                                ".org/resources/55168/ to view the feature changes!" +
-                                ".");
+                       notifyUpdate(Bukkit.getConsoleSender());
                     }
                 }.runTaskLaterAsynchronously(pl, 70);
             }
         }
     }
 
-    public void installUpdate(CommandSender s, boolean silentCheck) {
+    public void installUpdate(CommandSender sender, boolean silentCheck) {
         if (!downloaded) {
             if (updateExists(true)) {
-                downloadPlugin();
-
-                if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
-                    msg(s, "&a&lFlightControl &7» &aAutomatic installation finished (the configs have automatically " +
-                            "updated too)! Welcome to FlightControl &f" + getNewVersion() + "&a!");
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload flightcontrol");
+                if (newVersion.getMajorVersion() > version.getMajorVersion()) {
+                    msg(sender, "&e&lFlightControl &7» &eThere is an update available, but the changes in the " +
+                            "latest update that may not be compatible with your server, so you must manually update this plugin.");
                 } else {
-                    msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate downloaded. Restart " +
-                            "(or reload) the server to apply the update.");
+                    downloadPlugin();
+
+                    if (Bukkit.getPluginManager().isPluginEnabled("Plugman")) {
+                        msg(sender, "&a&lFlightControl &7» &aAutomatic installation finished (the configs have automatically " +
+                                "updated too)! Welcome to FlightControl &f" + getNewVersion() + "&a!");
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "plugman reload flightcontrol");
+                    } else {
+                        msg(sender, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate downloaded. Restart " +
+                                "(or reload) the server to apply the update.");
+                    }
                 }
             } else if (!silentCheck) {
-                msg(s, "&a&lFlightControl &7» &aNo updates found.");
+                msg(sender, "&a&lFlightControl &7» &aNo updates found.");
             }
         } else {
-            msg(s, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate has already been " +
+            msg(sender, "&a&lFlightControl &7» &aVersion &f" + getNewVersion() + " &aupdate has already been " +
                     "downloaded. Restart (or reload) the server to install the update.");
         }
     }
@@ -134,8 +136,8 @@ public class UpdateManager {
             gitHub.setReadTimeout(3000);
 
             ReadableByteChannel channel = Channels.newChannel(gitHub.getInputStream());
-
             fos.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
+
             downloaded = true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,10 +159,9 @@ public class UpdateManager {
         }
     }
 
-    public void notifyUpdate(Player p) {
-        if (updateExists(false) && !notified.contains(p.getUniqueId())) {
-            notified.add(p.getUniqueId());
-            msg(p, "&e&lFlightControl &7» &eWoot woot! Version &f" + getNewVersion() + "&e is now available! " +
+    public void notifyUpdate(CommandSender sender) {
+        if (updateExists(false) && notified.add(sender.getName())) {
+            msg(sender, "&e&lFlightControl &7» &eWoot woot! Version &f" + getNewVersion() + "&e is now available! " +
                     "Update with \"/fc update\" and check out the new features: &fhttps://www.spigotmc" +
                     ".org/resources/55168/");
         }
