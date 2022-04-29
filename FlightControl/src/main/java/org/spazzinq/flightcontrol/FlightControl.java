@@ -131,7 +131,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     }
 
     // Always not null because of plugin.yml
-    @SuppressWarnings("ConstantConditions") public void registerCommands() {
+    public void registerCommands() {
         getCommand("tempfly").setExecutor(new TempflyCommand());
         // Dependent on ConfManager
         registerFlyCommand();

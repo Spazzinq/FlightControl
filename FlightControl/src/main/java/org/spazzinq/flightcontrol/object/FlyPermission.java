@@ -50,6 +50,7 @@ public enum FlyPermission {
     FLY_SPEED_OTHERS("flightcontrol.flypseed.others"),
 
     TEMP_FLY("flightcontrol.tempfly"),
+    TEMP_FLY_CHECK("flightcontrol.tempfly.check"),
     TEMP_FLY_OTHERS("flightcontrol.tempfly.others");
 
     private final String stringPermission;

@@ -52,9 +52,10 @@ permissions:
     children:
       others: true
   flightcontrol.tempfly:
-    description: Ability to give temporary flight
+    description: Ability to give/remove/check temporary flight
     default: op
     children:
+      check: true
       others: true
   flightcontrol.ignore:
     description: Ignores FlightControl's checks and does not change flight

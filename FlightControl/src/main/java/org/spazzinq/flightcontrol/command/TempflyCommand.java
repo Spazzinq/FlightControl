@@ -56,6 +56,7 @@ public class TempflyCommand extends TemplateCommand {
     }
 
     @Override public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        // TODO Refactor
         Set<Player> targetPlayers = sender instanceof ConsoleCommandSender ? Collections.emptySet() : Collections.singleton((Player) sender);
         TempflyTask type;
         long duration = 0;
@@ -114,6 +115,17 @@ public class TempflyCommand extends TemplateCommand {
         // If does not have admin perms
         } else {
             type = TempflyTask.CHECK;
+
+            // Checking other player
+            // /tempfly check [player]
+            if (args.length > 1 && PlayerUtil.hasPermission(sender, FlyPermission.TEMP_FLY_CHECK)) {
+                int playerIndex = 1;
+                Player p = Bukkit.getPlayer(args[playerIndex]);
+
+                if (p != null) {
+                    targetPlayers = Collections.singleton(p);
+                }
+            }
         }
 
         runTempflyTask(sender, targetPlayers, type, duration, "silenttempfly".equals(label.toLowerCase()));
