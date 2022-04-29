@@ -144,9 +144,9 @@ public class CheckManager {
             String version = pm.getPlugin("PlotSquared").getDescription().getVersion().split("\\.")[0];
 
             switch (version) {
-                case "5":
-                    ownTerritoryChecks.put("PlotSquared", new PlotSquared5OwnCheck());
-                    trustedTerritoryChecks.put("PlotSquared", new PlotSquared5TrustedCheck());
+                case "6":
+                    ownTerritoryChecks.put("PlotSquared", new PlotSquared6OwnCheck());
+                    trustedTerritoryChecks.put("PlotSquared", new PlotSquared6TrustedCheck());
                     break;
                 case "4":
                     ownTerritoryChecks.put("PlotSquared", new PlotSquared4OwnCheck());

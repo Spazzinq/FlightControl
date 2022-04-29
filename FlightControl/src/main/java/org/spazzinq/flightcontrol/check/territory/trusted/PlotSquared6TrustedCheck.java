@@ -22,18 +22,18 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.territory.own;
+package org.spazzinq.flightcontrol.check.territory.trusted;
 
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
-public final class PlotSquared5OwnCheck extends TerritoryCheck {
+public final class PlotSquared6TrustedCheck extends TerritoryCheck {
     @Override public boolean check(Player p) {
         org.bukkit.Location l = p.getLocation();
-        Plot plot = Plot.getPlot(new Location(l.getWorld().getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ()));
+        Plot plot = Location.at(l.getWorld().toString(), l.getBlockX(), l.getBlockY(), l.getBlockZ()).getPlot();
 
-        return plot != null && plot.hasOwner() && plot.getOwners().contains(p.getUniqueId());
+        return plot != null && plot.getTrusted().contains(p.getUniqueId());
     }
 }
