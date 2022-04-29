@@ -55,5 +55,7 @@ subprojects {
         maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
         // CombatLogX
         maven { url = 'https://nexus.sirblobman.xyz/repository/public/' }
+        // GriefDefender
+        maven { url = 'https://repo.glaremasters.me/repository/bloodshot/' }
     }
 }
