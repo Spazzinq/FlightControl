@@ -49,7 +49,7 @@ dependencies {
     }
     compileOnly 'com.plotsquared:PlotSquared:6.6.3'
     compileOnly 'com.github.TownyAdvanced:Towny:0.97.5.1'
-    compileOnly 'com.github.Angeschossen:LandsAPI:5.15.2'
+    compileOnly 'com.github.Angeschossen:LandsAPI:6.5.1'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.17.1'
     compileOnly 'me.clip:placeholderapi:2.11.1'
     compileOnly 'com.github.NoChanceSD.PvPManager:PvPManager:3.8.4'
