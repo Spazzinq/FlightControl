@@ -32,7 +32,7 @@ import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 public class BypassPermissionCheck extends Check {
     @Override public boolean check(Player p) {
-        return PlayerUtil.hasPermission(p, FlyPermission.BYPASS);
+        return p != null && PlayerUtil.hasPermission(p, FlyPermission.BYPASS);
     }
 
     @Override public Cause getCause() {

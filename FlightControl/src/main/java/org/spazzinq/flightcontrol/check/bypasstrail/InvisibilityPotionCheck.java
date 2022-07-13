@@ -31,7 +31,7 @@ import org.spazzinq.flightcontrol.check.Check;
 
 public class InvisibilityPotionCheck extends Check {
     @Override public boolean check(Player p) {
-        return p.hasPotionEffect(PotionEffectType.INVISIBILITY);
+        return p != null && p.hasPotionEffect(PotionEffectType.INVISIBILITY);
     }
 
     @Override public Cause getCause() {
