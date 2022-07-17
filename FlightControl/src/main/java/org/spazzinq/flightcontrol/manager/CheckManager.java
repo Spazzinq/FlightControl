@@ -231,12 +231,12 @@ public class CheckManager {
         }
     }
 
-    private void addTerritoryCheck(String pluginName, @NotNull TerritoryCheck... checks) {
-        if (pluginLoading(pluginName)) {
-            ownTerritoryChecks.put(pluginName, checks[0]);
-            trustedTerritoryChecks.put(pluginName, checks[1]);
-        }
-    }
+//    private void addTerritoryCheck(String pluginName, @NotNull TerritoryCheck... checks) {
+//        if (pluginLoading(pluginName)) {
+//            ownTerritoryChecks.put(pluginName, checks[0]);
+//            trustedTerritoryChecks.put(pluginName, checks[1]);
+//        }
+//    }
 
     private void printLoadedChecks() {
         HashSet<Check> checks = new HashSet<>(bypassChecks);

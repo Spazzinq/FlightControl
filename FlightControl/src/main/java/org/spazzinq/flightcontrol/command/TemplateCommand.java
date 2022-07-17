@@ -32,7 +32,7 @@ import org.spazzinq.flightcontrol.manager.LangManager;
 import java.util.Map;
 
 public abstract class TemplateCommand implements CommandExecutor, TabCompleter {
-    protected FlightControl pl;
+    protected final FlightControl pl;
 
     protected Map<String, String> subCommands;
     protected String defaultHelp;

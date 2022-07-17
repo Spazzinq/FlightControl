@@ -36,7 +36,7 @@ public abstract class StorageManager {
 
     @Getter protected CommentConf conf;
     protected final File confFile;
-    protected String fileName;
+    protected final String fileName;
 
     protected boolean reloadIgnored;
 

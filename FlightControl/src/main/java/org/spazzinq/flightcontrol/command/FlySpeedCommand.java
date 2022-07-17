@@ -94,14 +94,14 @@ public class FlySpeedCommand implements CommandExecutor {
             FlightPlayer flightPlayer = playerManager.getFlightPlayer(p);
 
             if (flightPlayer.getActualFlightSpeed() == speed) {
-                msgVar(s, pl.getLangManager().getFlySpeedSame(), false, new HashMap<String, String>() {{
+                msgVar(s, pl.getLangManager().getFlySpeedSame(), false, new HashMap<>() {{
                     put("speed", String.valueOf(wrongSpeed));
                     put("player", p.getName());
                 }});
             } else {
                 playerManager.getFlightPlayer(p).setActualFlightSpeed(speed);
 
-                msgVar(s, pl.getLangManager().getFlySpeedSet(), false, new HashMap<String, String>() {{
+                msgVar(s, pl.getLangManager().getFlySpeedSet(), false, new HashMap<>() {{
                     put("speed", String.valueOf(wrongSpeed));
                     put("player", p.getName());
                 }});

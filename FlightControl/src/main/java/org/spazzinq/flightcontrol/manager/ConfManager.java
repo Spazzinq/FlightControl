@@ -82,8 +82,8 @@ public class ConfManager extends StorageManager {
         // ints
         int range = conf.getInt("nearby_disable.range");
         heightLimit = conf.getInt("settings.height_limit");
-
-        if (nearbyCheck = (range != -1)) {
+        nearbyCheck = (range != -1);
+        if (nearbyCheck) {
             nearbyRangeSquared = range * range;
         }
 

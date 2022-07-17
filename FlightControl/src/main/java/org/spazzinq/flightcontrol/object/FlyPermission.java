@@ -38,14 +38,6 @@ public enum FlyPermission {
     FLY_STUB("flightcontrol.fly."),
     NO_FLY_STUB("flightcontrol.nofly."),
 
-    TOWNY_OWN("flightcontrol.towny.own"),
-
-    LANDS_OWN("flightcontrol.lands.own"),
-    LANDS_TRUSTED("flightcontrol.lands.trusted"),
-
-    CLAIM_OWN("flightcontrol.claim.own"),
-    CLAIM_TRUSTED("flightcontrol.claim.trusted"),
-
     FLY_SPEED("flightcontrol.flyspeed"),
     FLY_SPEED_OTHERS("flightcontrol.flypseed.others"),
 

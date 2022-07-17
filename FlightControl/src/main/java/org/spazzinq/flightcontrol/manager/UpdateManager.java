@@ -127,7 +127,7 @@ public class UpdateManager {
     }
 
     private void downloadPlugin() {
-        try (FileOutputStream fos = new FileOutputStream(new File("plugins/FlightControl.jar"))) {
+        try (FileOutputStream fos = new FileOutputStream("plugins/FlightControl.jar")) {
             URLConnection gitHub = new URL("https://github.com/Spazzinq/FlightControl/releases/download/" + newVersion +
                     "/FlightControl.jar").openConnection();
             gitHub.setConnectTimeout(3000);

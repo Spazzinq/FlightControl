@@ -37,19 +37,19 @@ public final class PlayerUtil {
     private static final String[] shortUnits = {"d", "h", "m", "s"};
 
     public static boolean hasPermission(CommandSender p, FlyPermission flyPermission) {
-        return p.hasPermission(flyPermission.toString());
+        return p != null && p.hasPermission(flyPermission.toString());
     }
 
     public static boolean hasPermissionFly(boolean flyOrNoFly, Player p, String data) {
-        return p.hasPermission((flyOrNoFly ? FlyPermission.FLY_STUB : FlyPermission.NO_FLY_STUB) + data);
+        return p != null && p.hasPermission((flyOrNoFly ? FlyPermission.FLY_STUB : FlyPermission.NO_FLY_STUB) + data);
     }
 
     public static boolean hasPermissionCategory(Player p, Category category) {
-        return p.hasPermission(FlyPermission.CATEGORY_STUB + category.getName());
+        return p != null && p.hasPermission(FlyPermission.CATEGORY_STUB + category.getName());
     }
 
     public static boolean hasPermissionTempfly(Player p, Category category) {
-        return p.hasPermission(FlyPermission.TEMP_FLY_STUB + category.getName());
+        return p != null && p.hasPermission(FlyPermission.TEMP_FLY_STUB + category.getName());
     }
 
     public static String shortTempflyPlaceholder(FlightPlayer flightPlayer) {

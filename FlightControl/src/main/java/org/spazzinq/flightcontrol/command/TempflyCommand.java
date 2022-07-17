@@ -44,7 +44,7 @@ public class TempflyCommand extends TemplateCommand {
     private final List<String> exampleDurations = Arrays.asList("30minutes", "1hour", "3hours", "6hours", "12hours", "1day");
 
     public TempflyCommand() {
-        subCommands = new HashMap<String, String>() {{
+        subCommands = new HashMap<>() {{
             put("check [player]", "Returns a player's current tempfly duration");
             put("disable [player]", "Disables a player's tempfly");
             put("set (duration) [player]", "Sets a player's current tempfly duration");
@@ -128,7 +128,7 @@ public class TempflyCommand extends TemplateCommand {
             }
         }
 
-        runTempflyTask(sender, targetPlayers, type, duration, "silenttempfly".equals(label.toLowerCase()));
+        runTempflyTask(sender, targetPlayers, type, duration, "silenttempfly".equalsIgnoreCase(label));
 
         return true;
     }
@@ -198,7 +198,7 @@ public class TempflyCommand extends TemplateCommand {
                         break;
                 }
 
-                msgVar(sender, msg, false, new HashMap<String, String>() {{
+                msgVar(sender, msg, false, new HashMap<>() {{
                     if (targetPlayer != null) {
                         put("player", targetPlayer.getName());
                     }

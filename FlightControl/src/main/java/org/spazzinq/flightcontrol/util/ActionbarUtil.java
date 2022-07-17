@@ -62,11 +62,7 @@ public final class ActionbarUtil {
             Class<?> chatComponentTextClass = getNMSClass("ChatComponentText");
 
             Object chatComponentText = chatComponentTextClass.getConstructor(new Class[]{String.class}).newInstance(msg);
-            Object packetPlayOutChat;
-
-            Class<?> chatMessageTypeClass = getNMSClass("ChatMessageType");
-
-            packetPlayOutChat = packetPlayOutChatClass.getConstructor(
+            Object packetPlayOutChat = packetPlayOutChatClass.getConstructor(
                     new Class[]{iChatBaseComponentClass, byte.class})
                     .newInstance(chatComponentText, (byte) 2);
 

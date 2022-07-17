@@ -32,7 +32,7 @@ import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 public class IgnoreCheck extends Check {
     @Override public boolean check(Player p) {
-        return p != null && PlayerUtil.hasPermission(p, FlyPermission.IGNORE);
+        return PlayerUtil.hasPermission(p, FlyPermission.IGNORE);
     }
     @Override public Cause getCause() {
         // Check never calls anything, so no need for Cause

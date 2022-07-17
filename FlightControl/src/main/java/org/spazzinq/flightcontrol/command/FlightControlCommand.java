@@ -50,7 +50,7 @@ public class FlightControlCommand extends TemplateCommand {
     public FlightControlCommand() {
         config = pl.getConfManager();
 
-        subCommands = new TreeMap<String, String>() {{
+        subCommands = new TreeMap<>() {{
             put("actionbar", "Send notifications through the actionbar");
             put("autoenable", "Toggle automatic flight enabling");
             put("autoupdate", "Toggle automatic updates");

@@ -31,10 +31,10 @@ import org.spazzinq.flightcontrol.api.APIManager;
 import java.lang.reflect.Method;
 
 public class HandlerMethod implements Comparable<HandlerMethod> {
-    @Getter private Class<?> eventClass;
+    @Getter private final Class<?> eventClass;
     @Getter private final FlightListener listener;
     @Getter private final Method method;
-    @Getter private FlightEventHandler.Priority priority;
+    @Getter private final FlightEventHandler.Priority priority;
 
     public HandlerMethod(FlightListener listener, Method method) {
         method.setAccessible(true);

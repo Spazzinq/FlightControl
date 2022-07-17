@@ -80,12 +80,8 @@ public abstract class FileConfiguration extends MemoryConfiguration {
 
         String data = saveToString();
 
-        Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);
-
-        try {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
             writer.write(data);
-        } finally {
-            writer.close();
         }
     }
 
