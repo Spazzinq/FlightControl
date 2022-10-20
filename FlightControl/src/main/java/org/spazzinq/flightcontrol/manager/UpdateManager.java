@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2021 Spazzinq
+ * Copyright (c) 2022 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,6 @@ import org.spazzinq.flightcontrol.object.Version;
 import org.spazzinq.flightcontrol.object.VersionType;
 import org.spazzinq.flightcontrol.util.FileUtil;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;

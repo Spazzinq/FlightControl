@@ -24,20 +24,11 @@
 
 package org.spazzinq.flightcontrol.check.combat;
 
-import nl.marido.deluxecombat.api.DeluxeCombatAPI;
+import com.keurig.combatlogger.api.CombatLoggerAPI;
 import org.bukkit.entity.Player;
 
-public final class DeluxeCombatCheck extends CombatCheck {
-    private DeluxeCombatAPI api;
+public final class CombatLoggerCheck extends CombatCheck {
     @Override public boolean check(Player p) {
-        if (api == null) {
-            api = new DeluxeCombatAPI();
-        }
-        // DeluxeCombat loads player data too late sometimes, which is why this try-catch is necessary
-        try {
-            return api.isInCombat(p);
-        } catch (NullPointerException e) {
-            return false;
-        }
+        return CombatLoggerAPI.isTagged(p);
     }
 }

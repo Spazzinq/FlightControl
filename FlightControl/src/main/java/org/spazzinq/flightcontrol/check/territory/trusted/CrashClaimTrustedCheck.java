@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2021 Spazzinq
+ * Copyright (c) 2022 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@
 package org.spazzinq.flightcontrol.check.territory.trusted;
 
 import net.crashcraft.crashclaim.CrashClaim;
-import net.crashcraft.crashclaim.api.CrashClaimAPI;
 import net.crashcraft.crashclaim.permissions.PermissionHelper;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import org.bukkit.entity.Player;

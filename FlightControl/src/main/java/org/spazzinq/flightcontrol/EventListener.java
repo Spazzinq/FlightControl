@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2021 Spazzinq
+ * Copyright (c) 2022 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +26,11 @@ package org.spazzinq.flightcontrol;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
@@ -236,4 +238,10 @@ final class EventListener implements org.bukkit.event.Listener {
     @EventHandler private void onWorldInit(WorldInitEvent e) {
         pl.getPermissionManager().registerDefaultFlyPerms(e.getWorld().getName());
     }
+
+//    @EventHandler private void onHit(EntityDamageByEntityEvent e) {
+//        if (e.getEntity().getType() == EntityType.PLAYER) {
+//            e.getDamager()
+//        }
+//    }
 }

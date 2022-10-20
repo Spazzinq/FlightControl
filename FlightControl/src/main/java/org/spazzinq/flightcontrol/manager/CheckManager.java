@@ -1,7 +1,7 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
  *
- * Copyright (c) 2021 Spazzinq
+ * Copyright (c) 2022 Spazzinq
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,10 @@ import org.spazzinq.flightcontrol.check.bypasstrail.InvisibilityPotionCheck;
 import org.spazzinq.flightcontrol.check.bypasstrail.SpectatorModeCheck;
 import org.spazzinq.flightcontrol.check.bypasstrail.vanish.EssentialsVanishCheck;
 import org.spazzinq.flightcontrol.check.bypasstrail.vanish.PremiumSuperVanishCheck;
-import org.spazzinq.flightcontrol.check.combat.*;
+import org.spazzinq.flightcontrol.check.combat.CombatLogX11Check;
+import org.spazzinq.flightcontrol.check.combat.CombatTagPlusCheck;
+import org.spazzinq.flightcontrol.check.combat.DeluxeCombatCheck;
+import org.spazzinq.flightcontrol.check.combat.PvPManagerCheck;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 import org.spazzinq.flightcontrol.check.territory.own.*;
 import org.spazzinq.flightcontrol.check.territory.trusted.*;
