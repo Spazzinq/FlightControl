@@ -143,21 +143,13 @@ public class CheckManager {
         if (pluginLoading("PlotSquared")) {
             String version = pm.getPlugin("PlotSquared").getDescription().getVersion().split("\\.")[0];
 
-            switch (version) {
-                case "6":
-                    ownTerritoryChecks.put("PlotSquared", new PlotSquared6OwnCheck());
-                    trustedTerritoryChecks.put("PlotSquared", new PlotSquared6TrustedCheck());
-                    break;
-                case "4":
-                    ownTerritoryChecks.put("PlotSquared", new PlotSquared4OwnCheck());
-                    trustedTerritoryChecks.put("PlotSquared", new PlotSquared4TrustedCheck());
-                    break;
-                default:
-                    ownTerritoryChecks.put("PlotSquared", new PlotSquared3OwnCheck());
-                    trustedTerritoryChecks.put("PlotSquared", new PlotSquared3TrustedCheck());
-                    break;
+            if ("3".equals(version)) {
+                ownTerritoryChecks.put("PlotSquared", new PlotSquared3OwnCheck());
+                trustedTerritoryChecks.put("PlotSquared", new PlotSquared3TrustedCheck());
+            } else {
+                ownTerritoryChecks.put("PlotSquared", new PlotSquared6OwnCheck());
+                trustedTerritoryChecks.put("PlotSquared", new PlotSquared6TrustedCheck());
             }
-
         }
         if (pluginLoading("Towny")) {
             // trusted == own
@@ -210,16 +202,11 @@ public class CheckManager {
         HashSet<Check> combatChecks = new HashSet<>();
 
         if (pluginLoading("CombatLogX")) {
-            String version = pm.getPlugin("CombatLogX").getDescription().getVersion();
-            boolean versionEleven = version != null && version.startsWith("11.");
-
-            combatChecks.add(versionEleven ? new CombatLogX11Check() : new CombatLogX10Check());
+            combatChecks.add(new CombatLogX11Check());
         } else if (pluginLoading("CombatTagPlus")) {
             combatChecks.add(new CombatTagPlusCheck());
         } else if (pluginLoading("AntiCombatLogging")) {
             combatChecks.add(new AntiCombatLoggingCheck());
-        } else if (pluginLoading("CombatLogPro")) {
-            combatChecks.add(new CombatLogProCheck());
         } else if (pluginLoading("DeluxeCombat")) {
             combatChecks.add(new DeluxeCombatCheck());
         } else if (pluginLoading("PvPManager")) {

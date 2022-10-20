@@ -25,7 +25,6 @@
 package org.spazzinq.flightcontrol.object;
 
 import com.google.common.io.Files;
-import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConstructor;
 import org.bukkit.configuration.file.YamlRepresenter;
@@ -181,8 +180,6 @@ public class CommentConf extends YamlConfiguration {
      * @throws InvalidConfigurationException if the config parsed with the String is invalid
      */
     @Override public void loadFromString(@NotNull String data) throws InvalidConfigurationException {
-        Validate.notNull(data, "Contents cannot be null");
-
         Map<?, ?> input;
         try {
             input = yaml.load(data);

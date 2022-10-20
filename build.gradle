@@ -24,7 +24,7 @@
 
 allprojects {
     group = 'org.spazzinq'
-    version = '4.9.23'
+    version = '4.10.0'
 }
 
 subprojects {
@@ -41,18 +41,18 @@ subprojects {
         maven { url = 'https://repo.codemc.io/repository/maven-public/' }
         // WorldEdit, WorldGuard
         maven { url = 'https://maven.enginehub.org/repo/' }
-        // Essentials, FactionsUUID
+        // FactionsUUID
         maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
+        // EssentialsX
+        maven { url = 'https://repo.essentialsx.net/releases/' }
         // PlotSquared
-        maven { url = 'https://plotsquared.com/mvn/' }
+        maven { url = 'https://repo.papermc.io/repository/maven-public/' }
         // CrazyEnchantments
-        maven { url = 'https://jenkins.badbones69.com/plugin/repository/everything/' }
-        // Lands, PvPManager, SaberFactions, GriefPrevention, GriefDefender
+        maven { url = 'https://repo.badbones69.com/snapshots' }
+        // Lands, PvPManager, GriefPrevention, GriefDefender
         maven { url = 'https://jitpack.io' }
         // PlaceholderAPI
         maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-        // FactionsX
-        maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
         // CombatLogX
         maven { url = 'https://nexus.sirblobman.xyz/repository/public/' }
         // GriefDefender

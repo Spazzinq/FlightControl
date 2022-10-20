@@ -24,14 +24,18 @@
 
 package org.spazzinq.flightcontrol.check.combat;
 
-import nl.marido.deluxecombat.DeluxeCombat;
+import nl.marido.deluxecombat.api.DeluxeCombatAPI;
 import org.bukkit.entity.Player;
 
 public final class DeluxeCombatCheck extends CombatCheck {
+    private DeluxeCombatAPI api;
     @Override public boolean check(Player p) {
+        if (api == null) {
+            api = new DeluxeCombatAPI();
+        }
         // DeluxeCombat loads player data too late sometimes, which is why this try-catch is necessary
         try {
-            return DeluxeCombat.getAPI().isInCombat(p);
+            return api.isInCombat(p);
         } catch (NullPointerException e) {
             return false;
         }

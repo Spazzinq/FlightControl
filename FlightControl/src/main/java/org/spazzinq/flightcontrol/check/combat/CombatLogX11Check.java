@@ -25,7 +25,7 @@
 package org.spazzinq.flightcontrol.check.combat;
 
 import com.github.sirblobman.combatlogx.api.ICombatLogX;
-import com.github.sirblobman.combatlogx.api.manager.ICombatManager;
+import com.github.sirblobman.combatlogx.api.ICombatManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
