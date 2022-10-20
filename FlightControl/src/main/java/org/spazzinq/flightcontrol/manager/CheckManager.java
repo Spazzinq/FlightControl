@@ -26,7 +26,6 @@ package org.spazzinq.flightcontrol.manager;
 
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
-import org.jetbrains.annotations.NotNull;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.Check;
 import org.spazzinq.flightcontrol.check.always.*;
@@ -196,6 +195,10 @@ public class CheckManager {
             ownTerritoryChecks.put("GriefDefender", new GriefDefenderOwnCheck());
             trustedTerritoryChecks.put("GriefDefender", new GriefDefenderTrustedCheck());
         }
+        if (pluginLoading("CrashClaim")) {
+            ownTerritoryChecks.put("CrashClaim", new CrashClaimOwnCheck());
+            trustedTerritoryChecks.put("CrashClaim", new CrashClaimTrustedCheck());
+        }
     }
 
     private void loadCombatChecks() {
@@ -205,8 +208,6 @@ public class CheckManager {
             combatChecks.add(new CombatLogX11Check());
         } else if (pluginLoading("CombatTagPlus")) {
             combatChecks.add(new CombatTagPlusCheck());
-        } else if (pluginLoading("AntiCombatLogging")) {
-            combatChecks.add(new AntiCombatLoggingCheck());
         } else if (pluginLoading("DeluxeCombat")) {
             combatChecks.add(new DeluxeCombatCheck());
         } else if (pluginLoading("PvPManager")) {

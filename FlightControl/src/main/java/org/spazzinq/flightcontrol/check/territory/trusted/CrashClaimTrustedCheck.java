@@ -22,13 +22,23 @@
  * SOFTWARE.
  */
 
-package org.spazzinq.flightcontrol.check.combat;
+package org.spazzinq.flightcontrol.check.territory.trusted;
 
-import com.vk2gpz.anticombatlogging.AntiCombatLoggingAPI;
+import net.crashcraft.crashclaim.CrashClaim;
+import net.crashcraft.crashclaim.api.CrashClaimAPI;
+import net.crashcraft.crashclaim.permissions.PermissionHelper;
+import net.crashcraft.crashclaim.permissions.PermissionRoute;
 import org.bukkit.entity.Player;
+import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
-public final class AntiCombatLoggingCheck extends CombatCheck {
+public class CrashClaimTrustedCheck extends TerritoryCheck {
+    private PermissionHelper api;
+
     @Override public boolean check(Player p) {
-        return AntiCombatLoggingAPI.isInCombat(p);
+        if (api == null) {
+            api = CrashClaim.getPlugin().getApi().getPermissionHelper();
+        }
+
+        return api.hasPermission(p.getLocation(), PermissionRoute.BUILD);
     }
 }
