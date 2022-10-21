@@ -50,7 +50,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.2'
     compileOnly 'me.NoChance.PvPManager:PvPManager:3.10.9'
     compileOnly 'com.griefdefender:api:2.1.0-SNAPSHOT'
-    compileOnly 'world.bentobox:bentobox:1.21.0-SNAPSHOT'
+    compileOnly 'world.bentobox:bentobox:1.22.0-SNAPSHOT'
     compileOnly 'com.github.sirblobman.combatlogx:api:11.0.0.0-SNAPSHOT'
     compileOnly 'com.github.sirblobman.api:core:2.6-SNAPSHOT' // for CombatLogX 11
 
