@@ -68,6 +68,7 @@ dependencies {
     compileOnly files('../lib/CrazyEnchantments.v1.8-Dev-Build-v9.jar')
     compileOnly files('../lib/CrashClaim-1.0.34.jar')
     compileOnly files('../lib/SuperiorSkyblock2API.jar')
+    compileOnly files('../lib/ProtectionStones-2.10.3.jar')
 }
 
 processResources {

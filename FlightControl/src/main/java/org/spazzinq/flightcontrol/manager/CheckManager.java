@@ -202,6 +202,10 @@ public class CheckManager {
             ownTerritoryChecks.put("CrashClaim", new CrashClaimOwnCheck());
             trustedTerritoryChecks.put("CrashClaim", new CrashClaimTrustedCheck());
         }
+        if (pluginLoading("ProtectionStones")) {
+            ownTerritoryChecks.put("ProtectionStones", new ProtectionStonesOwnCheck());
+            trustedTerritoryChecks.put("ProtectionStones", new ProtectionStonesTrustedCheck());
+        }
     }
 
     private void loadCombatChecks() {

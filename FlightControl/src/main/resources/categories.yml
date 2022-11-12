@@ -26,7 +26,7 @@ global:
   # Disable/enable flight in certain plugin territories
   # Supports: GriefPrevention, Lands, PlotSquared, TownyTown, TownyNation,
   #           RedProtect, BentoBox (island), WorldGuard, Residence,
-  #           SuperiorSkyblock2, GriefDefender, CrashClaim
+  #           SuperiorSkyblock2, GriefDefender, CrashClaim, ProtectionStones
   territory:
     enable:
       # Enable/Disable in player's own territory
