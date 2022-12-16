@@ -142,7 +142,7 @@ public class FlightControlCommand extends TemplateCommand {
                         LangManager langManager = pl.getLangManager();
 
                         langManager.setUseActionBar(!langManager.useActionBar());
-                        langManager.set("player.actionbar", langManager.useActionBar());
+                        langManager.set("player.actionbar.enabled", langManager.useActionBar());
                         langManager.getLang().save();
 
                         msgToggle(s, langManager.useActionBar(), "Actionbar Notifications");
