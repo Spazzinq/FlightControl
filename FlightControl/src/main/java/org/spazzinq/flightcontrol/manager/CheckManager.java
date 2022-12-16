@@ -206,6 +206,10 @@ public class CheckManager {
             ownTerritoryChecks.put("ProtectionStones", new ProtectionStonesOwnCheck());
             trustedTerritoryChecks.put("ProtectionStones", new ProtectionStonesTrustedCheck());
         }
+        if (pluginLoading("HuskTowns")) {
+            ownTerritoryChecks.put("HuskTowns", new HuskTownsOwnCheck());
+            trustedTerritoryChecks.put("HuskTowns", new HuskTownsTrustedCheck());
+        }
     }
 
     private void loadCombatChecks() {

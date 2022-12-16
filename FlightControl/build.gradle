@@ -69,6 +69,7 @@ dependencies {
     compileOnly files('../lib/CrashClaim-1.0.34.jar')
     compileOnly files('../lib/SuperiorSkyblock2API.jar')
     compileOnly files('../lib/ProtectionStones-2.10.3.jar')
+    compileOnly files('../lib/husktowns-1.8.1.jar')
 }
 
 processResources {

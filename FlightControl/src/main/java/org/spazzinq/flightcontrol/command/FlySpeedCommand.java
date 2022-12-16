@@ -90,7 +90,7 @@ public class FlySpeedCommand implements CommandExecutor {
     private void setSpeed(CommandSender s, Player p, String wrongSpeedStr) {
         if (wrongSpeedStr.matches("\\d+|(\\d+)?.\\d+")) {
             float wrongSpeed = Math.min(Float.parseFloat(wrongSpeedStr), pl.getConfManager().getMaxFlightSpeed());
-            float speed = MathUtil.calcConvertedSpeed(wrongSpeed);
+            float speed = MathUtil.calcConvertedSpeed(wrongSpeed, pl.getConfManager().getMaxFlightSpeed());
             FlightPlayer flightPlayer = playerManager.getFlightPlayer(p);
 
             if (flightPlayer.getActualFlightSpeed() == speed) {
