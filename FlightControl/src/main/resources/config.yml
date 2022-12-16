@@ -18,8 +18,8 @@ settings:
   auto_enable_flight: true
   # The default speed is 1.0 and matches Essentials's /flyspeed values (0-10)
   flight_speed: 1.0
-  # The maximum flight speed a user can set using /flyspeed
-  max_flight_speed: 10.0
+  # The maximum flight speed a user can set using /flyspeed (cannot be higher than 10)
+  max_flight_speed: 1.0
   # Disables flight past the block height limit
   height_limit: -1
   # Supports: CombatTagPlus, CombatLogX, DeluxeCombat

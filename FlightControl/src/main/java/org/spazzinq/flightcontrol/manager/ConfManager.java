@@ -88,8 +88,8 @@ public class ConfManager extends StorageManager {
         }
 
         // floats
-        defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed", 1));
-        maxFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.max_flight_speed", 10));
+        maxFlightSpeed = (float) conf.getDouble("settings.max_flight_speed", 10);
+        defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed", 1), maxFlightSpeed);
 
         // Strings
         flyCommandName = conf.getString("settings.fly_command_name", "fly");

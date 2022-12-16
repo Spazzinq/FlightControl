@@ -162,7 +162,7 @@ public class FlightControlCommand extends TemplateCommand {
                         if (args.length == 2) {
                             if (args[1].matches("\\.\\d+|\\d+(\\.\\d+)?")) {
                                 float speed = Float.parseFloat(args[1]);
-                                float actualSpeed = MathUtil.calcConvertedSpeed(speed);
+                                float actualSpeed = MathUtil.calcConvertedSpeed(speed, config.getMaxFlightSpeed());
                                 if (speed > -1 && speed < 11) {
                                     if (config.getDefaultFlightSpeed() != actualSpeed) {
                                         config.set("settings.flight_speed", speed);

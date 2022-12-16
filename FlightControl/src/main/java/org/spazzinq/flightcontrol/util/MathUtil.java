@@ -25,10 +25,9 @@
 package org.spazzinq.flightcontrol.util;
 
 public final class MathUtil {
-    public static float calcConvertedSpeed(float unconvertedSpeed) {
+    public static float calcConvertedSpeed(float unconvertedSpeed, float maxSpeed) {
         float actualSpeed;
-        float defaultSpeed = 0.1f;
-        float maxSpeed = 1f;
+        float defaultMultiplier = 0.1f;
         float wrongSpeed = unconvertedSpeed;
 
         if (wrongSpeed > 10f) {
@@ -38,10 +37,10 @@ public final class MathUtil {
         }
 
         if (wrongSpeed < 1f) {
-            actualSpeed = defaultSpeed * wrongSpeed;
+            actualSpeed = defaultMultiplier * wrongSpeed;
         } else {
-            float ratio = ((wrongSpeed - 1) / 9) * (maxSpeed - defaultSpeed);
-            actualSpeed = ratio + defaultSpeed;
+            float ratio = ((wrongSpeed - 1) / 9) * (maxSpeed - defaultMultiplier);
+            actualSpeed = ratio + defaultMultiplier;
         }
 
         return actualSpeed;
@@ -62,17 +61,10 @@ public final class MathUtil {
         long duration = Long.parseLong(durationStr.substring(0, unitIndex == -1 ? durationStr.length() : unitIndex));
 
         switch (unit) {
-            case 'm':
-                duration *= 60;
-                break;
-            case 'h':
-                duration *= 3600;
-                break;
-            case 'd':
-                duration *= 86400;
-                break;
-            default:
-                break;
+            case 'm' -> duration *= 60;
+            case 'h' -> duration *= 3600;
+            case 'd' -> duration *= 86400;
+            default -> {}
         }
         return duration;
     }
