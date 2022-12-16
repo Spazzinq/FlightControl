@@ -142,7 +142,7 @@ public class ConfManager extends StorageManager {
         // 4.8.2
         if (!conf.isDouble("settings.max_flight_speed")) {
             pl.getLogger().info("Added \"max_flight_speed\" to the config!");
-            conf.addSubnodes(Collections.singleton("max_flight_speed: 10.0"), "settings.flight_speed");
+            conf.addSubnodes(Collections.singleton("max_flight_speed: 1.0"), "settings.flight_speed");
             modified = true;
         }
 

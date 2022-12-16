@@ -26,11 +26,9 @@ package org.spazzinq.flightcontrol;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
@@ -76,6 +74,7 @@ final class EventListener implements org.bukkit.event.Listener {
     @EventHandler private void onToggleFly(PlayerToggleFlightEvent e) {
         Player p = e.getPlayer();
         pl.getTrailManager().trailCheck(p);
+        pl.getStickybarManager().stickybarCheck(p);
 
         if (e.isFlying()) {
             pl.getPlayerManager().getFlightPlayer(p).getTempflyTimer().start();
@@ -105,6 +104,7 @@ final class EventListener implements org.bukkit.event.Listener {
             // Fixes a bug where particles remain when not supposed so
             if (!p.getAllowFlight()) {
                 pl.getTrailManager().disableTrail(p);
+                pl.getStickybarManager().disableStickybar(p);
             }
 
             // Apply flyspeed on world changes
@@ -121,6 +121,7 @@ final class EventListener implements org.bukkit.event.Listener {
         pl.getPlayerManager().getFlightPlayer(e.getPlayer()).getTempflyTimer().pause();
 
         pl.getTrailManager().disableTrail(e.getPlayer());
+        pl.getStickybarManager().disableStickybar(e.getPlayer());
     }
 
     /**
@@ -158,6 +159,7 @@ final class EventListener implements org.bukkit.event.Listener {
                 pl.getFlightManager().check(p);
                 if (p.isFlying()) {
                     pl.getTrailManager().trailCheck(p);
+                    pl.getStickybarManager().stickybarCheck(p);
                 }
 
                 // Start if always running or flying on login

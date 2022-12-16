@@ -176,6 +176,7 @@ public class FlightManager {
             p.setAllowFlight(false);
             p.setFlying(false);
             pl.getTrailManager().disableTrail(p);
+            pl.getStickybarManager().disableStickybar(p);
             Sound.play(p, e.getSound());
             msg(p, e.getMessage(), e.isByActionbar());
         }

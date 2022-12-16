@@ -8,7 +8,9 @@
 #    Par exemple, %speed% veut peut-être dire la nouvelle vitesse de vol globale
 player:
   # Utiliser l'actionbar (la région au-dessus de la barre d'action) pour ces messages
-  actionbar: false
+  actionbar:
+    enabled: false
+    sticky: false
   flight:
     # Si 'actionbar' est mise sur vrai, cela affichera la durée restante du vol temporaire dans la barre d’action
     tempfly_actionbar: '&fTemps de vol restant &7: &a&f%duration%'

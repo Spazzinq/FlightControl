@@ -25,11 +25,13 @@
 package org.spazzinq.flightcontrol.object;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public enum TempflyTask {
     HELP, CHECK, ADD, REMOVE, SET, DISABLE;
 
     public static final ArrayList<String> types = new ArrayList<>();
+    private static final Set<TempflyTask> modifyDuration = Set.of(ADD, REMOVE, SET, DISABLE);
 
     static {
         for (TempflyTask type : values()) {
@@ -49,5 +51,9 @@ public enum TempflyTask {
         }
 
         return type;
+    }
+
+    public static boolean modifiesDuration(TempflyTask task) {
+        return modifyDuration.contains(task);
     }
 }

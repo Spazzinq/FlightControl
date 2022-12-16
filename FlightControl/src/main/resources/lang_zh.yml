@@ -8,7 +8,9 @@
 #    e.g. %speed% could be the new global flight speed
 player:
   # Use the actionbar (area above hotbar) instead of chat
-  actionbar: false
+  actionbar:
+    enabled: false
+    sticky: false
   flight:
     # Shows remaining tempfly duration in actionbar if the 'actionbar' setting is true
     tempfly_actionbar: '&a你还有 &f%duration% &a的飞行时间.'

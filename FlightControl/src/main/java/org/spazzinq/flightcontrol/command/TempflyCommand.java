@@ -175,7 +175,7 @@ public class TempflyCommand extends TemplateCommand {
             FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(targetPlayer);
             boolean hasTimeLeft = type == TempflyTask.DISABLE && flightPlayer != null && flightPlayer.getTempflyTimer().hasTimeLeft();
 
-            if (type != TempflyTask.CHECK && type != TempflyTask.HELP && flightPlayer != null) {
+            if (TempflyTask.modifiesDuration(type) && flightPlayer != null) {
                 flightPlayer.modifyTempflyDuration(type, duration);
             }
 

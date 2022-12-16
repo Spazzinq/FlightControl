@@ -31,7 +31,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.command.*;
@@ -67,6 +66,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Getter private StatusManager statusManager;
     @Getter private FactionsManager factionsManager;
     @Getter private TrailManager trailManager;
+    @Getter private StickybarManager stickybarManager;
     // Misc. management
     @Getter private PermissionManager permissionManager;
 
@@ -94,10 +94,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     @Override public void onDisable() {
         playerManager.savePlayerData();
 
-        // Just in case the task isn't automatically cancelled
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            trailManager.disableTrail(p);
-        }
+        trailManager.disableAllTrails();
+        stickybarManager.disableAllStickybars();
     }
 
     private void registerManagers() {
@@ -126,6 +124,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         statusManager = new StatusManager();
         factionsManager = new FactionsManager();
         trailManager = new TrailManager();
+        stickybarManager = new StickybarManager();
 
         permissionManager = new PermissionManager();
     }
@@ -155,6 +154,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         // Check connected players
         flightManager.checkAllPlayers();
         trailManager.checkAllPlayers();
+        stickybarManager.checkAllPlayers();
 
         // Register commands
         registerCommands();

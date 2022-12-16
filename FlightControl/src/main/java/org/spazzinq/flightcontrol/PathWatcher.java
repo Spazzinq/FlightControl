@@ -103,6 +103,7 @@ class PathWatcher extends BukkitRunnable {
 
                     pl.getFlightManager().checkAllPlayers();
                     pl.getTrailManager().checkAllPlayers();
+                    pl.getStickybarManager().checkAllPlayers();
                 }
                 if (cmdChanged) {
                     pl.registerCommands();

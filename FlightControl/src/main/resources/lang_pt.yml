@@ -8,7 +8,9 @@
 #    ex: %speed% poderia ser a nova velocidade global
 player:
   # Usar a actionbar (área acima da hotbar) em vez do chat
-  actionbar: false
+  actionbar:
+    enabled: false
+    sticky: false
   flight:
     # Mostra o tempo restante disponível para voar na action se a config. 'actionbar' estiver setada para 'true'
     tempfly_actionbar: '&aVocê tem &f%duration% &apara voar restantes.'

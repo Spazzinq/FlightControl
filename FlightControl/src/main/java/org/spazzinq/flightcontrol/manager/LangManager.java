@@ -35,10 +35,7 @@ import org.spazzinq.flightcontrol.object.StorageManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
+import java.util.*;
 
 public class LangManager extends StorageManager {
     private final HashSet<String> languages = new HashSet<>(Arrays.asList("en", "fr", "zh"));
@@ -60,6 +57,7 @@ public class LangManager extends StorageManager {
     // Bool
     // TODO Fix caps
     @Setter private boolean useActionBar;
+    private boolean stickyActionBar;
 
     // Player messages
     @Getter private String tempflyActionbar;
@@ -139,7 +137,8 @@ public class LangManager extends StorageManager {
 
     @Override protected void initializeValues() {
             // boolean
-            useActionBar = lang.getBoolean("player.actionbar");
+            useActionBar = lang.getBoolean("player.actionbar.enabled");
+            stickyActionBar = lang.getBoolean("player.actionbar.sticky");
 
             // String
             /* Player */
@@ -214,6 +213,15 @@ public class LangManager extends StorageManager {
             modified = true;
         }
 
+        // 4.10.5
+        if (lang.isBoolean("player.actionbar")) {
+            lang.deleteNode("player.actionbar");
+            lang.addIndentedSubnodes(Collections.singleton("actionbar:"), "player");
+            lang.addIndentedSubnodes(Set.of("enabled: false", "sticky: false"), "player.actionbar");
+
+            modified = true;
+        }
+
         if (modified) {
             lang.save();
         }
@@ -248,5 +256,8 @@ public class LangManager extends StorageManager {
 
     public boolean useActionBar() {
         return useActionBar;
+    }
+    public boolean isActionBarSticky() {
+        return stickyActionBar;
     }
 }
