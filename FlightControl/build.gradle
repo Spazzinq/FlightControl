@@ -45,7 +45,7 @@ dependencies {
     compileOnly 'com.plotsquared:PlotSquared-Core'
     compileOnly 'com.plotsquared:PlotSquared-Bukkit'
     compileOnly 'com.github.TownyAdvanced:Towny:0.98.4.3'
-    compileOnly 'com.github.Angeschossen:LandsAPI:6.20.0'
+    compileOnly 'com.github.Angeschossen:LandsAPI:6.26.7'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.18'
     compileOnly 'me.clip:placeholderapi:2.11.2'
     compileOnly 'me.NoChance.PvPManager:PvPManager:3.10.9'
