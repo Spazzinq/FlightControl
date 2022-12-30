@@ -52,12 +52,15 @@ public final class PlayerUtil {
         return p != null && p.hasPermission(FlyPermission.TEMP_FLY_STUB + category.getName());
     }
 
-    public static String shortTempflyPlaceholder(FlightPlayer flightPlayer) {
-        long length = formatLength(flightPlayer.getTempflyTimer().getTimeLeft());
-
-        if (length > 0) {
+    /**
+     * Converts given long into a short-hand String representation (e.g. "10s", "10d").
+     * @param duration duration of time (in ms)
+     * @return short-hand String representation of duration
+     */
+    public static String durationToSymbols(long duration) {
+        if (duration > 0) {
             StringBuilder builder = new StringBuilder();
-            int[] amounts = timeArray(length);
+            int[] amounts = timeArray(duration);
 
             for (int n = 0; n < amounts.length; n++) {
                 if (amounts[n] != 0) {
@@ -74,12 +77,15 @@ public final class PlayerUtil {
         return "0s";
     }
 
-    public static String longTempflyPlaceholder(FlightPlayer flightPlayer) {
-        long length = formatLength(flightPlayer.getTempflyTimer().getTimeLeft());
-
-        if (length > 0) {
+    /**
+     * Converts given long into a String representation (e.g. "10 seconds", "10 days").
+     * @param duration given duration of time (in ms)
+     * @return String representation of duration
+     */
+    public static String durationToWords(long duration) {
+        if (duration > 0) {
             StringBuilder builder = new StringBuilder();
-            int[] amounts = timeArray(length);
+            int[] amounts = timeArray(duration);
 
             for (int n = 0; n < amounts.length; n++) {
                 if (amounts[n] != 0) {
@@ -96,6 +102,14 @@ public final class PlayerUtil {
         }
 
         return "0 seconds";
+    }
+
+    public static String durationToWords(FlightPlayer flightPlayer) {
+        return durationToWords(formatLength(flightPlayer.getTempflyTimer().getTimeLeft()));
+    }
+
+    public static String durationToSymbols(FlightPlayer flightPlayer) {
+        return durationToSymbols(formatLength(flightPlayer.getTempflyTimer().getTimeLeft()));
     }
 
     public static long formatLength(Long length) {

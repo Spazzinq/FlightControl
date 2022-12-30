@@ -75,13 +75,20 @@ public class CategoryManager {
             migrateFromVersion4();
         }
 
-        global = loadCategory("global", conf.getConfigurationSection("global"));
-        ConfigurationSection categoriesSection = conf.getConfigurationSection("categories");
+        ConfigurationSection globalSection = conf.getConfigurationSection("global");
+        if (globalSection == null) {
+            pl.getLogger().severe("No global category exists!");
+        } else {
+            global = loadCategory("global", globalSection);
+        }
 
-        for (String categoryName : categoriesSection.getKeys(false)) {
-            categories.add(
-                    loadCategory(categoryName.toLowerCase(), categoriesSection.getConfigurationSection(categoryName))
-            );
+        ConfigurationSection categoriesSection = conf.getConfigurationSection("categories");
+        if (categoriesSection != null) {
+            for (String categoryName : categoriesSection.getKeys(false)) {
+                categories.add(
+                        loadCategory(categoryName.toLowerCase(), categoriesSection.getConfigurationSection(categoryName))
+                );
+            }
         }
 
         Collections.sort(categories);
@@ -112,26 +119,22 @@ public class CategoryManager {
             List<String> enable = worldsSection.getStringList("enable");
             List<String> disable = worldsSection.getStringList("disable");
 
-            if (enable != null) {
-               for (String worldName : enable) {
-                   World world = Bukkit.getWorld(worldName);
+            for (String worldName : enable) {
+                World world = Bukkit.getWorld(worldName);
 
-                   if (world != null) {
-                       worlds.addEnabled(world);
-                   } else {
-                       nonexistent(categoryName, "worlds", "enabled world", worldName);
-                   }
-               }
+                if (world != null) {
+                    worlds.addEnabled(world);
+                } else {
+                    nonexistent(categoryName, "worlds", "enabled world", worldName);
+                }
             }
-            if (disable != null) {
-                for (String worldName : disable) {
-                    World world = Bukkit.getWorld(worldName);
+            for (String worldName : disable) {
+                World world = Bukkit.getWorld(worldName);
 
-                    if (world != null) {
-                        worlds.addDisabled(world);
-                    } else {
-                        nonexistent(categoryName, "worlds", "disabled world", worldName);
-                    }
+                if (world != null) {
+                    worlds.addDisabled(world);
+                } else {
+                    nonexistent(categoryName, "worlds", "disabled world", worldName);
                 }
             }
 

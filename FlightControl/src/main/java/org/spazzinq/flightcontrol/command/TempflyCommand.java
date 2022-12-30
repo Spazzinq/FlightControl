@@ -203,7 +203,7 @@ public class TempflyCommand extends TemplateCommand {
                         put("player", targetPlayer.getName());
                     }
                     if (flightPlayer != null) {
-                        put("duration", PlayerUtil.longTempflyPlaceholder(flightPlayer));
+                        put("duration", PlayerUtil.durationToWords(flightPlayer));
                     }
                 }});
             }

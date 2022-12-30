@@ -67,7 +67,7 @@ public class StickybarManager {
     public void enableStickybar(Player p) {
         stickyTasks.put(p, new BukkitRunnable() {
             @Override public void run() {
-                msgVar(p, pl.getLangManager().getTempflyActionbar(), true, "duration", PlayerUtil.longTempflyPlaceholder(pl.getPlayerManager().getFlightPlayer(p)));
+                msgVar(p, pl.getLangManager().getTempflyActionbar(), true, "duration", PlayerUtil.durationToWords(pl.getPlayerManager().getFlightPlayer(p)));
             }
         }.runTaskTimerAsynchronously(pl, 20, 20));
     }

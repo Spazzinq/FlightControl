@@ -25,6 +25,7 @@
 package org.spazzinq.flightcontrol.placeholder;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -56,14 +57,18 @@ public class ClipPlaceholder extends PlaceholderExpansion {
 
         if ("flying".equals(identifier)) {
             return String.valueOf(player.isFlying());
+        } else if (identifier.startsWith("flying_")) {
+            Player target = Bukkit.getPlayer(identifier.substring("flying_".length()));
+
+            return target == null ? "offline" : String.valueOf(target.isFlying());
         }
 
         FlightPlayer flightPlayer = pl.getPlayerManager().getFlightPlayer(player);
         long time = PlayerUtil.formatLength(flightPlayer.getTempflyTimer().getTimeLeft());
 
         switch (identifier) {
-            case "tempfly_short": return PlayerUtil.shortTempflyPlaceholder(flightPlayer);
-            case "tempfly_long": return PlayerUtil.longTempflyPlaceholder(flightPlayer);
+            case "tempfly_short": return PlayerUtil.durationToSymbols(flightPlayer);
+            case "tempfly_long": return PlayerUtil.durationToWords(flightPlayer);
             case "tempfly_s": return String.valueOf(seconds(time));
             case "tempfly_m": return String.valueOf(minutes(time));
             case "tempfly_h": return String.valueOf(hours(time));

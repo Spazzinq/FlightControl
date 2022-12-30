@@ -31,6 +31,7 @@ import org.spazzinq.flightcontrol.object.Category;
 import org.spazzinq.flightcontrol.object.CommentConf;
 import org.spazzinq.flightcontrol.object.Reward;
 import org.spazzinq.flightcontrol.util.MathUtil;
+import org.spazzinq.flightcontrol.util.PlayerUtil;
 
 import java.io.File;
 import java.util.HashSet;
@@ -62,7 +63,7 @@ public class RewardManager {
             long cooldown;
             List<String> commands;
 
-            // FIXME Inefficient
+            // Not very efficient but is single execution
             for (Category c : pl.getCategoryManager().getCategories()) {
                 if (categoryName.equals(c.getName())) {
                     category = c;
@@ -79,12 +80,22 @@ public class RewardManager {
 
             if (category != null) {
                 rewardTasks.add(new Reward(category, commands).runTaskTimer(pl, 0, cooldown));
+                loaded(categoryName, commands, PlayerUtil.durationToWords(cooldown * 50)); // Convert from ticks to ms
             } else {
-                pl.getLogger().warning("Category name \"" + categoryName + "\" from rewards.yml does not exist in categories.yml!");
+                nonexistent(categoryName);
             }
 
         }
     }
 
+    private void loaded(String categoryName, List<String> cmds, String cooldown) {
+        loaded(categoryName, cmds, cooldown, "");
+    }
+    private void loaded(String categoryName, List<String> cmds, String cooldown, String extra) {
+        pl.getLogger().info("Rewards for \"" + categoryName + "\" category loaded with a " + cooldown + " cooldown: " + cmds + extra);
+    }
 
+    private void nonexistent(String categoryName) {
+        pl.getLogger().warning("Category name \"" + categoryName + "\" from rewards.yml does not exist in categories.yml!");
+    }
 }

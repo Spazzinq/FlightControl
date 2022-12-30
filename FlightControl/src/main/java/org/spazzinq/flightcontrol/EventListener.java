@@ -25,6 +25,7 @@
 package org.spazzinq.flightcontrol;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,6 +33,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
+import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.event.server.PluginEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.object.Sound;
@@ -45,6 +48,7 @@ import static org.spazzinq.flightcontrol.util.MessageUtil.msg;
  */
 final class EventListener implements org.bukkit.event.Listener {
     private final FlightControl pl;
+    private boolean isCategoryReloadQueued;
 
     EventListener() {
         this.pl = FlightControl.getInstance();
@@ -238,7 +242,19 @@ final class EventListener implements org.bukkit.event.Listener {
      * Note: this does not take care of initial server start because of "load: POSTWORLD" in the plugin.yml.
      */
     @EventHandler private void onWorldInit(WorldInitEvent e) {
+        int secondsOfDelay = 5;
+        pl.getLogger().info("Detected that server is loading \"" + e.getWorld().getName() + "\" world. Reloading categories in " + secondsOfDelay + " seconds...");
         pl.getPermissionManager().registerDefaultFlyPerms(e.getWorld().getName());
+
+        if (!isCategoryReloadQueued) {
+            isCategoryReloadQueued = true;
+            new BukkitRunnable() {
+                @Override public void run() {
+                    pl.getCategoryManager().loadCategories();
+                    isCategoryReloadQueued = false;
+                }
+            }.runTaskLater(pl, secondsOfDelay * 20);
+        }
     }
 
 //    @EventHandler private void onHit(EntityDamageByEntityEvent e) {
