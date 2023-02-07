@@ -1,0 +1,55 @@
+# Translations: English (en), French (fr), Mandarin (zh), Portuguese (pt)
+# To change the language, remove the # below and set 'locale' to its abbreviation (e.g. en, fr, zh)
+#locale: en
+
+# Notes:
+# 1. If you don't want a message to be sent, set it to ''
+# 2. %VARIABLENAME% is the placeholder for the message's information
+#    e.g. %speed% could be the new global flight speed
+player:
+  # Use the actionbar (area above hotbar) instead of chat
+  actionbar: false
+  flight:
+    # Shows remaining tempfly duration in actionbar if the 'actionbar' setting is true
+    tempfly_actionbar: '&7Uçuş sürenin bitmesin &a%duration% &7var.'
+    enabled: '&aUçuşunuz etkinleştirildi'
+    disabled: '&cUçuşunuz devre dışı bırakıldı.'
+    # 'can_enable' and 'cannot_enable' are used when 'auto_enable' is false
+    # or if the player disables their own flight with /fly
+    can_enable: '&bŞimdi /fly kullanabilirsiniz.'
+    cannot_enable: '&cŞu anda uçamazsın'
+    height_denied: '&cBu kadar yükseğe uçamazsın!'
+  trail:
+    enabled: '&aUçuş izini etkinleştirdiniz!'
+    disabled: '&cUçuş izini devre dışı bıraktınız!'
+  permission_denied: '&cBu komutu kullanma izniniz yok.'
+
+admin:
+  # Prefix applied to messages that cannot be changed (e.g. /fc actionbar)
+  prefix: '&a&lFlightControl &a'
+  # The prefixes are written out because the different colors have different meanings
+  reloaded: '&a&lFlightControl &7» &aTüm yapılandırmalar başarıyla yeniden yüklendi!'
+  global_flight_speed:
+    set: '&e&lFlightControl &7» &eGlobal uçuş hızını &f%speed% &eolarak ayarladınız!'
+    same: '&e&lFlightControl &7» &eİyi haber! Zaten global uçuş hızı &f%speed%&e olarak ayarlanmış!'
+    usage: '&c&lFlightControl &7» &cYanlış kullanım! Kullanım: /fc speed (0-10)'
+  enemy_range:
+    set: '&e&lFlightControl &7» &eDüşman menzilindeyken devre dışı bırakma ayarını &f%range% &eolarak ayarlandı!'
+    same: '&e&lFlightControl &7» &eİyi haber! Düşman menzilindeyken devre dışı bırakma zaten &f%range%&e olarak ayarlanmış!'
+    usage: '&c&lFlightControl &7» &cYanlış kullanım! Kullanım: /fc enemyrange (menzil)'
+  fly:
+    enable: '&e&lFlightControl &7» &f%player%&e''in uçuşu aktifleştirildi!'
+    disable: '&e&lFlightControl &7» &e&f%player%&e''ın uçuşu devre dışı bırakıldı!'
+    usage: '&c&lFlightControl &7» &cLütfen geçerli bir oyuncu sağlayın!'
+  flyspeed:
+    set: '&a&lFlightControl &7» &a&f%player%&a''in uçuş hızı &f%speed%&a olarak ayarlandı!'
+    same: '&a&lFlightControl &7» &aİyi haber! &f%player%&a''in uçuş hızı zaten &f%speed%&a olarak ayarlanmış!'
+    usage: '&c&lFlightControl &7» &cYanlış kullanım! Kullanım /flyspeed (hız) [oyuncu]!'
+  tempfly:
+    set: '&e&lFlightControl &7» &f%player%&e adlı oyuncunun uçuş süresi &f%duration%&e olarak ayarlandı.'
+    disable: '&e&lFlightControl &7» &e%player%''in geçici uçuşu devre dışı bırakıldı!'
+    disabled: '&c&lFlightControl &7» &f%player%&c''in geçici uçuş zaten devre dışı!'
+    check: '&e&lFlightControl &7» &f%player%&e adlı oyuncunun &f%duration%&e uçuş süresi kaldı.'
+    usage: '&c&lFlightControl &7» &cGeçersiz format! Lütfen şunu kullan /tempfly (check/add/remove/set/disable) (oyuncu/all) [süre] ve
+            süreyi şu birim ile kullanın. Örnek süreler:
+            &f1d, 4h, 5m, 30s, 2days, 1hour, 10minutes, 60seconds&c.'
