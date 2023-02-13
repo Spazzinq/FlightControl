@@ -33,7 +33,7 @@ dependencies {
     implementation project(':VersionOld')
     implementation project(':VersionCurrent')
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
-    implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.18"))
+    implementation(platform("com.intellectualsites.bom:bom-1.24.x:1.24"))
 
     compileOnly 'org.jetbrains:annotations:23.0.0'
     compileOnly 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
