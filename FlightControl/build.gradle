@@ -23,7 +23,7 @@
  */
 
 plugins {
-    id 'io.freefair.lombok' version '6.5.1'
+    id 'io.freefair.lombok' version '6.6.3'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
@@ -44,8 +44,8 @@ dependencies {
     compileOnly 'net.essentialsx:EssentialsX:2.19.7'
     compileOnly 'com.plotsquared:PlotSquared-Core'
     compileOnly 'com.plotsquared:PlotSquared-Bukkit'
-    compileOnly 'com.github.TownyAdvanced:Towny:0.98.4.3'
-    compileOnly 'com.github.Angeschossen:LandsAPI:6.20.0'
+    compileOnly 'com.github.TownyAdvanced:Towny:0.98.6.9'
+    compileOnly 'com.github.Angeschossen:LandsAPI:6.28.11'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.18'
     compileOnly 'me.clip:placeholderapi:2.11.2'
     compileOnly 'me.NoChance.PvPManager:PvPManager:3.10.9'
