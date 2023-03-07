@@ -51,7 +51,7 @@ dependencies {
     compileOnly 'me.NoChance.PvPManager:PvPManager:3.10.9'
     compileOnly 'com.griefdefender:api:2.1.0-SNAPSHOT'
     compileOnly 'world.bentobox:bentobox:1.22.1-SNAPSHOT'
-    compileOnly 'com.github.sirblobman.api:core:2.6-SNAPSHOT' // for CombatLogX 11
+    compileOnly 'com.github.sirblobman.api:core:2.7-SNAPSHOT' // for CombatLogX 11
 
     compileOnly files('../lib/SaberFactions-3.0.2-RC.jar')
     compileOnly files('../lib/MVdWPlaceholderAPI-3.1.1.jar')
