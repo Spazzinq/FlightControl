@@ -35,7 +35,7 @@ dependencies {
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.24"))
 
-    compileOnly 'org.jetbrains:annotations:23.0.0'
+    compileOnly 'org.jetbrains:annotations:24.0.1'
     compileOnly 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
 
     compileOnly ('com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT') {
@@ -50,7 +50,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.2'
     compileOnly 'me.NoChance.PvPManager:PvPManager:3.10.9'
     compileOnly 'com.griefdefender:api:2.1.0-SNAPSHOT'
-    compileOnly 'world.bentobox:bentobox:1.22.0-SNAPSHOT'
+    compileOnly 'world.bentobox:bentobox:1.22.1-SNAPSHOT'
     compileOnly 'com.github.sirblobman.api:core:2.6-SNAPSHOT' // for CombatLogX 11
 
     compileOnly files('../lib/SaberFactions-3.0.2-RC.jar')
