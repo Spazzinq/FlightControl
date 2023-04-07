@@ -1,6 +1,6 @@
 allprojects {
     group = 'org.spazzinq'
-    version = '4.10.7'
+    version = '4.10.8'
 }
 
 subprojects {
@@ -25,12 +25,10 @@ subprojects {
         maven { url = 'https://repo.papermc.io/repository/maven-public/' }
         // CrazyEnchantments
         maven { url = 'https://repo.badbones69.com/snapshots' }
-        // Lands, PvPManager, GriefPrevention, GriefDefender
+        // Lands, PvPManager, GriefPrevention, GriefDefender, HuskTowns
         maven { url = 'https://jitpack.io' }
         // PlaceholderAPI
         maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-        // CombatLogX
-        maven { url = 'https://nexus.sirblobman.xyz/repository/public/' }
         // GriefDefender
         maven { url = 'https://repo.glaremasters.me/repository/bloodshot/' }
     }

@@ -5,19 +5,21 @@
 
 package org.spazzinq.flightcontrol.check.territory.trusted;
 
-import net.william278.husktowns.HuskTownsAPI;
-import net.william278.husktowns.chunk.ClaimedChunk;
+import net.william278.husktowns.api.HuskTownsAPI;
+import net.william278.husktowns.claim.TownClaim;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
+import java.util.Optional;
+
 public class HuskTownsTrustedCheck extends TerritoryCheck {
     @Override public boolean check(Player p) {
-        ClaimedChunk chunk = getChunk(p);
+        Optional<TownClaim> claim = getClaim(p);
 
-        return chunk != null && chunk.getPlotChunkMembers().contains(p.getUniqueId());
+        return claim.isPresent() && claim.get().claim().isPlotMember(p.getUniqueId());
     }
 
-    private ClaimedChunk getChunk(Player p) {
-        return HuskTownsAPI.getInstance().getClaimedChunk(p.getLocation());
+    private Optional<TownClaim> getClaim(Player p) {
+        return HuskTownsAPI.getInstance().getClaimAt(p.getLocation());
     }
 }
