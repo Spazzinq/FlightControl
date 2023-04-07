@@ -44,7 +44,7 @@ dependencies {
     compileOnly 'net.essentialsx:EssentialsX:2.19.7'
     compileOnly 'com.plotsquared:PlotSquared-Core'
     compileOnly 'com.plotsquared:PlotSquared-Bukkit'
-    compileOnly 'com.github.TownyAdvanced:Towny:0.98.6.9'
+    compileOnly 'com.github.TownyAdvanced:Towny:0.99.0.0'
     compileOnly 'com.github.Angeschossen:LandsAPI:6.28.11'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.18'
     compileOnly 'me.clip:placeholderapi:2.11.2'
