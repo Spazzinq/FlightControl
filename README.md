@@ -11,12 +11,12 @@ To build/have the latest functional version of FlightControl, clone the [beta](h
 To use FlightControl in your own development environment without directly importing the jar, please use [JitPack](https://jitpack.io/#Spazzinq/FlightControl).
 
 ## Information
-The **[Wiki](https://spazzinq.org/flightcontrol/)** contains all the information you need, whether it be [permissions](https://spazzinq.org/flightcontrol/permissions), [placeholders](https://spazzinq.org/flightcontrol/placeholders), or almost anything else (the rest coming soon).
+The **[Wiki](https://geofang.com/flightcontrol/)** contains all the information you need, whether it be [permissions](https://geofang.com/flightcontrol/permissions), [placeholders](https://geofang.com/flightcontrol/placeholders), or almost anything else (the rest coming soon).
 
-## Temporary links
-Donate: https://spazzinq.org/donate
+## Other Links
+Donate: https://geofang.com/donate
 
-Discord: https://spazzinq.org/discord
+Discord: https://geofang.com/discord
 
 Issue Tracker: https://github.com/Spazzinq/FlightControl/issues
 
