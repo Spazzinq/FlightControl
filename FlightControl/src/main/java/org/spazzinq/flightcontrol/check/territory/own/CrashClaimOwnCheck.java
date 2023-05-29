@@ -7,6 +7,7 @@ package org.spazzinq.flightcontrol.check.territory.own;
 
 import net.crashcraft.crashclaim.CrashClaim;
 import net.crashcraft.crashclaim.api.CrashClaimAPI;
+import net.crashcraft.crashclaim.claimobjects.Claim;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
@@ -18,6 +19,8 @@ public class CrashClaimOwnCheck extends TerritoryCheck {
             api = CrashClaim.getPlugin().getApi();
         }
 
-        return p.getUniqueId().equals(api.getClaim(p.getLocation()).getOwner());
+        Claim claim = api.getClaim(p.getLocation());
+
+        return claim != null && p.getUniqueId().equals(claim.getOwner());
     }
 }
