@@ -2,7 +2,7 @@
 
 Hey, if you're interested in contributing to FlightControl, then you've come to the right place.
 
-If you haven't already, please join [the Discord](https://spazzinq.org/discord). It's vital for communication.
+If you haven't already, please join [the Discord](https://geofang.com/discord). It's vital for communication.
 
 Firstly, here are some important references:
 

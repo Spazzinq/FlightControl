@@ -1,30 +1,6 @@
-/*
- * This file is part of FlightControl, which is licensed under the MIT License.
- *
- * Copyright (c) 2021 Spazzinq
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 plugins {
-    id 'io.freefair.lombok' version '6.6.3'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'io.freefair.lombok' version '8.0.1'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 dependencies {
@@ -44,14 +20,14 @@ dependencies {
     compileOnly 'net.essentialsx:EssentialsX:2.19.7'
     compileOnly 'com.plotsquared:PlotSquared-Core'
     compileOnly 'com.plotsquared:PlotSquared-Bukkit'
-    compileOnly 'com.github.TownyAdvanced:Towny:0.98.6.9'
+    compileOnly 'com.github.TownyAdvanced:Towny:0.99.0.11'
     compileOnly 'com.github.Angeschossen:LandsAPI:6.28.11'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.18'
     compileOnly 'me.clip:placeholderapi:2.11.2'
     compileOnly 'me.NoChance.PvPManager:PvPManager:3.10.9'
     compileOnly 'com.griefdefender:api:2.1.0-SNAPSHOT'
     compileOnly 'world.bentobox:bentobox:1.22.1-SNAPSHOT'
-    compileOnly 'com.github.sirblobman.api:core:2.6-SNAPSHOT' // for CombatLogX 11
+    compileOnly 'net.william278:HuskTowns:2.2.1'
 
     compileOnly files('../lib/SaberFactions-3.0.2-RC.jar')
     compileOnly files('../lib/MVdWPlaceholderAPI-3.1.1.jar')
@@ -69,7 +45,7 @@ dependencies {
     compileOnly files('../lib/CrashClaim-1.0.34.jar')
     compileOnly files('../lib/SuperiorSkyblock2API.jar')
     compileOnly files('../lib/ProtectionStones-2.10.3.jar')
-    compileOnly files('../lib/husktowns-1.8.1.jar')
+    compileOnly files('../lib/BlueSlimeCore-2.6.1.238.jar')
 }
 
 processResources {

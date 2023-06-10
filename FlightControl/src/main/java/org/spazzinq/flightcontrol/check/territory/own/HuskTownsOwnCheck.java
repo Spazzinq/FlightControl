@@ -1,42 +1,26 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
- *
- * Copyright (c) 2022 Spazzinq
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Copyright (c) 2023 Spazzinq
  */
 
 package org.spazzinq.flightcontrol.check.territory.own;
 
-import net.william278.husktowns.HuskTownsAPI;
+import net.william278.husktowns.api.HuskTownsAPI;
 import net.william278.husktowns.chunk.ClaimedChunk;
+import net.william278.husktowns.claim.TownClaim;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 
+import java.util.Optional;
+
 public class HuskTownsOwnCheck extends TerritoryCheck {
     @Override public boolean check(Player p) {
-        ClaimedChunk chunk = getChunk(p);
+        Optional<TownClaim> claim = getClaim(p);
 
-        return chunk != null && p.getUniqueId().equals(chunk.getPlotChunkOwner());
+        return claim.isPresent() && claim.get().claim().isPlotManager(p.getUniqueId());
     }
 
-    private ClaimedChunk getChunk(Player p) {
-        return HuskTownsAPI.getInstance().getClaimedChunk(p.getLocation());
+    private Optional<TownClaim> getClaim(Player p) {
+        return HuskTownsAPI.getInstance().getClaimAt(p.getLocation());
     }
 }
