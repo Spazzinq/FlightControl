@@ -16,7 +16,7 @@ import java.util.Objects;
 public final class PlotSquared6TrustedCheck extends TerritoryCheck {
     @Override public boolean check(Player p) {
         org.bukkit.Location l = p.getLocation();
-        Plot plot = Location.at(Objects.requireNonNull(l.getWorld()).getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ()).getPlot();
+        Plot plot = Location.at((l.getWorld()).getName(), l.getBlockX(), l.getBlockY(), l.getBlockZ()).getPlot();
 
         return plot != null && plot.getTrusted().contains(p.getUniqueId());
     }
