@@ -26,7 +26,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.2'
     compileOnly 'me.NoChance.PvPManager:PvPManager:3.10.9'
     compileOnly 'com.griefdefender:api:2.1.0-SNAPSHOT'
-    compileOnly 'world.bentobox:bentobox:1.22.1-SNAPSHOT'
+    compileOnly 'world.bentobox:bentobox:1.24.0-SNAPSHOT'
     compileOnly 'net.william278:HuskTowns:2.3.2'
 
     compileOnly files('../lib/SaberFactions-3.0.2-RC.jar')
