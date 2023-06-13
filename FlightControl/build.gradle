@@ -12,7 +12,7 @@ dependencies {
     implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.18"))
 
     compileOnly 'org.jetbrains:annotations:24.0.1'
-    compileOnly 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
 
     compileOnly ('com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT') {
         exclude group: 'com.google.code.gson', module: 'gson'
