@@ -83,7 +83,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         // TODO Change name
         boolean v1_13 = false;
 
-        for (int i = 13; i < 20; i++) {
+        for (int i = 13; i < 21; i++) {
             if (getServer().getBukkitVersion().contains("1." + i)) {
                 v1_13 = true;
                 break;
