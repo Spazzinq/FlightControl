@@ -21,6 +21,7 @@ player:
     can_enable: '&bVocê pode usar o /fly agora.'
     cannot_enable: '&cVocê não pode voar agora.'
     height_denied: '&cVocê não pode voar tão alto!'
+    block_break_disable: "&cVoo desativado ao quebrar %block%!"
   trail:
     enabled: '&aVocê ativou o rastro ao voar!'
     disabled: '&cVocê desativou o rastro ao voar!'
