@@ -75,6 +75,8 @@ public class LangManager extends StorageManager {
     @Getter private String tempFlyDisabled;
     @Getter private String tempFlyCheck;
     @Getter private String tempFlyUsage = "";
+    @Getter private String blockBreakDisable;
+
 
     public LangManager() {
         super("lang.yml");
@@ -147,6 +149,7 @@ public class LangManager extends StorageManager {
             tempFlyDisable = lang.getString("admin.tempfly.disable");
             tempFlyDisabled = lang.getString("admin.tempfly.disabled");
             tempFlyCheck = lang.getString("admin.tempfly.check");
+            blockBreakDisable = lang.getString("player.flight.block_break_disable");
     }
 
     @Override protected void updateFormatting() {

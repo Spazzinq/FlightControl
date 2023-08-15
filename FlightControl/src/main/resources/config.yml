@@ -56,6 +56,13 @@ trail:
   # Color picker (RBG): https://www.google.com/search?q=color+picker
   rgb: "0,0,0"
 
+block_break_disable_list:
+  - BARRIER
+  - CARROTS
+  - POTATOES
+  # - SUGAR_CANE
+  # Add more blocks
+
 sounds:
   # Plays the sounds on EVERY double tap of the space bar
   every_enable: false

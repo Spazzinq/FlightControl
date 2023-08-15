@@ -18,6 +18,7 @@ import org.spazzinq.flightcontrol.util.MathUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 public class ConfManager extends StorageManager {
     @Getter @Setter private boolean autoEnable;
@@ -40,6 +41,8 @@ public class ConfManager extends StorageManager {
 
     @Getter @Setter private String flyCommandName;
     @Getter @Setter private String aeEnchantName;
+    @Getter @Setter private List<String> blockBreakDisableList;
+
 
     public ConfManager() {
         super("config.yml");
@@ -75,6 +78,9 @@ public class ConfManager extends StorageManager {
         // Strings
         flyCommandName = conf.getString("settings.fly_command_name", "fly");
         aeEnchantName = conf.getString("settings.ae_enchant_name");
+
+        // Lists
+        blockBreakDisableList = conf.getStringList("block_break_disable_list");
 
         // Load other stuff that have separate methods
         loadSounds();

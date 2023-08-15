@@ -22,6 +22,7 @@ player:
     can_enable: '&bYou can use /fly now.'
     cannot_enable: '&cYou cannot fly right now.'
     height_denied: '&cYou cannot fly this high!'
+    block_break_disable: "&cFlight disabled when breaking %block%!"
   trail:
     enabled: '&aYou enabled the flight trail!'
     disabled: '&cYou disabled the flight trail!'

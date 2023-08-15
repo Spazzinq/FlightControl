@@ -15,6 +15,7 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.command.*;
+import org.spazzinq.flightcontrol.listener.BlockBreakFlyDisableListener;
 import org.spazzinq.flightcontrol.manager.*;
 import org.spazzinq.flightcontrol.multiversion.Particle;
 import org.spazzinq.flightcontrol.multiversion.current.Particle13;
@@ -67,7 +68,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
                 updateManager.checkForUpdate();
             }
         }.runTaskAsynchronously(this);
-
+        getServer().getPluginManager().registerEvents(new BlockBreakFlyDisableListener(this), this);
         // Start bStats
         new MetricsLite(this, 4704); // 4704 = plugin ID
     }
