@@ -10,9 +10,9 @@ import net.prosavage.factionsx.manager.PlayerManager;
 import net.prosavage.factionsx.persist.data.FactionsKt;
 import net.prosavage.factionsx.util.Relation;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
+import org.spazzinq.flightcontrol.multiversion.FactionsGenericHook;
 
-public class FactionsXHook extends FactionsHookBase {
+public class FactionsXHook extends FactionsGenericHook {
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p).isWarzone();
     }

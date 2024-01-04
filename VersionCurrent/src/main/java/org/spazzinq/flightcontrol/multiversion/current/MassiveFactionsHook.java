@@ -12,9 +12,9 @@ import com.massivecraft.factions.entity.FactionColl;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
+import org.spazzinq.flightcontrol.multiversion.FactionsGenericHook;
 
-public final class MassiveFactionsHook extends FactionsHookBase {
+public final class MassiveFactionsHook extends FactionsGenericHook {
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p) == FactionColl.get().getWarzone();
     }

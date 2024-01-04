@@ -7,6 +7,6 @@ package org.spazzinq.flightcontrol.multiversion;
 
 public class Hook {
     public final boolean isHooked() {
-        return !getClass().getName().endsWith("Base");
+        return !getClass().getName().contains("Generic");
     }
 }

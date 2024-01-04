@@ -6,7 +6,7 @@
 package org.spazzinq.flightcontrol;
 
 import lombok.Getter;
-import org.bstats.bukkit.MetricsLite;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -17,8 +17,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.command.*;
 import org.spazzinq.flightcontrol.manager.*;
 import org.spazzinq.flightcontrol.multiversion.Particle;
-import org.spazzinq.flightcontrol.multiversion.current.Particle13;
-import org.spazzinq.flightcontrol.multiversion.legacy.Particle8;
+import org.spazzinq.flightcontrol.multiversion.current.ParticleNewAPI;
+import org.spazzinq.flightcontrol.multiversion.legacy.ParticleOldAPI;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -51,7 +51,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     // Misc. management
     @Getter private PermissionManager permissionManager;
 
-    // Used for support (checking plugin version, debugging after granted permission)
+    // Used for support (after admin grants permission)
     public static final UUID spazzinqUUID = UUID.fromString("043f10b6-3d13-4340-a9eb-49cbc560f48c");
 
     public void onEnable() {
@@ -69,7 +69,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         }.runTaskAsynchronously(this);
 
         // Start bStats
-        new MetricsLite(this, 4704); // 4704 = plugin ID
+        new Metrics(this, 4704); // 4704 = plugin ID
     }
 
     @Override public void onDisable() {
@@ -80,12 +80,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     }
 
     private void registerManagers() {
-        // TODO Change name
-        boolean v1_13 = false;
+        boolean isNewSpigotAPI = false;
 
         for (int i = 13; i < 21; i++) {
             if (getServer().getBukkitVersion().contains("1." + i)) {
-                v1_13 = true;
+                isNewSpigotAPI = true;
                 break;
             }
         }
@@ -97,8 +96,8 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         updateManager = new UpdateManager();
 
         checkManager = new CheckManager();
-        hookManager = new HookManager(v1_13);
-        particle = v1_13 ? new Particle13() : new Particle8();
+        hookManager = new HookManager(isNewSpigotAPI);
+        particle = isNewSpigotAPI ? new ParticleNewAPI() : new ParticleOldAPI();
 
         flightManager = new FlightManager();
         playerManager = new PlayerManager();

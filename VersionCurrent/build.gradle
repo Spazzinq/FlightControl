@@ -2,23 +2,13 @@ dependencies {
     implementation project(':API')
     implementation project(':Multiversion')
 
-    compileOnly ('org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT') {
-        exclude group: 'net.md-5', module: 'bungeecord-chat'
-    }
-
-    compileOnly ('com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT') {
-        exclude group: 'com.google.code.gson', module: 'gson'
-    }
+    compileOnly ('org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT') { exclude(group: "*") }
+    compileOnly ('com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT') { exclude(group: "*") }
     compileOnly ('com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
 
-    compileOnly('com.massivecraft:Factions:1.6.9.5-U0.6.9') {
-        exclude group: 'com.darkblade12', module: 'particleeffect'
-        exclude group: 'org.spongepowered', module: 'configurate-hocon'
-        exclude group: 'org.kitteh', module: 'paste-gg-api'
-        exclude group: 'com.mojang', module: 'brigadier'
-    }
+    compileOnly('com.massivecraft:Factions:1.6.9.5-U0.6.9') { exclude(group: "*") }
 
     compileOnly files('../lib/MassiveCore-2.14.0.jar', '../lib/Factions-2.14.0.jar')
     compileOnly files('../lib/FactionsX-1.2.jar')

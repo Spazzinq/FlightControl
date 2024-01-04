@@ -5,10 +5,11 @@
 
 package org.spazzinq.flightcontrol.check.always;
 
-import com.songoda.skyblock.SkyBlock;
-import com.songoda.skyblock.island.Island;
-import com.songoda.skyblock.island.IslandManager;
-import com.songoda.skyblock.upgrade.Upgrade;
+import com.craftaro.skyblock.SkyBlock;
+import com.craftaro.skyblock.api.SkyBlockAPI;
+import com.craftaro.skyblock.api.island.Island;
+import com.craftaro.skyblock.api.island.IslandManager;
+import com.craftaro.skyblock.api.island.IslandUpgrade;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.api.object.Cause;
 import org.spazzinq.flightcontrol.check.Check;
@@ -18,12 +19,12 @@ public class FabledSkyblockCheck extends Check {
         Island island = getManager().getIslandPlayerAt(p);
 
         return island != null &&
-                (island.hasUpgrade(Upgrade.Type.Fly)
+                (island.hasUpgrade(IslandUpgrade.FLY)
                 || p.hasPermission("fabledskyblock.fly.*")
                 || (p.hasPermission("fabledskyblock.fly") && p.getUniqueId().equals(island.getOwnerUUID())));
     }
 
-    private IslandManager getManager() { return SkyBlock.getInstance().getIslandManager(); }
+    private IslandManager getManager() { return SkyBlockAPI.getIslandManager(); }
 
 
     @Override public Cause getCause() {

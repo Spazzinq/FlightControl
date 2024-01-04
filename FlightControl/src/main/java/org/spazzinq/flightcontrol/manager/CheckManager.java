@@ -16,9 +16,7 @@ import org.spazzinq.flightcontrol.check.bypasstrail.SpectatorModeCheck;
 import org.spazzinq.flightcontrol.check.bypasstrail.vanish.EssentialsVanishCheck;
 import org.spazzinq.flightcontrol.check.bypasstrail.vanish.PremiumSuperVanishCheck;
 import org.spazzinq.flightcontrol.check.combat.CombatLogX11Check;
-import org.spazzinq.flightcontrol.check.combat.CombatTagPlusCheck;
 import org.spazzinq.flightcontrol.check.combat.DeluxeCombatCheck;
-import org.spazzinq.flightcontrol.check.combat.PvPManagerCheck;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 import org.spazzinq.flightcontrol.check.territory.own.*;
 import org.spazzinq.flightcontrol.check.territory.trusted.*;
@@ -124,15 +122,8 @@ public class CheckManager {
 
     private void loadTerritoryChecks() {
         if (pluginLoading("PlotSquared")) {
-            String version = pm.getPlugin("PlotSquared").getDescription().getVersion().split("\\.")[0];
-
-            if ("3".equals(version)) {
-                ownTerritoryChecks.put("PlotSquared", new PlotSquared3OwnCheck());
-                trustedTerritoryChecks.put("PlotSquared", new PlotSquared3TrustedCheck());
-            } else {
-                ownTerritoryChecks.put("PlotSquared", new PlotSquared6OwnCheck());
-                trustedTerritoryChecks.put("PlotSquared", new PlotSquared6TrustedCheck());
-            }
+            ownTerritoryChecks.put("PlotSquared", new PlotSquaredOwnCheck());
+            trustedTerritoryChecks.put("PlotSquared", new PlotSquaredTrustedCheck());
         }
         if (pluginLoading("Towny")) {
             // trusted == own
@@ -179,10 +170,6 @@ public class CheckManager {
             ownTerritoryChecks.put("GriefDefender", new GriefDefenderOwnCheck());
             trustedTerritoryChecks.put("GriefDefender", new GriefDefenderTrustedCheck());
         }
-        if (pluginLoading("CrashClaim")) {
-            ownTerritoryChecks.put("CrashClaim", new CrashClaimOwnCheck());
-            trustedTerritoryChecks.put("CrashClaim", new CrashClaimTrustedCheck());
-        }
         if (pluginLoading("ProtectionStones")) {
             ownTerritoryChecks.put("ProtectionStones", new ProtectionStonesOwnCheck());
             trustedTerritoryChecks.put("ProtectionStones", new ProtectionStonesTrustedCheck());
@@ -198,12 +185,8 @@ public class CheckManager {
 
         if (pluginLoading("CombatLogX")) {
             combatChecks.add(new CombatLogX11Check());
-        } else if (pluginLoading("CombatTagPlus")) {
-            combatChecks.add(new CombatTagPlusCheck());
         } else if (pluginLoading("DeluxeCombat")) {
             combatChecks.add(new DeluxeCombatCheck());
-        } else if (pluginLoading("PvPManager")) {
-            combatChecks.add(new PvPManagerCheck());
         }
 
         if (!combatChecks.isEmpty() && pl.getConfManager().isCombatChecked()) {

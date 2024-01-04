@@ -22,7 +22,7 @@ settings:
   max_flight_speed: 1.0
   # Disables flight past the block height limit
   height_limit: -1
-  # Supports: CombatTagPlus, CombatLogX, DeluxeCombat
+  # Supports: CombatLogX, DeluxeCombat
   # NOTE: disable flight disabling/enabling in the combat plugin's config to prevent issues
   disable_flight_in_combat: false
   # Prevents fall damage when flight is disabled mid-air by FlightControl

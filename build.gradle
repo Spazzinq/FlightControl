@@ -21,15 +21,23 @@ subprojects {
         maven { url = 'https://ci.ender.zone/plugin/repository/everything/' }
         // EssentialsX
         maven { url = 'https://repo.essentialsx.net/releases/' }
-        // PlotSquared
+        // PaperSpigot, PlotSquared
         maven { url = 'https://repo.papermc.io/repository/maven-public/' }
         // CrazyEnchantments
-        maven { url = 'https://repo.badbones69.com/snapshots' }
-        // Lands, PvPManager, GriefPrevention, GriefDefender, HuskTowns
+        maven { url = 'https://repo.crazycrew.us/releases' }
+        // Lands, PvPManager, GriefPrevention, GriefDefender, HuskTowns, SaberFactions, DeluxeCombat, CombatLogger
         maven { url = 'https://jitpack.io' }
         // PlaceholderAPI
         maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
         // GriefDefender
+        maven { url = 'https://repo.glaremasters.me/repository/bloodshot/' }
+        // CombatLogX, BlobCore
+        maven { url = 'https://nexus.sirblobman.xyz/public/' }
+        // SuperiorSkyblock2
+        maven { url = 'https://repo.bg-software.com/repository/api/' }
+        // Towny
+        maven { url = 'https://repo.glaremasters.me/repository/towny/' }
+        // Towny
         maven { url = 'https://repo.glaremasters.me/repository/bloodshot/' }
     }
 }

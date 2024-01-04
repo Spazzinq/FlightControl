@@ -8,11 +8,11 @@ package org.spazzinq.flightcontrol.manager;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.multiversion.FactionRelation;
-import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
+import org.spazzinq.flightcontrol.multiversion.FactionsGenericHook;
 
 public class FactionsManager {
     private final FlightControl pl;
-    private FactionsHookBase factions;
+    private FactionsGenericHook factions;
 
     public FactionsManager() {
         pl = FlightControl.getInstance();

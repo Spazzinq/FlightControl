@@ -8,9 +8,9 @@ package org.spazzinq.flightcontrol.multiversion.current;
 import com.massivecraft.factions.*;
 import com.massivecraft.factions.perms.Relation;
 import org.bukkit.entity.Player;
-import org.spazzinq.flightcontrol.multiversion.FactionsHookBase;
+import org.spazzinq.flightcontrol.multiversion.FactionsGenericHook;
 
-public final class FactionsUUIDHook extends FactionsHookBase {
+public final class FactionsUUIDHook extends FactionsGenericHook {
     @Override public boolean inWarzone(Player p) {
         return getFactionAtLocation(p).isWarZone();
     }

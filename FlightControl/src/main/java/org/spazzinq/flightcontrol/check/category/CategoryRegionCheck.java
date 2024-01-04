@@ -7,15 +7,15 @@ package org.spazzinq.flightcontrol.check.category;
 
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.api.object.Region;
-import org.spazzinq.flightcontrol.multiversion.WorldGuardHookBase;
+import org.spazzinq.flightcontrol.multiversion.WorldGuardGenericHook;
 
 import java.util.HashSet;
 
 public class CategoryRegionCheck extends CategoryCheck {
-    private final WorldGuardHookBase worldGuard;
+    private final WorldGuardGenericHook worldGuard;
     private final HashSet<Region> regions;
 
-    public CategoryRegionCheck(WorldGuardHookBase worldGuard, HashSet<Region> regions) {
+    public CategoryRegionCheck(WorldGuardGenericHook worldGuard, HashSet<Region> regions) {
         this.worldGuard = worldGuard;
         this.regions = regions;
     }
