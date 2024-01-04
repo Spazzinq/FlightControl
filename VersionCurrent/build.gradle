@@ -8,7 +8,7 @@ dependencies {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
 
-    compileOnly('com.massivecraft:Factions:1.6.9.5-U0.6.9') { exclude(group: "*") }
+    compileOnly('com.massivecraft:Factions:1.6.9.5-U0.6.35') { exclude(group: "*") }
 
     compileOnly files('../lib/MassiveCore-2.14.0.jar', '../lib/Factions-2.14.0.jar')
     compileOnly files('../lib/FactionsX-1.2.jar')

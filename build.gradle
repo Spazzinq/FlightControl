@@ -1,6 +1,6 @@
 allprojects {
     group = 'org.spazzinq'
-    version = '4.10.12'
+    version = '5.0.0'
 }
 
 subprojects {

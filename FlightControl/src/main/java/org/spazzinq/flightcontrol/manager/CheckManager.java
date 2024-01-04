@@ -93,7 +93,7 @@ public class CheckManager {
             alwaysChecks.addEnabled(new CrazyEnchantmentsCheck());
         }
         // AdvancedEnchantments Check
-        if (pluginLoading("AdvancedEnchantments")) {
+        if (pluginLoading("AdvancedEnchantments") && !"disabled".equals(pl.getConfManager().getAeEnchantName())) {
             alwaysChecks.addEnabled(new AdvancedEnchantmentsCheck(pl));
         }
         // SaberFactions Check

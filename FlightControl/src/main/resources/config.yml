@@ -32,6 +32,7 @@ settings:
   vanish_bypass: true
   # Supports: AdvancedEnchantments
   # Set as the enchant name to support custom flight enchantments
+  # Set to "disabled" to disable the check
   ae_enchant_name: "Flight"
 
 tempfly:
