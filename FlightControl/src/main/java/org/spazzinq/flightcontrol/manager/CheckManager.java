@@ -1,25 +1,6 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
- *
- * Copyright (c) 2022 Spazzinq
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Copyright (c) 2023 Spazzinq
  */
 
 package org.spazzinq.flightcontrol.manager;
@@ -35,9 +16,7 @@ import org.spazzinq.flightcontrol.check.bypasstrail.SpectatorModeCheck;
 import org.spazzinq.flightcontrol.check.bypasstrail.vanish.EssentialsVanishCheck;
 import org.spazzinq.flightcontrol.check.bypasstrail.vanish.PremiumSuperVanishCheck;
 import org.spazzinq.flightcontrol.check.combat.CombatLogX11Check;
-import org.spazzinq.flightcontrol.check.combat.CombatTagPlusCheck;
 import org.spazzinq.flightcontrol.check.combat.DeluxeCombatCheck;
-import org.spazzinq.flightcontrol.check.combat.PvPManagerCheck;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 import org.spazzinq.flightcontrol.check.territory.own.*;
 import org.spazzinq.flightcontrol.check.territory.trusted.*;
@@ -114,7 +93,7 @@ public class CheckManager {
             alwaysChecks.addEnabled(new CrazyEnchantmentsCheck());
         }
         // AdvancedEnchantments Check
-        if (pluginLoading("AdvancedEnchantments")) {
+        if (pluginLoading("AdvancedEnchantments") && !"disabled".equals(pl.getConfManager().getAeEnchantName())) {
             alwaysChecks.addEnabled(new AdvancedEnchantmentsCheck(pl));
         }
         // SaberFactions Check
@@ -143,15 +122,8 @@ public class CheckManager {
 
     private void loadTerritoryChecks() {
         if (pluginLoading("PlotSquared")) {
-            String version = pm.getPlugin("PlotSquared").getDescription().getVersion().split("\\.")[0];
-
-            if ("3".equals(version)) {
-                ownTerritoryChecks.put("PlotSquared", new PlotSquared3OwnCheck());
-                trustedTerritoryChecks.put("PlotSquared", new PlotSquared3TrustedCheck());
-            } else {
-                ownTerritoryChecks.put("PlotSquared", new PlotSquared6OwnCheck());
-                trustedTerritoryChecks.put("PlotSquared", new PlotSquared6TrustedCheck());
-            }
+            ownTerritoryChecks.put("PlotSquared", new PlotSquaredOwnCheck());
+            trustedTerritoryChecks.put("PlotSquared", new PlotSquaredTrustedCheck());
         }
         if (pluginLoading("Towny")) {
             // trusted == own
@@ -198,10 +170,6 @@ public class CheckManager {
             ownTerritoryChecks.put("GriefDefender", new GriefDefenderOwnCheck());
             trustedTerritoryChecks.put("GriefDefender", new GriefDefenderTrustedCheck());
         }
-        if (pluginLoading("CrashClaim")) {
-            ownTerritoryChecks.put("CrashClaim", new CrashClaimOwnCheck());
-            trustedTerritoryChecks.put("CrashClaim", new CrashClaimTrustedCheck());
-        }
         if (pluginLoading("ProtectionStones")) {
             ownTerritoryChecks.put("ProtectionStones", new ProtectionStonesOwnCheck());
             trustedTerritoryChecks.put("ProtectionStones", new ProtectionStonesTrustedCheck());
@@ -217,12 +185,8 @@ public class CheckManager {
 
         if (pluginLoading("CombatLogX")) {
             combatChecks.add(new CombatLogX11Check());
-        } else if (pluginLoading("CombatTagPlus")) {
-            combatChecks.add(new CombatTagPlusCheck());
         } else if (pluginLoading("DeluxeCombat")) {
             combatChecks.add(new DeluxeCombatCheck());
-        } else if (pluginLoading("PvPManager")) {
-            combatChecks.add(new PvPManagerCheck());
         }
 
         if (!combatChecks.isEmpty() && pl.getConfManager().isCombatChecked()) {
