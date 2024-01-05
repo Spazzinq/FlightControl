@@ -64,7 +64,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         load();
         new BukkitRunnable() {
             @Override public void run() {
-                updateManager.checkForUpdate();
+                updateManager.checkForUpdate(Bukkit.getConsoleSender());
             }
         }.runTaskAsynchronously(this);
 
