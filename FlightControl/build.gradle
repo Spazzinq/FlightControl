@@ -25,7 +25,7 @@ dependencies {
     compileOnly ('com.github.TechFortress:GriefPrevention:16.18.1') { exclude(group: "*") } // https://github.com/TechFortress/GriefPrevention/
     compileOnly ('me.clip:placeholderapi:2.11.5') { exclude(group: "*") } // https://github.com/PlaceholderAPI/PlaceholderAPI/releases/tag/2.11.5
     compileOnly ('com.griefdefender:api:2.1.0-SNAPSHOT') { exclude(group: "*") } // https://github.com/bloodmc/GriefDefenderAPI
-    compileOnly ('world.bentobox:bentobox:1.24.1-SNAPSHOT') { exclude(group: "*") } // https://github.com/bentoboxworld
+    compileOnly ('world.bentobox:bentobox:2.0.0-SNAPSHOT') { exclude(group: "*") } // https://github.com/bentoboxworld
     compileOnly ('net.william278:HuskTowns:2.6.1') { exclude(group: "*") } // https://github.com/WiIIiam278/HuskTowns
     compileOnly ("com.github.SaberLLC:Saber-Factions:4.1.2-STABLE") { exclude(group: "*") }
     compileOnly ("io.github.fabiozumbi12.RedProtect:RedProtect-Core:8.1.1") { exclude(group: "*") }
