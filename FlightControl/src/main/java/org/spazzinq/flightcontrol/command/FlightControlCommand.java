@@ -86,7 +86,7 @@ public class FlightControlCommand extends TemplateCommand {
                     case "update":
                         new BukkitRunnable() {
                             @Override public void run() {
-                                pl.getUpdateManager().installUpdate(s, false);
+                                pl.getUpdateManager().checkForUpdate(s, false);
                             }
                         }.runTaskAsynchronously(pl);
                         break;
