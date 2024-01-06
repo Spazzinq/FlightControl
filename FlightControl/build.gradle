@@ -58,7 +58,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 shadowJar {
-    relocate 'org.bstats.bukkit', 'org.spazzinq.flightcontrol.metric'
+    relocate 'org.bstats', 'org.spazzinq.flightcontrol'
     relocate 'com.flowpowered' , 'com.griefdefender.lib.flowpowered'
     archiveFileName = 'FlightControl.jar'
 }

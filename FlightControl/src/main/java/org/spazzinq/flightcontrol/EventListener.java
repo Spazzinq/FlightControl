@@ -90,7 +90,7 @@ final class EventListener implements org.bukkit.event.Listener {
             }
 
             // Apply flyspeed on world changes
-            p.setFlySpeed(pl.getPlayerManager().getFlightPlayer(p).getActualFlightSpeed());
+            p.setFlySpeed(pl.getPlayerManager().getFlightPlayer(p).getRawFlightSpeed());
         }
 
 
@@ -146,7 +146,7 @@ final class EventListener implements org.bukkit.event.Listener {
                 }
 
                 // Load FlightPlayer data
-                p.setFlySpeed(flightPlayer.getActualFlightSpeed());
+                p.setFlySpeed(flightPlayer.getRawFlightSpeed());
             }
         }.runTaskLater(pl, 10);
     }

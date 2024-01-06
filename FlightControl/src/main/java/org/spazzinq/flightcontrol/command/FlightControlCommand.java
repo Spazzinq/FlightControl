@@ -10,7 +10,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.FlightControl;
 import org.spazzinq.flightcontrol.check.always.AdvancedEnchantmentsCheck;
 import org.spazzinq.flightcontrol.manager.ConfManager;
@@ -84,11 +83,7 @@ public class FlightControlCommand extends TemplateCommand {
                         msg(s, pl.getLangManager().getPluginReloaded());
                         break;
                     case "update":
-                        new BukkitRunnable() {
-                            @Override public void run() {
-                                pl.getUpdateManager().checkForUpdate(s, false);
-                            }
-                        }.runTaskAsynchronously(pl);
+                        pl.getUpdateManager().checkForUpdate(s);
                         break;
                     case "combat":
                         config.setCombatChecked(!config.isCombatChecked());
@@ -143,11 +138,11 @@ public class FlightControlCommand extends TemplateCommand {
                         if (args.length == 2) {
                             if (args[1].matches("\\.\\d+|\\d+(\\.\\d+)?")) {
                                 float speed = Float.parseFloat(args[1]);
-                                float actualSpeed = MathUtil.calcConvertedSpeed(speed, config.getMaxFlightSpeed());
+                                float actualSpeed = MathUtil.calcConvertedSpeed(speed, config.getMaxRawFlightSpeed());
                                 if (speed > -1 && speed < 11) {
-                                    if (config.getDefaultFlightSpeed() != actualSpeed) {
+                                    if (config.getDefaultRawFlightSpeed() != actualSpeed) {
                                         config.set("settings.flight_speed", speed);
-                                        config.setDefaultFlightSpeed(actualSpeed);
+                                        config.setDefaultRawFlightSpeed(actualSpeed);
 
                                         pl.getPlayerManager().loadPlayerData();
                                         msgVar(s, pl.getLangManager().getGlobalFlightSpeedSet(), false, "speed", String.valueOf(speed));

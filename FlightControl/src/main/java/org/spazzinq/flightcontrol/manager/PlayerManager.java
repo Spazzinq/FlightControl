@@ -41,7 +41,7 @@ public class PlayerManager {
 
             float speed = dataConf.isDouble("flight_speed")
                     ? (float) dataConf.getDouble("flight_speed")
-                    : pl.getConfManager().getDefaultFlightSpeed();
+                    : pl.getConfManager().getDefaultRawFlightSpeed();
 
             long tempFlyLength;
 
@@ -72,7 +72,7 @@ public class PlayerManager {
         for (Player p : Bukkit.getOnlinePlayers()) {
             FlightPlayer flightPlayer = getFlightPlayer(p);
 
-            p.setFlySpeed(flightPlayer.getActualFlightSpeed());
+            p.setFlySpeed(flightPlayer.getRawFlightSpeed());
             if (!flightPlayer.isTrailWanted()) {
                 pl.getTrailManager().disableTrail(p);
             }

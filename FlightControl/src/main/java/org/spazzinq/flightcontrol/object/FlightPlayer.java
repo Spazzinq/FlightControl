@@ -23,15 +23,15 @@ public class FlightPlayer {
     private final UUID uuid;
 
     @Getter private final Timer tempflyTimer;
-    @Getter private float actualFlightSpeed;
+    @Getter private float rawFlightSpeed;
     @Getter @Setter private boolean trailWanted;
 
-    public FlightPlayer(File dataFile, YamlConfiguration data, UUID uuid, float actualFlightSpeed, boolean trailWanted, long tempflyDuration) {
+    public FlightPlayer(File dataFile, YamlConfiguration data, UUID uuid, float rawFlightSpeed, boolean trailWanted, long tempflyDuration) {
         this.dataFile = dataFile;
         this.data = data;
         this.uuid = uuid;
         // Don't store speed in data conf if not personal for player
-        this.actualFlightSpeed = actualFlightSpeed;
+        this.rawFlightSpeed = rawFlightSpeed;
         this.trailWanted = trailWanted;
         this.tempflyTimer = new Timer(tempflyDuration) {
             @SneakyThrows @Override public void onFinish() {
@@ -101,11 +101,11 @@ public class FlightPlayer {
         }
     }
 
-    @SneakyThrows public void setActualFlightSpeed(float actualFlightSpeed) {
-        this.actualFlightSpeed = actualFlightSpeed;
-        getPlayer().setFlySpeed(actualFlightSpeed);
+    @SneakyThrows public void setRawFlightSpeed(float rawFlightSpeed) {
+        this.rawFlightSpeed = rawFlightSpeed;
+        getPlayer().setFlySpeed(rawFlightSpeed);
 
-        data.set("flight_speed", actualFlightSpeed);
+        data.set("flight_speed", rawFlightSpeed);
     }
 
     @SneakyThrows public void saveData() {

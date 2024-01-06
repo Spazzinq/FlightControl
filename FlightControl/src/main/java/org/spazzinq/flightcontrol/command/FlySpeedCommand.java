@@ -68,22 +68,22 @@ public class FlySpeedCommand implements CommandExecutor {
         return true;
     }
 
-    private void setSpeed(CommandSender s, Player p, String wrongSpeedStr) {
-        if (wrongSpeedStr.matches("\\d+|(\\d+)?.\\d+")) {
-            float wrongSpeed = Math.min(Float.parseFloat(wrongSpeedStr), pl.getConfManager().getMaxFlightSpeed());
-            float speed = MathUtil.calcConvertedSpeed(wrongSpeed, pl.getConfManager().getMaxFlightSpeed());
+    private void setSpeed(CommandSender s, Player p, String rationalSpeedStr) {
+        if (rationalSpeedStr.matches("\\d+|(\\d+)?.\\d+")) {
+            float rationalSpeed = Float.parseFloat(rationalSpeedStr);
+            float rawSpeed = MathUtil.calcConvertedSpeed(rationalSpeed, pl.getConfManager().getMaxRawFlightSpeed());
             FlightPlayer flightPlayer = playerManager.getFlightPlayer(p);
 
-            if (flightPlayer.getActualFlightSpeed() == speed) {
+            if (flightPlayer.getRawFlightSpeed() == rawSpeed) {
                 msgVar(s, pl.getLangManager().getFlySpeedSame(), false, new HashMap<>() {{
-                    put("speed", String.valueOf(wrongSpeed));
+                    put("speed", String.valueOf(rationalSpeed));
                     put("player", p.getName());
                 }});
             } else {
-                playerManager.getFlightPlayer(p).setActualFlightSpeed(speed);
+                playerManager.getFlightPlayer(p).setRawFlightSpeed(rawSpeed);
 
                 msgVar(s, pl.getLangManager().getFlySpeedSet(), false, new HashMap<>() {{
-                    put("speed", String.valueOf(wrongSpeed));
+                    put("speed", String.valueOf(rationalSpeed));
                     put("player", p.getName());
                 }});
             }
