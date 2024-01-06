@@ -1,6 +1,6 @@
 /*
  * This file is part of FlightControl, which is licensed under the MIT License.
- * Copyright (c) 2023 Spazzinq
+ * Copyright (c) 2024 George Fang
  */
 
 package org.spazzinq.flightcontrol.placeholder;
