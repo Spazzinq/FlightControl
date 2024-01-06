@@ -6,10 +6,8 @@
 package org.spazzinq.flightcontrol.check.territory.own;
 
 import net.william278.husktowns.api.HuskTownsAPI;
-import net.william278.husktowns.chunk.ClaimedChunk;
 import net.william278.husktowns.claim.TownClaim;
 import net.william278.husktowns.town.Member;
-import net.william278.husktowns.town.Town;
 import org.bukkit.entity.Player;
 import org.spazzinq.flightcontrol.check.territory.TerritoryCheck;
 

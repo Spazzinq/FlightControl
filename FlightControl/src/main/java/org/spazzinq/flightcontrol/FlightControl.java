@@ -80,11 +80,11 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
     }
 
     private void registerManagers() {
-        boolean isNewSpigotAPI = false;
+        boolean isNewSpigotAPI = true;
 
-        for (int i = 13; i < 21; i++) {
+        for (int i = 8; i < 13; i++) {
             if (getServer().getBukkitVersion().contains("1." + i)) {
-                isNewSpigotAPI = true;
+                isNewSpigotAPI = false;
                 break;
             }
         }

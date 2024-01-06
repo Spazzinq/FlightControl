@@ -5,7 +5,6 @@
 
 package org.spazzinq.flightcontrol.check.always;
 
-import com.craftaro.skyblock.SkyBlock;
 import com.craftaro.skyblock.api.SkyBlockAPI;
 import com.craftaro.skyblock.api.island.Island;
 import com.craftaro.skyblock.api.island.IslandManager;
