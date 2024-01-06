@@ -36,7 +36,7 @@ public class UpdateManager {
     private static final String PLUGIN_PATH = "plugins/FlightControl.jar";
     private static final int MSG_SEND_DELAY_IN_TICKS = 70;
 
-    private static UpdateStatus updateStatus;
+    private static UpdateStatus updateStatus = UpdateStatus.UNKNOWN;
     private final FlightControl pl;
 
     @Getter @Setter private Version newVersion;
@@ -67,20 +67,17 @@ public class UpdateManager {
         }
     }
 
-    public void checkForUpdate(CommandSender sender, boolean delayMessageSend) {
+    public void checkForUpdate(CommandSender sender) {
         if (updateStatus == UpdateStatus.UNKNOWN || updateStatus == UpdateStatus.UP_TO_DATE) {
             fetchSpigotVersion(sender);
+        } else {
+            sendStatus(sender);
         }
-
-        new BukkitRunnable() {
-            @Override public void run() {
-                sendStatus(sender);
-            }
-        }.runTaskLaterAsynchronously(pl, delayMessageSend ? MSG_SEND_DELAY_IN_TICKS : 0);
     }
 
     public void fetchSpigotVersion(CommandSender sender) {
         updateStatus = UpdateStatus.FETCHING_FROM_SPIGOT;
+        sendStatus(sender);
 
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
             try {

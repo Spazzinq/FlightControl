@@ -6,25 +6,24 @@
 package org.spazzinq.flightcontrol.util;
 
 public final class MathUtil {
-    public static float calcConvertedSpeed(float unconvertedSpeed, float maxSpeed) {
-        float actualSpeed;
-        float defaultMultiplier = 0.1f;
-        float wrongSpeed = unconvertedSpeed;
+    public static float calcConvertedSpeed(float rationalSpeed, float maxRawSpeed) {
+        float multiplier = 0.1f;
 
-        if (wrongSpeed > 10f) {
-            wrongSpeed = 10f;
-        } else if (wrongSpeed < 0.0001f) {
-            wrongSpeed = 0.0001f;
+        // Set min-max bounds
+        if (rationalSpeed > 10f) {
+            rationalSpeed = 10f;
+        } else if (rationalSpeed < 0.0001f) {
+            rationalSpeed = 0.0001f;
         }
 
-        if (wrongSpeed < 1f) {
-            actualSpeed = defaultMultiplier * wrongSpeed;
+        if (rationalSpeed < 1f) {
+            // Scale down if less than 1
+            return multiplier * rationalSpeed;
         } else {
-            float ratio = ((wrongSpeed - 1) / 9) * (maxSpeed - defaultMultiplier);
-            actualSpeed = ratio + defaultMultiplier;
+            // Use ratio formula otherwise
+            float ratio = ((rationalSpeed - 1) / 9) * (maxRawSpeed - multiplier);
+            return ratio + multiplier;
         }
-
-        return actualSpeed;
     }
 
     /**

@@ -25,8 +25,8 @@ public class ConfManager extends StorageManager {
     @Getter @Setter private boolean autoUpdate;
     @Getter @Setter private boolean inGameSupport;
 
-    @Getter @Setter private float defaultFlightSpeed;
-    @Getter @Setter private float maxFlightSpeed;
+    @Getter @Setter private float defaultRawFlightSpeed;
+    @Getter @Setter private float maxRawFlightSpeed;
     @Getter @Setter private int heightLimit;
 
     @Getter @Setter private boolean combatChecked;
@@ -69,8 +69,8 @@ public class ConfManager extends StorageManager {
         }
 
         // floats
-        maxFlightSpeed = (float) conf.getDouble("settings.max_flight_speed", 10);
-        defaultFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed", 1), maxFlightSpeed);
+        maxRawFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.max_flight_speed", 10), 1f);
+        defaultRawFlightSpeed = MathUtil.calcConvertedSpeed((float) conf.getDouble("settings.flight_speed", 1), maxRawFlightSpeed);
 
         // Strings
         flyCommandName = conf.getString("settings.fly_command_name", "fly");
