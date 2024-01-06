@@ -24,6 +24,25 @@
 
 package org.spazzinq.flightcontrol.object;
 
+import lombok.Getter;
+
+@Getter
 public enum UpdateStatus {
-    DOWNLOADING, DOWNLOADED, VERIFIED
+    UNKNOWN("&e&lFlightControl &7» &eFailed to check for updates. Unknown update status."),
+    FETCHING_FROM_SPIGOT("&a&lFlightControl &7» &aChecking for updates..."),
+    NEEDS_UPDATE("&e&lFlightControl &7» &eThere is an update available, but you either disabled automatic " +
+            "updates or the update is major and requires manual installation. Remember to download and update the " +
+            "plugin to receive new features and security updates!"),
+    UP_TO_DATE("&a&lFlightControl &7» &aNo updates found. You're in the clear!"),
+    DOWNLOADING("&a&lFlightControl &7» &aCurrently downloading an update..."),
+    DOWNLOADED_BUT_NOT_VERIFIED("&c&lFlightControl &7» &cCould not verify the newly downloaded update is not corrupted!"),
+    VERIFIED("&a&lFlightControl &7» &aThe update has already been downloaded but cannot install right now. Restart " +
+            "(or reload) the server to install the update."),
+    WILL_AUTO_UPDATE("&a&lFlightControl &7» &aAutomatic installation finished! Welcome to a new version of FlightControl.");
+
+    private final String message;
+
+    UpdateStatus(String message) {
+        this.message = message;
+    }
 }

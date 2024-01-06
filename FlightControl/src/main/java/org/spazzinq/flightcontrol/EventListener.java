@@ -6,7 +6,6 @@
 package org.spazzinq.flightcontrol;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,8 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
-import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.event.server.PluginEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.spazzinq.flightcontrol.api.object.Sound;
@@ -129,11 +126,7 @@ final class EventListener implements org.bukkit.event.Listener {
 
         // Notify of updates
         if (p.isOp()) {
-            new BukkitRunnable() {
-                @Override public void run() {
-                    pl.getUpdateManager().notifyUpdate(p);
-                }
-            }.runTaskLater(pl, 40);
+            pl.getUpdateManager().sendStatus(p, true);
         }
 
         // Check flight then trail, allowing time for other plugins to load data

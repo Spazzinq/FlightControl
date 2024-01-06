@@ -62,11 +62,7 @@ public final class FlightControl extends org.bukkit.plugin.java.JavaPlugin {
         new EventListener();
         // Load and check
         load();
-        new BukkitRunnable() {
-            @Override public void run() {
-                updateManager.checkForUpdate(Bukkit.getConsoleSender());
-            }
-        }.runTaskAsynchronously(this);
+        updateManager.checkForUpdate(Bukkit.getConsoleSender(), true);
 
         // Start bStats
         new Metrics(this, 4704); // 4704 = plugin ID
