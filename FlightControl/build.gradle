@@ -27,7 +27,7 @@ dependencies {
     }
     compileOnly ("com.intellectualsites.plotsquared:plotsquared-core") { exclude(group: "*") }
     compileOnly ("com.intellectualsites.plotsquared:plotsquared-bukkit") { exclude(group: "*") }
-    compileOnly ('com.palmergames.bukkit.towny:towny:0.100.0.20') { exclude(group: "*") } // https://github.com/TownyAdvanced/Towny
+    compileOnly ('com.palmergames.bukkit.towny:towny:0.100.1.3') { exclude(group: "*") } // https://github.com/TownyAdvanced/Towny
     compileOnly ('com.github.Angeschossen:LandsAPI:6.42.15') { exclude(group: "*") } // https://github.com/Angeschossen/LandsAPI
     compileOnly ('com.github.TechFortress:GriefPrevention:17.0.0') { exclude(group: "*") } // https://github.com/TechFortress/GriefPrevention/
     compileOnly ('com.griefdefender:api:2.1.0-SNAPSHOT') { exclude(group: "*") } // https://github.com/bloodmc/GriefDefenderAPI
