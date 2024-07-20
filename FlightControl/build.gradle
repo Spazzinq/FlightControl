@@ -13,7 +13,7 @@ dependencies {
     implementation(platform("com.intellectualsites.bom:bom-newest:1.47"))
 
     // Latest Spigot version
-    compileOnly ('io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT')
+    compileOnly ('io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT')
 
     // Placeholders
     compileOnly ('me.clip:placeholderapi:2.11.6') { exclude(group: "*") } // https://github.com/PlaceholderAPI/PlaceholderAPI/releases/tag/2.11.6
