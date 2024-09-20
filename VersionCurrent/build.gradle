@@ -3,7 +3,7 @@ dependencies {
     implementation project(':Multiversion')
 
     compileOnly ('org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT') { exclude(group: "*") }
-    compileOnly ('com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT') { exclude(group: "*") }
+    compileOnly ('com.sk89q.worldedit:worldedit-bukkit:7.4.0-SNAPSHOT') { exclude(group: "*") }
     compileOnly ('com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT') {
         exclude group: 'com.google.code.gson', module: 'gson'
     }
