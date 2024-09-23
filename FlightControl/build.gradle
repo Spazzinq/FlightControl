@@ -43,7 +43,7 @@ dependencies {
     // Combat
     compileOnly ('com.github.sirblobman.api:core:2.9-SNAPSHOT') { exclude(group: "*") }
     compileOnly ('com.github.sirblobman.combatlogx:api:11.4-SNAPSHOT') { exclude(group: "*") }
-    compileOnly ('com.github.timderspieler:DeluxeCombat-API:1.5.0') { exclude(group: "*") }
+    compileOnly ('com.github.timderspieler:DeluxeCombat-API:1.5.1') { exclude(group: "*") }
 
     // Maven-less Resources
     compileOnly files('../lib/Residence5.1.5.0.jar') // https://github.com/Zrips/Residence, GPL-3.0
